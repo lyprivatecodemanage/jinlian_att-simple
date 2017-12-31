@@ -573,14 +573,14 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 				result.getReportExcept().add(reportExcept);
 				result.getReportDaily().setLate("1");//迟到次数
 			}
-			if(StringUtils.isEmpty(signInTime)){//未签到
+			if(StringUtils.isEmpty(signOutTime)){//未签退
 				ReportExcept reportExcept = new ReportExcept();
 				reportExcept.setEmployeeId(employeeId);
 				reportExcept.setCompanyId(companyId);
 				reportExcept.setExceptDate(countDate);
 				reportExcept.setExceptType("4");
 				result.getReportExcept().add(reportExcept);
-			}else if(TimeUtil.compareTime(earlyLine, signInTime)){//早退
+			}else if(TimeUtil.compareTime(earlyLine, signOutTime)){//早退
 				ReportExcept reportExcept = new ReportExcept();
 				reportExcept.setEmployeeId(employeeId);
 				reportExcept.setCompanyId(companyId);
@@ -618,6 +618,16 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 	 * @param result
 	 */
 	public void getHasPlanSign(AlgorithmParam algorithmParam, AlgorithmResult result){
+		algorithmParam.setSignInLimitLine(
+				TimeUtil.getLongAfter(
+						algorithmParam.getClassesEmployee().getOnDutySchedulingDate(), 
+						-1*Integer.parseInt(algorithmParam.getClassesEmployee().getOnPunchCardRule()), 
+						Calendar.MINUTE));//上班打卡开始时间
+		algorithmParam.setSignOutLimitLine(
+				TimeUtil.getLongAfter(
+						algorithmParam.getClassesEmployee().getOffDutySchedulingDate(), 
+						Integer.parseInt(algorithmParam.getClassesEmployee().getOffPunchCardRule()), 
+						Calendar.MINUTE));//下班打卡结束时间
 		if(!TimeUtil.compareTime(algorithmParam.getAttEndLine(), algorithmParam.getAttBeginLine())){
 			//申请覆盖了上班时间，则不计算异常；签到签退时间按正常抓取
 			String centerLine = TimeUtil.getCenter(
