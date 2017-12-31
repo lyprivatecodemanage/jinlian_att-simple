@@ -33,13 +33,12 @@
   </resultMap>
   <resultMap id="ApplicationMap" type="com.xiangshangban.att_simple.bean.Application">
     <id column="id" jdbcType="VARCHAR" property="id" />
-    <result column="employee_id" jdbcType="VARCHAR" property="employeeId" />
     <result column="company_id" jdbcType="VARCHAR" property="companyId" />
     <result column="start_time" jdbcType="VARCHAR" property="startTime" />
     <result column="end_time" jdbcType="VARCHAR" property="endTime" />
     <result column="is_skip_rest_day" jdbcType="VARCHAR" property="isSkipRestDay" />
-    <result column="applicaiton_type" jdbcType="VARCHAR" property="applicaitonType"/>
-    <result column="applicaiton_children_type" property="applicaitonChildrenType"/>
+    <result column="application_type" jdbcType="VARCHAR" property="applicationType"/>
+    <result column="application_children_type" property="applicationChildrenType"/>
   </resultMap>
   <resultMap id="Company" type="com.xiangshangban.att_simple.bean.Company"> 
   
@@ -155,7 +154,7 @@
   	SELECT DISTINCT to_char(a.start_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') start_time, 
 		  to_char(a.end_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss')  end_time,a.employee_id,
   			a.department_id,a.company_id, '1' AS application_type,
-  			leave_type AS applicaiton_children_type
+  			leave_type AS application_children_type
 	FROM application_leave_ a
 	LEFT JOIN application_total_record_ AS b ON a.application_no=b.application_no
 	WHERE a.employee_id=#{employeeId} AND a.company_id=#{companyId} 

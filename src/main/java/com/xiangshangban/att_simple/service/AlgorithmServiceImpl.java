@@ -66,10 +66,11 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 	 * @param beginDate 开始日期，  格式yyyy-MM-dd
 	 * @param endDate 结束日期 ， 格式yyyy-MM-dd
 	 */
+	@Override
 	public void calculate(String companyId, String employeeId, String beginDate, String endDate) {
 		logger.info(beginDate+"到"+endDate+"日报计算开始");
 		String date = beginDate;
-		while(TimeUtil.compareTime(date+" 00:00:00", endDate+" 00:00:00")){
+		while(TimeUtil.compareTime(endDate+" 00:00:00", date+" 00:00:00")){
 			this.calculate(companyId, employeeId, date);
 			date = TimeUtil.getLongAfterDate(date+" 00:00:00", 1, Calendar.DATE);
 		}
@@ -363,8 +364,8 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 			String currentApplyBegin=application.getStartTime();
 			String currentApplyEnd=application.getEndTime();
 			//申请时间与应在岗时间的关系
-			int appAttRelation = TimeUtil.timeRelation(application.getStartTime(), 
-					application.getEndTime(), restBeginTime, restEndTime);
+			int appAttRelation = TimeUtil.timeRelation(attBeginLine, attEndLine,
+					application.getStartTime(), application.getEndTime());
 			//申请时间与休息时间的关系
 			int appRestRelation = TimeUtil.timeRelation(application.getStartTime(), 
 					application.getEndTime(), restBeginTime, restEndTime);
@@ -435,6 +436,8 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 			if(appAttRelation==5){//外申请
 				currentApplyBegin=attBeginLine;
 				currentApplyEnd=attEndLine;
+				attBeginLine = algorithmParam.getAttEndLine();//应在岗的最早时间
+				attEndLine = algorithmParam.getAttBeginLine();//应在岗的最晚时间
 				leaveRestTime= TimeUtil.getTimeLength(restEndTime, restBeginTime);
 			}
 			currentApply = TimeUtil.getTimeLength(currentApplyEnd, currentApplyBegin)-leaveRestTime;
