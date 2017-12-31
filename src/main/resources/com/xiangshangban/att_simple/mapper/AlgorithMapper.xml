@@ -124,7 +124,7 @@
 		 AND (a.record_date BETWEEN #{beginTime} AND #{endTime})
 		 AND (a.record_type='2' OR a.record_type='3' OR a.record_type='6' OR a.record_type='7' OR a.record_type='8')
 	  UNION
-	  	SELECT b.fill_card_time AS record_date
+	  	SELECT to_char(b.fill_card_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') AS record_date
 		FROM application_fill_card_ b
 		LEFT JOIN application_total_record_ AS c ON b.application_no=c.application_no
 		WHERE b.employee_id=#{employeeId} AND b.company_id=#{companyId} 
@@ -142,7 +142,7 @@
 		 AND (a.record_date BETWEEN #{beginTime} AND #{endTime})
 		 AND (a.record_type='2' OR a.record_type='3' OR a.record_type='6' OR a.record_type='7' OR a.record_type='8')
 	  UNION
-		SELECT b.fill_card_time AS record_date
+		SELECT to_char(b.fill_card_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') AS record_date
 		FROM application_fill_card_ b
 		LEFT JOIN application_total_record_ AS c ON b.application_no=c.application_no
 		WHERE b.employee_id=#{employeeId} AND b.company_id=#{companyId} 
