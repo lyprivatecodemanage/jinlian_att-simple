@@ -81,6 +81,13 @@ public class ApplicationServiceImpl implements ApplicationService {
 		//查询年假剩余,年假额度,调休剩余,调休额度
 		Vacation vacation = vacationMapper.SelectEmployeeVacation(companyId, null, employeeId);
 		result.put("applicaitonTypeList", applicationTypeList);
+		if(vacation==null){
+			vacation = new Vacation();
+			vacation.setAnnualLeaveBalance("");
+			vacation.setAdjustRestBalance("");
+			vacation.setAdjustRestTotal("");
+			vacation.setAnnualLeaveTotal("");
+		}
 		result.put("vacation", vacation);
 		return result;
 	}
@@ -89,19 +96,18 @@ public class ApplicationServiceImpl implements ApplicationService {
 	 */
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED,rollbackForClassName="Exception")
-	public ReturnData leaveApplication(Application application) {
+	public ReturnData leaveApplication(Application application)throws Exception{
 		ReturnData returnData = new ReturnData();
-		try{
 			//判断请假类型是否是年假和调休
 			if("2".equals(application.getApplicationChildrenType())||"3".equals(application.getApplicationChildrenType())){
 				//查询额度
 				Vacation vacation = vacationMapper.SelectEmployeeVacation(application.getCompanyId(), null, application.getApplicationId());
-				if("2".equals(application.getApplicationChildrenType())&&Integer.valueOf(application.getApplicationHour())>Integer.valueOf(vacation.getAnnualLeaveBalance())){
+				if(vacation==null || "2".equals(application.getApplicationChildrenType())&&Integer.valueOf(application.getApplicationHour())>Integer.valueOf(vacation.getAnnualLeaveBalance())){
 					returnData.setMessage("年假剩余不足");
 					returnData.setReturnCode("4400");
 					return returnData;
 				}
-				if("3".equals(application.getApplicationChildrenType())&&Integer.valueOf(application.getApplicationHour())>Integer.valueOf(vacation.getAdjustRestBalance())){
+				if(vacation == null || "3".equals(application.getApplicationChildrenType())&&Integer.valueOf(application.getApplicationHour())>Integer.valueOf(vacation.getAdjustRestBalance())){
 					returnData.setMessage("调休剩余不足");
 					returnData.setReturnCode("4401");
 					return returnData;
@@ -118,31 +124,26 @@ public class ApplicationServiceImpl implements ApplicationService {
 			//是否抄送
 			if("1".equals(application.getIsCopy())){
 				//添加抄送记录
-				for(ApplicationToCopyPerson applicationToCopyPerson :application.getCopyPersonList()){
+				for(ApplicationToCopyPerson applicationToCopyPerson :application.getAppCopyPersonList()){
 					applicationToCopyPerson.setId(FormatUtil.createUuid());
 					applicationToCopyPerson.setApplicationNo(application.getApplicationNo());
 					applicationToCopyPerson.setOperaterTime(application.getApplicationTime());
+					applicationToCopyPerson.setCompanyId(application.getCompanyId());
 					applicationToCopyPersonMapper.insertSelective(applicationToCopyPerson);
 				}
 			}
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
 			return	returnData;
-		}catch(Exception e){
-			logger.info(e);
-			returnData.setMessage("服务器错误");
-			returnData.setReturnCode("3001");
-			return	returnData;
-		}
+	
 	}
 	/**
 	 * 加班申请
 	 */
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED,rollbackForClassName="Exception")
-	public ReturnData overTimeApplication(Application application) {
+	public ReturnData overTimeApplication(Application application) throws Exception{
 		ReturnData returnData = new ReturnData();
-		try{
 		if(StringUtils.isEmpty(application)||StringUtils.isEmpty(application.getApplicationChildrenType())){
 			returnData.setMessage("必传参数为空");
 			returnData.setReturnCode("3006");
@@ -150,7 +151,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 		}
 		//设置部门id
 		Employee employee =  employeeDao.selectByEmployee(application.getApplicationId(), application.getCompanyId());
-		application.setDepartmentId(employee.getEmployeeBirthday());//部门id
+		application.setDepartmentId(employee.getDepartmentId());//部门id
 		//生成申请记录
 		applicationTotalRecordMapper.insertApplicationRecord(application);
 		//生成加班申请记录
@@ -159,12 +160,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 		returnData.setMessage("成功");
 		returnData.setReturnCode("3000");
 		return	returnData;
-	}catch(Exception e){
-		logger.info(e);
-		returnData.setMessage("服务器错误");
-		returnData.setReturnCode("3001");
-		return	returnData;
-	}
 		
 	}
 	/**
@@ -172,9 +167,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 	 */
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED,rollbackForClassName="Exception")
-	public ReturnData businessTravelApplication(Application application) {
+	public ReturnData businessTravelApplication(Application application) throws Exception{
 		ReturnData returnData = new ReturnData();
-		try{
 			if(StringUtils.isEmpty(application)||StringUtils.isEmpty(application.getApplicationChildrenType())){
 				returnData.setMessage("必传参数为空");
 				returnData.setReturnCode("3006");
@@ -182,7 +176,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 			}
 			//设置部门id
 			Employee employee =  employeeDao.selectByEmployee(application.getApplicationId(), application.getCompanyId());
-			application.setDepartmentId(employee.getEmployeeBirthday());//部门id
+			application.setDepartmentId(employee.getDepartmentId());//部门id
 			//生成申请记录
 			applicationTotalRecordMapper.insertApplicationRecord(application);
 			//生成出差记录
@@ -191,21 +185,14 @@ public class ApplicationServiceImpl implements ApplicationService {
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
 			return	returnData;
-		}catch(Exception e){
-			logger.info(e);
-			returnData.setMessage("服务器错误");
-			returnData.setReturnCode("3001");
-			return	returnData;
-		}
 	}
 	/**
 	 * 外出申请
 	 */
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED,rollbackForClassName="Exception")
-	public ReturnData outgoingApplication(Application application) {
+	public ReturnData outgoingApplication(Application application) throws Exception{
 		ReturnData returnData = new ReturnData();
-		try{
 			if(StringUtils.isEmpty(application)||StringUtils.isEmpty(application.getOutgoingLocation())){
 				returnData.setMessage("必传参数为空");
 				returnData.setReturnCode("3006");
@@ -213,7 +200,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 			}
 			//设置部门id
 			Employee employee =  employeeDao.selectByEmployee(application.getApplicationId(), application.getCompanyId());
-			application.setDepartmentId(employee.getEmployeeBirthday());//部门id
+			application.setDepartmentId(employee.getDepartmentId());//部门id
 			//生成申请记录
 			applicationTotalRecordMapper.insertApplicationRecord(application);
 			//生成外出记录
@@ -222,21 +209,14 @@ public class ApplicationServiceImpl implements ApplicationService {
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
 			return	returnData;
-		}catch(Exception e){
-			logger.info(e);
-			returnData.setMessage("服务器错误");
-			returnData.setReturnCode("3001");
-			return	returnData;
-		}
 	}
 	/**
 	 * 补卡申请
 	 */
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED,rollbackForClassName="Exception")
-	public ReturnData fillCardApplication(Application application) {
+	public ReturnData fillCardApplication(Application application) throws Exception{
 		ReturnData returnData = new ReturnData();
-		try{
 			if(StringUtils.isEmpty(application)||StringUtils.isEmpty(application.getApplicationChildrenType())){
 				returnData.setMessage("必传参数为空");
 				returnData.setReturnCode("3006");
@@ -244,7 +224,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 			}
 			//设置部门id
 			Employee employee =  employeeDao.selectByEmployee(application.getApplicationId(), application.getCompanyId());
-			application.setDepartmentId(employee.getEmployeeBirthday());//部门id
+			application.setDepartmentId(employee.getDepartmentId());//部门id
 			//生成申请记录
 			applicationTotalRecordMapper.insertApplicationRecord(application);
 			//生成外出记录
@@ -253,12 +233,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
 			return	returnData;
-		}catch(Exception e){
-			logger.info(e);
-			returnData.setMessage("服务器错误");
-			returnData.setReturnCode("3001");
-			return	returnData;
-		}
 	}
 	
 	/**
@@ -281,11 +255,10 @@ public class ApplicationServiceImpl implements ApplicationService {
 	 */
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED,rollbackForClassName="Exception")
-	public boolean commonContactPeople(Application application) {
+	public boolean commonContactPeople(Application application) throws Exception{
 		String companyId = application.getCompanyId();
 		String employeeId = application.getApplicationId();
 		String type = application.getCommonContactPeopleList().get(0).getType();
-		try{
 			//先将之前的常用联系人删除之后,在重新添加常用联系人
 			applicationCommonContactPeopleMapper.deleteByEmployeeIdAndCompanyIdAndType(employeeId, companyId, type);
 			List<ApplicationCommonContactPeople> commonContactPeopleList = application.getCommonContactPeopleList();
@@ -298,11 +271,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 					applicationCommonContactPeopleMapper.insert(contactPeople);
 				}
 			}
-		}catch(Exception e){
-			logger.info(e);
-			e.printStackTrace();
-			return false;
-		}
 		return true;
 	}
 	/**
@@ -312,7 +280,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 	@Transactional(propagation=Propagation.REQUIRED,rollbackForClassName="Exception")
 	public List<ApplicationCommonContactPeople> commonContactPeopleList(String employeeId,String companyId,String type,String page,String count){
 		List<ApplicationCommonContactPeople> commonContactPeopleList = null;
-		try{
 		page = String.valueOf((Integer.valueOf(page)-1)*Integer.valueOf(count));//将页数转成记录条数
 		Integer commonContactPeopleCount = applicationCommonContactPeopleMapper.selectCountByEmployeeIdAndCompanyId(employeeId,companyId,type);
 		if(commonContactPeopleCount>0&&Integer.valueOf(page)<commonContactPeopleCount){//有常用联系人并且满足分页条件
@@ -334,11 +301,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 			commonContactPeopleList = new ArrayList<ApplicationCommonContactPeople>();
 			List<Employee> employeeList = employeeDao.selectCommonContactPeoplePage(employeeId,companyId, page, count);
 			this.setValue("6",employeeList, null, null, commonContactPeopleList);
-		}
-		
-		}catch(Exception e){
-			logger.info(e);
-			e.printStackTrace();
 		}
 		return commonContactPeopleList;
 	}
@@ -448,7 +410,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 				Employee emp=employeeDao.selectNameByEmployeeIdAndDepartmentIdAndCompanyId(copyPersonList.get(i).getAppCopyPersonId(), null, companyId);
 				copyPersonList.get(i).setAppCopyPersonName(emp.getEmployeeName());
 			}
-			application.setCopyPersonList(copyPersonList);
+			application.setAppCopyPersonList(copyPersonList);
 		}
 		String applicationType = applicationRecordStatus.getApplicationType();
 		//if("0".equals(applicationRecordStatus.getIsComplete())){//未完成
@@ -471,7 +433,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 	}
 	
 	private Application getApplicationDetails(Application application,ApplicationTotalRecord applicationRecordStatus,String applicationNo,String employeeId,String departmentId,String companyId){
-		Application applicationDetails = null;
+		Application applicationDetails = new Application();
 		switch (applicationRecordStatus.getApplicationType()) {
 		case "1":
 			applicationDetails = applicationLeaveMapper.selectDetailsByApplicationNo(applicationNo);
@@ -498,8 +460,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 		applicationDetails.setApplicatrionPersonName(emp.getEmployeeName());
 		applicationDetails.setDepartmentName(emp.getDepartmentName());
 		applicationDetails.setCompanyName(emp.getCompanyName());
-		if(!StringUtils.isEmpty(application.getCopyPersonList())){
-			applicationDetails.setCopyPersonList(application.getCopyPersonList());
+		if(!StringUtils.isEmpty(application.getAppCopyPersonList())){
+			applicationDetails.setAppCopyPersonList(application.getAppCopyPersonList());
 			applicationDetails.setIsCopy("1");
 		}
 		applicationDetails.setIsReject(applicationRecordStatus.getIsReject());

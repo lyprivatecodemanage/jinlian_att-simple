@@ -402,8 +402,6 @@
 			AND
 				classes_id !=''
 			AND
-				classes_id in (SELECT id FROM classes_type WHERE company_id = #{companyId})
-			AND
 				emp_company_id = #{companyId}
 		) A
 	GROUP BY
@@ -435,6 +433,19 @@
   <!-- 通过人员ID和公司ID查询人员名称 -->
   <select id="selectEmpNameById" parameterType="String" resultType="String">
   	select employee_name from organization.employee_ where employee_id = #{empId} and company_id = #{companyId}
+  </select>
+  
+  <!-- 查询指定公司一周内执行“一键排班”的次数 -->
+  <select id="selectOneKeyAccessCount" parameterType="String" resultType="int">
+  	SELECT
+		COUNT (1)
+	FROM
+		operate_log
+	WHERE
+		operate_emp_company = #{companyId}
+		AND operate_date BETWEEN #{monday}
+		AND #{weekend}
+		AND operate_content LIKE '%一键排班%'
   </select>
   
   <!-- 更新人员班次类型的名称 -->

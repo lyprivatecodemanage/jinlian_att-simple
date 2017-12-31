@@ -26,6 +26,8 @@ public class ClassesType {
     private String offPunchCardTime;//下班允许推迟xx分钟打卡
 
     private String autoClassesFlag;//自动排班标志位（1：一个月进行一次排班 2：一个季度进行一次排班）
+    
+    private String autoScheduledSwitch;//自动排班开关（1：启用自动排班 0：不启用自动排班）
 
     private String createTime;//该班次类型生成的时间
 
@@ -179,5 +181,13 @@ public class ClassesType {
 
 	public void setDelDate(String delDate) {
 		this.delDate = delDate;
+	}
+
+	public String getAutoScheduledSwitch() {
+		return autoScheduledSwitch;
+	}
+
+	public void setAutoScheduledSwitch(String autoScheduledSwitch) {
+		this.autoScheduledSwitch = autoScheduledSwitch;
 	}
 }

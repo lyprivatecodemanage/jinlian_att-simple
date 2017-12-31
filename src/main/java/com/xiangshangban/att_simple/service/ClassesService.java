@@ -89,6 +89,15 @@ public interface ClassesService {
 	boolean oneButtonScheduling(String companyId);
 	
 	/**
+	 * 查询指定公司一周之内使用“一键排班”的次数
+	 * @param monday 周一日期
+	 * @param weekend 周末日期
+	 * @param companyId 公司ID
+	 * @return
+	 */
+	int queryOneKeyAccessCount(String monday,String weekend,String companyId);
+	
+	/**
 	 * 给指定的人员添加指定日期的排班
 	 * @param requestParam
 	 * @param companyId

@@ -121,6 +121,15 @@ public interface ClassesEmployeeMapper {
 	 */
 	int updateAppointEmpDateClasses(ClassesEmployee classesEmployee);
 	
+	/**
+	 * 查询当前公司一周只能使用“一键排班”的次数
+	 * @param monday 周一日期
+	 * @param weekend 周末日起
+	 * @param companyId 公司ID
+	 * @return
+	 */
+	int selectOneKeyAccessCount(@Param("monday") String monday,@Param("weekend")String weekend,@Param("companyId") String companyId);
+	
 	//########################<自动排班>############################
 	
 	/**
