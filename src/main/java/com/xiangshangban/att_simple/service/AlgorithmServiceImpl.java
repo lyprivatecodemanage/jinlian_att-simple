@@ -234,8 +234,9 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 			//是否既有“加班签到时间”又有“加班签退时间”
 			//是否加班签到-签退区间与加班申请区间有交集
 			if(StringUtils.isNotEmpty(overSignIn) && StringUtils.isNotEmpty(overSignOut)){
+				long length = TimeUtil.containTimeLength(application.getStartTime(), application.getEndTime(), overSignIn, overSignOut);
 				AlgorithmReport.setNormalOverWork(
-						TimeUtil.containTimeLength(overSignValidBegin, overSignValidBegin, overSignIn, overSignOut)+"",
+						length+"",
 						result.getReportDaily());
 			}
 			
