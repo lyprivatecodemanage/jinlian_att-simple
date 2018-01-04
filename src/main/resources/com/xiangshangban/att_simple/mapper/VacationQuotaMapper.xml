@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiangshangban.att_simple.dao.VacationQuotaMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.VacationQuota">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="employee_id" jdbcType="VARCHAR" property="employeeId" />
+    <result column="department_id" jdbcType="VARCHAR" property="departmentId" />
+    <result column="company_id" jdbcType="VARCHAR" property="companyId" />
+    <result column="year_vacation_total" jdbcType="VARCHAR" property="yearVacationTotal" />
+    <result column="surplus_year_vacation" jdbcType="VARCHAR" property="surplusYearVacation" />
+    <result column="transfer_rest_total" jdbcType="VARCHAR" property="transferRestTotal" />
+    <result column="surplus_transfer_rest" jdbcType="VARCHAR" property="surplusTransferRest" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, employee_id, department_id, company_id, year_vacation_total, surplus_year_vacation, 
+    transfer_rest_total, surplus_transfer_rest
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from vacation_quota_
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from vacation_quota_
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.VacationQuota">
+    insert into vacation_quota_ (id, employee_id, department_id, 
+      company_id, year_vacation_total, surplus_year_vacation, 
+      transfer_rest_total, surplus_transfer_rest)
+    values (#{id,jdbcType=VARCHAR}, #{employeeId,jdbcType=VARCHAR}, #{departmentId,jdbcType=VARCHAR}, 
+      #{companyId,jdbcType=VARCHAR}, #{yearVacationTotal,jdbcType=VARCHAR}, #{surplusYearVacation,jdbcType=VARCHAR}, 
+      #{transferRestTotal,jdbcType=VARCHAR}, #{surplusTransferRest,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.VacationQuota">
+    insert into vacation_quota_
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="employeeId != null">
+        employee_id,
+      </if>
+      <if test="departmentId != null">
+        department_id,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="yearVacationTotal != null">
+        year_vacation_total,
+      </if>
+      <if test="surplusYearVacation != null">
+        surplus_year_vacation,
+      </if>
+      <if test="transferRestTotal != null">
+        transfer_rest_total,
+      </if>
+      <if test="surplusTransferRest != null">
+        surplus_transfer_rest,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="employeeId != null">
+        #{employeeId,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentId != null">
+        #{departmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="yearVacationTotal != null">
+        #{yearVacationTotal,jdbcType=VARCHAR},
+      </if>
+      <if test="surplusYearVacation != null">
+        #{surplusYearVacation,jdbcType=VARCHAR},
+      </if>
+      <if test="transferRestTotal != null">
+        #{transferRestTotal,jdbcType=VARCHAR},
+      </if>
+      <if test="surplusTransferRest != null">
+        #{surplusTransferRest,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.VacationQuota">
+    update vacation_quota_
+    <set>
+      <if test="employeeId != null">
+        employee_id = #{employeeId,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentId != null">
+        department_id = #{departmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="yearVacationTotal != null">
+        year_vacation_total = #{yearVacationTotal,jdbcType=VARCHAR},
+      </if>
+      <if test="surplusYearVacation != null">
+        surplus_year_vacation = #{surplusYearVacation,jdbcType=VARCHAR},
+      </if>
+      <if test="transferRestTotal != null">
+        transfer_rest_total = #{transferRestTotal,jdbcType=VARCHAR},
+      </if>
+      <if test="surplusTransferRest != null">
+        surplus_transfer_rest = #{surplusTransferRest,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.VacationQuota">
+    update vacation_quota_
+    set employee_id = #{employeeId,jdbcType=VARCHAR},
+      department_id = #{departmentId,jdbcType=VARCHAR},
+      company_id = #{companyId,jdbcType=VARCHAR},
+      year_vacation_total = #{yearVacationTotal,jdbcType=VARCHAR},
+      surplus_year_vacation = #{surplusYearVacation,jdbcType=VARCHAR},
+      transfer_rest_total = #{transferRestTotal,jdbcType=VARCHAR},
+      surplus_transfer_rest = #{surplusTransferRest,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

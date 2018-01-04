@@ -1,0 +1,276 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.jinnian</groupId>
+  <artifactId>att-simple</artifactId>
+  <version>2.0</version>
+  <packaging>jar</packaging>
+
+  <name>att-simple</name>
+  <url>http://maven.apache.org</url>
+
+ <parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.7.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.7</java.version>
+		<spring-version>4.3.11.RELEASE</spring-version>
+		<xml-apis-version>1.4.01</xml-apis-version>
+		<commons-collections-version>3.2.1</commons-collections-version>
+		<commons-io-version>2.4</commons-io-version>
+		<commons-beanutils-core-version>1.8.0</commons-beanutils-core-version>
+		<commons-lang-version>2.6</commons-lang-version>
+		<commons-lang3-version>3.1</commons-lang3-version>
+		<commons-httpclient-version>3.1</commons-httpclient-version>
+		<commons-fileupload-version>1.2.2</commons-fileupload-version>
+		<commons-codec-version>1.6</commons-codec-version>
+		<commons-pool-version>2.4.2</commons-pool-version>
+		<taglibs-version>1.1.2</taglibs-version>
+		<cglib-version>2.2.2</cglib-version>
+		<slf4j-version>1.6.6</slf4j-version>
+		<log4j-version>1.2.17</log4j-version>
+		<json-lib-version>2.4</json-lib-version>
+		<ezmorph-version>1.0.6</ezmorph-version>
+		<httpclient-version>4.4</httpclient-version>
+		<oss-version>2.0.7</oss-version>
+		<fastjson-version>1.2.7</fastjson-version>
+		<spring-data-redis-version>1.6.1.RELEASE</spring-data-redis-version>
+		<jedis-version>2.8.0</jedis-version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>  
+		        <exclusion>   
+		            <groupId>org.springframework.boot</groupId>  
+		            <artifactId>spring-boot-starter-logging</artifactId>  
+		        </exclusion>  
+		    </exclusions>  
+		</dependency>
+		<dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		<!-- <dependency>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-starter-tomcat</artifactId>
+	        <scope>provided</scope>
+		</dependency> -->
+		<!-- apache commons -->
+		<dependency>
+			<groupId>org.apache.commons.collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>${commons-collections-version}</version><scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${commons-io-version}</version><scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons.beanutils</groupId>
+			<artifactId>commons-beanutils-core</artifactId>
+			<version>${commons-beanutils-core-version}</version><scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons.lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>${commons-lang-version}</version><scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commons-lang3-version}</version><scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons.httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>${commons-httpclient-version}</version><scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>${commons-fileupload-version}</version><scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>${commons-codec-version}</version><scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache</groupId>
+			<artifactId>commons-pool2</artifactId>
+			<version>${commons-pool-version}</version><scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>taglibs</groupId>
+			<artifactId>standard</artifactId>
+			<version>${taglibs-version}</version><scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+			<version>${cglib-version}</version><scope>provided</scope>
+		</dependency>
+
+		<!-- <dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<scope>provided</scope>
+		</dependency> -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4j-version}</version><scope>provided</scope>
+		</dependency>
+		<dependency> 
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.json</groupId>
+			<artifactId>json-lib</artifactId>
+			<version>${json-lib-version}</version><scope>provided</scope>
+			<classifier>jdk15</classifier>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.ezmorph</groupId>
+			<artifactId>ezmorph</artifactId>
+			<version>${ezmorph-version}</version><scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.http</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>${httpclient-version}</version><scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.http</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>${httpclient-version}</version><scope>provided</scope>
+		</dependency>
+		<!--oss -->
+		<dependency>
+			<groupId>com.aliyun.oss</groupId>
+			<artifactId>aliyun-sdk-oss</artifactId>
+			<version>${oss-version}</version><scope>provided</scope>
+		</dependency>
+		<!-- redis -->
+		<!-- <dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-redis</artifactId>
+			<version>${spring-data-redis-version}</version><scope>provided</scope>
+		</dependency> -->
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>${jedis-version}</version><scope>provided</scope>
+		</dependency>
+		
+		<!--fastjson -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>${fastjson-version}</version><scope>provided</scope>
+		</dependency>
+		<!-- 支持 @ConfigurationProperties 注解 -->  
+		<!-- <dependency>  
+		    <groupId>org.springframework.boot</groupId>  
+		    <artifactId>spring-boot-configuration-processor</artifactId>  
+		    <optional>true</optional>  
+		</dependency> -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- <dependency>  
+            <groupId>org.springframework.boot</groupId>  
+            <artifactId>spring-boot-starter-data-jpa</artifactId>  
+        </dependency> -->
+		<!-- <dependency>  
+            <groupId>com.alibaba</groupId>  
+            <artifactId>druid</artifactId>  
+            <version>1.0.25</version>  
+        </dependency> -->
+       
+        <dependency>
+        	<groupId>org.springframework.integration</groupId>
+        	<artifactId>spring-integration-http</artifactId>
+        </dependency>
+        
+         <dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		
+		<!-- 导出报表 -->
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.9</version>
+		</dependency>
+		
+        <dependency>
+	     <groupId>org.apache.poi</groupId>
+	     <artifactId>poi-ooxml</artifactId>
+	     <version>3.9</version>
+        </dependency>
+        <dependency>
+        	<groupId>org.scala-lang</groupId>
+        	<artifactId>scala-library</artifactId>
+        	<version>2.11.0</version>
+        </dependency>
+        <dependency>
+        	<groupId>org.springframework.boot</groupId>
+        	<artifactId>spring-boot-starter-jta-narayana</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>net.sourceforge.htmlunit</groupId>
+        	<artifactId>htmlunit</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>com.nimbusds</groupId>
+        	<artifactId>oauth2-oidc-sdk</artifactId>
+        	<version>4.5</version>
+        </dependency>
+	</dependencies>
+	
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+
+</project>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiangshangban.att_simple.dao.ApplicationTypeMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.ApplicationType">
+    <id column="application_type" property="applicationType" />
+    <id column="application_children_type" property="applicationChildrenType" />
+    <result column="description" property="description" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    application_type, application_children_type, description
+  </sql>
+  
+  <select id="selectAllApplicationType" resultMap="BaseResultMap">
+  	select application_type from application_type_ group by application_type
+  </select>
+  
+  
+  
+  
+  
+  
+  
+  <select id="selectByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ApplicationType" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from application_type_
+    where 
+    application_type = #{applicationType} and 
+    application_children_type = #{applicationChildrenType}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ApplicationType">
+    delete from application_type_
+    where application_type = #{applicationType}
+      and application_children_type = #{applicationChildrenType}
+  </delete>
+  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.ApplicationType">
+    insert into application_type_ (application_type, application_children_type, 
+      description)
+    values (#{applicationType}, #{applicationChildrenType}, 
+      #{description})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationType">
+    insert into application_type_
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="applicationType != null">
+        application_type,
+      </if>
+      <if test="applicationChildrenType != null">
+        application_children_type,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="applicationType != null">
+        #{applicationType},
+      </if>
+      <if test="applicationChildrenType != null">
+        #{applicationChildrenType},
+      </if>
+      <if test="description != null">
+        #{description},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationType">
+    update application_type_
+    <set>
+      <if test="description != null">
+        description = #{description},
+      </if>
+    </set>
+    where application_type = #{applicationType}
+      and application_children_type = #{applicationChildrenType}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ApplicationType">
+    update application_type_
+    set description = #{description}
+    where application_type = #{applicationType}
+      and application_children_type = #{applicationChildrenType}
+  </update>
+</mapper>
