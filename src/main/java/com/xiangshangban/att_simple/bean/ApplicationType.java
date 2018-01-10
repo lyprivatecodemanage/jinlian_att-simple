@@ -1,12 +1,17 @@
 package com.xiangshangban.att_simple.bean;
 
-public class ApplicationType extends ApplicationTypeKey {
+/**
+ * 申请类型表
+ * @author mian
+ */
+public class ApplicationType {
+	//申请类型
 	private String applicationType;
-
+	//申请子类型
     private String applicationChildrenType;
-    
+    //申请类型描述
     private String description;
-    
+    //子类型描述
     private String children_description;
 
 	public String getApplicationType() {

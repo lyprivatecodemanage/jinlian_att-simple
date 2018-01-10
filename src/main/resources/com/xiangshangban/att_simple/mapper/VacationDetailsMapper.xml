@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiangshangban.att_simple.dao.VacationDetailsMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.VacationDetails">
+    <id column="vacation_details_id" jdbcType="VARCHAR" property="vacationDetailsId" />
+    <result column="vacation_id" jdbcType="VARCHAR" property="vacationId" />
+    <result column="vacation_type" jdbcType="VARCHAR" property="vacationType" />
+    <result column="vacation_mold" jdbcType="VARCHAR" property="vacationMold" />
+    <result column="limit_change" jdbcType="VARCHAR" property="limitChange" />
+    <result column="vacation_total" jdbcType="VARCHAR" property="vacationTotal" />
+    <result column="vacation_balance" jdbcType="VARCHAR" property="vacationBalance" />
+    <result column="changing_reason" jdbcType="VARCHAR" property="changingReason" />
+    <result column="auditor_employee_id" jdbcType="VARCHAR" property="auditorEmployeeId" />
+    <result column="changeing_date" jdbcType="VARCHAR" property="changeingDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    vacation_details_id, vacation_id, vacation_type, vacation_mold, limit_change, vacation_total, 
+    vacation_balance, changing_reason, auditor_employee_id, changeing_date
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from vacation_details
+    where vacation_details_id = #{vacationDetailsId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from vacation_details
+    where vacation_details_id = #{vacationDetailsId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.VacationDetails">
+    insert into vacation_details (vacation_details_id, vacation_id, vacation_type, 
+      vacation_mold, limit_change, vacation_total, 
+      vacation_balance, changing_reason, auditor_employee_id, 
+      changeing_date)
+    values (#{vacationDetailsId,jdbcType=VARCHAR}, #{vacationId,jdbcType=VARCHAR}, #{vacationType,jdbcType=VARCHAR}, 
+      #{vacationMold,jdbcType=VARCHAR}, #{limitChange,jdbcType=VARCHAR}, #{vacationTotal,jdbcType=VARCHAR}, 
+      #{vacationBalance,jdbcType=VARCHAR}, #{changingReason,jdbcType=VARCHAR}, #{auditorEmployeeId,jdbcType=VARCHAR}, 
+      #{changeingDate,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.VacationDetails">
+    insert into vacation_details
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="vacationDetailsId != null">
+        vacation_details_id,
+      </if>
+      <if test="vacationId != null">
+        vacation_id,
+      </if>
+      <if test="vacationType != null">
+        vacation_type,
+      </if>
+      <if test="vacationMold != null">
+        vacation_mold,
+      </if>
+      <if test="limitChange != null">
+        limit_change,
+      </if>
+      <if test="vacationTotal != null">
+        vacation_total,
+      </if>
+      <if test="vacationBalance != null">
+        vacation_balance,
+      </if>
+      <if test="changingReason != null">
+        changing_reason,
+      </if>
+      <if test="auditorEmployeeId != null">
+        auditor_employee_id,
+      </if>
+      <if test="changeingDate != null">
+        changeing_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="vacationDetailsId != null">
+        #{vacationDetailsId,jdbcType=VARCHAR},
+      </if>
+      <if test="vacationId != null">
+        #{vacationId,jdbcType=VARCHAR},
+      </if>
+      <if test="vacationType != null">
+        #{vacationType,jdbcType=VARCHAR},
+      </if>
+      <if test="vacationMold != null">
+        #{vacationMold,jdbcType=VARCHAR},
+      </if>
+      <if test="limitChange != null">
+        #{limitChange,jdbcType=VARCHAR},
+      </if>
+      <if test="vacationTotal != null">
+        #{vacationTotal,jdbcType=VARCHAR},
+      </if>
+      <if test="vacationBalance != null">
+        #{vacationBalance,jdbcType=VARCHAR},
+      </if>
+      <if test="changingReason != null">
+        #{changingReason,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorEmployeeId != null">
+        #{auditorEmployeeId,jdbcType=VARCHAR},
+      </if>
+      <if test="changeingDate != null">
+        #{changeingDate,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.VacationDetails">
+    update vacation_details
+    <set>
+      <if test="vacationId != null">
+        vacation_id = #{vacationId,jdbcType=VARCHAR},
+      </if>
+      <if test="vacationType != null">
+        vacation_type = #{vacationType,jdbcType=VARCHAR},
+      </if>
+      <if test="vacationMold != null">
+        vacation_mold = #{vacationMold,jdbcType=VARCHAR},
+      </if>
+      <if test="limitChange != null">
+        limit_change = #{limitChange,jdbcType=VARCHAR},
+      </if>
+      <if test="vacationTotal != null">
+        vacation_total = #{vacationTotal,jdbcType=VARCHAR},
+      </if>
+      <if test="vacationBalance != null">
+        vacation_balance = #{vacationBalance,jdbcType=VARCHAR},
+      </if>
+      <if test="changingReason != null">
+        changing_reason = #{changingReason,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorEmployeeId != null">
+        auditor_employee_id = #{auditorEmployeeId,jdbcType=VARCHAR},
+      </if>
+      <if test="changeingDate != null">
+        changeing_date = #{changeingDate,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where vacation_details_id = #{vacationDetailsId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.VacationDetails">
+    update vacation_details
+    set vacation_id = #{vacationId,jdbcType=VARCHAR},
+      vacation_type = #{vacationType,jdbcType=VARCHAR},
+      vacation_mold = #{vacationMold,jdbcType=VARCHAR},
+      limit_change = #{limitChange,jdbcType=VARCHAR},
+      vacation_total = #{vacationTotal,jdbcType=VARCHAR},
+      vacation_balance = #{vacationBalance,jdbcType=VARCHAR},
+      changing_reason = #{changingReason,jdbcType=VARCHAR},
+      auditor_employee_id = #{auditorEmployeeId,jdbcType=VARCHAR},
+      changeing_date = #{changeingDate,jdbcType=VARCHAR}
+    where vacation_details_id = #{vacationDetailsId,jdbcType=VARCHAR}
+  </update>
+</mapper>

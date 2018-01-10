@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import com.xiangshangban.att_simple.bean.ApplicationType;
 @Mapper
 public interface ApplicationTypeMapper {
+	
     int deleteByPrimaryKey(ApplicationType record);
 
     int insert(ApplicationType record);
@@ -20,4 +21,6 @@ public interface ApplicationTypeMapper {
     int updateByPrimaryKey(ApplicationType record);
     
     List<ApplicationType> getApplicationTypeList();
+    
+    
 }

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiangshangban.att_simple.dao.AdjustRestDateCalculateMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.AdjustRestDateCalculate">
+    <id column="adjust_rest_id" jdbcType="VARCHAR" property="adjustRestId" />
+    <result column="application_form_id" jdbcType="VARCHAR" property="applicationFormId" />
+    <result column="adjust_rest_tyoe" jdbcType="VARCHAR" property="adjustRestTyoe" />
+    <result column="adjust_rest_duration" jdbcType="VARCHAR" property="adjustRestDuration" />
+    <result column="adjust_mold" jdbcType="VARCHAR" property="adjustMold" />
+    <result column="adjust_date" jdbcType="VARCHAR" property="adjustDate" />
+    <result column="adjust_reason" jdbcType="VARCHAR" property="adjustReason" />
+    <result column="adjust_total" jdbcType="VARCHAR" property="adjustTotal" />
+    <result column="adjust_balance" jdbcType="VARCHAR" property="adjustBalance" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    adjust_rest_id, application_form_id, adjust_rest_tyoe, adjust_rest_duration, adjust_mold, 
+    adjust_date, adjust_reason, adjust_total, adjust_balance
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from adjust_rest_date_calculate
+    where adjust_rest_id = #{adjustRestId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from adjust_rest_date_calculate
+    where adjust_rest_id = #{adjustRestId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.AdjustRestDateCalculate">
+    insert into adjust_rest_date_calculate (adjust_rest_id, application_form_id, 
+      adjust_rest_tyoe, adjust_rest_duration, adjust_mold, 
+      adjust_date, adjust_reason, adjust_total, 
+      adjust_balance)
+    values (#{adjustRestId,jdbcType=VARCHAR}, #{applicationFormId,jdbcType=VARCHAR}, 
+      #{adjustRestTyoe,jdbcType=VARCHAR}, #{adjustRestDuration,jdbcType=VARCHAR}, #{adjustMold,jdbcType=VARCHAR}, 
+      #{adjustDate,jdbcType=VARCHAR}, #{adjustReason,jdbcType=VARCHAR}, #{adjustTotal,jdbcType=VARCHAR}, 
+      #{adjustBalance,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.AdjustRestDateCalculate">
+    insert into adjust_rest_date_calculate
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="adjustRestId != null">
+        adjust_rest_id,
+      </if>
+      <if test="applicationFormId != null">
+        application_form_id,
+      </if>
+      <if test="adjustRestTyoe != null">
+        adjust_rest_tyoe,
+      </if>
+      <if test="adjustRestDuration != null">
+        adjust_rest_duration,
+      </if>
+      <if test="adjustMold != null">
+        adjust_mold,
+      </if>
+      <if test="adjustDate != null">
+        adjust_date,
+      </if>
+      <if test="adjustReason != null">
+        adjust_reason,
+      </if>
+      <if test="adjustTotal != null">
+        adjust_total,
+      </if>
+      <if test="adjustBalance != null">
+        adjust_balance,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="adjustRestId != null">
+        #{adjustRestId,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationFormId != null">
+        #{applicationFormId,jdbcType=VARCHAR},
+      </if>
+      <if test="adjustRestTyoe != null">
+        #{adjustRestTyoe,jdbcType=VARCHAR},
+      </if>
+      <if test="adjustRestDuration != null">
+        #{adjustRestDuration,jdbcType=VARCHAR},
+      </if>
+      <if test="adjustMold != null">
+        #{adjustMold,jdbcType=VARCHAR},
+      </if>
+      <if test="adjustDate != null">
+        #{adjustDate,jdbcType=VARCHAR},
+      </if>
+      <if test="adjustReason != null">
+        #{adjustReason,jdbcType=VARCHAR},
+      </if>
+      <if test="adjustTotal != null">
+        #{adjustTotal,jdbcType=VARCHAR},
+      </if>
+      <if test="adjustBalance != null">
+        #{adjustBalance,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.AdjustRestDateCalculate">
+    update adjust_rest_date_calculate
+    <set>
+      <if test="applicationFormId != null">
+        application_form_id = #{applicationFormId,jdbcType=VARCHAR},
+      </if>
+      <if test="adjustRestTyoe != null">
+        adjust_rest_tyoe = #{adjustRestTyoe,jdbcType=VARCHAR},
+      </if>
+      <if test="adjustRestDuration != null">
+        adjust_rest_duration = #{adjustRestDuration,jdbcType=VARCHAR},
+      </if>
+      <if test="adjustMold != null">
+        adjust_mold = #{adjustMold,jdbcType=VARCHAR},
+      </if>
+      <if test="adjustDate != null">
+        adjust_date = #{adjustDate,jdbcType=VARCHAR},
+      </if>
+      <if test="adjustReason != null">
+        adjust_reason = #{adjustReason,jdbcType=VARCHAR},
+      </if>
+      <if test="adjustTotal != null">
+        adjust_total = #{adjustTotal,jdbcType=VARCHAR},
+      </if>
+      <if test="adjustBalance != null">
+        adjust_balance = #{adjustBalance,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where adjust_rest_id = #{adjustRestId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.AdjustRestDateCalculate">
+    update adjust_rest_date_calculate
+    set application_form_id = #{applicationFormId,jdbcType=VARCHAR},
+      adjust_rest_tyoe = #{adjustRestTyoe,jdbcType=VARCHAR},
+      adjust_rest_duration = #{adjustRestDuration,jdbcType=VARCHAR},
+      adjust_mold = #{adjustMold,jdbcType=VARCHAR},
+      adjust_date = #{adjustDate,jdbcType=VARCHAR},
+      adjust_reason = #{adjustReason,jdbcType=VARCHAR},
+      adjust_total = #{adjustTotal,jdbcType=VARCHAR},
+      adjust_balance = #{adjustBalance,jdbcType=VARCHAR}
+    where adjust_rest_id = #{adjustRestId,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiangshangban.att_simple.dao.AnnualLeaveDateCalculateMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.AnnualLeaveDateCalculate">
+    <id column="annual_leave_id" jdbcType="VARCHAR" property="annualLeaveId" />
+    <result column="annual_leave_type" jdbcType="VARCHAR" property="annualLeaveType" />
+    <result column="annual_leave_duration" jdbcType="VARCHAR" property="annualLeaveDuration" />
+    <result column="annual_leave_mold" jdbcType="VARCHAR" property="annualLeaveMold" />
+    <result column="annual_leave_date" jdbcType="VARCHAR" property="annualLeaveDate" />
+    <result column="annual_leave_reason" jdbcType="VARCHAR" property="annualLeaveReason" />
+    <result column="annual_leave_total" jdbcType="VARCHAR" property="annualLeaveTotal" />
+    <result column="annual_leave_balance" jdbcType="VARCHAR" property="annualLeaveBalance" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    annual_leave_id, annual_leave_type, annual_leave_duration, annual_leave_mold, annual_leave_date, 
+    annual_leave_reason, annual_leave_total, annual_leave_balance
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from annual_leave_date_calculate
+    where annual_leave_id = #{annualLeaveId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from annual_leave_date_calculate
+    where annual_leave_id = #{annualLeaveId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.AnnualLeaveDateCalculate">
+    insert into annual_leave_date_calculate (annual_leave_id, annual_leave_type, annual_leave_duration, 
+      annual_leave_mold, annual_leave_date, annual_leave_reason, 
+      annual_leave_total, annual_leave_balance)
+    values (#{annualLeaveId,jdbcType=VARCHAR}, #{annualLeaveType,jdbcType=VARCHAR}, #{annualLeaveDuration,jdbcType=VARCHAR}, 
+      #{annualLeaveMold,jdbcType=VARCHAR}, #{annualLeaveDate,jdbcType=VARCHAR}, #{annualLeaveReason,jdbcType=VARCHAR}, 
+      #{annualLeaveTotal,jdbcType=VARCHAR}, #{annualLeaveBalance,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.AnnualLeaveDateCalculate">
+    insert into annual_leave_date_calculate
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="annualLeaveId != null">
+        annual_leave_id,
+      </if>
+      <if test="annualLeaveType != null">
+        annual_leave_type,
+      </if>
+      <if test="annualLeaveDuration != null">
+        annual_leave_duration,
+      </if>
+      <if test="annualLeaveMold != null">
+        annual_leave_mold,
+      </if>
+      <if test="annualLeaveDate != null">
+        annual_leave_date,
+      </if>
+      <if test="annualLeaveReason != null">
+        annual_leave_reason,
+      </if>
+      <if test="annualLeaveTotal != null">
+        annual_leave_total,
+      </if>
+      <if test="annualLeaveBalance != null">
+        annual_leave_balance,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="annualLeaveId != null">
+        #{annualLeaveId,jdbcType=VARCHAR},
+      </if>
+      <if test="annualLeaveType != null">
+        #{annualLeaveType,jdbcType=VARCHAR},
+      </if>
+      <if test="annualLeaveDuration != null">
+        #{annualLeaveDuration,jdbcType=VARCHAR},
+      </if>
+      <if test="annualLeaveMold != null">
+        #{annualLeaveMold,jdbcType=VARCHAR},
+      </if>
+      <if test="annualLeaveDate != null">
+        #{annualLeaveDate,jdbcType=VARCHAR},
+      </if>
+      <if test="annualLeaveReason != null">
+        #{annualLeaveReason,jdbcType=VARCHAR},
+      </if>
+      <if test="annualLeaveTotal != null">
+        #{annualLeaveTotal,jdbcType=VARCHAR},
+      </if>
+      <if test="annualLeaveBalance != null">
+        #{annualLeaveBalance,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.AnnualLeaveDateCalculate">
+    update annual_leave_date_calculate
+    <set>
+      <if test="annualLeaveType != null">
+        annual_leave_type = #{annualLeaveType,jdbcType=VARCHAR},
+      </if>
+      <if test="annualLeaveDuration != null">
+        annual_leave_duration = #{annualLeaveDuration,jdbcType=VARCHAR},
+      </if>
+      <if test="annualLeaveMold != null">
+        annual_leave_mold = #{annualLeaveMold,jdbcType=VARCHAR},
+      </if>
+      <if test="annualLeaveDate != null">
+        annual_leave_date = #{annualLeaveDate,jdbcType=VARCHAR},
+      </if>
+      <if test="annualLeaveReason != null">
+        annual_leave_reason = #{annualLeaveReason,jdbcType=VARCHAR},
+      </if>
+      <if test="annualLeaveTotal != null">
+        annual_leave_total = #{annualLeaveTotal,jdbcType=VARCHAR},
+      </if>
+      <if test="annualLeaveBalance != null">
+        annual_leave_balance = #{annualLeaveBalance,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where annual_leave_id = #{annualLeaveId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.AnnualLeaveDateCalculate">
+    update annual_leave_date_calculate
+    set annual_leave_type = #{annualLeaveType,jdbcType=VARCHAR},
+      annual_leave_duration = #{annualLeaveDuration,jdbcType=VARCHAR},
+      annual_leave_mold = #{annualLeaveMold,jdbcType=VARCHAR},
+      annual_leave_date = #{annualLeaveDate,jdbcType=VARCHAR},
+      annual_leave_reason = #{annualLeaveReason,jdbcType=VARCHAR},
+      annual_leave_total = #{annualLeaveTotal,jdbcType=VARCHAR},
+      annual_leave_balance = #{annualLeaveBalance,jdbcType=VARCHAR}
+    where annual_leave_id = #{annualLeaveId,jdbcType=VARCHAR}
+  </update>
+</mapper>
