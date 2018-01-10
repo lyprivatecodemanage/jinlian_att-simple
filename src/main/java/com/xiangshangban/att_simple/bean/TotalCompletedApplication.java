@@ -25,8 +25,20 @@ public class TotalCompletedApplication {
     private String isReject;
     //申请单状态(0:删除;1:正常;2:撤回)
     private String applicationStatus;
+    
+    private String rejectReason;
+    
+    
 
-    public String getApplcationNo() {
+    public String getRejectReason() {
+		return rejectReason;
+	}
+
+	public void setRejectReason(String rejectReason) {
+		this.rejectReason = rejectReason;
+	}
+
+	public String getApplcationNo() {
         return applcationNo;
     }
 
