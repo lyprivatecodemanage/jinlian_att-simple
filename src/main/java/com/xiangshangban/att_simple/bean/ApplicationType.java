@@ -1,6 +1,6 @@
 package com.xiangshangban.att_simple.bean;
 
-public class ApplicationType extends ApplicationTypeKey {
+public class ApplicationType {
 	private String applicationType;
 
     private String applicationChildrenType;

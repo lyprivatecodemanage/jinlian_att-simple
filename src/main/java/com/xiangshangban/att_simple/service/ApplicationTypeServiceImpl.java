@@ -9,8 +9,10 @@ import com.xiangshangban.att_simple.bean.ApplicationType;
 import com.xiangshangban.att_simple.dao.ApplicationTypeMapper;
 @Service("applicationTypeService")
 public class ApplicationTypeServiceImpl implements ApplicationTypeService {
+	
 	@Autowired
 	private ApplicationTypeMapper applicationTypeMapper;
+	
 	@Override
 	public List<ApplicationType> selectApplicationType() {
 		
