@@ -1,7 +1,10 @@
 package com.xiangshangban.att_simple.dao;
 
+import org.apache.ibatis.annotations.Mapper;
+
 import com.xiangshangban.att_simple.bean.AdjustRestDateCalculate;
 
+@Mapper
 public interface AdjustRestDateCalculateMapper {
 
 	int deleteByPrimaryKey(String adjustRestId);

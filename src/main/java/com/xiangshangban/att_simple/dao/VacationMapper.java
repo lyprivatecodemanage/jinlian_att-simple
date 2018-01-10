@@ -1,7 +1,10 @@
 package com.xiangshangban.att_simple.dao;
 
+import org.apache.ibatis.annotations.Mapper;
+
 import com.xiangshangban.att_simple.bean.Vacation;
 
+@Mapper
 public interface VacationMapper {
 
 	int deleteByPrimaryKey(String vacationId);
@@ -15,4 +18,5 @@ public interface VacationMapper {
     int updateByPrimaryKeySelective(Vacation record);
 
     int updateByPrimaryKey(Vacation record);
+    
 }

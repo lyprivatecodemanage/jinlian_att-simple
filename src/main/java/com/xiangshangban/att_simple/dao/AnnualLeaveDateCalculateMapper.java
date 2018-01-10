@@ -1,7 +1,10 @@
 package com.xiangshangban.att_simple.dao;
 
+import org.apache.ibatis.annotations.Mapper;
+
 import com.xiangshangban.att_simple.bean.AnnualLeaveDateCalculate;
 
+@Mapper
 public interface AnnualLeaveDateCalculateMapper {
 
 	int deleteByPrimaryKey(String annualLeaveId);
