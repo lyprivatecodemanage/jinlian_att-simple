@@ -11,7 +11,7 @@ public class Applicaiton {
 	private String companyId;
 	private String companyName;
 	private String applicaitonType;
-	private String ;
+	/*private String ;
 	private String applicaitonNo;
 	private String applicaitonNo;
 	private String applicaitonNo;
@@ -28,5 +28,5 @@ public class Applicaiton {
 	private String applicaitonNo;
 	private String applicaitonNo;
 	private String applicaitonNo;
-	
+	*/
 }

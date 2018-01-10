@@ -1,7 +1,9 @@
 package com.xiangshangban.att_simple.dao;
 
-import com.xiangshangban.att_simple.bean.CopyPersonWithApplication;
+import org.apache.ibatis.annotations.Mapper;
 
+import com.xiangshangban.att_simple.bean.CopyPersonWithApplication;
+@Mapper
 public interface CopyPersonWithApplicationMapper {
     int deleteByPrimaryKey(String id);
 

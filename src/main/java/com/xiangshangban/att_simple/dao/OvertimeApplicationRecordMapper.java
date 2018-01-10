@@ -1,7 +1,9 @@
 package com.xiangshangban.att_simple.dao;
 
-import com.xiangshangban.att_simple.bean.OvertimeApplicationRecord;
+import org.apache.ibatis.annotations.Mapper;
 
+import com.xiangshangban.att_simple.bean.OvertimeApplicationRecord;
+@Mapper
 public interface OvertimeApplicationRecordMapper {
     int deleteByPrimaryKey(String id);
 

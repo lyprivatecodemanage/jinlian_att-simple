@@ -1,7 +1,9 @@
 package com.xiangshangban.att_simple.dao;
 
-import com.xiangshangban.att_simple.bean.OutgoingApplicationRecord;
+import org.apache.ibatis.annotations.Mapper;
 
+import com.xiangshangban.att_simple.bean.OutgoingApplicationRecord;
+@Mapper
 public interface OutgoingApplicationRecordMapper {
     int deleteByPrimaryKey(String id);
 

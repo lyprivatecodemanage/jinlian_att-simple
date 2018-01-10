@@ -1,7 +1,9 @@
 package com.xiangshangban.att_simple.dao;
 
-import com.xiangshangban.att_simple.bean.CommonSubmitPeople;
+import org.apache.ibatis.annotations.Mapper;
 
+import com.xiangshangban.att_simple.bean.CommonSubmitPeople;
+@Mapper
 public interface CommonSubmitPeopleMapper {
     int deleteByPrimaryKey(String id);
 

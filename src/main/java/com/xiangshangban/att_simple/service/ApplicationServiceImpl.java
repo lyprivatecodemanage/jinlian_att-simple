@@ -12,15 +12,12 @@ import com.xiangshangban.att_simple.bean.ApplicationType;
 import com.xiangshangban.att_simple.dao.ApplicationTypeMapper;
 import com.xiangshangban.att_simple.dao.CopyPersonWithApplicationMapper;
 import com.xiangshangban.att_simple.dao.LeaveApplicationRecordMapper;
-import com.xiangshangban.att_simple.dao.TotalWillCompleteApplicationMapper;
 
 @Service("applicationTypeService")
 public class ApplicationServiceImpl implements ApplicationService {
 	
 	@Autowired
 	private ApplicationTypeMapper applicationTypeMapper;
-	@Autowired
-	private TotalWillCompleteApplicationMapper  totalWillCompleteApplicationMapper;
 	@Autowired
 	private LeaveApplicationRecordMapper  leaveApplicationRecordDao;
 	@Autowired

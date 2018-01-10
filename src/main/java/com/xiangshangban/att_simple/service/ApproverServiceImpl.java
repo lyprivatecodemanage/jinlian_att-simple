@@ -2,6 +2,8 @@ package com.xiangshangban.att_simple.service;
 
 import java.util.Map;
 
+import org.springframework.stereotype.Service;
+@Service("approverService")
 public class ApproverServiceImpl implements ApproverService {
 
 	@Override

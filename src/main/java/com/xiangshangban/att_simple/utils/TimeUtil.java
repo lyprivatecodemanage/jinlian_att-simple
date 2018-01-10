@@ -8,7 +8,8 @@ import java.util.Date;
 
 import org.springframework.util.StringUtils;
 
-import com.xiangshangban.organization.exception.CustomException;
+import com.xiangshangban.att_simple.exception.CustomException;
+
 
 public class TimeUtil {
 

@@ -1,7 +1,9 @@
 package com.xiangshangban.att_simple.dao;
 
-import com.xiangshangban.att_simple.bean.ApplicationTransferRecord;
+import org.apache.ibatis.annotations.Mapper;
 
+import com.xiangshangban.att_simple.bean.ApplicationTransferRecord;
+@Mapper
 public interface ApplicationTransferRecordMapper {
     int deleteByPrimaryKey(String id);
 

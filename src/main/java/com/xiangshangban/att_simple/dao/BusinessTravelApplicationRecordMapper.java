@@ -1,7 +1,9 @@
 package com.xiangshangban.att_simple.dao;
 
-import com.xiangshangban.att_simple.bean.BusinessTravelApplicationRecord;
+import org.apache.ibatis.annotations.Mapper;
 
+import com.xiangshangban.att_simple.bean.BusinessTravelApplicationRecord;
+@Mapper
 public interface BusinessTravelApplicationRecordMapper {
     int deleteByPrimaryKey(String id);
 
