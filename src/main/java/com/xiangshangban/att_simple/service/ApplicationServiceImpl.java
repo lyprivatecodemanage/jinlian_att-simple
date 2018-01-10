@@ -10,12 +10,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.xiangshangban.att_simple.bean.ApplicationType;
 import com.xiangshangban.att_simple.dao.ApplicationTypeMapper;
+import com.xiangshangban.att_simple.dao.CopyPersonWithApplicationMapper;
+import com.xiangshangban.att_simple.dao.LeaveApplicationRecordMapper;
+import com.xiangshangban.att_simple.dao.TotalWillCompleteApplicationMapper;
 
 @Service("applicationTypeService")
 public class ApplicationServiceImpl implements ApplicationService {
 	
 	@Autowired
 	private ApplicationTypeMapper applicationTypeMapper;
+	@Autowired
+	private TotalWillCompleteApplicationMapper  totalWillCompleteApplicationMapper;
+	@Autowired
+	private LeaveApplicationRecordMapper  leaveApplicationRecordDao;
+	@Autowired
+	private CopyPersonWithApplicationMapper  copyPersonWithApplicationMapper;
 
 	@Override
 	@Transactional
@@ -26,6 +35,13 @@ public class ApplicationServiceImpl implements ApplicationService {
 		//查询年假剩余,年假额度,调休剩余,调休额度
 		//...
 		return result;
+	}
+
+	@Override
+	@Transactional
+	public Map<String, Object> leaveApplication(Map<String, String> params) {
+		
+		return null;
 	}
 
 	

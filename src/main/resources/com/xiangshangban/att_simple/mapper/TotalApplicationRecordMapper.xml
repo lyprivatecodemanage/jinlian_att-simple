@@ -1,44 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xiangshangban.att_simple.dao.TotalWillCompleteApplicationMapper">
-  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.TotalWillCompleteApplication">
+<mapper namespace="com.xiangshangban.att_simple.dao.TotalApplicationRecordMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.TotalApplicationRecord">
     <id column="applcation_no" jdbcType="VARCHAR" property="applcationNo" />
     <result column="operater_time" jdbcType="VARCHAR" property="operaterTime" />
     <result column="operater_id" jdbcType="VARCHAR" property="operaterId" />
     <result column="application_type" jdbcType="VARCHAR" property="applicationType" />
-    <result column="approver" jdbcType="VARCHAR" property="approver" />
+    <result column="last_approver" jdbcType="VARCHAR" property="lastApprover" />
     <result column="is_copy" jdbcType="VARCHAR" property="isCopy" />
     <result column="application_id" jdbcType="VARCHAR" property="applicationId" />
     <result column="company_id" jdbcType="VARCHAR" property="companyId" />
-    <result column="is_transfer" jdbcType="VARCHAR" property="isTransfer" />
+    <result column="is_reject" jdbcType="VARCHAR" property="isReject" />
     <result column="application_status" jdbcType="VARCHAR" property="applicationStatus" />
+    <result column="reject_reason" jdbcType="VARCHAR" property="rejectReason" />
+    <result column="is_transfer" jdbcType="VARCHAR" property="isTransfer" />
   </resultMap>
   <sql id="Base_Column_List">
-    applcation_no, operater_time, operater_id, application_type, approver, is_copy, application_id, 
-    company_id, is_transfer, application_status
+    applcation_no, operater_time, operater_id, application_type, last_approver, is_copy, 
+    application_id, company_id, is_reject, application_status, reject_reason, is_transfer
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from total_will_complete_application_
+    from total_application_record_
     where applcation_no = #{applcationNo,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from total_will_complete_application_
+    delete from total_application_record_
     where applcation_no = #{applcationNo,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.TotalWillCompleteApplication">
-    insert into total_will_complete_application_ (applcation_no, operater_time, operater_id, 
-      application_type, approver, is_copy, 
-      application_id, company_id, is_transfer, 
-      application_status)
+  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.TotalApplicationRecord">
+    insert into total_application_record_ (applcation_no, operater_time, operater_id, 
+      application_type, last_approver, is_copy, 
+      application_id, company_id, is_reject, 
+      application_status, reject_reason, is_transfer
+      )
     values (#{applcationNo,jdbcType=VARCHAR}, #{operaterTime,jdbcType=VARCHAR}, #{operaterId,jdbcType=VARCHAR}, 
-      #{applicationType,jdbcType=VARCHAR}, #{approver,jdbcType=VARCHAR}, #{isCopy,jdbcType=VARCHAR}, 
-      #{applicationId,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR}, #{isTransfer,jdbcType=VARCHAR}, 
-      #{applicationStatus,jdbcType=VARCHAR})
+      #{applicationType,jdbcType=VARCHAR}, #{lastApprover,jdbcType=VARCHAR}, #{isCopy,jdbcType=VARCHAR}, 
+      #{applicationId,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR}, #{isReject,jdbcType=VARCHAR}, 
+      #{applicationStatus,jdbcType=VARCHAR}, #{rejectReason,jdbcType=VARCHAR}, #{isTransfer,jdbcType=VARCHAR}
+      )
   </insert>
-  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.TotalWillCompleteApplication">
-    insert into total_will_complete_application_
+  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.TotalApplicationRecord">
+    insert into total_application_record_
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="applcationNo != null">
         applcation_no,
@@ -52,8 +56,8 @@
       <if test="applicationType != null">
         application_type,
       </if>
-      <if test="approver != null">
-        approver,
+      <if test="lastApprover != null">
+        last_approver,
       </if>
       <if test="isCopy != null">
         is_copy,
@@ -64,11 +68,17 @@
       <if test="companyId != null">
         company_id,
       </if>
-      <if test="isTransfer != null">
-        is_transfer,
+      <if test="isReject != null">
+        is_reject,
       </if>
       <if test="applicationStatus != null">
         application_status,
+      </if>
+      <if test="rejectReason != null">
+        reject_reason,
+      </if>
+      <if test="isTransfer != null">
+        is_transfer,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -84,8 +94,8 @@
       <if test="applicationType != null">
         #{applicationType,jdbcType=VARCHAR},
       </if>
-      <if test="approver != null">
-        #{approver,jdbcType=VARCHAR},
+      <if test="lastApprover != null">
+        #{lastApprover,jdbcType=VARCHAR},
       </if>
       <if test="isCopy != null">
         #{isCopy,jdbcType=VARCHAR},
@@ -96,16 +106,22 @@
       <if test="companyId != null">
         #{companyId,jdbcType=VARCHAR},
       </if>
-      <if test="isTransfer != null">
-        #{isTransfer,jdbcType=VARCHAR},
+      <if test="isReject != null">
+        #{isReject,jdbcType=VARCHAR},
       </if>
       <if test="applicationStatus != null">
         #{applicationStatus,jdbcType=VARCHAR},
       </if>
+      <if test="rejectReason != null">
+        #{rejectReason,jdbcType=VARCHAR},
+      </if>
+      <if test="isTransfer != null">
+        #{isTransfer,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.TotalWillCompleteApplication">
-    update total_will_complete_application_
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.TotalApplicationRecord">
+    update total_application_record_
     <set>
       <if test="operaterTime != null">
         operater_time = #{operaterTime,jdbcType=VARCHAR},
@@ -116,8 +132,8 @@
       <if test="applicationType != null">
         application_type = #{applicationType,jdbcType=VARCHAR},
       </if>
-      <if test="approver != null">
-        approver = #{approver,jdbcType=VARCHAR},
+      <if test="lastApprover != null">
+        last_approver = #{lastApprover,jdbcType=VARCHAR},
       </if>
       <if test="isCopy != null">
         is_copy = #{isCopy,jdbcType=VARCHAR},
@@ -128,26 +144,34 @@
       <if test="companyId != null">
         company_id = #{companyId,jdbcType=VARCHAR},
       </if>
-      <if test="isTransfer != null">
-        is_transfer = #{isTransfer,jdbcType=VARCHAR},
+      <if test="isReject != null">
+        is_reject = #{isReject,jdbcType=VARCHAR},
       </if>
       <if test="applicationStatus != null">
         application_status = #{applicationStatus,jdbcType=VARCHAR},
       </if>
+      <if test="rejectReason != null">
+        reject_reason = #{rejectReason,jdbcType=VARCHAR},
+      </if>
+      <if test="isTransfer != null">
+        is_transfer = #{isTransfer,jdbcType=VARCHAR},
+      </if>
     </set>
     where applcation_no = #{applcationNo,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.TotalWillCompleteApplication">
-    update total_will_complete_application_
+  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.TotalApplicationRecord">
+    update total_application_record_
     set operater_time = #{operaterTime,jdbcType=VARCHAR},
       operater_id = #{operaterId,jdbcType=VARCHAR},
       application_type = #{applicationType,jdbcType=VARCHAR},
-      approver = #{approver,jdbcType=VARCHAR},
+      last_approver = #{lastApprover,jdbcType=VARCHAR},
       is_copy = #{isCopy,jdbcType=VARCHAR},
       application_id = #{applicationId,jdbcType=VARCHAR},
       company_id = #{companyId,jdbcType=VARCHAR},
-      is_transfer = #{isTransfer,jdbcType=VARCHAR},
-      application_status = #{applicationStatus,jdbcType=VARCHAR}
+      is_reject = #{isReject,jdbcType=VARCHAR},
+      application_status = #{applicationStatus,jdbcType=VARCHAR},
+      reject_reason = #{rejectReason,jdbcType=VARCHAR},
+      is_transfer = #{isTransfer,jdbcType=VARCHAR}
     where applcation_no = #{applcationNo,jdbcType=VARCHAR}
   </update>
 </mapper>

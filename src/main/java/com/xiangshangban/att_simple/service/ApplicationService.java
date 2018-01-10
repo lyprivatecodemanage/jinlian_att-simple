@@ -10,4 +10,10 @@ public interface ApplicationService {
 	 * @return
 	 */
 	Map<String,Object> applicationIndexPage(String employeeId,String companyId);
+	/**
+	 * 请假申请
+	 * @param params
+	 * @return
+	 */
+	Map<String,Object> leaveApplication(Map<String,String> params);
 }

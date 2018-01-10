@@ -25,8 +25,8 @@
             targetProject="att-simple"
             type="XMLMAPPER" />
         <!-- 要生成哪些表-->  
-        <table tableName="application_transfer_record_" domainObjectName="ApplicationTransferRecord" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
-        <table tableName="application_type_" domainObjectName="ApplicationType" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
+        <table tableName="total_application_record_" domainObjectName="TotalApplicationRecord" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
+      <!--   <table tableName="application_type_" domainObjectName="ApplicationType" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
         <table tableName="business_travel_application_record_" domainObjectName="BusinessTravelApplicationRecord" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
         <table tableName="copy_person_with_application_" domainObjectName="CopyPersonWithApplication" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
         <table tableName="leave_application_record_" domainObjectName="LeaveApplicationRecord" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
@@ -35,7 +35,7 @@
         <table tableName="total_completed_application_" domainObjectName="TotalCompletedApplication" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
         <table tableName="total_will_complete_application_" domainObjectName="TotalWillCompleteApplication" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
         <table tableName="common_submit_people_" domainObjectName="CommonSubmitPeople" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
-        
+         -->
         
         
         

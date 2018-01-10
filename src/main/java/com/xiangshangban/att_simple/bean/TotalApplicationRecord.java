@@ -1,6 +1,6 @@
 package com.xiangshangban.att_simple.bean;
 
-public class TotalCompletedApplication {
+public class TotalApplicationRecord {
     private String applcationNo;
 
     private String operaterTime;
@@ -20,20 +20,12 @@ public class TotalCompletedApplication {
     private String isReject;
 
     private String applicationStatus;
-    
+
     private String rejectReason;
-    
-    
 
-    public String getRejectReason() {
-		return rejectReason;
-	}
+    private String isTransfer;
 
-	public void setRejectReason(String rejectReason) {
-		this.rejectReason = rejectReason;
-	}
-
-	public String getApplcationNo() {
+    public String getApplcationNo() {
         return applcationNo;
     }
 
@@ -111,5 +103,21 @@ public class TotalCompletedApplication {
 
     public void setApplicationStatus(String applicationStatus) {
         this.applicationStatus = applicationStatus;
+    }
+
+    public String getRejectReason() {
+        return rejectReason;
+    }
+
+    public void setRejectReason(String rejectReason) {
+        this.rejectReason = rejectReason;
+    }
+
+    public String getIsTransfer() {
+        return isTransfer;
+    }
+
+    public void setIsTransfer(String isTransfer) {
+        this.isTransfer = isTransfer;
     }
 }
