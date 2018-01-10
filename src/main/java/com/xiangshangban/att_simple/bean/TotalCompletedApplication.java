@@ -20,8 +20,20 @@ public class TotalCompletedApplication {
     private String isReject;
 
     private String applicationStatus;
+    
+    private String rejectReason;
+    
+    
 
-    public String getApplcationNo() {
+    public String getRejectReason() {
+		return rejectReason;
+	}
+
+	public void setRejectReason(String rejectReason) {
+		this.rejectReason = rejectReason;
+	}
+
+	public String getApplcationNo() {
         return applcationNo;
     }
 
