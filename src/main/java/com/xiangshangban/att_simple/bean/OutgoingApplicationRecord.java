@@ -1,34 +1,39 @@
 package com.xiangshangban.att_simple.bean;
 
+/**
+ * 外出申请记录表
+ * @author mian
+ */
 public class OutgoingApplicationRecord {
+	//uuid
     private String id;
-
+    //申请单号(uuid)
     private String applicationNo;
-
+    //申请人id
     private String employeeId;
-
+    //申请人部门id
     private String departmentId;
-
+    //申请人部门id
     private String companyId;
-
+    //外出地点
     private String outgoningLocation;
-
+    //开始时间
     private String startTime;
-
+    //结束时间
     private String endTime;
-
+    //外出说明
     private String reason;
-
+    //上传的出差凭证(key)
     private String uploadVoucher;
-
+    //审批人id
     private String approver;
-
+    //操作时间
     private String operaterTime;
-
+    //是否转移(0:否;1:是)
     private String isTransfer;
-
+    //申请小时数(单位:小时)
     private String applicationHour;
-
+    //申请发起时间
     private String applicationTime;
 
     public String getId() {

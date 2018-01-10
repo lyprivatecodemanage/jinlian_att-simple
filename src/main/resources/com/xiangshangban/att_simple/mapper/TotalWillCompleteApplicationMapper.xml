@@ -12,10 +12,11 @@
     <result column="company_id" jdbcType="VARCHAR" property="companyId" />
     <result column="is_transfer" jdbcType="VARCHAR" property="isTransfer" />
     <result column="application_status" jdbcType="VARCHAR" property="applicationStatus" />
+    <result column="reject_reason" jdbcType="VARCHAR" property="rejectReason"/>
   </resultMap>
   <sql id="Base_Column_List">
     applcation_no, operater_time, operater_id, application_type, approver, is_copy, application_id, 
-    company_id, is_transfer, application_status
+    company_id, is_transfer, application_status,reject_reason
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 

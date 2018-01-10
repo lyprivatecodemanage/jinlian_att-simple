@@ -1,25 +1,32 @@
 package com.xiangshangban.att_simple.bean;
 
+/**
+ * 已完成申请记录汇总表
+ * @author mian
+ */
 public class TotalWillCompleteApplication {
+	//申请单号(uuid)
     private String applcationNo;
-
+    //操作时间
     private String operaterTime;
-
+    //操作人id
     private String operaterId;
-
+    //申请类型(1:请假;2:加班;3:出差;4:外出;5:补卡)
     private String applicationType;
-
+    //审批人id
     private String approver;
-
+    //是否抄送(0:否;1:是)
     private String isCopy;
-
+    //申请人id
     private String applicationId;
-
+    //公司id
     private String companyId;
-
+    //是否转移(0:否;1:是)
     private String isTransfer;
-
+    //申请单状态(0:删除;1:正常;2:撤回)
     private String applicationStatus;
+    //驳回说明
+    private String rejectReason;
 
     public String getApplcationNo() {
         return applcationNo;
@@ -100,4 +107,13 @@ public class TotalWillCompleteApplication {
     public void setApplicationStatus(String applicationStatus) {
         this.applicationStatus = applicationStatus;
     }
+
+	public String getRejectReason() {
+		return rejectReason;
+	}
+
+	public void setRejectReason(String rejectReason) {
+		this.rejectReason = rejectReason;
+	}
+    
 }

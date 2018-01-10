@@ -1,18 +1,23 @@
 package com.xiangshangban.att_simple.bean;
 
+/**
+ * 申请转移记录表
+ * @author mian
+ */
 public class ApplicationTransferRecord {
+	//ID
     private String id;
-
+    //申请单号
     private String applicationNo;
-
+    //申请转移发起人id
     private String transferPersonId;
-
+    //申请转移接收人id
     private String transferPersionAccessId;
-
+    //转移次数
     private String transferTimes;
-
+    //操作时间
     private String operaterTime;
-
+    //移交说明
     private String transferExplain;
 
     public String getId() {

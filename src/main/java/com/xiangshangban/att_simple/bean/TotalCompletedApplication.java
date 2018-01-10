@@ -1,24 +1,29 @@
 package com.xiangshangban.att_simple.bean;
 
+/**
+ * 未完成申请记录汇总表
+ * @author mian
+ */
 public class TotalCompletedApplication {
+	//申请单号(uuid)
     private String applcationNo;
-
+    //操作时间
     private String operaterTime;
-
+    //操作人id
     private String operaterId;
-
+    //申请类型(1:请假;2:加班;3:出差;4:外出;5:补卡;6:年假微调;7:调休微调)
     private String applicationType;
-
+    //最后一次审批人id
     private String lastApprover;
-
+    //是否抄送(0:否;1:是)
     private String isCopy;
-
+    //申请人id
     private String applicationId;
-
+    //公司id
     private String companyId;
-
+    //是否驳回(0:否;1:是)
     private String isReject;
-
+    //申请单状态(0:删除;1:正常;2:撤回)
     private String applicationStatus;
 
     public String getApplcationNo() {

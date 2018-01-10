@@ -1,12 +1,17 @@
 package com.xiangshangban.att_simple.bean;
 
+/**
+ * 申请单抄送人联系表
+ * @author mian
+ */
 public class CopyPersonWithApplication {
+	//uuid
     private String id;
-
+    //申请单号
     private String applicationNo;
-
+    //抄送人id
     private String copyPersonId;
-
+    //操作时间
     private String operaterTime;
 
     public String getId() {
