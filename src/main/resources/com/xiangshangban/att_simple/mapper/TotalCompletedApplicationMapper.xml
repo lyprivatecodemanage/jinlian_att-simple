@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiangshangban.att_simple.dao.TotalCompletedApplicationMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.TotalCompletedApplication">
+    <id column="applcation_no" jdbcType="VARCHAR" property="applcationNo" />
+    <result column="operater_time" jdbcType="VARCHAR" property="operaterTime" />
+    <result column="operater_id" jdbcType="VARCHAR" property="operaterId" />
+    <result column="application_type" jdbcType="VARCHAR" property="applicationType" />
+    <result column="last_approver" jdbcType="VARCHAR" property="lastApprover" />
+    <result column="is_copy" jdbcType="VARCHAR" property="isCopy" />
+    <result column="application_id" jdbcType="VARCHAR" property="applicationId" />
+    <result column="company_id" jdbcType="VARCHAR" property="companyId" />
+    <result column="is_reject" jdbcType="VARCHAR" property="isReject" />
+    <result column="application_status" jdbcType="VARCHAR" property="applicationStatus" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    applcation_no, operater_time, operater_id, application_type, last_approver, is_copy, 
+    application_id, company_id, is_reject, application_status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from total_completed_application_
+    where applcation_no = #{applcationNo,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from total_completed_application_
+    where applcation_no = #{applcationNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.TotalCompletedApplication">
+    insert into total_completed_application_ (applcation_no, operater_time, operater_id, 
+      application_type, last_approver, is_copy, 
+      application_id, company_id, is_reject, 
+      application_status)
+    values (#{applcationNo,jdbcType=VARCHAR}, #{operaterTime,jdbcType=VARCHAR}, #{operaterId,jdbcType=VARCHAR}, 
+      #{applicationType,jdbcType=VARCHAR}, #{lastApprover,jdbcType=VARCHAR}, #{isCopy,jdbcType=VARCHAR}, 
+      #{applicationId,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR}, #{isReject,jdbcType=VARCHAR}, 
+      #{applicationStatus,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.TotalCompletedApplication">
+    insert into total_completed_application_
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="applcationNo != null">
+        applcation_no,
+      </if>
+      <if test="operaterTime != null">
+        operater_time,
+      </if>
+      <if test="operaterId != null">
+        operater_id,
+      </if>
+      <if test="applicationType != null">
+        application_type,
+      </if>
+      <if test="lastApprover != null">
+        last_approver,
+      </if>
+      <if test="isCopy != null">
+        is_copy,
+      </if>
+      <if test="applicationId != null">
+        application_id,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="isReject != null">
+        is_reject,
+      </if>
+      <if test="applicationStatus != null">
+        application_status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="applcationNo != null">
+        #{applcationNo,jdbcType=VARCHAR},
+      </if>
+      <if test="operaterTime != null">
+        #{operaterTime,jdbcType=VARCHAR},
+      </if>
+      <if test="operaterId != null">
+        #{operaterId,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationType != null">
+        #{applicationType,jdbcType=VARCHAR},
+      </if>
+      <if test="lastApprover != null">
+        #{lastApprover,jdbcType=VARCHAR},
+      </if>
+      <if test="isCopy != null">
+        #{isCopy,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationId != null">
+        #{applicationId,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="isReject != null">
+        #{isReject,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationStatus != null">
+        #{applicationStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.TotalCompletedApplication">
+    update total_completed_application_
+    <set>
+      <if test="operaterTime != null">
+        operater_time = #{operaterTime,jdbcType=VARCHAR},
+      </if>
+      <if test="operaterId != null">
+        operater_id = #{operaterId,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationType != null">
+        application_type = #{applicationType,jdbcType=VARCHAR},
+      </if>
+      <if test="lastApprover != null">
+        last_approver = #{lastApprover,jdbcType=VARCHAR},
+      </if>
+      <if test="isCopy != null">
+        is_copy = #{isCopy,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationId != null">
+        application_id = #{applicationId,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="isReject != null">
+        is_reject = #{isReject,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationStatus != null">
+        application_status = #{applicationStatus,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where applcation_no = #{applcationNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.TotalCompletedApplication">
+    update total_completed_application_
+    set operater_time = #{operaterTime,jdbcType=VARCHAR},
+      operater_id = #{operaterId,jdbcType=VARCHAR},
+      application_type = #{applicationType,jdbcType=VARCHAR},
+      last_approver = #{lastApprover,jdbcType=VARCHAR},
+      is_copy = #{isCopy,jdbcType=VARCHAR},
+      application_id = #{applicationId,jdbcType=VARCHAR},
+      company_id = #{companyId,jdbcType=VARCHAR},
+      is_reject = #{isReject,jdbcType=VARCHAR},
+      application_status = #{applicationStatus,jdbcType=VARCHAR}
+    where applcation_no = #{applcationNo,jdbcType=VARCHAR}
+  </update>
+</mapper>

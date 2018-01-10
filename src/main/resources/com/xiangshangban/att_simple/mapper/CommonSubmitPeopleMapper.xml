@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiangshangban.att_simple.dao.CommonSubmitPeopleMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.CommonSubmitPeople">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="employee_id" jdbcType="VARCHAR" property="employeeId" />
+    <result column="company_id" jdbcType="VARCHAR" property="companyId" />
+    <result column="common_commit_people_id" jdbcType="VARCHAR" property="commonCommitPeopleId" />
+    <result column="common_commit_people_name" jdbcType="VARCHAR" property="commonCommitPeopleName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, employee_id, company_id, common_commit_people_id, common_commit_people_name
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from common_submit_people_
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from common_submit_people_
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.CommonSubmitPeople">
+    insert into common_submit_people_ (id, employee_id, company_id, 
+      common_commit_people_id, common_commit_people_name
+      )
+    values (#{id,jdbcType=VARCHAR}, #{employeeId,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR}, 
+      #{commonCommitPeopleId,jdbcType=VARCHAR}, #{commonCommitPeopleName,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.CommonSubmitPeople">
+    insert into common_submit_people_
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="employeeId != null">
+        employee_id,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="commonCommitPeopleId != null">
+        common_commit_people_id,
+      </if>
+      <if test="commonCommitPeopleName != null">
+        common_commit_people_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="employeeId != null">
+        #{employeeId,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="commonCommitPeopleId != null">
+        #{commonCommitPeopleId,jdbcType=VARCHAR},
+      </if>
+      <if test="commonCommitPeopleName != null">
+        #{commonCommitPeopleName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.CommonSubmitPeople">
+    update common_submit_people_
+    <set>
+      <if test="employeeId != null">
+        employee_id = #{employeeId,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="commonCommitPeopleId != null">
+        common_commit_people_id = #{commonCommitPeopleId,jdbcType=VARCHAR},
+      </if>
+      <if test="commonCommitPeopleName != null">
+        common_commit_people_name = #{commonCommitPeopleName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.CommonSubmitPeople">
+    update common_submit_people_
+    set employee_id = #{employeeId,jdbcType=VARCHAR},
+      company_id = #{companyId,jdbcType=VARCHAR},
+      common_commit_people_id = #{commonCommitPeopleId,jdbcType=VARCHAR},
+      common_commit_people_name = #{commonCommitPeopleName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>
