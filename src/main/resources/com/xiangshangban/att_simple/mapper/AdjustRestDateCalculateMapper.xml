@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.AdjustRestDateCalculate">
     <id column="adjust_rest_id" jdbcType="VARCHAR" property="adjustRestId" />
     <result column="application_form_id" jdbcType="VARCHAR" property="applicationFormId" />
-    <result column="adjust_rest_tyoe" jdbcType="VARCHAR" property="adjustRestTyoe" />
+    <result column="adjust_rest_type" jdbcType="VARCHAR" property="adjustRestType" />
     <result column="adjust_rest_duration" jdbcType="VARCHAR" property="adjustRestDuration" />
     <result column="adjust_mold" jdbcType="VARCHAR" property="adjustMold" />
     <result column="adjust_date" jdbcType="VARCHAR" property="adjustDate" />
@@ -32,7 +32,7 @@
       adjust_date, adjust_reason, adjust_total, 
       adjust_balance)
     values (#{adjustRestId,jdbcType=VARCHAR}, #{applicationFormId,jdbcType=VARCHAR}, 
-      #{adjustRestTyoe,jdbcType=VARCHAR}, #{adjustRestDuration,jdbcType=VARCHAR}, #{adjustMold,jdbcType=VARCHAR}, 
+      #{adjustRestType,jdbcType=VARCHAR}, #{adjustRestDuration,jdbcType=VARCHAR}, #{adjustMold,jdbcType=VARCHAR}, 
       #{adjustDate,jdbcType=VARCHAR}, #{adjustReason,jdbcType=VARCHAR}, #{adjustTotal,jdbcType=VARCHAR}, 
       #{adjustBalance,jdbcType=VARCHAR})
   </insert>
@@ -45,7 +45,7 @@
       <if test="applicationFormId != null">
         application_form_id,
       </if>
-      <if test="adjustRestTyoe != null">
+      <if test="adjustRestType != null">
         adjust_rest_tyoe,
       </if>
       <if test="adjustRestDuration != null">
@@ -74,8 +74,8 @@
       <if test="applicationFormId != null">
         #{applicationFormId,jdbcType=VARCHAR},
       </if>
-      <if test="adjustRestTyoe != null">
-        #{adjustRestTyoe,jdbcType=VARCHAR},
+      <if test="adjustRestType != null">
+        #{adjustRestType,jdbcType=VARCHAR},
       </if>
       <if test="adjustRestDuration != null">
         #{adjustRestDuration,jdbcType=VARCHAR},
@@ -103,8 +103,8 @@
       <if test="applicationFormId != null">
         application_form_id = #{applicationFormId,jdbcType=VARCHAR},
       </if>
-      <if test="adjustRestTyoe != null">
-        adjust_rest_tyoe = #{adjustRestTyoe,jdbcType=VARCHAR},
+      <if test="adjustRestType != null">
+        adjust_rest_tyoe = #{adjustRestType,jdbcType=VARCHAR},
       </if>
       <if test="adjustRestDuration != null">
         adjust_rest_duration = #{adjustRestDuration,jdbcType=VARCHAR},
@@ -130,7 +130,7 @@
   <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.AdjustRestDateCalculate">
     update adjust_rest_date_calculate
     set application_form_id = #{applicationFormId,jdbcType=VARCHAR},
-      adjust_rest_tyoe = #{adjustRestTyoe,jdbcType=VARCHAR},
+      adjust_rest_tyoe = #{adjustRestType,jdbcType=VARCHAR},
       adjust_rest_duration = #{adjustRestDuration,jdbcType=VARCHAR},
       adjust_mold = #{adjustMold,jdbcType=VARCHAR},
       adjust_date = #{adjustDate,jdbcType=VARCHAR},

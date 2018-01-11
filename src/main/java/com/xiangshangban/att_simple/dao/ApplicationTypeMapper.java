@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.xiangshangban.att_simple.bean.ApplicationType;
+
 @Mapper
 public interface ApplicationTypeMapper {
 	
