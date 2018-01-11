@@ -29,8 +29,20 @@ public class TotalApplicationRecord {
     private String rejectReason;
 
     private String isTransfer;
+    
+    private String isComplete;
+    
+    
 
-    public String getApplcationNo() {
+    public String getIsComplete() {
+		return isComplete;
+	}
+
+	public void setIsComplete(String isComplete) {
+		this.isComplete = isComplete;
+	}
+
+	public String getApplcationNo() {
         return applcationNo;
     }
 
