@@ -31,6 +31,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 		List<ApplicationType> applicationTypeList = applicationTypeMapper.getApplicationTypeList();
 		//查询年假剩余,年假额度,调休剩余,调休额度
 		//...
+		result.put("applicaitonTypeList", applicationTypeList);
 		return result;
 	}
 

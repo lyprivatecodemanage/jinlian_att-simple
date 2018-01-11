@@ -44,8 +44,8 @@ public class ApplicationController {
 		public  Map<String,Object> applicationIndexPage(@RequestBody String jsonString ,HttpServletRequest request){
 			Map<String,Object> result = new HashMap<String,Object>();
 			GainData data = new GainData(jsonString, request);
-			String employeeId = data.getData("accessUserId").toString();//员工id
-			String companyId = data.getData("companyId").toString();//公司id
+			String employeeId = request.getHeader("accessUserId");//员工id
+			String companyId = request.getHeader("companyId");//公司id
 			if(StringUtils.isEmpty(companyId)||StringUtils.isEmpty(employeeId)){
 				result.put("message", "请求信息错误");
 				result.put("returnCode", "3012");
