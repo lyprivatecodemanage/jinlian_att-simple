@@ -6,14 +6,17 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.xiangshangban.att_simple.bean.ApplicationType;
 import com.xiangshangban.att_simple.dao.ApplicationTypeMapper;
 import com.xiangshangban.att_simple.dao.CopyPersonWithApplicationMapper;
 import com.xiangshangban.att_simple.dao.LeaveApplicationRecordMapper;
+import com.xiangshangban.att_simple.dao.TotalApplicationRecordMapper;
 
 @Service("applicationTypeService")
+@Transactional 
 public class ApplicationServiceImpl implements ApplicationService {
 	
 	@Autowired
@@ -22,9 +25,11 @@ public class ApplicationServiceImpl implements ApplicationService {
 	private LeaveApplicationRecordMapper  leaveApplicationRecordDao;
 	@Autowired
 	private CopyPersonWithApplicationMapper  copyPersonWithApplicationMapper;
+	@Autowired
+	private TotalApplicationRecordMapper totalApplicationRecordMapper;
 
 	@Override
-	@Transactional
+	@Transactional(propagation=Propagation.REQUIRED,rollbackForClassName="Exception")
 	public Map<String, Object> applicationIndexPage(String employeeId, String companyId) {
 		Map<String, Object> result = new HashMap<String,Object>();
 		//查询申请类型
@@ -36,10 +41,12 @@ public class ApplicationServiceImpl implements ApplicationService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation=Propagation.REQUIRED,rollbackForClassName="Exception")
 	public Map<String, Object> leaveApplication(Map<String, String> params) {
+		Map<String, Object> result = new HashMap<String,Object>();
 		
-		return null;
+		
+		return result;
 	}
 
 	
