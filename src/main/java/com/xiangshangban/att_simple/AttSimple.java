@@ -13,27 +13,24 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import com.xiangshangban.att_simple.filter.ServletFilter;
 
 
-
-
-
 @SpringBootApplication
 @EnableTransactionManagement
-public class AttSimple 
-{
-	public static Logger logger = Logger.getLogger(AttSimple.class);
-    public static void main( String[] args )
-    {
-    	SpringApplication.run(AttSimple.class, args);
-		logger.info("启动成功");
+public class AttSimple {
+    public static Logger logger = Logger.getLogger(AttSimple.class);
+
+    public static void main(String[] args) {
+        SpringApplication.run(AttSimple.class, args);
+        logger.info("启动成功");
     }
+
     @Bean
     public FilterRegistrationBean filterRegistrationBean() {
- 	   FilterRegistrationBean registrationBean = new FilterRegistrationBean();
- 	   ServletFilter weChatFilter = new ServletFilter();
- 	   registrationBean.setFilter(weChatFilter);
- 	   List<String> urlPatterns = new ArrayList<String>();
- 	   urlPatterns.add("/*");
- 	   registrationBean.setUrlPatterns(urlPatterns);
- 	   return registrationBean;
- 	}
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+        ServletFilter weChatFilter = new ServletFilter();
+        registrationBean.setFilter(weChatFilter);
+        List<String> urlPatterns = new ArrayList<String>();
+        urlPatterns.add("/*");
+        registrationBean.setUrlPatterns(urlPatterns);
+        return registrationBean;
+    }
 }
