@@ -95,4 +95,25 @@ public class AdjustRestDateCalculate {
 	public void setAdjustBalance(String adjustBalance) {
 		this.adjustBalance = adjustBalance;
 	}
+
+	public AdjustRestDateCalculate() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public AdjustRestDateCalculate(String adjustRestId, String applicationFormId, String adjustRestType,
+			String adjustRestDuration, String adjustMold, String adjustDate, String adjustReason, String adjustTotal,
+			String adjustBalance) {
+		super();
+		this.adjustRestId = adjustRestId;
+		this.applicationFormId = applicationFormId;
+		this.adjustRestType = adjustRestType;
+		this.adjustRestDuration = adjustRestDuration;
+		this.adjustMold = adjustMold;
+		this.adjustDate = adjustDate;
+		this.adjustReason = adjustReason;
+		this.adjustTotal = adjustTotal;
+		this.adjustBalance = adjustBalance;
+	}
+	
 }

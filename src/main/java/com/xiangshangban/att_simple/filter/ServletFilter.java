@@ -36,7 +36,7 @@ public class ServletFilter implements Filter{
 		res.setHeader("Access-Control-Max-Age", "360000");
 		res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 		chain.doFilter(req, res);
-
+		
 	}
 
 	@Override
