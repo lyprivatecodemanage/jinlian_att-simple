@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiangshangban.att_simple.dao.checkingInMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.checkingIn">
+    <id column="checkingin_id" jdbcType="VARCHAR" property="checkinginId" />
+    <result column="company_id" jdbcType="VARCHAR" property="companyId" />
+    <result column="department_id" jdbcType="VARCHAR" property="departmentId" />
+    <result column="employee_id" jdbcType="VARCHAR" property="employeeId" />
+    <result column="checking_date" jdbcType="VARCHAR" property="checkingDate" />
+    <result column="signin_date" jdbcType="VARCHAR" property="signinDate" />
+    <result column="signout_date" jdbcType="VARCHAR" property="signoutDate" />
+    <result column="attendance_time" jdbcType="VARCHAR" property="attendanceTime" />
+    <result column="exception" jdbcType="VARCHAR" property="exception" />
+    <result column="overtime" jdbcType="VARCHAR" property="overtime" />
+    <result column="leave_time" jdbcType="VARCHAR" property="leaveTime" />
+    <result column="evection_time" jdbcType="VARCHAR" property="evectionTime" />
+    <result column="go_out_time" jdbcType="VARCHAR" property="goOutTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    checkingin_id, company_id, department_id, employee_id, checking_date, signin_date, 
+    signout_date, attendance_time, exception, overtime, leave_time, evection_time, go_out_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from checkingin
+    where checkingin_id = #{checkinginId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from checkingin
+    where checkingin_id = #{checkinginId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.checkingIn">
+    insert into checkingin (checkingin_id, company_id, department_id, 
+      employee_id, checking_date, signin_date, 
+      signout_date, attendance_time, exception, 
+      overtime, leave_time, evection_time, 
+      go_out_time)
+    values (#{checkinginId,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR}, #{departmentId,jdbcType=VARCHAR}, 
+      #{employeeId,jdbcType=VARCHAR}, #{checkingDate,jdbcType=VARCHAR}, #{signinDate,jdbcType=VARCHAR}, 
+      #{signoutDate,jdbcType=VARCHAR}, #{attendanceTime,jdbcType=VARCHAR}, #{exception,jdbcType=VARCHAR}, 
+      #{overtime,jdbcType=VARCHAR}, #{leaveTime,jdbcType=VARCHAR}, #{evectionTime,jdbcType=VARCHAR}, 
+      #{goOutTime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.checkingIn">
+    insert into checkingin
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="checkinginId != null">
+        checkingin_id,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="departmentId != null">
+        department_id,
+      </if>
+      <if test="employeeId != null">
+        employee_id,
+      </if>
+      <if test="checkingDate != null">
+        checking_date,
+      </if>
+      <if test="signinDate != null">
+        signin_date,
+      </if>
+      <if test="signoutDate != null">
+        signout_date,
+      </if>
+      <if test="attendanceTime != null">
+        attendance_time,
+      </if>
+      <if test="exception != null">
+        exception,
+      </if>
+      <if test="overtime != null">
+        overtime,
+      </if>
+      <if test="leaveTime != null">
+        leave_time,
+      </if>
+      <if test="evectionTime != null">
+        evection_time,
+      </if>
+      <if test="goOutTime != null">
+        go_out_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="checkinginId != null">
+        #{checkinginId,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentId != null">
+        #{departmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="employeeId != null">
+        #{employeeId,jdbcType=VARCHAR},
+      </if>
+      <if test="checkingDate != null">
+        #{checkingDate,jdbcType=VARCHAR},
+      </if>
+      <if test="signinDate != null">
+        #{signinDate,jdbcType=VARCHAR},
+      </if>
+      <if test="signoutDate != null">
+        #{signoutDate,jdbcType=VARCHAR},
+      </if>
+      <if test="attendanceTime != null">
+        #{attendanceTime,jdbcType=VARCHAR},
+      </if>
+      <if test="exception != null">
+        #{exception,jdbcType=VARCHAR},
+      </if>
+      <if test="overtime != null">
+        #{overtime,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveTime != null">
+        #{leaveTime,jdbcType=VARCHAR},
+      </if>
+      <if test="evectionTime != null">
+        #{evectionTime,jdbcType=VARCHAR},
+      </if>
+      <if test="goOutTime != null">
+        #{goOutTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.checkingIn">
+    update checkingin
+    <set>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentId != null">
+        department_id = #{departmentId,jdbcType=VARCHAR},
+      </if>
+      <if test="employeeId != null">
+        employee_id = #{employeeId,jdbcType=VARCHAR},
+      </if>
+      <if test="checkingDate != null">
+        checking_date = #{checkingDate,jdbcType=VARCHAR},
+      </if>
+      <if test="signinDate != null">
+        signin_date = #{signinDate,jdbcType=VARCHAR},
+      </if>
+      <if test="signoutDate != null">
+        signout_date = #{signoutDate,jdbcType=VARCHAR},
+      </if>
+      <if test="attendanceTime != null">
+        attendance_time = #{attendanceTime,jdbcType=VARCHAR},
+      </if>
+      <if test="exception != null">
+        exception = #{exception,jdbcType=VARCHAR},
+      </if>
+      <if test="overtime != null">
+        overtime = #{overtime,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveTime != null">
+        leave_time = #{leaveTime,jdbcType=VARCHAR},
+      </if>
+      <if test="evectionTime != null">
+        evection_time = #{evectionTime,jdbcType=VARCHAR},
+      </if>
+      <if test="goOutTime != null">
+        go_out_time = #{goOutTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where checkingin_id = #{checkinginId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.checkingIn">
+    update checkingin
+    set company_id = #{companyId,jdbcType=VARCHAR},
+      department_id = #{departmentId,jdbcType=VARCHAR},
+      employee_id = #{employeeId,jdbcType=VARCHAR},
+      checking_date = #{checkingDate,jdbcType=VARCHAR},
+      signin_date = #{signinDate,jdbcType=VARCHAR},
+      signout_date = #{signoutDate,jdbcType=VARCHAR},
+      attendance_time = #{attendanceTime,jdbcType=VARCHAR},
+      exception = #{exception,jdbcType=VARCHAR},
+      overtime = #{overtime,jdbcType=VARCHAR},
+      leave_time = #{leaveTime,jdbcType=VARCHAR},
+      evection_time = #{evectionTime,jdbcType=VARCHAR},
+      go_out_time = #{goOutTime,jdbcType=VARCHAR}
+    where checkingin_id = #{checkinginId,jdbcType=VARCHAR}
+  </update>
+</mapper>
