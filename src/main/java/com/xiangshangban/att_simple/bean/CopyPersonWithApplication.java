@@ -11,6 +11,8 @@ public class CopyPersonWithApplication {
     private String applicationNo;
     //抄送人id
     private String copyPersonId;
+    //抄送人姓名
+    private String copyPersonName;
     //操作时间
     private String operaterTime;
 
@@ -22,7 +24,15 @@ public class CopyPersonWithApplication {
         this.id = id;
     }
 
-    public String getApplicationNo() {
+    public String getCopyPersonName() {
+		return copyPersonName;
+	}
+
+	public void setCopyPersonName(String copyPersonName) {
+		this.copyPersonName = copyPersonName;
+	}
+
+	public String getApplicationNo() {
         return applicationNo;
     }
 

@@ -20,6 +20,7 @@ import com.xiangshangban.att_simple.utils.FormatUtil;
 import com.xiangshangban.att_simple.utils.GainData;
 import com.xiangshangban.att_simple.utils.RegexUtil;
 import com.xiangshangban.att_simple.utils.TimeUtil;
+import com.xiangshangban.organization.bean.Employee;
 /**
  * 
  * @author 李业
@@ -52,6 +53,36 @@ public class ApplicationController {
 				return result;
 			}
 			result = applicationService.applicationIndexPage(employeeId, companyId);
+			return result;
+		}
+		
+		@RequestMapping(value = "/allTypeApplication",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+		public Map<String,Object> allTypeApplication(@RequestBody String jsonString ,HttpServletRequest request) {
+			Map<String,Object> result = new HashMap<String,Object>();
+			Map<String,String> params = new HashMap<String,String>();
+			
+			
+			String applicationType = "";
+			//申请类型[ 1:请假,2:加班,3:出差,4:外出,5:补卡 ]
+			switch(applicationType){
+			   case "1":
+				   result = applicationService.leaveApplication(params);
+				   break;
+			   case "2":
+				   
+				   break;
+			   case "3":
+				   break;
+			   case "4":
+				   break;
+			   case "5":
+				   break;
+			   default :
+				   break;
+			}
+			
+			
+			
 			return result;
 		}
 		/**

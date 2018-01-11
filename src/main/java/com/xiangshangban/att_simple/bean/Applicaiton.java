@@ -1,5 +1,6 @@
 package com.xiangshangban.att_simple.bean;
 
+import java.util.List;
 
 public class Applicaiton {
 	private String applicaitonNo;//申请单号
@@ -17,14 +18,16 @@ public class Applicaiton {
 	private String uploadVoucher;//申请凭证
 	private String approver;//审批人id
 	private String approverNmae;//审批人姓名
-	private String copyPersonId;//抄送人id
-	private String copyPersonName;//抄送人姓名
+	//private String copyPersonId;//抄送人id
+	//private String copyPersonName;//抄送人姓名
+	private List<CopyPersonWithApplication> copyPersonWithApplicationList;//抄送人集合
 	private String isCopy;//是否抄送(0:否;1:是)
 	private String isReject;//是否驳回(0:否;1:是)
 	private String isTransfer;//是否转移(0:否;1:是)
 	private String applicationStatus;//申请单状态(0:删除;1:正常;2:撤回)
 	private String rejectReason;//驳回说明
-	private String transferExplain;//移交说明
+	private List<ApplicationTransferRecord> applicationTransferRecordList;//移交列表
+	//private String transferExplain;//移交说明
 	private String applicationTime;//申请发起时间
 	private String operaterTime;//操作时间
 	private String outgoningLocation;//外出地点
@@ -119,7 +122,7 @@ public class Applicaiton {
 	public void setApproverNmae(String approverNmae) {
 		this.approverNmae = approverNmae;
 	}
-	public String getCopyPersonId() {
+	/*public String getCopyPersonId() {
 		return copyPersonId;
 	}
 	public void setCopyPersonId(String copyPersonId) {
@@ -130,7 +133,7 @@ public class Applicaiton {
 	}
 	public void setCopyPersonName(String copyPersonName) {
 		this.copyPersonName = copyPersonName;
-	}
+	}*/
 	public String getIsCopy() {
 		return isCopy;
 	}
@@ -161,12 +164,12 @@ public class Applicaiton {
 	public void setRejectReason(String rejectReason) {
 		this.rejectReason = rejectReason;
 	}
-	public String getTransferExplain() {
+	/*public String getTransferExplain() {
 		return transferExplain;
 	}
 	public void setTransferExplain(String transferExplain) {
 		this.transferExplain = transferExplain;
-	}
+	}*/
 	public String getApplicationTime() {
 		return applicationTime;
 	}
