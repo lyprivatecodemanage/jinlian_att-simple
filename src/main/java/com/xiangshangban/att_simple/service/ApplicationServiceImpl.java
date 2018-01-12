@@ -23,11 +23,11 @@ public class ApplicationServiceImpl implements ApplicationService {
 	@Autowired
 	private ApplicationTypeMapper applicationTypeMapper;
 	@Autowired
-	private ApplicationLeaveMapper  leaveApplicationRecordDao;
+	private ApplicationLeaveMapper  ApplicationLeaveMapper;
 	@Autowired
-	private ApplicationToCopyPersonMapper  copyPersonWithApplicationMapper;
+	private ApplicationToCopyPersonMapper  ApplicationToCopyPersonMapper;
 	@Autowired
-	private ApplicationTotalRecordMapper totalApplicationRecordMapper;
+	private ApplicationTotalRecordMapper ApplicationtotalRecordMapper;
 	@Autowired
 	private VacationMapper vacationMapper;
 
