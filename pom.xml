@@ -1,16 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.jinnian</groupId>
-  <artifactId>att-simple</artifactId>
-  <version>2.0</version>
-  <packaging>jar</packaging>
+	<groupId>com.jinnian</groupId>
+	<artifactId>att-simple</artifactId>
+	<version>2.0</version>
+	<packaging>jar</packaging>
 
-  <name>att-simple</name>
-  <url>http://maven.apache.org</url>
+	<name>att-simple</name>
+	<url>http://maven.apache.org</url>
 
- <parent>
+	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>1.5.7.RELEASE</version>
@@ -54,12 +54,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-			<exclusions>  
-		        <exclusion>   
-		            <groupId>org.springframework.boot</groupId>  
-		            <artifactId>spring-boot-starter-logging</artifactId>  
-		        </exclusion>  
-		    </exclusions>  
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.mybatis.spring.boot</groupId>
@@ -146,7 +146,7 @@
 			<artifactId>log4j</artifactId>
 			<version>${log4j-version}</version><scope>provided</scope>
 		</dependency>
-		<dependency> 
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-log4j2</artifactId>
 		</dependency>
@@ -191,80 +191,80 @@
 			<artifactId>jedis</artifactId>
 			<version>${jedis-version}</version><scope>provided</scope>
 		</dependency>
-		
+
 		<!--fastjson -->
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
 			<version>${fastjson-version}</version><scope>provided</scope>
 		</dependency>
-		<!-- 支持 @ConfigurationProperties 注解 -->  
-		<!-- <dependency>  
-		    <groupId>org.springframework.boot</groupId>  
-		    <artifactId>spring-boot-configuration-processor</artifactId>  
-		    <optional>true</optional>  
+		<!-- 支持 @ConfigurationProperties 注解 -->
+		<!-- <dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-configuration-processor</artifactId>
+		    <optional>true</optional>
 		</dependency> -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-		<!-- <dependency>  
-            <groupId>org.springframework.boot</groupId>  
-            <artifactId>spring-boot-starter-data-jpa</artifactId>  
+		<!-- <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency> -->
-		<!-- <dependency>  
-            <groupId>com.alibaba</groupId>  
-            <artifactId>druid</artifactId>  
-            <version>1.0.25</version>  
+		<!-- <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.0.25</version>
         </dependency> -->
-       
-        <dependency>
-        	<groupId>org.springframework.integration</groupId>
-        	<artifactId>spring-integration-http</artifactId>
-        </dependency>
-        
-         <dependency>
+
+		<dependency>
+			<groupId>org.springframework.integration</groupId>
+			<artifactId>spring-integration-http</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>org.mybatis.spring.boot</groupId>
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 			<version>1.1.1</version>
 		</dependency>
-		
+
 		<!-- 导出报表 -->
 		<dependency>
-		    <groupId>org.apache.poi</groupId>
+			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
 			<version>3.9</version>
 		</dependency>
-		
-        <dependency>
-	     <groupId>org.apache.poi</groupId>
-	     <artifactId>poi-ooxml</artifactId>
-	     <version>3.9</version>
-        </dependency>
-        <dependency>
-        	<groupId>org.scala-lang</groupId>
-        	<artifactId>scala-library</artifactId>
-        	<version>2.11.0</version>
-        </dependency>
-        <dependency>
-        	<groupId>org.springframework.boot</groupId>
-        	<artifactId>spring-boot-starter-jta-narayana</artifactId>
-        </dependency>
-        <dependency>
-        	<groupId>net.sourceforge.htmlunit</groupId>
-        	<artifactId>htmlunit</artifactId>
-        </dependency>
-        <!-- organization2.0.jar -->
-        <dependency>
-        	<groupId>com.xiangshangban</groupId>
+
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-library</artifactId>
+			<version>2.11.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jta-narayana</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.htmlunit</groupId>
+			<artifactId>htmlunit</artifactId>
+		</dependency>
+		<!-- organization2.0.jar -->
+		<dependency>
+			<groupId>com.xiangshangban</groupId>
 			<artifactId>organization</artifactId>
-			<version>2.0</version>  
-			<scope>system</scope>  
-			<systemPath>${project.basedir}/lib/organization-2.0.jar</systemPath>  
-        </dependency>
+			<version>2.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/organization-2.0.jar</systemPath>
+		</dependency>
 	</dependencies>
-	
+
 
 	<build>
 		<plugins>

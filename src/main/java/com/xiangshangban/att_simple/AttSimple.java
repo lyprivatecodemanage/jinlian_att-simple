@@ -3,6 +3,7 @@ package com.xiangshangban.att_simple;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.apache.log4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,6 +17,7 @@ import com.xiangshangban.att_simple.filter.ServletFilter;
 @SpringBootApplication
 @EnableTransactionManagement
 public class AttSimple {
+
     public static Logger logger = Logger.getLogger(AttSimple.class);
 
     public static void main(String[] args) {
