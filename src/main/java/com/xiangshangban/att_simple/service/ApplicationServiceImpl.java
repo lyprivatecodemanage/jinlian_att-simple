@@ -19,7 +19,7 @@ import com.xiangshangban.att_simple.dao.ApplicationTotalRecordMapper;
 import com.xiangshangban.att_simple.dao.ApplicationTypeMapper;
 import com.xiangshangban.att_simple.dao.VacationMapper;
 
-@Service("applicationTypeService")
+@Service("applicationService")
 @Transactional 
 public class ApplicationServiceImpl implements ApplicationService {
 	
@@ -46,7 +46,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 		result.put("vacation", vacation);
 		return result;
 	}
-
+	/**
+	 * 请假申请
+	 */
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED,rollbackForClassName="Exception")
 	public Map<String, Object> leaveApplication(Application application) {
@@ -67,22 +69,17 @@ public class ApplicationServiceImpl implements ApplicationService {
 			}
 		}
 		//生成申请记录
-		int i = applicationtotalRecordMapper.insertApplicationRecord(application);
-		int j = applicationLeaveMapper.insertApplicationRecord(application);
+		applicationtotalRecordMapper.insertApplicationRecord(application);
+		applicationLeaveMapper.insertApplicationRecord(application);
 		//是否抄送
 		if("1".equals(application.getIsCopy())){
-			for(ApplicationToCopyPerson applicationToCopyPerson :application.getCopyPersonWithApplicationList()){
-				
+			//添加抄送记录
+			for(ApplicationToCopyPerson applicationToCopyPerson :application.getCopyPersonList()){
+				applicationToCopyPersonMapper.insertSelective(applicationToCopyPerson);
 			}
 		}
-		
-		
-		if(i>0&&j>0){
-			result.put("message", "成功");
-			result.put("returnCode", "3000");
-		}
-		
-		
+		result.put("message", "成功");
+		result.put("returnCode", "3000");
 		return result;
 	}
 

@@ -1,7 +1,9 @@
 package com.xiangshangban.att_simple.dao;
 
-import com.xiangshangban.att_simple.bean.ReportExcept;
+import org.apache.ibatis.annotations.Mapper;
 
+import com.xiangshangban.att_simple.bean.ReportExcept;
+@Mapper
 public interface ReportExceptMapper {
     int deleteByPrimaryKey(String exceptId);
 

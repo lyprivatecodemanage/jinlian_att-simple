@@ -123,7 +123,7 @@ public class ApplicationController {
 		 * @param request
 		 * @return
 		 */
-		@RequestMapping(value = "/leaveApplication",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+		/*@RequestMapping(value = "/leaveApplication",produces="application/json;charset=utf-8",method=RequestMethod.POST)
 		public Map<String,Object> leaveApplication(@RequestBody String jsonString ,HttpServletRequest request) {
 			Map<String,Object> result = new HashMap<String,Object>();
 			Map<String,String> params = new HashMap<String,String>();
@@ -176,91 +176,7 @@ public class ApplicationController {
 				result.put("returnCode", "3001");
 				return result;
 			}
-	   }
-	   /**
-	    * 加班申请
-	    * @param jsonString
-	    * @param request
-	    * @return
-	    */
-		@RequestMapping(value = "/overtimeApplication",produces="application/json;charset=utf-8",method=RequestMethod.POST)
-	   public Map<String,Object> overtimeApplication(@RequestBody String jsonString ,HttpServletRequest request) {
-			Map<String,Object> result = new HashMap<String,Object>();
-			try{
-			GainData data = new GainData(jsonString, request);
-			String employeeId = data.getData("accessUserId").toString();//员工id
-			String companyId = data.getData("companyId").toString();//公司id
-			return result;
-			}catch(Exception e){
-				logger.info(e);
-				result.put("message", "服务器错误");
-				result.put("returnCode", "3001");
-				return result;
-			}
-	   }
-	   /**
-	    * 出差申请
-	    * @param jsonString
-	    * @param request
-	    * @return
-	    */
-		@RequestMapping(value = "/businessTravelApplication",produces="application/json;charset=utf-8",method=RequestMethod.POST)
-		public Map<String,Object> businessTravelApplication(@RequestBody String jsonString ,HttpServletRequest request) {
-			Map<String,Object> result = new HashMap<String,Object>();
-			try{
-			GainData data = new GainData(jsonString, request);
-			String employeeId = data.getData("accessUserId").toString();//员工id
-			String companyId = data.getData("companyId").toString();//公司id
-			return result;
-			}catch(Exception e){
-				logger.info(e);
-				result.put("message", "服务器错误");
-				result.put("returnCode", "3001");
-				return result;
-			}
-		}
-		/**
-		 * 外出申请
-		 * @param jsonString
-		 * @param request
-		 * @return
-		 */
-		@RequestMapping(value = "/outgoingApplication",produces="application/json;charset=utf-8",method=RequestMethod.POST)
-		public Map<String,Object> outgoingApplication(@RequestBody String jsonString ,HttpServletRequest request) {
-			Map<String,Object> result = new HashMap<String,Object>();
-			try{
-			GainData data = new GainData(jsonString, request);
-			String employeeId = data.getData("accessUserId").toString();//员工id
-			String companyId = data.getData("companyId").toString();//公司id
-			return result;
-			}catch(Exception e){
-				logger.info(e);
-				result.put("message", "服务器错误");
-				result.put("returnCode", "3001");
-				return result;
-			}
-		}
-		/**
-		 * 补卡申请
-		 * @param jsonString
-		 * @param request
-		 * @return
-		 */
-		@RequestMapping(value = "/fillCardApplication",produces="application/json;charset=utf-8",method=RequestMethod.POST)
-		public Map<String,Object> fillCardApplication(@RequestBody String jsonString ,HttpServletRequest request) {
-			Map<String,Object> result = new HashMap<String,Object>();
-			try{
-			GainData data = new GainData(jsonString, request);
-			String employeeId = data.getData("accessUserId").toString();//员工id
-			String companyId = data.getData("companyId").toString();//公司id
-			return result;
-			}catch(Exception e){
-				logger.info(e);
-				result.put("message", "服务器错误");
-				result.put("returnCode", "3001");
-				return result;
-			}
-		}
+	   }*/
 		/**
 		 * 申请列表获取
 		 * @param jsonString
