@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiangshangban.organization.dao.CompanyDao">
+
+  <resultMap id="Company" type="com.xiangshangban.organization.bean.Company"> 
+  
+    <id column="company_id"  property="companyId" />
+    <result column="company_name"  property="companyName" />
+    <result column="company_english_name"  property="companyEnglishName" />
+    <result column="company_abbreviation_name"  property="companyAbbreviationName" />
+    <result column="company_address_detail"  property="companyAddressDetail" />
+    <result column="company_phone"  property="companyPhone" />
+    <result column="company_email"  property="companyEmail" />
+    <result column="company_postalcode"  property="companyPostalcode" />
+    <result column="company_logo"  property="companyLogo" />
+    <result column="company_business_license"  property="companyBusinessLicense" />
+    <result column="juridical_person"  property="juridicalPerson" />
+    <result column="brought_accoun"  property="broughtAccoun" />
+    <result column="registered_capital"  property="registeredCapital" />
+    <result column="join_date"  property="joinDate" />
+    <result column="company_state"  property="companyState" />
+    <result column="registration_number"  property="registrationNumber" />
+    <result column="business_registration_number"  property="businessRegistrationNumber" />
+    <result column="uniform_credit_code"  property="uniformCreditCode" />
+    <result column="type_enterprise"  property="typeEnterprise" />
+    <result column="taxpayer_registration_number"  property="taxpayerRegistrationNumber" />
+    <result column="industry_type"  property="industryType" />
+    <result column="begin_business_time"  property="beginBusinessTime" />
+    <result column="end_business_time"  property="endBusinessTime" />
+    <result column="dateof_approval"  property="dateofApproval" />
+    <result column="registration_authority"  property="registrationAuthority" />
+    <result column="registered_address"  property="registeredAddress" />
+    <result column="company_creat_time"  property="companyCreatTime" />
+    <result column="company_area"  property="companyArea" />
+    <result column="company_code"  property="companyCode" />
+    <result column="company_approve"  property="companyApprove" />
+    <result column="company_personal_name"  property="companyPersonalName" />
+    <result column="user_name"  property="userName" />
+    <result column="company_no"  property="companyNo" /> 
+    <result column="userid"  property="userId" /> 
+     <result column="account"  property="Account" />
+          
+  </resultMap> 
+  <sql id="Base_Column_List">    
+    company_id, company_name, company_english_name, company_abbreviation_name, company_address_detail, 
+    company_phone, company_email, company_postalcode, company_logo, company_business_license, 
+    juridical_person, brought_accoun, registered_capital, join_date, company_state, registration_number, 
+    business_registration_number, uniform_credit_code, type_enterprise, taxpayer_registration_number, 
+    industry_type, begin_business_time, end_business_time, dateof_approval, registration_authority, 
+    registered_address,company_creat_time,company_personal_name,company_no
+  </sql>
+      
+  <!-- 查询一个人加入了哪些公司 -->
+  <select id="selectByUserCompany" parameterType="java.lang.String" resultMap="Company">  
+   select 
+s.userid,s.account,u.company_id,c.company_name
+from organization.company_ c 
+LEFT JOIN organization.user_company u on c.company_id=u.company_id 
+LEFT JOIN organization.u_users s on u.user_id=s.userid
+where 
+s.userid =(select s.userid from organization.u_users s where s.account=#{Account})
+  </select>
+   
+  <!-- 查询一个公司详细信息 -->
+  <select id="selectByCompany" parameterType="java.lang.String" resultMap="Company">  
+    select 
+     company_id, company_name,company_abbreviation_name,company_phone,company_personal_name,industry_type,
+     company_no,company_area,company_personal_name,user_name,company_logo,company_code
+    from organization.company_
+    where 
+    company_id = #{companyId}
+  </select>
+  
+  
+  <select id="findBycompanyNo" parameterType="java.lang.String" resultMap="Company">
+    select 
+    c.company_no
+    from organization.company_ c
+    where 
+    c.company_no = #{companyNo}
+  </select>
+  
+  
+  <select id="fingdByAllCompany"  resultMap="Company">  
+    select 
+     company_id, company_name,company_abbreviation_name,company_phone,company_personal_name,industry_type,
+     company_no,company_area,company_personal_name,user_name
+    from organization.company_   
+  </select>
+  
+  <delete id="deleteByCompany" parameterType="java.lang.String"> 
+    delete from organization.company_
+    where 
+    company_id = #{companyId}
+  </delete>
+  
+</mapper>

@@ -19,17 +19,4 @@ public interface ApplicationLeaveMapper {
 	
 	
 	
-	/** 系统 **/
-	
-    int deleteByPrimaryKey(String id);
-
-    int insert(ApplicationLeave record);
-
-    int insertSelective(ApplicationLeave record);
-
-    ApplicationLeave selectByPrimaryKey(String id);
-
-    int updateByPrimaryKeySelective(ApplicationLeave record);
-
-    int updateByPrimaryKey(ApplicationLeave record);
 }

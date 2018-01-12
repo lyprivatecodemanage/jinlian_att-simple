@@ -21,8 +21,6 @@ import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.service.ApplicationService;
 import com.xiangshangban.att_simple.utils.FormatUtil;
 import com.xiangshangban.att_simple.utils.GainData;
-import com.xiangshangban.att_simple.utils.RegexUtil;
-import com.xiangshangban.att_simple.utils.TimeUtil;
 /**
  * 
  * @author 李业
@@ -35,7 +33,6 @@ public class ApplicationController {
 		private static final Logger logger = Logger.getLogger(ApplicationController.class);
 		@Autowired
 		private ApplicationService applicationService;
-		
 	
 		/**
 		 * app申请页面
@@ -81,19 +78,27 @@ public class ApplicationController {
 			}else if(data.getType()==1){
 				
 			}
-			if(application==null||StringUtils.isEmpty(application.getApplicaitonType())){
+			if(application==null||StringUtils.isEmpty(application.getApplicationType())){
 				result.put("message", "必传参数为空");
 				result.put("returnCode", "3006");
 				return result;
 			}
+			//系统当前时间
+			String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(System.currentTimeMillis()));
 			application.setApplicationId(employeeId);
 			application.setCompanyId(companyId);
+			application.setApplicationNo(FormatUtil.createUuid());
+			application.setOperaterId(companyId);//设置本次操作人id
+			application.setOperaterTime(date);
+			application.setApplicationTime(date);
+			application.setIsComplete("0");//未完成
 			//调用申请小时数计算
+			
 			//...
 			String applicationHour = "";//计算得出的申请小时数
 			application.setApplicationHour(applicationHour);
 			//申请类型{ 1:请假,2:加班,3:出差,4:外出,5:补卡 }
-			switch(application.getApplicaitonType()){
+			switch(application.getApplicationType()){
 			   case "1":
 				   result = applicationService.leaveApplication(application);
 				   break;
