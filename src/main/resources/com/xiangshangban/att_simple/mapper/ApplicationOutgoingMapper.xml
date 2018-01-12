@@ -1,55 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xiangshangban.att_simple.dao.LeaveApplicationRecordMapper">
-  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.LeaveApplicationRecord">
+<mapper namespace="com.xiangshangban.att_simple.dao.ApplicationOutgoingMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.ApplicationOutgoing">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="application_no" jdbcType="VARCHAR" property="applicationNo" />
     <result column="employee_id" jdbcType="VARCHAR" property="employeeId" />
     <result column="department_id" jdbcType="VARCHAR" property="departmentId" />
     <result column="company_id" jdbcType="VARCHAR" property="companyId" />
-    <result column="leave_type" jdbcType="VARCHAR" property="leaveType" />
+    <result column="outgoning_location" jdbcType="VARCHAR" property="outgoningLocation" />
     <result column="start_time" jdbcType="VARCHAR" property="startTime" />
     <result column="end_time" jdbcType="VARCHAR" property="endTime" />
     <result column="reason" jdbcType="VARCHAR" property="reason" />
     <result column="upload_voucher" jdbcType="VARCHAR" property="uploadVoucher" />
     <result column="approver" jdbcType="VARCHAR" property="approver" />
-    <result column="copy_to_person" jdbcType="VARCHAR" property="copyToPerson" />
     <result column="operater_time" jdbcType="VARCHAR" property="operaterTime" />
     <result column="is_transfer" jdbcType="VARCHAR" property="isTransfer" />
     <result column="application_hour" jdbcType="VARCHAR" property="applicationHour" />
     <result column="application_time" jdbcType="VARCHAR" property="applicationTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, application_no, employee_id, department_id, company_id, leave_type, start_time, 
-    end_time, reason, upload_voucher, approver, copy_to_person, operater_time, is_transfer, 
-    application_hour, application_time
+    id, application_no, employee_id, department_id, company_id, outgoning_location, start_time, 
+    end_time, reason, upload_voucher, approver, operater_time, is_transfer, application_hour, 
+    application_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from leave_application_record_
+    from application_outgoing_
     where id = #{id,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from leave_application_record_
+    delete from application_outgoing_
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.LeaveApplicationRecord">
-    insert into leave_application_record_ (id, application_no, employee_id, 
-      department_id, company_id, leave_type, 
+  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.ApplicationOutgoing">
+    insert into application_outgoing_ (id, application_no, employee_id, 
+      department_id, company_id, outgoning_location, 
       start_time, end_time, reason, 
-      upload_voucher, approver, copy_to_person, 
-      operater_time, is_transfer, application_hour, 
-      application_time)
+      upload_voucher, approver, operater_time, 
+      is_transfer, application_hour, application_time
+      )
     values (#{id,jdbcType=VARCHAR}, #{applicationNo,jdbcType=VARCHAR}, #{employeeId,jdbcType=VARCHAR}, 
-      #{departmentId,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR}, #{leaveType,jdbcType=VARCHAR}, 
+      #{departmentId,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR}, #{outgoningLocation,jdbcType=VARCHAR}, 
       #{startTime,jdbcType=VARCHAR}, #{endTime,jdbcType=VARCHAR}, #{reason,jdbcType=VARCHAR}, 
-      #{uploadVoucher,jdbcType=VARCHAR}, #{approver,jdbcType=VARCHAR}, #{copyToPerson,jdbcType=VARCHAR}, 
-      #{operaterTime,jdbcType=VARCHAR}, #{isTransfer,jdbcType=VARCHAR}, #{applicationHour,jdbcType=VARCHAR}, 
-      #{applicationTime,jdbcType=VARCHAR})
+      #{uploadVoucher,jdbcType=VARCHAR}, #{approver,jdbcType=VARCHAR}, #{operaterTime,jdbcType=VARCHAR}, 
+      #{isTransfer,jdbcType=VARCHAR}, #{applicationHour,jdbcType=VARCHAR}, #{applicationTime,jdbcType=VARCHAR}
+      )
   </insert>
-  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.LeaveApplicationRecord">
-    insert into leave_application_record_
+  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationOutgoing">
+    insert into application_outgoing_
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -66,8 +65,8 @@
       <if test="companyId != null">
         company_id,
       </if>
-      <if test="leaveType != null">
-        leave_type,
+      <if test="outgoningLocation != null">
+        outgoning_location,
       </if>
       <if test="startTime != null">
         start_time,
@@ -83,9 +82,6 @@
       </if>
       <if test="approver != null">
         approver,
-      </if>
-      <if test="copyToPerson != null">
-        copy_to_person,
       </if>
       <if test="operaterTime != null">
         operater_time,
@@ -116,8 +112,8 @@
       <if test="companyId != null">
         #{companyId,jdbcType=VARCHAR},
       </if>
-      <if test="leaveType != null">
-        #{leaveType,jdbcType=VARCHAR},
+      <if test="outgoningLocation != null">
+        #{outgoningLocation,jdbcType=VARCHAR},
       </if>
       <if test="startTime != null">
         #{startTime,jdbcType=VARCHAR},
@@ -134,9 +130,6 @@
       <if test="approver != null">
         #{approver,jdbcType=VARCHAR},
       </if>
-      <if test="copyToPerson != null">
-        #{copyToPerson,jdbcType=VARCHAR},
-      </if>
       <if test="operaterTime != null">
         #{operaterTime,jdbcType=VARCHAR},
       </if>
@@ -151,8 +144,8 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.LeaveApplicationRecord">
-    update leave_application_record_
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationOutgoing">
+    update application_outgoing_
     <set>
       <if test="applicationNo != null">
         application_no = #{applicationNo,jdbcType=VARCHAR},
@@ -166,8 +159,8 @@
       <if test="companyId != null">
         company_id = #{companyId,jdbcType=VARCHAR},
       </if>
-      <if test="leaveType != null">
-        leave_type = #{leaveType,jdbcType=VARCHAR},
+      <if test="outgoningLocation != null">
+        outgoning_location = #{outgoningLocation,jdbcType=VARCHAR},
       </if>
       <if test="startTime != null">
         start_time = #{startTime,jdbcType=VARCHAR},
@@ -184,9 +177,6 @@
       <if test="approver != null">
         approver = #{approver,jdbcType=VARCHAR},
       </if>
-      <if test="copyToPerson != null">
-        copy_to_person = #{copyToPerson,jdbcType=VARCHAR},
-      </if>
       <if test="operaterTime != null">
         operater_time = #{operaterTime,jdbcType=VARCHAR},
       </if>
@@ -202,19 +192,18 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.LeaveApplicationRecord">
-    update leave_application_record_
+  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ApplicationOutgoing">
+    update application_outgoing_
     set application_no = #{applicationNo,jdbcType=VARCHAR},
       employee_id = #{employeeId,jdbcType=VARCHAR},
       department_id = #{departmentId,jdbcType=VARCHAR},
       company_id = #{companyId,jdbcType=VARCHAR},
-      leave_type = #{leaveType,jdbcType=VARCHAR},
+      outgoning_location = #{outgoningLocation,jdbcType=VARCHAR},
       start_time = #{startTime,jdbcType=VARCHAR},
       end_time = #{endTime,jdbcType=VARCHAR},
       reason = #{reason,jdbcType=VARCHAR},
       upload_voucher = #{uploadVoucher,jdbcType=VARCHAR},
       approver = #{approver,jdbcType=VARCHAR},
-      copy_to_person = #{copyToPerson,jdbcType=VARCHAR},
       operater_time = #{operaterTime,jdbcType=VARCHAR},
       is_transfer = #{isTransfer,jdbcType=VARCHAR},
       application_hour = #{applicationHour,jdbcType=VARCHAR},

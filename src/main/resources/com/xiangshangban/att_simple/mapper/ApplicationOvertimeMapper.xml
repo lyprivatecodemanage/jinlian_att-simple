@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xiangshangban.att_simple.dao.BusinessTravelApplicationRecordMapper">
-  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.BusinessTravelApplicationRecord">
+<mapper namespace="com.xiangshangban.att_simple.dao.ApplicationOvertimeMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.ApplicationOvertime">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="application_no" jdbcType="VARCHAR" property="applicationNo" />
     <result column="employee_id" jdbcType="VARCHAR" property="employeeId" />
     <result column="department_id" jdbcType="VARCHAR" property="departmentId" />
     <result column="company_id" jdbcType="VARCHAR" property="companyId" />
-    <result column="business_travel_type" jdbcType="VARCHAR" property="businessTravelType" />
+    <result column="overtime_type" jdbcType="VARCHAR" property="overtimeType" />
     <result column="start_time" jdbcType="VARCHAR" property="startTime" />
     <result column="end_time" jdbcType="VARCHAR" property="endTime" />
     <result column="reason" jdbcType="VARCHAR" property="reason" />
@@ -19,36 +19,36 @@
     <result column="application_time" jdbcType="VARCHAR" property="applicationTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, application_no, employee_id, department_id, company_id, business_travel_type, 
-    start_time, end_time, reason, upload_voucher, approver, operater_time, is_transfer, 
-    application_hour, application_time
+    id, application_no, employee_id, department_id, company_id, overtime_type, start_time, 
+    end_time, reason, upload_voucher, approver, operater_time, is_transfer, application_hour, 
+    application_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from business_travel_application_record_
+    from application_overtime_
     where id = #{id,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from business_travel_application_record_
+    delete from application_overtime_
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.BusinessTravelApplicationRecord">
-    insert into business_travel_application_record_ (id, application_no, employee_id, 
-      department_id, company_id, business_travel_type, 
+  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.ApplicationOvertime">
+    insert into application_overtime_ (id, application_no, employee_id, 
+      department_id, company_id, overtime_type, 
       start_time, end_time, reason, 
       upload_voucher, approver, operater_time, 
       is_transfer, application_hour, application_time
       )
     values (#{id,jdbcType=VARCHAR}, #{applicationNo,jdbcType=VARCHAR}, #{employeeId,jdbcType=VARCHAR}, 
-      #{departmentId,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR}, #{businessTravelType,jdbcType=VARCHAR}, 
+      #{departmentId,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR}, #{overtimeType,jdbcType=VARCHAR}, 
       #{startTime,jdbcType=VARCHAR}, #{endTime,jdbcType=VARCHAR}, #{reason,jdbcType=VARCHAR}, 
       #{uploadVoucher,jdbcType=VARCHAR}, #{approver,jdbcType=VARCHAR}, #{operaterTime,jdbcType=VARCHAR}, 
       #{isTransfer,jdbcType=VARCHAR}, #{applicationHour,jdbcType=VARCHAR}, #{applicationTime,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.BusinessTravelApplicationRecord">
-    insert into business_travel_application_record_
+  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationOvertime">
+    insert into application_overtime_
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -65,8 +65,8 @@
       <if test="companyId != null">
         company_id,
       </if>
-      <if test="businessTravelType != null">
-        business_travel_type,
+      <if test="overtimeType != null">
+        overtime_type,
       </if>
       <if test="startTime != null">
         start_time,
@@ -112,8 +112,8 @@
       <if test="companyId != null">
         #{companyId,jdbcType=VARCHAR},
       </if>
-      <if test="businessTravelType != null">
-        #{businessTravelType,jdbcType=VARCHAR},
+      <if test="overtimeType != null">
+        #{overtimeType,jdbcType=VARCHAR},
       </if>
       <if test="startTime != null">
         #{startTime,jdbcType=VARCHAR},
@@ -144,8 +144,8 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.BusinessTravelApplicationRecord">
-    update business_travel_application_record_
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationOvertime">
+    update application_overtime_
     <set>
       <if test="applicationNo != null">
         application_no = #{applicationNo,jdbcType=VARCHAR},
@@ -159,8 +159,8 @@
       <if test="companyId != null">
         company_id = #{companyId,jdbcType=VARCHAR},
       </if>
-      <if test="businessTravelType != null">
-        business_travel_type = #{businessTravelType,jdbcType=VARCHAR},
+      <if test="overtimeType != null">
+        overtime_type = #{overtimeType,jdbcType=VARCHAR},
       </if>
       <if test="startTime != null">
         start_time = #{startTime,jdbcType=VARCHAR},
@@ -192,13 +192,13 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.BusinessTravelApplicationRecord">
-    update business_travel_application_record_
+  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ApplicationOvertime">
+    update application_overtime_
     set application_no = #{applicationNo,jdbcType=VARCHAR},
       employee_id = #{employeeId,jdbcType=VARCHAR},
       department_id = #{departmentId,jdbcType=VARCHAR},
       company_id = #{companyId,jdbcType=VARCHAR},
-      business_travel_type = #{businessTravelType,jdbcType=VARCHAR},
+      overtime_type = #{overtimeType,jdbcType=VARCHAR},
       start_time = #{startTime,jdbcType=VARCHAR},
       end_time = #{endTime,jdbcType=VARCHAR},
       reason = #{reason,jdbcType=VARCHAR},

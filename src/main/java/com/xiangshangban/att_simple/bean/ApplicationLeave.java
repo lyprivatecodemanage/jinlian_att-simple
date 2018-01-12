@@ -1,10 +1,10 @@
 package com.xiangshangban.att_simple.bean;
 
 /**
- * 出差申请记录表
+ * 请假申请记录表
  * @author mian
  */
-public class BusinessTravelApplicationRecord {
+public class ApplicationLeave {
 	//uuid
     private String id;
     //申请单号(uuid)
@@ -15,18 +15,20 @@ public class BusinessTravelApplicationRecord {
     private String departmentId;
     //申请人公司id
     private String companyId;
-    //出差类型(1:短期出差;2:长期出差)
-    private String businessTravelType;
+    //请假类型(1:事假;2:年假;3:调休假;4:婚假;5:产假;6:丧假)
+    private String leaveType;
     //开始时间
     private String startTime;
     //结束时间
     private String endTime;
-    //出差说明
+    //请假说明
     private String reason;
-    //上传的出差凭证(key)
+    //上传的凭证
     private String uploadVoucher;
     //审批人id
     private String approver;
+    //抄送人id
+    private String copyToPerson;
     //操作时间
     private String operaterTime;
     //是否转移(0:否;1:是)
@@ -76,12 +78,12 @@ public class BusinessTravelApplicationRecord {
         this.companyId = companyId;
     }
 
-    public String getBusinessTravelType() {
-        return businessTravelType;
+    public String getLeaveType() {
+        return leaveType;
     }
 
-    public void setBusinessTravelType(String businessTravelType) {
-        this.businessTravelType = businessTravelType;
+    public void setLeaveType(String leaveType) {
+        this.leaveType = leaveType;
     }
 
     public String getStartTime() {
@@ -122,6 +124,14 @@ public class BusinessTravelApplicationRecord {
 
     public void setApprover(String approver) {
         this.approver = approver;
+    }
+
+    public String getCopyToPerson() {
+        return copyToPerson;
+    }
+
+    public void setCopyToPerson(String copyToPerson) {
+        this.copyToPerson = copyToPerson;
     }
 
     public String getOperaterTime() {

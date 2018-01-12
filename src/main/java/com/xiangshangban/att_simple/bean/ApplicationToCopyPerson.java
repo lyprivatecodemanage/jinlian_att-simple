@@ -4,7 +4,7 @@ package com.xiangshangban.att_simple.bean;
  * 申请单抄送人联系表
  * @author mian
  */
-public class CopyPersonWithApplication {
+public class ApplicationToCopyPerson {
 	//uuid
     private String id;
     //申请单号

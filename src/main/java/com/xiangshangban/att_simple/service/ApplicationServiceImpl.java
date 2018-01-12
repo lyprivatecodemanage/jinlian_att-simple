@@ -11,9 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.xiangshangban.att_simple.bean.ApplicationType;
 import com.xiangshangban.att_simple.dao.ApplicationTypeMapper;
-import com.xiangshangban.att_simple.dao.CopyPersonWithApplicationMapper;
-import com.xiangshangban.att_simple.dao.LeaveApplicationRecordMapper;
-import com.xiangshangban.att_simple.dao.TotalApplicationRecordMapper;
+import com.xiangshangban.att_simple.dao.ApplicationToCopyPersonMapper;
+import com.xiangshangban.att_simple.dao.ApplicationLeaveMapper;
+import com.xiangshangban.att_simple.dao.ApplicationTotalRecordMapper;
+import com.xiangshangban.att_simple.dao.VacationMapper;
 
 @Service("applicationTypeService")
 @Transactional 
@@ -22,11 +23,13 @@ public class ApplicationServiceImpl implements ApplicationService {
 	@Autowired
 	private ApplicationTypeMapper applicationTypeMapper;
 	@Autowired
-	private LeaveApplicationRecordMapper  leaveApplicationRecordDao;
+	private ApplicationLeaveMapper  leaveApplicationRecordDao;
 	@Autowired
-	private CopyPersonWithApplicationMapper  copyPersonWithApplicationMapper;
+	private ApplicationToCopyPersonMapper  copyPersonWithApplicationMapper;
 	@Autowired
-	private TotalApplicationRecordMapper totalApplicationRecordMapper;
+	private ApplicationTotalRecordMapper totalApplicationRecordMapper;
+	@Autowired
+	private VacationMapper vacationMapper;
 
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED,rollbackForClassName="Exception")
@@ -35,7 +38,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 		//查询申请类型
 		List<ApplicationType> applicationTypeList = applicationTypeMapper.getApplicationTypeList();
 		//查询年假剩余,年假额度,调休剩余,调休额度
-		//...
+		vacationMapper.SelectEmployeeVacation(companyId, deparmentId, employeeId);
 		result.put("applicaitonTypeList", applicationTypeList);
 		return result;
 	}

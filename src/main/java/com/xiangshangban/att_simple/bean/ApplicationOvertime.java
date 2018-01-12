@@ -4,7 +4,7 @@ package com.xiangshangban.att_simple.bean;
  * 加班申请记录表
  * @author mian
  */
-public class OvertimeApplicationRecord {
+public class ApplicationOvertime {
 	//uuid
     private String id;
     //申请单号(uuid)

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xiangshangban.att_simple.dao.CopyPersonWithApplicationMapper">
-  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.CopyPersonWithApplication">
+<mapper namespace="com.xiangshangban.att_simple.dao.ApplicationToCopyPersonMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.ApplicationToCopyPerson">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="application_no" jdbcType="VARCHAR" property="applicationNo" />
     <result column="copy_person_id" jdbcType="VARCHAR" property="copyPersonId" />
@@ -13,21 +13,21 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from copy_person_with_application_
+    from application_to_copy_person_
     where id = #{id,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from copy_person_with_application_
+    delete from application_to_copy_person_
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.CopyPersonWithApplication">
-    insert into copy_person_with_application_ (id, application_no, copy_person_id, 
+  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.ApplicationToCopyPerson">
+    insert into application_to_copy_person_ (id, application_no, copy_person_id, 
       operater_time)
     values (#{id,jdbcType=VARCHAR}, #{applicationNo,jdbcType=VARCHAR}, #{copyPersonId,jdbcType=VARCHAR}, 
       #{operaterTime,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.CopyPersonWithApplication">
-    insert into copy_person_with_application_
+  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationToCopyPerson">
+    insert into application_to_copy_person_
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -57,8 +57,8 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.CopyPersonWithApplication">
-    update copy_person_with_application_
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationToCopyPerson">
+    update application_to_copy_person_
     <set>
       <if test="applicationNo != null">
         application_no = #{applicationNo,jdbcType=VARCHAR},
@@ -72,8 +72,8 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.CopyPersonWithApplication">
-    update copy_person_with_application_
+  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ApplicationToCopyPerson">
+    update application_to_copy_person_
     set application_no = #{applicationNo,jdbcType=VARCHAR},
       copy_person_id = #{copyPersonId,jdbcType=VARCHAR},
       operater_time = #{operaterTime,jdbcType=VARCHAR}

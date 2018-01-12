@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xiangshangban.att_simple.dao.CommonSubmitPeopleMapper">
-  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.CommonSubmitPeople">
+<mapper namespace="com.xiangshangban.att_simple.dao.ApplicationCommonSubmitPeopleMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.ApplicationCommonSubmitPeople">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="employee_id" jdbcType="VARCHAR" property="employeeId" />
     <result column="company_id" jdbcType="VARCHAR" property="companyId" />
@@ -14,23 +14,23 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from common_submit_people_
+    from application_common_submit_people_
     where id = #{id,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from common_submit_people_
+    delete from application_common_submit_people_
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.CommonSubmitPeople">
-    insert into common_submit_people_ (id, employee_id, company_id, 
+  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.ApplicationCommonSubmitPeople">
+    insert into application_common_submit_people_ (id, employee_id, company_id, 
       common_commit_people_id, common_commit_people_name
       )
     values (#{id,jdbcType=VARCHAR}, #{employeeId,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR}, 
       #{commonCommitPeopleId,jdbcType=VARCHAR}, #{commonCommitPeopleName,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.CommonSubmitPeople">
-    insert into common_submit_people_
+  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationCommonSubmitPeople">
+    insert into application_common_submit_people_
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -66,8 +66,8 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.CommonSubmitPeople">
-    update common_submit_people_
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationCommonSubmitPeople">
+    update application_common_submit_people_
     <set>
       <if test="employeeId != null">
         employee_id = #{employeeId,jdbcType=VARCHAR},
@@ -84,8 +84,8 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.CommonSubmitPeople">
-    update common_submit_people_
+  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ApplicationCommonSubmitPeople">
+    update application_common_submit_people_
     set employee_id = #{employeeId,jdbcType=VARCHAR},
       company_id = #{companyId,jdbcType=VARCHAR},
       common_commit_people_id = #{commonCommitPeopleId,jdbcType=VARCHAR},

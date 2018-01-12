@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xiangshangban.att_simple.dao.TotalApplicationRecordMapper">
-  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.TotalApplicationRecord">
+<mapper namespace="com.xiangshangban.att_simple.dao.ApplicationTotalRecordMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.ApplicationTotalRecord">
     <id column="applcation_no"  property="applcationNo" />
     <result column="operater_time"  property="operaterTime" />
     <result column="operater_id"  property="operaterId" />
@@ -23,15 +23,15 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from total_application_record_
+    from application_total_record_
     where applcation_no = #{applcationNo}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from total_application_record_
+    delete from application_total_record_
     where applcation_no = #{applcationNo}
   </delete>
-  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.TotalApplicationRecord">
-    insert into total_application_record_ (applcation_no, operater_time, operater_id, 
+  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.ApplicationTotalRecord">
+    insert into application_total_record_ (applcation_no, operater_time, operater_id, 
       application_type, last_approver, is_copy, 
       application_id, company_id, is_reject, 
       application_status, reject_reason, is_transfer
@@ -42,8 +42,8 @@
       #{applicationStatus}, #{rejectReason}, #{isTransfer}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.TotalApplicationRecord">
-    insert into total_application_record_
+  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationTotalRecord">
+    insert into application_total_record_
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="applcationNo != null">
         applcation_no,
@@ -121,8 +121,8 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.TotalApplicationRecord">
-    update total_application_record_
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationTotalRecord">
+    update application_total_record_
     <set>
       <if test="operaterTime != null">
         operater_time = #{operaterTime},
@@ -160,8 +160,8 @@
     </set>
     where applcation_no = #{applcationNo}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.TotalApplicationRecord">
-    update total_application_record_
+  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ApplicationTotalRecord">
+    update application_total_record_
     set operater_time = #{operaterTime},
       operater_id = #{operaterId},
       application_type = #{applicationType},

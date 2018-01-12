@@ -20,7 +20,7 @@ public class Application {
 	private String approverNmae;//审批人姓名
 	//private String copyPersonId;//抄送人id
 	//private String copyPersonName;//抄送人姓名
-	private List<CopyPersonWithApplication> copyPersonWithApplicationList;//抄送人集合
+	private List<ApplicationToCopyPerson> copyPersonWithApplicationList;//抄送人集合
 	private String isCopy;//是否抄送(0:否;1:是)
 	private String isReject;//是否驳回(0:否;1:是)
 	private String isTransfer;//是否转移(0:否;1:是)
@@ -194,10 +194,10 @@ public class Application {
 	public void setApplcationHour(String applcationHour) {
 		this.applcationHour = applcationHour;
 	}
-	public List<CopyPersonWithApplication> getCopyPersonWithApplicationList() {
+	public List<ApplicationToCopyPerson> getCopyPersonWithApplicationList() {
 		return copyPersonWithApplicationList;
 	}
-	public void setCopyPersonWithApplicationList(List<CopyPersonWithApplication> copyPersonWithApplicationList) {
+	public void setCopyPersonWithApplicationList(List<ApplicationToCopyPerson> copyPersonWithApplicationList) {
 		this.copyPersonWithApplicationList = copyPersonWithApplicationList;
 	}
 	public List<ApplicationTransferRecord> getApplicationTransferRecordList() {
