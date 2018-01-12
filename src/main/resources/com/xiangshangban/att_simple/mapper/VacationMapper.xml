@@ -16,6 +16,11 @@
     adjust_rest_total, adjust_rest_balance
   </sql>
   
+  <sql id="Vacation_Employee_Column_List">
+    vacation_id, v.company_id, v.department_id, v.employee_id, annual_leave_total, annual_leave_balance, 
+    adjust_rest_total, adjust_rest_balance
+  </sql>
+  
   <!-- select -->
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -30,6 +35,23 @@
   	where company_id = #{companyId}
   	and department_id = #{deparmentId}
   	and employee_id = #{employeeId}
+  </select>
+  <select id="SelectFuzzyPagel" parameterType="com.xiangshangban.att_simple.bean.Vacation" resultMap="BaseResultMap">
+  	select
+  	<include refid="Vacation_Employee_Column_List"></include>
+  	from vacation 
+  	<where>
+  		<if test="companyId != null">
+  			v.company_id = companyId
+  		</if>
+  		<if test="departmentId != null">
+  			and v.company_id = departmentId
+  		</if>
+  		<if test="employeeId != null">
+  			and v.employee_id = employeeId
+  		</if>
+  	</where>
+  	模糊查询 ==》使用实体类中的属性对有值的属性进行模糊分页查询
   </select>
   
   <!-- delete -->
