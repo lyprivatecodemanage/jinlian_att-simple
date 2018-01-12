@@ -113,6 +113,4 @@ public class ApplicationServiceImpl implements ApplicationService {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	
 }
