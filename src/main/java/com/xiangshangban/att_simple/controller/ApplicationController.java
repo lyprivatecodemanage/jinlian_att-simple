@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.service.ApplicationService;
 import com.xiangshangban.att_simple.utils.FormatUtil;
@@ -60,12 +62,17 @@ public class ApplicationController {
 		public Map<String,Object> allTypeApplication(@RequestBody String jsonString ,HttpServletRequest request) {
 			Map<String,Object> result = new HashMap<String,Object>();
 			Map<String,String> params = new HashMap<String,String>();
-			Application application = new Application();
+			Application application = null;
 			GainData data = new GainData(jsonString, request);
 			if(data.getType()==0){
-				
+				application = JSON.parseObject(JSONObject.toJSONString(data.getResult()), Application.class);
 			}else if(data.getType()==1){
 				
+			}
+			if(application==null||StringUtils.isEmpty(application.getApplicaitonType())){
+				result.put("message", "必传参数为空");
+				result.put("returnCode", "3006");
+				return result;
 			}
 			//申请类型[ 1:请假,2:加班,3:出差,4:外出,5:补卡 ]
 			switch(application.getApplicaitonType()){

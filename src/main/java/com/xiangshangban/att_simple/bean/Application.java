@@ -194,6 +194,18 @@ public class Application {
 	public void setApplcationHour(String applcationHour) {
 		this.applcationHour = applcationHour;
 	}
+	public List<CopyPersonWithApplication> getCopyPersonWithApplicationList() {
+		return copyPersonWithApplicationList;
+	}
+	public void setCopyPersonWithApplicationList(List<CopyPersonWithApplication> copyPersonWithApplicationList) {
+		this.copyPersonWithApplicationList = copyPersonWithApplicationList;
+	}
+	public List<ApplicationTransferRecord> getApplicationTransferRecordList() {
+		return applicationTransferRecordList;
+	}
+	public void setApplicationTransferRecordList(List<ApplicationTransferRecord> applicationTransferRecordList) {
+		this.applicationTransferRecordList = applicationTransferRecordList;
+	}
 	
 	
 }
