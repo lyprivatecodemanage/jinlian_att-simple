@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiangshangban.att_simple.dao.ClassesEmployeeMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.ClassesEmployee">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="emp_id" jdbcType="VARCHAR" property="empId" />
+    <result column="emp_company_id" jdbcType="VARCHAR" property="empCompanyId" />
+    <result column="classes_id" jdbcType="VARCHAR" property="classesId" />
+    <result column="on_duty_scheduling_date" jdbcType="VARCHAR" property="onDutySchedulingDate" />
+    <result column="off_duty_scheduling_date" jdbcType="VARCHAR" property="offDutySchedulingDate" />
+    <result column="week" jdbcType="VARCHAR" property="week" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, emp_id, emp_company_id, classes_id, on_duty_scheduling_date, off_duty_scheduling_date, 
+    week
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from classes_employee_
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from classes_employee_
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.ClassesEmployee">
+    insert into classes_employee_ (id, emp_id, emp_company_id, 
+      classes_id, on_duty_scheduling_date, off_duty_scheduling_date, 
+      week)
+    values (#{id,jdbcType=VARCHAR}, #{empId,jdbcType=VARCHAR}, #{empCompanyId,jdbcType=VARCHAR}, 
+      #{classesId,jdbcType=VARCHAR}, #{onDutySchedulingDate,jdbcType=VARCHAR}, #{offDutySchedulingDate,jdbcType=VARCHAR}, 
+      #{week,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ClassesEmployee">
+    insert into classes_employee_
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="empId != null">
+        emp_id,
+      </if>
+      <if test="empCompanyId != null">
+        emp_company_id,
+      </if>
+      <if test="classesId != null">
+        classes_id,
+      </if>
+      <if test="onDutySchedulingDate != null">
+        on_duty_scheduling_date,
+      </if>
+      <if test="offDutySchedulingDate != null">
+        off_duty_scheduling_date,
+      </if>
+      <if test="week != null">
+        week,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="empId != null">
+        #{empId,jdbcType=VARCHAR},
+      </if>
+      <if test="empCompanyId != null">
+        #{empCompanyId,jdbcType=VARCHAR},
+      </if>
+      <if test="classesId != null">
+        #{classesId,jdbcType=VARCHAR},
+      </if>
+      <if test="onDutySchedulingDate != null">
+        #{onDutySchedulingDate,jdbcType=VARCHAR},
+      </if>
+      <if test="offDutySchedulingDate != null">
+        #{offDutySchedulingDate,jdbcType=VARCHAR},
+      </if>
+      <if test="week != null">
+        #{week,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.ClassesEmployee">
+    update classes_employee_
+    <set>
+      <if test="empId != null">
+        emp_id = #{empId,jdbcType=VARCHAR},
+      </if>
+      <if test="empCompanyId != null">
+        emp_company_id = #{empCompanyId,jdbcType=VARCHAR},
+      </if>
+      <if test="classesId != null">
+        classes_id = #{classesId,jdbcType=VARCHAR},
+      </if>
+      <if test="onDutySchedulingDate != null">
+        on_duty_scheduling_date = #{onDutySchedulingDate,jdbcType=VARCHAR},
+      </if>
+      <if test="offDutySchedulingDate != null">
+        off_duty_scheduling_date = #{offDutySchedulingDate,jdbcType=VARCHAR},
+      </if>
+      <if test="week != null">
+        week = #{week,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ClassesEmployee">
+    update classes_employee_
+    set emp_id = #{empId,jdbcType=VARCHAR},
+      emp_company_id = #{empCompanyId,jdbcType=VARCHAR},
+      classes_id = #{classesId,jdbcType=VARCHAR},
+      on_duty_scheduling_date = #{onDutySchedulingDate,jdbcType=VARCHAR},
+      off_duty_scheduling_date = #{offDutySchedulingDate,jdbcType=VARCHAR},
+      week = #{week,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>
