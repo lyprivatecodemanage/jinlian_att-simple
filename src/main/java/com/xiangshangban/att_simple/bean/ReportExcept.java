@@ -5,11 +5,11 @@ public class ReportExcept {
 
     private String employeeId;
 
-    private String exceptDate;
+    private String exceptDate;//异常日期
 
-    private String exceptTime;
+    private String exceptTime;//异常具体时间（迟到、早退）
 
-    private String exceptType;
+    private String exceptType;//异常类型
 
     private String lackTime;
 
