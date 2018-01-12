@@ -2,7 +2,7 @@ package com.xiangshangban.att_simple.bean;
 
 import java.util.List;
 
-public class Applicaiton {
+public class Application {
 	private String applicaitonNo;//申请单号
 	private String applicationId;//申请人id
 	private String applicatrionPersonName;//申请人姓名

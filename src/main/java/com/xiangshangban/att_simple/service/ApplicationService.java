@@ -16,4 +16,30 @@ public interface ApplicationService {
 	 * @return
 	 */
 	Map<String,Object> leaveApplication(Map<String,String> params);
+	/**
+	 * 加班申请
+	 * @param params
+	 * @return
+	 */
+	Map<String,Object> overTimeApplication(Map<String,String> params);
+	/**
+	 * 出差申请
+	 * @param params
+	 * @return
+	 */
+	Map<String,Object> businessTravelApplication(Map<String,String> params);
+	/**
+	 * 外出申请
+	 * @param params
+	 * @return
+	 */
+	Map<String,Object> outgoingApplication(Map<String,String> params);
+	/**
+	 * 补卡申请
+	 * @param params
+	 * @return
+	 */
+	Map<String,Object> fillCardApplication(Map<String,String> params);
+	
+	
 }

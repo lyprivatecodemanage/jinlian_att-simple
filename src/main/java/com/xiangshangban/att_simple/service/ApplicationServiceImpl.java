@@ -49,5 +49,29 @@ public class ApplicationServiceImpl implements ApplicationService {
 		return result;
 	}
 
+	@Override
+	public Map<String, Object> overTimeApplication(Map<String, String> params) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, Object> businessTravelApplication(Map<String, String> params) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, Object> outgoingApplication(Map<String, String> params) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, Object> fillCardApplication(Map<String, String> params) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 }
