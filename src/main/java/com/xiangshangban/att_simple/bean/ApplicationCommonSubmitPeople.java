@@ -4,7 +4,7 @@ package com.xiangshangban.att_simple.bean;
  * 常用提交人记录表
  * @author mian
  */
-public class CommonSubmitPeople {
+public class ApplicationCommonSubmitPeople {
 	//uuid
     private String id;
     //员工id

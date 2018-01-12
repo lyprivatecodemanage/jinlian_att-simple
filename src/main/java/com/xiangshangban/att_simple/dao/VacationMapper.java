@@ -22,7 +22,13 @@ public interface VacationMapper {
     
     /*-------------------------------------华丽的分割线-----------------------------------------*/
     
-    //按照公司ID、部门ID、人员ID查询单条假期记录
+    /**
+     * 按照公司ID、部门ID、人员ID查询单条假期记录
+     * @param companyId
+     * @param deparmentId
+     * @param employeeId
+     * @return
+     */
     Vacation SelectEmployeeVacation(@Param("companyId")String companyId,@Param("deparmentId")String deparmentId,@Param("employeeId")String employeeId);
     
 }

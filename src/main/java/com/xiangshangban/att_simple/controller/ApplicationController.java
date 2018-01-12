@@ -15,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.service.ApplicationService;
 import com.xiangshangban.att_simple.utils.FormatUtil;
 import com.xiangshangban.att_simple.utils.GainData;
 import com.xiangshangban.att_simple.utils.RegexUtil;
 import com.xiangshangban.att_simple.utils.TimeUtil;
-import com.xiangshangban.organization.bean.Employee;
 /**
  * 
  * @author 李业
@@ -55,33 +57,63 @@ public class ApplicationController {
 			result = applicationService.applicationIndexPage(employeeId, companyId);
 			return result;
 		}
-		
+		/**
+		 * 请假,加班,出差,外出,补卡申请
+		 * @param jsonString
+		 * @param request
+		 * @return
+		 */
 		@RequestMapping(value = "/allTypeApplication",produces="application/json;charset=utf-8",method=RequestMethod.POST)
 		public Map<String,Object> allTypeApplication(@RequestBody String jsonString ,HttpServletRequest request) {
 			Map<String,Object> result = new HashMap<String,Object>();
 			Map<String,String> params = new HashMap<String,String>();
-			
-			
-			String applicationType = "";
-			//申请类型[ 1:请假,2:加班,3:出差,4:外出,5:补卡 ]
-			switch(applicationType){
+			String employeeId = request.getHeader("accessUserId");
+			String companyId = request.getHeader("companyId");
+			if(StringUtils.isEmpty(companyId)||StringUtils.isEmpty(employeeId)){
+				result.put("message", "请求头参数缺失");
+				result.put("returnCode", "3013");
+				return result;
+			}
+			Application application = null;
+			GainData data = new GainData(jsonString, request);
+			if(data.getType()==0){
+				application = JSON.parseObject(JSONObject.toJSONString(data.getResult()), Application.class);
+			}else if(data.getType()==1){
+				
+			}
+			if(application==null||StringUtils.isEmpty(application.getApplicaitonType())){
+				result.put("message", "必传参数为空");
+				result.put("returnCode", "3006");
+				return result;
+			}
+			application.setApplicationId(employeeId);
+			application.setCompanyId(companyId);
+			//调用申请小时数计算
+			//...
+			String applicationHour = "";//计算得出的申请小时数
+			application.setApplicationHour(applicationHour);
+			//申请类型{ 1:请假,2:加班,3:出差,4:外出,5:补卡 }
+			switch(application.getApplicaitonType()){
 			   case "1":
-				   result = applicationService.leaveApplication(params);
+				   result = applicationService.leaveApplication(application);
 				   break;
 			   case "2":
-				   
+				   result = applicationService.overTimeApplication(params);
 				   break;
 			   case "3":
+				   result = applicationService.businessTravelApplication(params);
 				   break;
 			   case "4":
+				   result = applicationService.outgoingApplication(params);
 				   break;
 			   case "5":
+				   result = applicationService.fillCardApplication(params);
 				   break;
 			   default :
+				   result.put("message", "必传参数为空");
+				   result.put("returnCode", "3006");
 				   break;
 			}
-			
-			
 			
 			return result;
 		}

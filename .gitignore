@@ -8,7 +8,7 @@ target/
 .project
 .settings/
 .springBeans
-src/main/resources/config/generatorConfig.xml
+src/main/resources/con<!--  -->fig/generatorConfig.xml
 
 ### IntelliJ IDEA ###
 .idea

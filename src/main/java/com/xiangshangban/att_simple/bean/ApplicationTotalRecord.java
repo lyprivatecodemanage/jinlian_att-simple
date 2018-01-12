@@ -3,7 +3,7 @@ package com.xiangshangban.att_simple.bean;
  * 申请记录汇总表
  * @author mian
  */
-public class TotalApplicationRecord {
+public class ApplicationTotalRecord {
 
 	//申请单号(uuid)
     private String applcationNo;

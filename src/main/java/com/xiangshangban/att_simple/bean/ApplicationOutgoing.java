@@ -4,7 +4,7 @@ package com.xiangshangban.att_simple.bean;
  * 外出申请记录表
  * @author mian
  */
-public class OutgoingApplicationRecord {
+public class ApplicationOutgoing {
 	//uuid
     private String id;
     //申请单号(uuid)

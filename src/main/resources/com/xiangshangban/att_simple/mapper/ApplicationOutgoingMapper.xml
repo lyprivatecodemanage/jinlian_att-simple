@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xiangshangban.att_simple.dao.OutgoingApplicationRecordMapper">
-  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.OutgoingApplicationRecord">
+<mapper namespace="com.xiangshangban.att_simple.dao.ApplicationOutgoingMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.ApplicationOutgoing">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="application_no" jdbcType="VARCHAR" property="applicationNo" />
     <result column="employee_id" jdbcType="VARCHAR" property="employeeId" />
@@ -26,15 +26,15 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from outgoing_application_record_
+    from application_outgoing_
     where id = #{id,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from outgoing_application_record_
+    delete from application_outgoing_
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.OutgoingApplicationRecord">
-    insert into outgoing_application_record_ (id, application_no, employee_id, 
+  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.ApplicationOutgoing">
+    insert into application_outgoing_ (id, application_no, employee_id, 
       department_id, company_id, outgoning_location, 
       start_time, end_time, reason, 
       upload_voucher, approver, operater_time, 
@@ -47,8 +47,8 @@
       #{isTransfer,jdbcType=VARCHAR}, #{applicationHour,jdbcType=VARCHAR}, #{applicationTime,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.OutgoingApplicationRecord">
-    insert into outgoing_application_record_
+  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationOutgoing">
+    insert into application_outgoing_
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -144,8 +144,8 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.OutgoingApplicationRecord">
-    update outgoing_application_record_
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationOutgoing">
+    update application_outgoing_
     <set>
       <if test="applicationNo != null">
         application_no = #{applicationNo,jdbcType=VARCHAR},
@@ -192,8 +192,8 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.OutgoingApplicationRecord">
-    update outgoing_application_record_
+  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ApplicationOutgoing">
+    update application_outgoing_
     set application_no = #{applicationNo,jdbcType=VARCHAR},
       employee_id = #{employeeId,jdbcType=VARCHAR},
       department_id = #{departmentId,jdbcType=VARCHAR},
