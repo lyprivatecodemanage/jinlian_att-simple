@@ -1,12 +1,10 @@
 package com.xiangshangban.att_simple.controller;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.xiangshangban.att_simple.bean.Application;
+import com.xiangshangban.att_simple.service.ApplicationService;
+import com.xiangshangban.att_simple.utils.GainData;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.xiangshangban.att_simple.bean.Application;
-import com.xiangshangban.att_simple.service.ApplicationService;
-import com.xiangshangban.att_simple.utils.FormatUtil;
-import com.xiangshangban.att_simple.utils.GainData;
-import com.xiangshangban.att_simple.utils.RegexUtil;
-import com.xiangshangban.att_simple.utils.TimeUtil;
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 /**
  * 
  * @author 李业
@@ -219,5 +212,4 @@ public class ApplicationController {
 				return result;
 			}
 		}
-
 	}

@@ -1,19 +1,19 @@
 package com.xiangshangban.att_simple.bean;
 
 public class ClassesEmployee {
-    private String id;
+    private String id; //主键
 
-    private String empId;
+    private String empId;//人员ID
 
-    private String empCompanyId;
+    private String empCompanyId;//人员公司ID
 
-    private String classesId;
+    private String classesId;//该人员使用的班次类型
 
-    private String onDutySchedulingDate;
+    private String onDutySchedulingDate;//该班次的上班时间（一个人的班次类型是不能够更改的，但是班次的上下班时间是可以进行微调的）
 
-    private String offDutySchedulingDate;
+    private String offDutySchedulingDate;//该班次下班时间
 
-    private String week;
+    private String week;//上班时间所在日期的星期
 
     private ClassesType classesType;
     public String getId() {
