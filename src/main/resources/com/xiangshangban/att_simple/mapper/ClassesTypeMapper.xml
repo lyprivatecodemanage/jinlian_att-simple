@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiangshangban.att_simple.dao.ClassesTypeMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.ClassesType">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="classes_name" jdbcType="VARCHAR" property="classesName" />
+    <result column="on_duty_time" jdbcType="VARCHAR" property="onDutyTime" />
+    <result column="off_duty_time" jdbcType="VARCHAR" property="offDutyTime" />
+    <result column="morrow_duty_time_flag" jdbcType="VARCHAR" property="morrowDutyTimeFlag" />
+    <result column="rest_time" jdbcType="VARCHAR" property="restTime" />
+    <result column="rest_days" jdbcType="VARCHAR" property="restDays" />
+    <result column="festival_rest_flag" jdbcType="VARCHAR" property="festivalRestFlag" />
+    <result column="sign_in_rule" jdbcType="VARCHAR" property="signInRule" />
+    <result column="sign_out_rule" jdbcType="VARCHAR" property="signOutRule" />
+    <result column="on_punch_card_time" jdbcType="VARCHAR" property="onPunchCardTime" />
+    <result column="off_punch_card_time" jdbcType="VARCHAR" property="offPunchCardTime" />
+    <result column="auto_classes_flag" jdbcType="VARCHAR" property="autoClassesFlag" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="company_id" jdbcType="VARCHAR" property="companyId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, classes_name, on_duty_time, off_duty_time, morrow_duty_time_flag, rest_time, 
+    rest_days, festival_rest_flag, sign_in_rule, sign_out_rule, on_punch_card_time, off_punch_card_time, 
+    auto_classes_flag, create_time, company_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from classes_type
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from classes_type
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.ClassesType">
+    insert into classes_type (id, classes_name, on_duty_time, 
+      off_duty_time, morrow_duty_time_flag, rest_time, 
+      rest_days, festival_rest_flag, sign_in_rule, 
+      sign_out_rule, on_punch_card_time, off_punch_card_time, 
+      auto_classes_flag, create_time, company_id
+      )
+    values (#{id,jdbcType=VARCHAR}, #{classesName,jdbcType=VARCHAR}, #{onDutyTime,jdbcType=VARCHAR}, 
+      #{offDutyTime,jdbcType=VARCHAR}, #{morrowDutyTimeFlag,jdbcType=VARCHAR}, #{restTime,jdbcType=VARCHAR}, 
+      #{restDays,jdbcType=VARCHAR}, #{festivalRestFlag,jdbcType=VARCHAR}, #{signInRule,jdbcType=VARCHAR}, 
+      #{signOutRule,jdbcType=VARCHAR}, #{onPunchCardTime,jdbcType=VARCHAR}, #{offPunchCardTime,jdbcType=VARCHAR}, 
+      #{autoClassesFlag,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ClassesType">
+    insert into classes_type
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="classesName != null">
+        classes_name,
+      </if>
+      <if test="onDutyTime != null">
+        on_duty_time,
+      </if>
+      <if test="offDutyTime != null">
+        off_duty_time,
+      </if>
+      <if test="morrowDutyTimeFlag != null">
+        morrow_duty_time_flag,
+      </if>
+      <if test="restTime != null">
+        rest_time,
+      </if>
+      <if test="restDays != null">
+        rest_days,
+      </if>
+      <if test="festivalRestFlag != null">
+        festival_rest_flag,
+      </if>
+      <if test="signInRule != null">
+        sign_in_rule,
+      </if>
+      <if test="signOutRule != null">
+        sign_out_rule,
+      </if>
+      <if test="onPunchCardTime != null">
+        on_punch_card_time,
+      </if>
+      <if test="offPunchCardTime != null">
+        off_punch_card_time,
+      </if>
+      <if test="autoClassesFlag != null">
+        auto_classes_flag,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="classesName != null">
+        #{classesName,jdbcType=VARCHAR},
+      </if>
+      <if test="onDutyTime != null">
+        #{onDutyTime,jdbcType=VARCHAR},
+      </if>
+      <if test="offDutyTime != null">
+        #{offDutyTime,jdbcType=VARCHAR},
+      </if>
+      <if test="morrowDutyTimeFlag != null">
+        #{morrowDutyTimeFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="restTime != null">
+        #{restTime,jdbcType=VARCHAR},
+      </if>
+      <if test="restDays != null">
+        #{restDays,jdbcType=VARCHAR},
+      </if>
+      <if test="festivalRestFlag != null">
+        #{festivalRestFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="signInRule != null">
+        #{signInRule,jdbcType=VARCHAR},
+      </if>
+      <if test="signOutRule != null">
+        #{signOutRule,jdbcType=VARCHAR},
+      </if>
+      <if test="onPunchCardTime != null">
+        #{onPunchCardTime,jdbcType=VARCHAR},
+      </if>
+      <if test="offPunchCardTime != null">
+        #{offPunchCardTime,jdbcType=VARCHAR},
+      </if>
+      <if test="autoClassesFlag != null">
+        #{autoClassesFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.ClassesType">
+    update classes_type
+    <set>
+      <if test="classesName != null">
+        classes_name = #{classesName,jdbcType=VARCHAR},
+      </if>
+      <if test="onDutyTime != null">
+        on_duty_time = #{onDutyTime,jdbcType=VARCHAR},
+      </if>
+      <if test="offDutyTime != null">
+        off_duty_time = #{offDutyTime,jdbcType=VARCHAR},
+      </if>
+      <if test="morrowDutyTimeFlag != null">
+        morrow_duty_time_flag = #{morrowDutyTimeFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="restTime != null">
+        rest_time = #{restTime,jdbcType=VARCHAR},
+      </if>
+      <if test="restDays != null">
+        rest_days = #{restDays,jdbcType=VARCHAR},
+      </if>
+      <if test="festivalRestFlag != null">
+        festival_rest_flag = #{festivalRestFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="signInRule != null">
+        sign_in_rule = #{signInRule,jdbcType=VARCHAR},
+      </if>
+      <if test="signOutRule != null">
+        sign_out_rule = #{signOutRule,jdbcType=VARCHAR},
+      </if>
+      <if test="onPunchCardTime != null">
+        on_punch_card_time = #{onPunchCardTime,jdbcType=VARCHAR},
+      </if>
+      <if test="offPunchCardTime != null">
+        off_punch_card_time = #{offPunchCardTime,jdbcType=VARCHAR},
+      </if>
+      <if test="autoClassesFlag != null">
+        auto_classes_flag = #{autoClassesFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ClassesType">
+    update classes_type
+    set classes_name = #{classesName,jdbcType=VARCHAR},
+      on_duty_time = #{onDutyTime,jdbcType=VARCHAR},
+      off_duty_time = #{offDutyTime,jdbcType=VARCHAR},
+      morrow_duty_time_flag = #{morrowDutyTimeFlag,jdbcType=VARCHAR},
+      rest_time = #{restTime,jdbcType=VARCHAR},
+      rest_days = #{restDays,jdbcType=VARCHAR},
+      festival_rest_flag = #{festivalRestFlag,jdbcType=VARCHAR},
+      sign_in_rule = #{signInRule,jdbcType=VARCHAR},
+      sign_out_rule = #{signOutRule,jdbcType=VARCHAR},
+      on_punch_card_time = #{onPunchCardTime,jdbcType=VARCHAR},
+      off_punch_card_time = #{offPunchCardTime,jdbcType=VARCHAR},
+      auto_classes_flag = #{autoClassesFlag,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=VARCHAR},
+      company_id = #{companyId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>
