@@ -1,0 +1,579 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiangshangban.att_simple.dao.ReportDailyMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.ReportDaily">
+    <id column="employee_id" jdbcType="VARCHAR" property="employeeId" />
+    <id column="company_id" jdbcType="VARCHAR" property="companyId" />
+    <id column="att_date" jdbcType="VARCHAR" property="attDate" />
+    <result column="report_id" jdbcType="VARCHAR" property="reportId" />
+    <result column="dept_id" jdbcType="VARCHAR" property="deptId" />
+    <result column="paiban_remark" jdbcType="VARCHAR" property="paibanRemark" />
+    <result column="check_info" jdbcType="VARCHAR" property="checkInfo" />
+    <result column="work_time" jdbcType="VARCHAR" property="workTime" />
+    <result column="real_work_time" jdbcType="VARCHAR" property="realWorkTime" />
+    <result column="real_attendance_time" jdbcType="VARCHAR" property="realAttendanceTime" />
+    <result column="late" jdbcType="VARCHAR" property="late" />
+    <result column="late_time" jdbcType="VARCHAR" property="lateTime" />
+    <result column="early" jdbcType="VARCHAR" property="early" />
+    <result column="early_time" jdbcType="VARCHAR" property="earlyTime" />
+    <result column="absent" jdbcType="VARCHAR" property="absent" />
+    <result column="absent_time" jdbcType="VARCHAR" property="absentTime" />
+    <result column="normal_over_work" jdbcType="VARCHAR" property="normalOverWork" />
+    <result column="week_over_work" jdbcType="VARCHAR" property="weekOverWork" />
+    <result column="holiday_over_work" jdbcType="VARCHAR" property="holidayOverWork" />
+    <result column="change_time" jdbcType="VARCHAR" property="changeTime" />
+    <result column="leave_absence" jdbcType="VARCHAR" property="leaveAbsence" />
+    <result column="leave_days_off" jdbcType="VARCHAR" property="leaveDaysOff" />
+    <result column="leave_annual" jdbcType="VARCHAR" property="leaveAnnual" />
+    <result column="leave_sick" jdbcType="VARCHAR" property="leaveSick" />
+    <result column="leave_marriage" jdbcType="VARCHAR" property="leaveMarriage" />
+    <result column="leave_maternity" jdbcType="VARCHAR" property="leaveMaternity" />
+    <result column="leave_maternity_check" jdbcType="VARCHAR" property="leaveMaternityCheck" />
+    <result column="leave_paternity" jdbcType="VARCHAR" property="leavePaternity" />
+    <result column="leave_funeral" jdbcType="VARCHAR" property="leaveFuneral" />
+    <result column="leave_nursing" jdbcType="VARCHAR" property="leaveNursing" />
+    <result column="leave_welfare" jdbcType="VARCHAR" property="leaveWelfare" />
+    <result column="new_welfare" jdbcType="VARCHAR" property="newWelfare" />
+    <result column="leave_long_sick" jdbcType="VARCHAR" property="leaveLongSick" />
+    <result column="out_time_holiday" jdbcType="VARCHAR" property="outTimeHoliday" />
+    <result column="out_time_week" jdbcType="VARCHAR" property="outTimeWeek" />
+    <result column="out_time_work" jdbcType="VARCHAR" property="outTimeWork" />
+    <result column="evection_time_holiday" jdbcType="VARCHAR" property="evectionTimeHoliday" />
+    <result column="evection_time_week" jdbcType="VARCHAR" property="evectionTimeWeek" />
+    <result column="evection_time_work" jdbcType="VARCHAR" property="evectionTimeWork" />
+    <result column="dept_name" jdbcType="VARCHAR" property="deptName" />
+    <result column="begin_time1" jdbcType="VARCHAR" property="beginTime1" />
+    <result column="end_time1" jdbcType="VARCHAR" property="endTime1" />
+    <result column="leave_other" jdbcType="VARCHAR" property="leaveOther" />
+    <result column="leave_amblosis" jdbcType="VARCHAR" property="leaveAmblosis" />
+    <result column="leave_pregnancy" jdbcType="VARCHAR" property="leavePregnancy" />
+    <result column="work_day" jdbcType="VARCHAR" property="workDay" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    employee_id, company_id, att_date, report_id, dept_id, paiban_remark, check_info, 
+    work_time, real_work_time, real_attendance_time, late, late_time, early, early_time, 
+    absent, absent_time, normal_over_work, week_over_work, holiday_over_work, change_time, 
+    leave_absence, leave_days_off, leave_annual, leave_sick, leave_marriage, leave_maternity, 
+    leave_maternity_check, leave_paternity, leave_funeral, leave_nursing, leave_welfare, 
+    new_welfare, leave_long_sick, out_time_holiday, out_time_week, out_time_work, evection_time_holiday, 
+    evection_time_week, evection_time_work, dept_name, begin_time1, end_time1, leave_other, 
+    leave_amblosis, leave_pregnancy, work_day
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ReportDailyKey" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from report_daily_
+    where employee_id = #{employeeId,jdbcType=VARCHAR}
+      and company_id = #{companyId,jdbcType=VARCHAR}
+      and att_date = #{attDate,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ReportDailyKey">
+    delete from report_daily_
+    where employee_id = #{employeeId,jdbcType=VARCHAR}
+      and company_id = #{companyId,jdbcType=VARCHAR}
+      and att_date = #{attDate,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.ReportDaily">
+    insert into report_daily_ (employee_id, company_id, att_date, 
+      report_id, dept_id, paiban_remark, 
+      check_info, work_time, real_work_time, 
+      real_attendance_time, late, late_time, 
+      early, early_time, absent, 
+      absent_time, normal_over_work, week_over_work, 
+      holiday_over_work, change_time, leave_absence, 
+      leave_days_off, leave_annual, leave_sick, 
+      leave_marriage, leave_maternity, leave_maternity_check, 
+      leave_paternity, leave_funeral, leave_nursing, 
+      leave_welfare, new_welfare, leave_long_sick, 
+      out_time_holiday, out_time_week, out_time_work, 
+      evection_time_holiday, evection_time_week, 
+      evection_time_work, dept_name, begin_time1, 
+      end_time1, leave_other, leave_amblosis, 
+      leave_pregnancy, work_day)
+    values (#{employeeId,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR}, #{attDate,jdbcType=VARCHAR}, 
+      #{reportId,jdbcType=VARCHAR}, #{deptId,jdbcType=VARCHAR}, #{paibanRemark,jdbcType=VARCHAR}, 
+      #{checkInfo,jdbcType=VARCHAR}, #{workTime,jdbcType=VARCHAR}, #{realWorkTime,jdbcType=VARCHAR}, 
+      #{realAttendanceTime,jdbcType=VARCHAR}, #{late,jdbcType=VARCHAR}, #{lateTime,jdbcType=VARCHAR}, 
+      #{early,jdbcType=VARCHAR}, #{earlyTime,jdbcType=VARCHAR}, #{absent,jdbcType=VARCHAR}, 
+      #{absentTime,jdbcType=VARCHAR}, #{normalOverWork,jdbcType=VARCHAR}, #{weekOverWork,jdbcType=VARCHAR}, 
+      #{holidayOverWork,jdbcType=VARCHAR}, #{changeTime,jdbcType=VARCHAR}, #{leaveAbsence,jdbcType=VARCHAR}, 
+      #{leaveDaysOff,jdbcType=VARCHAR}, #{leaveAnnual,jdbcType=VARCHAR}, #{leaveSick,jdbcType=VARCHAR}, 
+      #{leaveMarriage,jdbcType=VARCHAR}, #{leaveMaternity,jdbcType=VARCHAR}, #{leaveMaternityCheck,jdbcType=VARCHAR}, 
+      #{leavePaternity,jdbcType=VARCHAR}, #{leaveFuneral,jdbcType=VARCHAR}, #{leaveNursing,jdbcType=VARCHAR}, 
+      #{leaveWelfare,jdbcType=VARCHAR}, #{newWelfare,jdbcType=VARCHAR}, #{leaveLongSick,jdbcType=VARCHAR}, 
+      #{outTimeHoliday,jdbcType=VARCHAR}, #{outTimeWeek,jdbcType=VARCHAR}, #{outTimeWork,jdbcType=VARCHAR}, 
+      #{evectionTimeHoliday,jdbcType=VARCHAR}, #{evectionTimeWeek,jdbcType=VARCHAR}, 
+      #{evectionTimeWork,jdbcType=VARCHAR}, #{deptName,jdbcType=VARCHAR}, #{beginTime1,jdbcType=VARCHAR}, 
+      #{endTime1,jdbcType=VARCHAR}, #{leaveOther,jdbcType=VARCHAR}, #{leaveAmblosis,jdbcType=VARCHAR}, 
+      #{leavePregnancy,jdbcType=VARCHAR}, #{workDay,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ReportDaily">
+    insert into report_daily_
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="employeeId != null">
+        employee_id,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="attDate != null">
+        att_date,
+      </if>
+      <if test="reportId != null">
+        report_id,
+      </if>
+      <if test="deptId != null">
+        dept_id,
+      </if>
+      <if test="paibanRemark != null">
+        paiban_remark,
+      </if>
+      <if test="checkInfo != null">
+        check_info,
+      </if>
+      <if test="workTime != null">
+        work_time,
+      </if>
+      <if test="realWorkTime != null">
+        real_work_time,
+      </if>
+      <if test="realAttendanceTime != null">
+        real_attendance_time,
+      </if>
+      <if test="late != null">
+        late,
+      </if>
+      <if test="lateTime != null">
+        late_time,
+      </if>
+      <if test="early != null">
+        early,
+      </if>
+      <if test="earlyTime != null">
+        early_time,
+      </if>
+      <if test="absent != null">
+        absent,
+      </if>
+      <if test="absentTime != null">
+        absent_time,
+      </if>
+      <if test="normalOverWork != null">
+        normal_over_work,
+      </if>
+      <if test="weekOverWork != null">
+        week_over_work,
+      </if>
+      <if test="holidayOverWork != null">
+        holiday_over_work,
+      </if>
+      <if test="changeTime != null">
+        change_time,
+      </if>
+      <if test="leaveAbsence != null">
+        leave_absence,
+      </if>
+      <if test="leaveDaysOff != null">
+        leave_days_off,
+      </if>
+      <if test="leaveAnnual != null">
+        leave_annual,
+      </if>
+      <if test="leaveSick != null">
+        leave_sick,
+      </if>
+      <if test="leaveMarriage != null">
+        leave_marriage,
+      </if>
+      <if test="leaveMaternity != null">
+        leave_maternity,
+      </if>
+      <if test="leaveMaternityCheck != null">
+        leave_maternity_check,
+      </if>
+      <if test="leavePaternity != null">
+        leave_paternity,
+      </if>
+      <if test="leaveFuneral != null">
+        leave_funeral,
+      </if>
+      <if test="leaveNursing != null">
+        leave_nursing,
+      </if>
+      <if test="leaveWelfare != null">
+        leave_welfare,
+      </if>
+      <if test="newWelfare != null">
+        new_welfare,
+      </if>
+      <if test="leaveLongSick != null">
+        leave_long_sick,
+      </if>
+      <if test="outTimeHoliday != null">
+        out_time_holiday,
+      </if>
+      <if test="outTimeWeek != null">
+        out_time_week,
+      </if>
+      <if test="outTimeWork != null">
+        out_time_work,
+      </if>
+      <if test="evectionTimeHoliday != null">
+        evection_time_holiday,
+      </if>
+      <if test="evectionTimeWeek != null">
+        evection_time_week,
+      </if>
+      <if test="evectionTimeWork != null">
+        evection_time_work,
+      </if>
+      <if test="deptName != null">
+        dept_name,
+      </if>
+      <if test="beginTime1 != null">
+        begin_time1,
+      </if>
+      <if test="endTime1 != null">
+        end_time1,
+      </if>
+      <if test="leaveOther != null">
+        leave_other,
+      </if>
+      <if test="leaveAmblosis != null">
+        leave_amblosis,
+      </if>
+      <if test="leavePregnancy != null">
+        leave_pregnancy,
+      </if>
+      <if test="workDay != null">
+        work_day,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="employeeId != null">
+        #{employeeId,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="attDate != null">
+        #{attDate,jdbcType=VARCHAR},
+      </if>
+      <if test="reportId != null">
+        #{reportId,jdbcType=VARCHAR},
+      </if>
+      <if test="deptId != null">
+        #{deptId,jdbcType=VARCHAR},
+      </if>
+      <if test="paibanRemark != null">
+        #{paibanRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="checkInfo != null">
+        #{checkInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="workTime != null">
+        #{workTime,jdbcType=VARCHAR},
+      </if>
+      <if test="realWorkTime != null">
+        #{realWorkTime,jdbcType=VARCHAR},
+      </if>
+      <if test="realAttendanceTime != null">
+        #{realAttendanceTime,jdbcType=VARCHAR},
+      </if>
+      <if test="late != null">
+        #{late,jdbcType=VARCHAR},
+      </if>
+      <if test="lateTime != null">
+        #{lateTime,jdbcType=VARCHAR},
+      </if>
+      <if test="early != null">
+        #{early,jdbcType=VARCHAR},
+      </if>
+      <if test="earlyTime != null">
+        #{earlyTime,jdbcType=VARCHAR},
+      </if>
+      <if test="absent != null">
+        #{absent,jdbcType=VARCHAR},
+      </if>
+      <if test="absentTime != null">
+        #{absentTime,jdbcType=VARCHAR},
+      </if>
+      <if test="normalOverWork != null">
+        #{normalOverWork,jdbcType=VARCHAR},
+      </if>
+      <if test="weekOverWork != null">
+        #{weekOverWork,jdbcType=VARCHAR},
+      </if>
+      <if test="holidayOverWork != null">
+        #{holidayOverWork,jdbcType=VARCHAR},
+      </if>
+      <if test="changeTime != null">
+        #{changeTime,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveAbsence != null">
+        #{leaveAbsence,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveDaysOff != null">
+        #{leaveDaysOff,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveAnnual != null">
+        #{leaveAnnual,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveSick != null">
+        #{leaveSick,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveMarriage != null">
+        #{leaveMarriage,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveMaternity != null">
+        #{leaveMaternity,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveMaternityCheck != null">
+        #{leaveMaternityCheck,jdbcType=VARCHAR},
+      </if>
+      <if test="leavePaternity != null">
+        #{leavePaternity,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveFuneral != null">
+        #{leaveFuneral,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveNursing != null">
+        #{leaveNursing,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveWelfare != null">
+        #{leaveWelfare,jdbcType=VARCHAR},
+      </if>
+      <if test="newWelfare != null">
+        #{newWelfare,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveLongSick != null">
+        #{leaveLongSick,jdbcType=VARCHAR},
+      </if>
+      <if test="outTimeHoliday != null">
+        #{outTimeHoliday,jdbcType=VARCHAR},
+      </if>
+      <if test="outTimeWeek != null">
+        #{outTimeWeek,jdbcType=VARCHAR},
+      </if>
+      <if test="outTimeWork != null">
+        #{outTimeWork,jdbcType=VARCHAR},
+      </if>
+      <if test="evectionTimeHoliday != null">
+        #{evectionTimeHoliday,jdbcType=VARCHAR},
+      </if>
+      <if test="evectionTimeWeek != null">
+        #{evectionTimeWeek,jdbcType=VARCHAR},
+      </if>
+      <if test="evectionTimeWork != null">
+        #{evectionTimeWork,jdbcType=VARCHAR},
+      </if>
+      <if test="deptName != null">
+        #{deptName,jdbcType=VARCHAR},
+      </if>
+      <if test="beginTime1 != null">
+        #{beginTime1,jdbcType=VARCHAR},
+      </if>
+      <if test="endTime1 != null">
+        #{endTime1,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveOther != null">
+        #{leaveOther,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveAmblosis != null">
+        #{leaveAmblosis,jdbcType=VARCHAR},
+      </if>
+      <if test="leavePregnancy != null">
+        #{leavePregnancy,jdbcType=VARCHAR},
+      </if>
+      <if test="workDay != null">
+        #{workDay,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.ReportDaily">
+    update report_daily_
+    <set>
+      <if test="reportId != null">
+        report_id = #{reportId,jdbcType=VARCHAR},
+      </if>
+      <if test="deptId != null">
+        dept_id = #{deptId,jdbcType=VARCHAR},
+      </if>
+      <if test="paibanRemark != null">
+        paiban_remark = #{paibanRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="checkInfo != null">
+        check_info = #{checkInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="workTime != null">
+        work_time = #{workTime,jdbcType=VARCHAR},
+      </if>
+      <if test="realWorkTime != null">
+        real_work_time = #{realWorkTime,jdbcType=VARCHAR},
+      </if>
+      <if test="realAttendanceTime != null">
+        real_attendance_time = #{realAttendanceTime,jdbcType=VARCHAR},
+      </if>
+      <if test="late != null">
+        late = #{late,jdbcType=VARCHAR},
+      </if>
+      <if test="lateTime != null">
+        late_time = #{lateTime,jdbcType=VARCHAR},
+      </if>
+      <if test="early != null">
+        early = #{early,jdbcType=VARCHAR},
+      </if>
+      <if test="earlyTime != null">
+        early_time = #{earlyTime,jdbcType=VARCHAR},
+      </if>
+      <if test="absent != null">
+        absent = #{absent,jdbcType=VARCHAR},
+      </if>
+      <if test="absentTime != null">
+        absent_time = #{absentTime,jdbcType=VARCHAR},
+      </if>
+      <if test="normalOverWork != null">
+        normal_over_work = #{normalOverWork,jdbcType=VARCHAR},
+      </if>
+      <if test="weekOverWork != null">
+        week_over_work = #{weekOverWork,jdbcType=VARCHAR},
+      </if>
+      <if test="holidayOverWork != null">
+        holiday_over_work = #{holidayOverWork,jdbcType=VARCHAR},
+      </if>
+      <if test="changeTime != null">
+        change_time = #{changeTime,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveAbsence != null">
+        leave_absence = #{leaveAbsence,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveDaysOff != null">
+        leave_days_off = #{leaveDaysOff,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveAnnual != null">
+        leave_annual = #{leaveAnnual,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveSick != null">
+        leave_sick = #{leaveSick,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveMarriage != null">
+        leave_marriage = #{leaveMarriage,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveMaternity != null">
+        leave_maternity = #{leaveMaternity,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveMaternityCheck != null">
+        leave_maternity_check = #{leaveMaternityCheck,jdbcType=VARCHAR},
+      </if>
+      <if test="leavePaternity != null">
+        leave_paternity = #{leavePaternity,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveFuneral != null">
+        leave_funeral = #{leaveFuneral,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveNursing != null">
+        leave_nursing = #{leaveNursing,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveWelfare != null">
+        leave_welfare = #{leaveWelfare,jdbcType=VARCHAR},
+      </if>
+      <if test="newWelfare != null">
+        new_welfare = #{newWelfare,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveLongSick != null">
+        leave_long_sick = #{leaveLongSick,jdbcType=VARCHAR},
+      </if>
+      <if test="outTimeHoliday != null">
+        out_time_holiday = #{outTimeHoliday,jdbcType=VARCHAR},
+      </if>
+      <if test="outTimeWeek != null">
+        out_time_week = #{outTimeWeek,jdbcType=VARCHAR},
+      </if>
+      <if test="outTimeWork != null">
+        out_time_work = #{outTimeWork,jdbcType=VARCHAR},
+      </if>
+      <if test="evectionTimeHoliday != null">
+        evection_time_holiday = #{evectionTimeHoliday,jdbcType=VARCHAR},
+      </if>
+      <if test="evectionTimeWeek != null">
+        evection_time_week = #{evectionTimeWeek,jdbcType=VARCHAR},
+      </if>
+      <if test="evectionTimeWork != null">
+        evection_time_work = #{evectionTimeWork,jdbcType=VARCHAR},
+      </if>
+      <if test="deptName != null">
+        dept_name = #{deptName,jdbcType=VARCHAR},
+      </if>
+      <if test="beginTime1 != null">
+        begin_time1 = #{beginTime1,jdbcType=VARCHAR},
+      </if>
+      <if test="endTime1 != null">
+        end_time1 = #{endTime1,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveOther != null">
+        leave_other = #{leaveOther,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveAmblosis != null">
+        leave_amblosis = #{leaveAmblosis,jdbcType=VARCHAR},
+      </if>
+      <if test="leavePregnancy != null">
+        leave_pregnancy = #{leavePregnancy,jdbcType=VARCHAR},
+      </if>
+      <if test="workDay != null">
+        work_day = #{workDay,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where employee_id = #{employeeId,jdbcType=VARCHAR}
+      and company_id = #{companyId,jdbcType=VARCHAR}
+      and att_date = #{attDate,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ReportDaily">
+    update report_daily_
+    set report_id = #{reportId,jdbcType=VARCHAR},
+      dept_id = #{deptId,jdbcType=VARCHAR},
+      paiban_remark = #{paibanRemark,jdbcType=VARCHAR},
+      check_info = #{checkInfo,jdbcType=VARCHAR},
+      work_time = #{workTime,jdbcType=VARCHAR},
+      real_work_time = #{realWorkTime,jdbcType=VARCHAR},
+      real_attendance_time = #{realAttendanceTime,jdbcType=VARCHAR},
+      late = #{late,jdbcType=VARCHAR},
+      late_time = #{lateTime,jdbcType=VARCHAR},
+      early = #{early,jdbcType=VARCHAR},
+      early_time = #{earlyTime,jdbcType=VARCHAR},
+      absent = #{absent,jdbcType=VARCHAR},
+      absent_time = #{absentTime,jdbcType=VARCHAR},
+      normal_over_work = #{normalOverWork,jdbcType=VARCHAR},
+      week_over_work = #{weekOverWork,jdbcType=VARCHAR},
+      holiday_over_work = #{holidayOverWork,jdbcType=VARCHAR},
+      change_time = #{changeTime,jdbcType=VARCHAR},
+      leave_absence = #{leaveAbsence,jdbcType=VARCHAR},
+      leave_days_off = #{leaveDaysOff,jdbcType=VARCHAR},
+      leave_annual = #{leaveAnnual,jdbcType=VARCHAR},
+      leave_sick = #{leaveSick,jdbcType=VARCHAR},
+      leave_marriage = #{leaveMarriage,jdbcType=VARCHAR},
+      leave_maternity = #{leaveMaternity,jdbcType=VARCHAR},
+      leave_maternity_check = #{leaveMaternityCheck,jdbcType=VARCHAR},
+      leave_paternity = #{leavePaternity,jdbcType=VARCHAR},
+      leave_funeral = #{leaveFuneral,jdbcType=VARCHAR},
+      leave_nursing = #{leaveNursing,jdbcType=VARCHAR},
+      leave_welfare = #{leaveWelfare,jdbcType=VARCHAR},
+      new_welfare = #{newWelfare,jdbcType=VARCHAR},
+      leave_long_sick = #{leaveLongSick,jdbcType=VARCHAR},
+      out_time_holiday = #{outTimeHoliday,jdbcType=VARCHAR},
+      out_time_week = #{outTimeWeek,jdbcType=VARCHAR},
+      out_time_work = #{outTimeWork,jdbcType=VARCHAR},
+      evection_time_holiday = #{evectionTimeHoliday,jdbcType=VARCHAR},
+      evection_time_week = #{evectionTimeWeek,jdbcType=VARCHAR},
+      evection_time_work = #{evectionTimeWork,jdbcType=VARCHAR},
+      dept_name = #{deptName,jdbcType=VARCHAR},
+      begin_time1 = #{beginTime1,jdbcType=VARCHAR},
+      end_time1 = #{endTime1,jdbcType=VARCHAR},
+      leave_other = #{leaveOther,jdbcType=VARCHAR},
+      leave_amblosis = #{leaveAmblosis,jdbcType=VARCHAR},
+      leave_pregnancy = #{leavePregnancy,jdbcType=VARCHAR},
+      work_day = #{workDay,jdbcType=VARCHAR}
+    where employee_id = #{employeeId,jdbcType=VARCHAR}
+      and company_id = #{companyId,jdbcType=VARCHAR}
+      and att_date = #{attDate,jdbcType=VARCHAR}
+  </update>
+</mapper>
