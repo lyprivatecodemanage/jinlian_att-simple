@@ -20,18 +20,18 @@ public class Application {
 	private String approverNmae;//审批人姓名
 	//private String copyPersonId;//抄送人id
 	//private String copyPersonName;//抄送人姓名
-	private List<ApplicationToCopyPerson> copyPersonWithApplicationList;//抄送人集合
+	private List<ApplicationToCopyPerson> copyPersonList;//抄送人集合
 	private String isCopy;//是否抄送(0:否;1:是)
 	private String isReject;//是否驳回(0:否;1:是)
 	private String isTransfer;//是否转移(0:否;1:是)
 	private String applicationStatus;//申请单状态(0:删除;1:正常;2:撤回)
 	private String rejectReason;//驳回说明
-	private List<ApplicationTransferRecord> applicationTransferRecordList;//移交列表
+	private List<ApplicationTransferRecord> transferRecordList;//移交列表
 	//private String transferExplain;//移交说明
 	private String applicationTime;//申请发起时间
 	private String operaterTime;//操作时间
 	private String outgoningLocation;//外出地点
-	private String applcationHour;//申请小时数
+	private String applicationHour;//申请小时数
 	public String getApplicaitonNo() {
 		return applicaitonNo;
 	}
@@ -188,23 +188,23 @@ public class Application {
 	public void setOutgoningLocation(String outgoningLocation) {
 		this.outgoningLocation = outgoningLocation;
 	}
-	public String getApplcationHour() {
-		return applcationHour;
+	public String getApplicationHour() {
+		return applicationHour;
 	}
-	public void setApplcationHour(String applcationHour) {
-		this.applcationHour = applcationHour;
+	public void setApplicationHour(String applicationHour) {
+		this.applicationHour = applicationHour;
 	}
-	public List<ApplicationToCopyPerson> getCopyPersonWithApplicationList() {
-		return copyPersonWithApplicationList;
+	public List<ApplicationToCopyPerson> getCopyPersonList() {
+		return copyPersonList;
 	}
-	public void setCopyPersonWithApplicationList(List<ApplicationToCopyPerson> copyPersonWithApplicationList) {
-		this.copyPersonWithApplicationList = copyPersonWithApplicationList;
+	public void setCopyPersonList(List<ApplicationToCopyPerson> copyPersonList) {
+		this.copyPersonList = copyPersonList;
 	}
-	public List<ApplicationTransferRecord> getApplicationTransferRecordList() {
-		return applicationTransferRecordList;
+	public List<ApplicationTransferRecord> getTransferRecordList() {
+		return transferRecordList;
 	}
-	public void setApplicationTransferRecordList(List<ApplicationTransferRecord> applicationTransferRecordList) {
-		this.applicationTransferRecordList = applicationTransferRecordList;
+	public void setTransferRecordList(List<ApplicationTransferRecord> transferRecordList) {
+		this.transferRecordList = transferRecordList;
 	}
 	
 	

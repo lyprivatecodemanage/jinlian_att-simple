@@ -20,6 +20,101 @@
     applcation_no, operater_time, operater_id, application_type, last_approver, is_copy, 
     application_id, company_id, is_reject, application_status, reject_reason, is_transfer, is_complete
   </sql>
+  <!-- 添加新的申请记录 -->
+  <insert id="insertApplicationRecord" parameterType="com.xiangshangban.att_simple.bean.Application">
+  	insert into application_total_record_
+  	 <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="applcationNo != null">
+        applcation_no,
+      </if>
+      <if test="operaterTime != null">
+        operater_time,
+      </if>
+      <if test="operaterId != null">
+        operater_id,
+      </if>
+      <if test="applicationType != null">
+        application_type,
+      </if>
+      <if test="lastApprover != null">
+        last_approver,
+      </if>
+      <if test="isCopy != null">
+        is_copy,
+      </if>
+      <if test="applicationId != null">
+        application_id,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="isReject != null">
+        is_reject,
+      </if>
+      <if test="applicationStatus != null">
+        application_status,
+      </if>
+      <if test="rejectReason != null">
+        reject_reason,
+      </if>
+      <if test="isTransfer != null">
+        is_transfer,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="applcationNo != null">
+        #{applcationNo},
+      </if>
+      <if test="operaterTime != null">
+        #{operaterTime},
+      </if>
+      <if test="operaterId != null">
+        #{operaterId},
+      </if>
+      <if test="applicationType != null">
+        #{applicationType},
+      </if>
+      <if test="lastApprover != null">
+        #{lastApprover},
+      </if>
+      <if test="isCopy != null">
+        #{isCopy},
+      </if>
+      <if test="applicationId != null">
+        #{applicationId},
+      </if>
+      <if test="companyId != null">
+        #{companyId},
+      </if>
+      <if test="isReject != null">
+        #{isReject},
+      </if>
+      <if test="applicationStatus != null">
+        #{applicationStatus},
+      </if>
+      <if test="rejectReason != null">
+        #{rejectReason},
+      </if>
+      <if test="isTransfer != null">
+        #{isTransfer},
+      </if>
+    </trim>
+  
+  </insert>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <!-- 系统 -->
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
