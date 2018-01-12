@@ -15,16 +15,30 @@
     vacation_id, company_id, department_id, employee_id, annual_leave_total, annual_leave_balance, 
     adjust_rest_total, adjust_rest_balance
   </sql>
+  
+  <!-- select -->
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from vacation
     where vacation_id = #{vacationId,jdbcType=VARCHAR}
   </select>
+  <select id="SelectEmployeeVacation" resultMap="BaseResultMap">
+  	select
+  	<include refid="Base_Column_List"></include>
+  	from vacation
+  	where company_id = #{companyId}
+  	and department_id = #{deparmentId}
+  	and employee_id = #{employeeId}
+  </select>
+  
+  <!-- delete -->
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from vacation
     where vacation_id = #{vacationId,jdbcType=VARCHAR}
   </delete>
+  
+  <!-- insert -->
   <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.Vacation">
     insert into vacation (vacation_id, company_id, department_id, 
       employee_id, annual_leave_total, annual_leave_balance, 
@@ -88,6 +102,8 @@
       </if>
     </trim>
   </insert>
+  
+  <!-- update -->
   <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.Vacation">
     update vacation
     <set>

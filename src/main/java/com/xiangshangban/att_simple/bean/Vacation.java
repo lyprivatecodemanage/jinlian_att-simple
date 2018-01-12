@@ -85,4 +85,23 @@ public class Vacation {
     public void setAdjustRestBalance(String adjustRestBalance) {
         this.adjustRestBalance = adjustRestBalance;
     }
+
+	public Vacation() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public Vacation(String vacationId, String companyId, String departmentId, String employeeId,
+			String annualLeaveTotal, String annualLeaveBalance, String adjustRestTotal, String adjustRestBalance) {
+		super();
+		this.vacationId = vacationId;
+		this.companyId = companyId;
+		this.departmentId = departmentId;
+		this.employeeId = employeeId;
+		this.annualLeaveTotal = annualLeaveTotal;
+		this.annualLeaveBalance = annualLeaveBalance;
+		this.adjustRestTotal = adjustRestTotal;
+		this.adjustRestBalance = adjustRestBalance;
+	}
+    
 }
