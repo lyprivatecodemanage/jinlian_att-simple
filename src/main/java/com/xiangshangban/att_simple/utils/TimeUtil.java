@@ -38,18 +38,18 @@ public class TimeUtil {
 	/**
 	 * 得到几天后的时间
 	 * 
-	 * @param d
-	 * @param day
+	 * @param time 时间基数
+	 * @param days 在时间基数上要推迟的天数 
 	 * @return
 	 */
-	public static String getDateAfter(String time) {
+	public static String getDateAfter(String time,int days) {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		Date date;
 		try {
 			date = format.parse(time);
 			Calendar now = Calendar.getInstance();
 			now.setTime(date);
-			int day = now.get(Calendar.DAY_OF_WEEK) - 2;
+			int day = now.get(Calendar.DAY_OF_WEEK) - days;
 			now.set(Calendar.DATE, now.get(Calendar.DATE) - day + 6);
 			return format.format(now.getTime());
 		} catch (ParseException e) {
@@ -87,7 +87,6 @@ public class TimeUtil {
 				return begin.substring(0, 16)+"~"+end.substring(0, 16);
 			}
 		}
-		
 	}
 	
 	/**
@@ -663,10 +662,9 @@ public class TimeUtil {
 		return false;
 	}
 	public static void main(String[] args) {
-		System.out.println(isCrossDay("2017-10-16 10:00:00", "2017-10-17 10:05:00"));
+//		System.out.println(isCrossDay("2017-10-16 10:00:00", "2017-10-17 10:05:00"));
+//		System.out.println(getDateAfter(getCurrentDate(),1));
+		System.out.println(getCurrentMaxDate());
 	}
-
-	
-
 	
 }
