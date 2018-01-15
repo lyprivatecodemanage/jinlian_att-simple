@@ -2,7 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xiangshangban.att_simple.dao.ApplicationLeaveMapper">
   <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.ApplicationLeave">
-    <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="application_no" jdbcType="VARCHAR" property="applicationNo" />
     <result column="employee_id" jdbcType="VARCHAR" property="employeeId" />
     <result column="department_id" jdbcType="VARCHAR" property="departmentId" />
@@ -20,7 +19,7 @@
     <result column="application_time" jdbcType="VARCHAR" property="applicationTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, application_no, employee_id, department_id, company_id, leave_type, start_time, 
+    application_no, employee_id, department_id, company_id, leave_type, start_time, 
     end_time, reason, upload_voucher, approver, copy_to_person, operater_time, is_transfer, 
     application_hour, application_time
   </sql>
@@ -29,36 +28,32 @@
   <insert id="insertApplicationRecord" parameterType="com.xiangshangban.att_simple.bean.Application">
   	insert into application_leave_
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">id,</if>
       <if test="applicationNo != null">application_no,</if>
-      <if test="employeeId != null">employee_id,</if>
+      <if test="applicationId != null">employee_id,</if>
       <if test="departmentId != null">department_id,</if>
       <if test="companyId != null">company_id,</if>
-      <if test="leaveType != null">leave_type,</if>
+      <if test="applicationChildrenType != null">leave_type,</if>
       <if test="startTime != null">start_time,</if>
       <if test="endTime != null">end_time,</if>
       <if test="reason != null">reason,</if>
       <if test="uploadVoucher != null">upload_voucher,</if>
       <if test="approver != null">approver,</if>
-      <if test="copyToPerson != null">copy_to_person,</if>
       <if test="operaterTime != null">operater_time,</if>
       <if test="isTransfer != null">is_transfer,</if>
       <if test="applicationHour != null">application_hour,</if>
       <if test="applicationTime != null">application_time,</if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">#{id},</if>
       <if test="applicationNo != null">#{applicationNo},</if>
-      <if test="employeeId != null">#{employeeId},</if>
+      <if test="applicationId != null">#{applicationId},</if>
       <if test="departmentId != null">#{departmentId},</if>
       <if test="companyId != null">#{companyId},</if>
-      <if test="leaveType != null">#{leaveType},</if>
+      <if test="applicationChildrenType != null">#{applicationChildrenType},</if>
       <if test="startTime != null">#{startTime},</if>
       <if test="endTime != null">#{endTime},</if>
       <if test="reason != null">#{reason},</if>
       <if test="uploadVoucher != null">#{uploadVoucher},</if>
       <if test="approver != null">#{approver},</if>
-      <if test="copyToPerson != null">#{copyToPerson},</if>
       <if test="operaterTime != null">#{operaterTime},</if>
       <if test="isTransfer != null">#{isTransfer},</if>
       <if test="applicationHour != null">#{applicationHour},</if>
@@ -70,202 +65,4 @@
   
   
   
-  <!-- 系统 -->
-  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from application_leave_
-    where id = #{id}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from application_leave_
-    where id = #{id}
-  </delete>
-  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.ApplicationLeave">
-    insert into application_leave_ (id, application_no, employee_id, 
-      department_id, company_id, leave_type, 
-      start_time, end_time, reason, 
-      upload_voucher, approver, copy_to_person, 
-      operater_time, is_transfer, application_hour, 
-      application_time)
-    values (#{id}, #{applicationNo}, #{employeeId}, 
-      #{departmentId}, #{companyId}, #{leaveType}, 
-      #{startTime}, #{endTime}, #{reason}, 
-      #{uploadVoucher}, #{approver}, #{copyToPerson}, 
-      #{operaterTime}, #{isTransfer}, #{applicationHour}, 
-      #{applicationTime})
-  </insert>
-  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationLeave">
-    insert into application_leave_
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      <if test="applicationNo != null">
-        application_no,
-      </if>
-      <if test="employeeId != null">
-        employee_id,
-      </if>
-      <if test="departmentId != null">
-        department_id,
-      </if>
-      <if test="companyId != null">
-        company_id,
-      </if>
-      <if test="leaveType != null">
-        leave_type,
-      </if>
-      <if test="startTime != null">
-        start_time,
-      </if>
-      <if test="endTime != null">
-        end_time,
-      </if>
-      <if test="reason != null">
-        reason,
-      </if>
-      <if test="uploadVoucher != null">
-        upload_voucher,
-      </if>
-      <if test="approver != null">
-        approver,
-      </if>
-      <if test="copyToPerson != null">
-        copy_to_person,
-      </if>
-      <if test="operaterTime != null">
-        operater_time,
-      </if>
-      <if test="isTransfer != null">
-        is_transfer,
-      </if>
-      <if test="applicationHour != null">
-        application_hour,
-      </if>
-      <if test="applicationTime != null">
-        application_time,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id},
-      </if>
-      <if test="applicationNo != null">
-        #{applicationNo},
-      </if>
-      <if test="employeeId != null">
-        #{employeeId},
-      </if>
-      <if test="departmentId != null">
-        #{departmentId},
-      </if>
-      <if test="companyId != null">
-        #{companyId},
-      </if>
-      <if test="leaveType != null">
-        #{leaveType},
-      </if>
-      <if test="startTime != null">
-        #{startTime},
-      </if>
-      <if test="endTime != null">
-        #{endTime},
-      </if>
-      <if test="reason != null">
-        #{reason},
-      </if>
-      <if test="uploadVoucher != null">
-        #{uploadVoucher},
-      </if>
-      <if test="approver != null">
-        #{approver},
-      </if>
-      <if test="copyToPerson != null">
-        #{copyToPerson},
-      </if>
-      <if test="operaterTime != null">
-        #{operaterTime},
-      </if>
-      <if test="isTransfer != null">
-        #{isTransfer},
-      </if>
-      <if test="applicationHour != null">
-        #{applicationHour},
-      </if>
-      <if test="applicationTime != null">
-        #{applicationTime},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationLeave">
-    update application_leave_
-    <set>
-      <if test="applicationNo != null">
-        application_no = #{applicationNo},
-      </if>
-      <if test="employeeId != null">
-        employee_id = #{employeeId},
-      </if>
-      <if test="departmentId != null">
-        department_id = #{departmentId},
-      </if>
-      <if test="companyId != null">
-        company_id = #{companyId},
-      </if>
-      <if test="leaveType != null">
-        leave_type = #{leaveType},
-      </if>
-      <if test="startTime != null">
-        start_time = #{startTime},
-      </if>
-      <if test="endTime != null">
-        end_time = #{endTime},
-      </if>
-      <if test="reason != null">
-        reason = #{reason},
-      </if>
-      <if test="uploadVoucher != null">
-        upload_voucher = #{uploadVoucher},
-      </if>
-      <if test="approver != null">
-        approver = #{approver},
-      </if>
-      <if test="copyToPerson != null">
-        copy_to_person = #{copyToPerson},
-      </if>
-      <if test="operaterTime != null">
-        operater_time = #{operaterTime},
-      </if>
-      <if test="isTransfer != null">
-        is_transfer = #{isTransfer},
-      </if>
-      <if test="applicationHour != null">
-        application_hour = #{applicationHour},
-      </if>
-      <if test="applicationTime != null">
-        application_time = #{applicationTime},
-      </if>
-    </set>
-    where id = #{id}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ApplicationLeave">
-    update application_leave_
-    set application_no = #{applicationNo},
-      employee_id = #{employeeId},
-      department_id = #{departmentId},
-      company_id = #{companyId},
-      leave_type = #{leaveType},
-      start_time = #{startTime},
-      end_time = #{endTime},
-      reason = #{reason},
-      upload_voucher = #{uploadVoucher},
-      approver = #{approver},
-      copy_to_person = #{copyToPerson},
-      operater_time = #{operaterTime},
-      is_transfer = #{isTransfer},
-      application_hour = #{applicationHour},
-      application_time = #{applicationTime}
-    where id = #{id}
-  </update>
 </mapper>

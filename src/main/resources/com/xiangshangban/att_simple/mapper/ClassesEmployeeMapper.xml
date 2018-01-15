@@ -32,6 +32,7 @@
       #{classesId,jdbcType=VARCHAR}, #{onDutySchedulingDate,jdbcType=VARCHAR}, #{offDutySchedulingDate,jdbcType=VARCHAR}, 
       #{week,jdbcType=VARCHAR})
   </insert>
+  <!-- 添加新的人员班次 -->
   <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ClassesEmployee">
     insert into classes_employee_
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -52,6 +53,12 @@
       </if>
       <if test="offDutySchedulingDate != null">
         off_duty_scheduling_date,
+      </if>
+      <if test="restStartTime != null">
+        rest_start_time,
+      </if>
+      <if test="restEndTime != null">
+        rest_end_time,
       </if>
       <if test="week != null">
         week,
@@ -75,6 +82,12 @@
       </if>
       <if test="offDutySchedulingDate != null">
         #{offDutySchedulingDate,jdbcType=VARCHAR},
+      </if>
+      <if test="restStartTime != null">
+        #{restStartTime,jdbcType=VARCHAR},
+      </if>
+      <if test="restEndTime != null">
+        #{restEndTime,jdbcType=VARCHAR},
       </if>
       <if test="week != null">
         #{week,jdbcType=VARCHAR},
