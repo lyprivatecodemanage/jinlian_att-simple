@@ -48,6 +48,8 @@
     <result column="leave_amblosis" jdbcType="VARCHAR" property="leaveAmblosis" />
     <result column="leave_pregnancy" jdbcType="VARCHAR" property="leavePregnancy" />
     <result column="work_day" jdbcType="VARCHAR" property="workDay" />
+    <result column="sign_in_time" jdbcType="VARCHAR" property="signInTime" />
+    <result column="sign_out_time" jdbcType="VARCHAR" property="signOutTime" />
   </resultMap>
   <sql id="Base_Column_List">
     employee_id, company_id, att_date, report_id, dept_id, paiban_remark, check_info, 
@@ -57,7 +59,7 @@
     leave_maternity_check, leave_paternity, leave_funeral, leave_nursing, leave_welfare, 
     new_welfare, leave_long_sick, out_time_holiday, out_time_week, out_time_work, evection_time_holiday, 
     evection_time_week, evection_time_work, dept_name, begin_time1, end_time1, leave_other, 
-    leave_amblosis, leave_pregnancy, work_day
+    leave_amblosis, leave_pregnancy, work_day,sign_in_time,sign_out_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ReportDailyKey" resultMap="BaseResultMap">
     select 
@@ -89,7 +91,7 @@
       evection_time_holiday, evection_time_week, 
       evection_time_work, dept_name, begin_time1, 
       end_time1, leave_other, leave_amblosis, 
-      leave_pregnancy, work_day)
+      leave_pregnancy, work_day,sign_in_time,sign_out_time)
     values (#{employeeId,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR}, #{attDate,jdbcType=VARCHAR}, 
       #{reportId,jdbcType=VARCHAR}, #{deptId,jdbcType=VARCHAR}, #{paibanRemark,jdbcType=VARCHAR}, 
       #{checkInfo,jdbcType=VARCHAR}, #{workTime,jdbcType=VARCHAR}, #{realWorkTime,jdbcType=VARCHAR}, 
@@ -105,7 +107,7 @@
       #{evectionTimeHoliday,jdbcType=VARCHAR}, #{evectionTimeWeek,jdbcType=VARCHAR}, 
       #{evectionTimeWork,jdbcType=VARCHAR}, #{deptName,jdbcType=VARCHAR}, #{beginTime1,jdbcType=VARCHAR}, 
       #{endTime1,jdbcType=VARCHAR}, #{leaveOther,jdbcType=VARCHAR}, #{leaveAmblosis,jdbcType=VARCHAR}, 
-      #{leavePregnancy,jdbcType=VARCHAR}, #{workDay,jdbcType=VARCHAR})
+      #{leavePregnancy,jdbcType=VARCHAR}, #{workDay,jdbcType=VARCHAR},#{signInTime},#{signOutTime})
   </insert>
   <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ReportDaily">
     insert into report_daily_
@@ -248,6 +250,12 @@
       <if test="workDay != null">
         work_day,
       </if>
+      <if test="signInTime!=null">
+      	sign_in_time,
+      </if>
+      <if test="signOutTime!=null">
+      	sign_out_time=#{signOutTime},
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="employeeId != null">
@@ -388,6 +396,12 @@
       <if test="workDay != null">
         #{workDay,jdbcType=VARCHAR},
       </if>
+      <if test="signInTime!=null">
+      	#{signInTime},
+      </if>
+      <if test="signOutTime!=null">
+      	sign_out_time=#{signOutTime},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.ReportDaily">
@@ -522,6 +536,12 @@
       <if test="workDay != null">
         work_day = #{workDay,jdbcType=VARCHAR},
       </if>
+      <if test="signInTime!=null">
+      	sign_in_time=#{signInTime},
+      </if>
+      <if test="signOutTime!=null">
+      	sign_out_time=#{signOutTime},
+      </if>
     </set>
     where employee_id = #{employeeId,jdbcType=VARCHAR}
       and company_id = #{companyId,jdbcType=VARCHAR}
@@ -571,7 +591,9 @@
       leave_other = #{leaveOther,jdbcType=VARCHAR},
       leave_amblosis = #{leaveAmblosis,jdbcType=VARCHAR},
       leave_pregnancy = #{leavePregnancy,jdbcType=VARCHAR},
-      work_day = #{workDay,jdbcType=VARCHAR}
+      work_day = #{workDay,jdbcType=VARCHAR},
+      sign_in_time=#{signInTime},
+      sign_out_time=#{signOutTime}
     where employee_id = #{employeeId,jdbcType=VARCHAR}
       and company_id = #{companyId,jdbcType=VARCHAR}
       and att_date = #{attDate,jdbcType=VARCHAR}
