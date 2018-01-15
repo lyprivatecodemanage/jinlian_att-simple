@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiangshangban.att_simple.dao.ApplicationLeaveMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.ApplicationLeave">
+    <result column="application_no" jdbcType="VARCHAR" property="applicationNo" />
+    <result column="employee_id" jdbcType="VARCHAR" property="employeeId" />
+    <result column="department_id" jdbcType="VARCHAR" property="departmentId" />
+    <result column="company_id" jdbcType="VARCHAR" property="companyId" />
+    <result column="leave_type" jdbcType="VARCHAR" property="leaveType" />
+    <result column="start_time" jdbcType="VARCHAR" property="startTime" />
+    <result column="end_time" jdbcType="VARCHAR" property="endTime" />
+    <result column="reason" jdbcType="VARCHAR" property="reason" />
+    <result column="upload_voucher" jdbcType="VARCHAR" property="uploadVoucher" />
+    <result column="approver" jdbcType="VARCHAR" property="approver" />
+    <result column="copy_to_person" jdbcType="VARCHAR" property="copyToPerson" />
+    <result column="operater_time" jdbcType="VARCHAR" property="operaterTime" />
+    <result column="is_transfer" jdbcType="VARCHAR" property="isTransfer" />
+    <result column="application_hour" jdbcType="VARCHAR" property="applicationHour" />
+    <result column="application_time" jdbcType="VARCHAR" property="applicationTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    application_no, employee_id, department_id, company_id, leave_type, start_time, 
+    end_time, reason, upload_voucher, approver, copy_to_person, operater_time, is_transfer, 
+    application_hour, application_time
+  </sql>
+  
+  <!-- 添加请假记录 -->
+  <insert id="insertApplicationRecord" parameterType="com.xiangshangban.att_simple.bean.Application">
+  	insert into application_leave_
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="applicationNo != null">application_no,</if>
+      <if test="applicationId != null">employee_id,</if>
+      <if test="departmentId != null">department_id,</if>
+      <if test="companyId != null">company_id,</if>
+      <if test="applicationChildrenType != null">leave_type,</if>
+      <if test="startTime != null">start_time,</if>
+      <if test="endTime != null">end_time,</if>
+      <if test="reason != null">reason,</if>
+      <if test="uploadVoucher != null">upload_voucher,</if>
+      <if test="approver != null">approver,</if>
+      <if test="operaterTime != null">operater_time,</if>
+      <if test="isTransfer != null">is_transfer,</if>
+      <if test="applicationHour != null">application_hour,</if>
+      <if test="applicationTime != null">application_time,</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="applicationNo != null">#{applicationNo},</if>
+      <if test="applicationId != null">#{applicationId},</if>
+      <if test="departmentId != null">#{departmentId},</if>
+      <if test="companyId != null">#{companyId},</if>
+      <if test="applicationChildrenType != null">#{applicationChildrenType},</if>
+      <if test="startTime != null">#{startTime},</if>
+      <if test="endTime != null">#{endTime},</if>
+      <if test="reason != null">#{reason},</if>
+      <if test="uploadVoucher != null">#{uploadVoucher},</if>
+      <if test="approver != null">#{approver},</if>
+      <if test="operaterTime != null">#{operaterTime},</if>
+      <if test="isTransfer != null">#{isTransfer},</if>
+      <if test="applicationHour != null">#{applicationHour},</if>
+      <if test="applicationTime != null">#{applicationTime},</if>
+    </trim>
+  </insert>
+  
+  
+  
+  
+  
+</mapper>

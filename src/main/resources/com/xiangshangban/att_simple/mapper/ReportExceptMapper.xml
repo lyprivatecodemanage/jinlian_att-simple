@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiangshangban.att_simple.dao.ReportExceptMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.ReportExcept">
+    <id column="except_id" jdbcType="VARCHAR" property="exceptId" />
+    <result column="employee_id" jdbcType="VARCHAR" property="employeeId" />
+    <result column="except_date" jdbcType="VARCHAR" property="exceptDate" />
+    <result column="except_time" jdbcType="VARCHAR" property="exceptTime" />
+    <result column="except_type" jdbcType="VARCHAR" property="exceptType" />
+    <result column="lack_time" jdbcType="VARCHAR" property="lackTime" />
+    <result column="lack_begin_time" jdbcType="VARCHAR" property="lackBeginTime" />
+    <result column="lack_end_time" jdbcType="VARCHAR" property="lackEndTime" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="plan_type" jdbcType="VARCHAR" property="planType" />
+    <result column="plan_id" jdbcType="VARCHAR" property="planId" />
+    <result column="company_id" jdbcType="VARCHAR" property="companyId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    except_id, employee_id, except_date, except_time, except_type, lack_time, lack_begin_time, 
+    lack_end_time, create_time, remark, plan_type, plan_id, company_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from report_except_
+    where except_id = #{exceptId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from report_except_
+    where except_id = #{exceptId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.ReportExcept">
+    insert into report_except_ (except_id, employee_id, except_date, 
+      except_time, except_type, lack_time, 
+      lack_begin_time, lack_end_time, create_time, 
+      remark, plan_type, plan_id, 
+      company_id)
+    values (#{exceptId,jdbcType=VARCHAR}, #{employeeId,jdbcType=VARCHAR}, #{exceptDate,jdbcType=VARCHAR}, 
+      #{exceptTime,jdbcType=VARCHAR}, #{exceptType,jdbcType=VARCHAR}, #{lackTime,jdbcType=VARCHAR}, 
+      #{lackBeginTime,jdbcType=VARCHAR}, #{lackEndTime,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{planType,jdbcType=VARCHAR}, #{planId,jdbcType=VARCHAR}, 
+      #{companyId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ReportExcept">
+    insert into report_except_
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="exceptId != null">
+        except_id,
+      </if>
+      <if test="employeeId != null">
+        employee_id,
+      </if>
+      <if test="exceptDate != null">
+        except_date,
+      </if>
+      <if test="exceptTime != null">
+        except_time,
+      </if>
+      <if test="exceptType != null">
+        except_type,
+      </if>
+      <if test="lackTime != null">
+        lack_time,
+      </if>
+      <if test="lackBeginTime != null">
+        lack_begin_time,
+      </if>
+      <if test="lackEndTime != null">
+        lack_end_time,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="planType != null">
+        plan_type,
+      </if>
+      <if test="planId != null">
+        plan_id,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="exceptId != null">
+        #{exceptId,jdbcType=VARCHAR},
+      </if>
+      <if test="employeeId != null">
+        #{employeeId,jdbcType=VARCHAR},
+      </if>
+      <if test="exceptDate != null">
+        #{exceptDate,jdbcType=VARCHAR},
+      </if>
+      <if test="exceptTime != null">
+        #{exceptTime,jdbcType=VARCHAR},
+      </if>
+      <if test="exceptType != null">
+        #{exceptType,jdbcType=VARCHAR},
+      </if>
+      <if test="lackTime != null">
+        #{lackTime,jdbcType=VARCHAR},
+      </if>
+      <if test="lackBeginTime != null">
+        #{lackBeginTime,jdbcType=VARCHAR},
+      </if>
+      <if test="lackEndTime != null">
+        #{lackEndTime,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="planType != null">
+        #{planType,jdbcType=VARCHAR},
+      </if>
+      <if test="planId != null">
+        #{planId,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.ReportExcept">
+    update report_except_
+    <set>
+      <if test="employeeId != null">
+        employee_id = #{employeeId,jdbcType=VARCHAR},
+      </if>
+      <if test="exceptDate != null">
+        except_date = #{exceptDate,jdbcType=VARCHAR},
+      </if>
+      <if test="exceptTime != null">
+        except_time = #{exceptTime,jdbcType=VARCHAR},
+      </if>
+      <if test="exceptType != null">
+        except_type = #{exceptType,jdbcType=VARCHAR},
+      </if>
+      <if test="lackTime != null">
+        lack_time = #{lackTime,jdbcType=VARCHAR},
+      </if>
+      <if test="lackBeginTime != null">
+        lack_begin_time = #{lackBeginTime,jdbcType=VARCHAR},
+      </if>
+      <if test="lackEndTime != null">
+        lack_end_time = #{lackEndTime,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="planType != null">
+        plan_type = #{planType,jdbcType=VARCHAR},
+      </if>
+      <if test="planId != null">
+        plan_id = #{planId,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where except_id = #{exceptId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ReportExcept">
+    update report_except_
+    set employee_id = #{employeeId,jdbcType=VARCHAR},
+      except_date = #{exceptDate,jdbcType=VARCHAR},
+      except_time = #{exceptTime,jdbcType=VARCHAR},
+      except_type = #{exceptType,jdbcType=VARCHAR},
+      lack_time = #{lackTime,jdbcType=VARCHAR},
+      lack_begin_time = #{lackBeginTime,jdbcType=VARCHAR},
+      lack_end_time = #{lackEndTime,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      plan_type = #{planType,jdbcType=VARCHAR},
+      plan_id = #{planId,jdbcType=VARCHAR},
+      company_id = #{companyId,jdbcType=VARCHAR}
+    where except_id = #{exceptId,jdbcType=VARCHAR}
+  </update>
+</mapper>

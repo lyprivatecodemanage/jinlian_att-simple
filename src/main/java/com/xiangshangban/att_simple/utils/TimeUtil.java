@@ -8,9 +8,6 @@ import java.util.Date;
 
 import org.springframework.util.StringUtils;
 
-import com.xiangshangban.att_simple.exception.CustomException;
-
-
 public class TimeUtil {
 
 	/**
@@ -41,18 +38,18 @@ public class TimeUtil {
 	/**
 	 * 得到几天后的时间
 	 * 
-	 * @param d
-	 * @param day
+	 * @param time 时间基数
+	 * @param days 在时间基数上要推迟的天数 
 	 * @return
 	 */
-	public static String getDateAfter(String time) {
+	public static String getDateAfter(String time,int days) {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		Date date;
 		try {
 			date = format.parse(time);
 			Calendar now = Calendar.getInstance();
 			now.setTime(date);
-			int day = now.get(Calendar.DAY_OF_WEEK) - 2;
+			int day = now.get(Calendar.DAY_OF_WEEK) - days;
 			now.set(Calendar.DATE, now.get(Calendar.DATE) - day + 6);
 			return format.format(now.getTime());
 		} catch (ParseException e) {
@@ -90,7 +87,6 @@ public class TimeUtil {
 				return begin.substring(0, 16)+"~"+end.substring(0, 16);
 			}
 		}
-		
 	}
 	
 	/**
@@ -164,7 +160,7 @@ public class TimeUtil {
 	}
 	/**
 	 * 或取当前时间字符串
-	 * @return
+	 * @return yyyy-MM-dd HH:mm:ss
 	 */
 	public static String getCurrentTime(){
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -384,7 +380,7 @@ public class TimeUtil {
 	 * @param sourceTime 原始时间 yyyy-MM-dd HH:mm:ss
 	 * @param distance 长度
 	 * @param type 时间单位， 年：Calendar.YEAR，月：Calendar.MONTH，日： Calendar.DATE，分钟： Calendar.MINUTE，秒： Calendar.SECOND 
-	 * @return
+	 * @return yyyy-MM-dd HH:mm:ss
 	 */
 	public static String getLongAfter(String sourceTime, int distance,int type) {  
 		SimpleDateFormat fomat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -525,77 +521,150 @@ public class TimeUtil {
 	 */
 	public static boolean compareTime(String newTime, String oldTime){
 		SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
 		try {
 			 return formatter.parse(newTime).getTime()>formatter.parse(oldTime).getTime();
 		} catch (ParseException e) {
-			try {
-				return sdf.parse(newTime).getTime()>sdf.parse(oldTime).getTime();
-			} catch (ParseException e1) {
-				e1.printStackTrace();
-			}
-			
+			e.printStackTrace();
 		}
        return false;
 	}
-	
-	public static String getDateAfterString(String time,String period){
-		try{
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		Date date =format.parse(time);
-		Calendar now = Calendar.getInstance();
-		now.setTime(date);
-		now.add(Calendar.MONTH, Integer.valueOf(period));
-		return format.format(now.getTime());
-		}catch(Exception e){
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
-	public static String timeFormatTransfer(String time)throws Exception{
-		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat format2 = new SimpleDateFormat("yyyy/MM/dd");
-		SimpleDateFormat format3 = new SimpleDateFormat("yyyy年MM月dd日");
-		Date date =null;
+	/**
+	 * 获取两个时间点的中间点
+	 * @param time1   时间1 ， 格式：yyyy-MM-dd HH:mm:ss
+	 * @param time2   时间2 ，晚于time1， 格式：yyyy-MM-dd HH:mm:ss
+	 * @return
+	 */
+	public static String getCenter(String time1, String time2) {
 		try {
-			date =format1.parse(time);
+			SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			long distance = (formatter.parse(time2).getTime()-formatter.parse(time1).getTime())/2;
+			return formatter.format(formatter.parse(time1).getTime()+distance);
 		} catch (ParseException e) {
-			try {
-				date =format2.parse(time);
-			} catch (ParseException e1) {
-				try {
-					date =format3.parse(time);
-				} catch (ParseException e2) {
-					throw new CustomException("日期格式不正确");
-				}
-			}
-		}
-		time = format1.format(date);
-		return time;
-	}
-	
-	/*public static boolean compareTime(String time1,String time2){
-		boolean flag = true;
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		Date date1 = format.parse(time1);
-		Date date2 = format.parse(time2);
-		return flag;
-	}*/
-	
-	public static void main(String[] args){
-			
-			for(int i=0;i<4;i++){
-				try {
-					String time = timeFormatTransfer("2014大是大非吧");
-			System.out.println(time);
-		}catch(Exception e){
 			e.printStackTrace();
-			System.out.println(((CustomException)e).getExceptionMessage());
-			continue;
 		}
-				System.out.println("123");
-				
-		}
+		return null;
 	}
+	/**
+	 * 获取两个时间的间隔多少秒(绝对值)
+	 * @param time1 时间1，yyyy-MM-dd HH:mm:ss
+	 * @param time2 时间2，yyyy-MM-dd HH:mm:ss
+	 * @return
+	 */
+	public static long getTimeLength(String time1, String time2) {
+		try {
+			SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			long t1 = formatter.parse(time1).getTime();
+			long t2 = formatter.parse(time2).getTime();
+			long distance = (t1>t2?(t1-t2):(t2-t1))/1000;
+			return distance;
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	/**
+	 * 两个时间段的交叉关系
+	 * @param beginTime1 时段1的开始，yyyy-MM-dd HH:mm:ss
+	 * @param endTime1   时段1的结束，yyyy-MM-dd HH:mm:ss
+	 * @param beginTime2 时段2的开始，yyyy-MM-dd HH:mm:ss
+	 * @param endTime2 时段2的结束，yyyy-MM-dd HH:mm:ss
+	 * @return  “1”：时段2早于时段1； “2”：时段2开始小于等于时段1开始，并且时段2结束大于时段1开始，时段2结束时间小于时段1结束；
+	 * “3”：时段2包含在时段1内，但时段2不等于时段1； “4”：时段1开始小于时段2开始，时段1结束时间大于时段1开始，并且时段2结束大于时段1结束；
+	 * “5”：时段1包含在时段2内，时段2可以等于时段1； “6”：时段1早于时段2
+	 */
+	public static int timeRelation(String beginTime1, String endTime1, 
+			String beginTime2, String endTime2) {
+		try {
+			SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			long b1 = formatter.parse(beginTime1).getTime();
+			long e1 = formatter.parse(endTime1).getTime();
+			long b2 = formatter.parse(beginTime2).getTime();
+			long e2 = formatter.parse(endTime2).getTime();
+			if(e2<b1){
+				return 1;
+			}
+			if(b2<=b1 && e2>b1 && e2<e1){
+				return 2;
+			}
+			if(b2>b1 && e2<e1){
+				return 3;
+			}
+			if(b2>b1 && b2<e1 && e2>=e1){
+				return 4;
+			}
+			if(b2<=b1 && e2>=e1){
+				return 5;
+			}
+			if(b2>e1){
+				return 6;
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return 1;
+	}
+	/**
+	 * 交叉多少秒
+	 * @param beginTime1
+	 * @param endTime1
+	 * @param beginTime2
+	 * @param endTime2
+	 * @return 时段1和时段2
+	 */
+	public static long containTimeLength(String beginTime1, String endTime1, 
+			String beginTime2, String endTime2) {
+		try {
+			SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			long b1 = formatter.parse(beginTime1).getTime();
+			long e1 = formatter.parse(endTime1).getTime();
+			long b2 = formatter.parse(beginTime2).getTime();
+			long e2 = formatter.parse(endTime2).getTime();
+			if(e2<b1){//1
+				return 0;
+			}
+			if(b2<=b1 && e2>b1 && e2<e1){//2
+				return e2-b1;
+			}
+			if(b2>b1 && e2<e1){//3
+				return e2-b2;
+			}
+			if(b2>b1 && b2<e1 && e2>=e1){//4
+				return e1-b2;
+			}
+			if(b2<=b1 && e2>=e1){//5
+				return e1-b1;
+			}
+			if(b2>e1){//6
+				return 0;
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	/**
+	 * 检查是否跨天
+	 * @param beginTime
+	 * @param endTime
+	 * @return true：跨天， false：不跨天
+	 */
+	public static boolean isCrossDay(String beginTime, String endTime) {
+		SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			String beginDate = formatter.format(formatter.parse(beginTime));
+			String endDate = formatter.format(formatter.parse(beginTime));
+			if(beginDate.equals(endDate)){
+				return true;
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	public static void main(String[] args) {
+//		System.out.println(isCrossDay("2017-10-16 10:00:00", "2017-10-17 10:05:00"));
+//		System.out.println(getDateAfter(getCurrentDate(),1));
+		System.out.println(getCurrentMaxDate());
+	}
+	
 }

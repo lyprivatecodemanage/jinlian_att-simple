@@ -1,12 +1,10 @@
 package com.xiangshangban.att_simple.controller;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.xiangshangban.att_simple.bean.Application;
+import com.xiangshangban.att_simple.service.ApplicationService;
+import com.xiangshangban.att_simple.utils.GainData;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +13,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.service.ApplicationService;
 import com.xiangshangban.att_simple.utils.FormatUtil;
 import com.xiangshangban.att_simple.utils.GainData;
-import com.xiangshangban.att_simple.utils.RegexUtil;
-import com.xiangshangban.att_simple.utils.TimeUtil;
-import com.xiangshangban.organization.bean.Employee;
 /**
  * 
  * @author 李业
@@ -33,7 +37,6 @@ public class ApplicationController {
 		private static final Logger logger = Logger.getLogger(ApplicationController.class);
 		@Autowired
 		private ApplicationService applicationService;
-		
 	
 		/**
 		 * app申请页面
@@ -55,33 +58,71 @@ public class ApplicationController {
 			result = applicationService.applicationIndexPage(employeeId, companyId);
 			return result;
 		}
-		
+		/**
+		 * 请假,加班,出差,外出,补卡申请
+		 * @param jsonString
+		 * @param request
+		 * @return
+		 */
 		@RequestMapping(value = "/allTypeApplication",produces="application/json;charset=utf-8",method=RequestMethod.POST)
 		public Map<String,Object> allTypeApplication(@RequestBody String jsonString ,HttpServletRequest request) {
 			Map<String,Object> result = new HashMap<String,Object>();
 			Map<String,String> params = new HashMap<String,String>();
+			String employeeId = request.getHeader("accessUserId");
+			String companyId = request.getHeader("companyId");
+			if(StringUtils.isEmpty(companyId)||StringUtils.isEmpty(employeeId)){
+				result.put("message", "请求头参数缺失");
+				result.put("returnCode", "3013");
+				return result;
+			}
+			Application application = null;
+			GainData data = new GainData(jsonString, request);
+			if(data.getType()==0){
+				application = JSON.parseObject(JSONObject.toJSONString(data.getResult()), Application.class);
+			}else if(data.getType()==1){
+				
+			}
+			if(application==null||StringUtils.isEmpty(application.getApplicationType())){
+				result.put("message", "必传参数为空");
+				result.put("returnCode", "3006");
+				return result;
+			}
+			//系统当前时间
+			String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(System.currentTimeMillis()));
+			application.setApplicationId(employeeId);
+			application.setCompanyId(companyId);
+			application.setApplicationNo(FormatUtil.createUuid());
+			application.setOperaterId(companyId);//设置本次操作人id
+			application.setOperaterTime(date);
+			application.setApplicationTime(date);
+			application.setIsComplete("0");//未完成
+			//调用申请小时数计算
 			
-			
-			String applicationType = "";
-			//申请类型[ 1:请假,2:加班,3:出差,4:外出,5:补卡 ]
-			switch(applicationType){
+			//...
+			String applicationHour = "";//计算得出的申请小时数
+			application.setApplicationHour(applicationHour);
+			//申请类型{ 1:请假,2:加班,3:出差,4:外出,5:补卡 }
+			switch(application.getApplicationType()){
 			   case "1":
-				   result = applicationService.leaveApplication(params);
+				   result = applicationService.leaveApplication(application);
 				   break;
 			   case "2":
-				   
+				   result = applicationService.overTimeApplication(params);
 				   break;
 			   case "3":
+				   result = applicationService.businessTravelApplication(params);
 				   break;
 			   case "4":
+				   result = applicationService.outgoingApplication(params);
 				   break;
 			   case "5":
+				   result = applicationService.fillCardApplication(params);
 				   break;
 			   default :
+				   result.put("message", "必传参数为空");
+				   result.put("returnCode", "3006");
 				   break;
 			}
-			
-			
 			
 			return result;
 		}
@@ -91,7 +132,7 @@ public class ApplicationController {
 		 * @param request
 		 * @return
 		 */
-		@RequestMapping(value = "/leaveApplication",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+		/*@RequestMapping(value = "/leaveApplication",produces="application/json;charset=utf-8",method=RequestMethod.POST)
 		public Map<String,Object> leaveApplication(@RequestBody String jsonString ,HttpServletRequest request) {
 			Map<String,Object> result = new HashMap<String,Object>();
 			Map<String,String> params = new HashMap<String,String>();
@@ -144,91 +185,7 @@ public class ApplicationController {
 				result.put("returnCode", "3001");
 				return result;
 			}
-	   }
-	   /**
-	    * 加班申请
-	    * @param jsonString
-	    * @param request
-	    * @return
-	    */
-		@RequestMapping(value = "/overtimeApplication",produces="application/json;charset=utf-8",method=RequestMethod.POST)
-	   public Map<String,Object> overtimeApplication(@RequestBody String jsonString ,HttpServletRequest request) {
-			Map<String,Object> result = new HashMap<String,Object>();
-			try{
-			GainData data = new GainData(jsonString, request);
-			String employeeId = data.getData("accessUserId").toString();//员工id
-			String companyId = data.getData("companyId").toString();//公司id
-			return result;
-			}catch(Exception e){
-				logger.info(e);
-				result.put("message", "服务器错误");
-				result.put("returnCode", "3001");
-				return result;
-			}
-	   }
-	   /**
-	    * 出差申请
-	    * @param jsonString
-	    * @param request
-	    * @return
-	    */
-		@RequestMapping(value = "/businessTravelApplication",produces="application/json;charset=utf-8",method=RequestMethod.POST)
-		public Map<String,Object> businessTravelApplication(@RequestBody String jsonString ,HttpServletRequest request) {
-			Map<String,Object> result = new HashMap<String,Object>();
-			try{
-			GainData data = new GainData(jsonString, request);
-			String employeeId = data.getData("accessUserId").toString();//员工id
-			String companyId = data.getData("companyId").toString();//公司id
-			return result;
-			}catch(Exception e){
-				logger.info(e);
-				result.put("message", "服务器错误");
-				result.put("returnCode", "3001");
-				return result;
-			}
-		}
-		/**
-		 * 外出申请
-		 * @param jsonString
-		 * @param request
-		 * @return
-		 */
-		@RequestMapping(value = "/outgoingApplication",produces="application/json;charset=utf-8",method=RequestMethod.POST)
-		public Map<String,Object> outgoingApplication(@RequestBody String jsonString ,HttpServletRequest request) {
-			Map<String,Object> result = new HashMap<String,Object>();
-			try{
-			GainData data = new GainData(jsonString, request);
-			String employeeId = data.getData("accessUserId").toString();//员工id
-			String companyId = data.getData("companyId").toString();//公司id
-			return result;
-			}catch(Exception e){
-				logger.info(e);
-				result.put("message", "服务器错误");
-				result.put("returnCode", "3001");
-				return result;
-			}
-		}
-		/**
-		 * 补卡申请
-		 * @param jsonString
-		 * @param request
-		 * @return
-		 */
-		@RequestMapping(value = "/fillCardApplication",produces="application/json;charset=utf-8",method=RequestMethod.POST)
-		public Map<String,Object> fillCardApplication(@RequestBody String jsonString ,HttpServletRequest request) {
-			Map<String,Object> result = new HashMap<String,Object>();
-			try{
-			GainData data = new GainData(jsonString, request);
-			String employeeId = data.getData("accessUserId").toString();//员工id
-			String companyId = data.getData("companyId").toString();//公司id
-			return result;
-			}catch(Exception e){
-				logger.info(e);
-				result.put("message", "服务器错误");
-				result.put("returnCode", "3001");
-				return result;
-			}
-		}
+	   }*/
 		/**
 		 * 申请列表获取
 		 * @param jsonString
@@ -271,5 +228,4 @@ public class ApplicationController {
 				return result;
 			}
 		}
-
 	}
