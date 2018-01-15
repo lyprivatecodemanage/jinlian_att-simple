@@ -5,7 +5,7 @@ public class ReportDailyKey {
 
     private String companyId;
 
-    private String attDate;
+    private String attDate;//考勤日期
 
     public String getEmployeeId() {
         return employeeId;
