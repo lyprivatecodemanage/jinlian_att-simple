@@ -37,7 +37,8 @@ public class ClassesServiceImpl implements ClassesService{
 		Object onDutyTime = jsonObject.get("on_duty_time");
 		Object offDutyTime = jsonObject.get("off_duty_time");
 		Object morrowFlag = jsonObject.get("morrowFlag");
-		Object restTime = jsonObject.get("restTime");
+		Object restStartTime = jsonObject.get("restStartTime");
+		Object restEndTime = jsonObject.get("restEndTime");
 		Object restDays = jsonObject.get("restDays");
 		Object festivalRestFlag = jsonObject.get("festivalRestFlag");
 		Object signInRule = jsonObject.get("signInRule");
@@ -51,7 +52,7 @@ public class ClassesServiceImpl implements ClassesService{
 		boolean result = false;
 		
 		if(classesName!=null && onDutyTime!=null && offDutyTime!=null && morrowFlag!=null 
-				&& restTime!=null && restDays!=null && festivalRestFlag!=null 
+				&& restStartTime!=null && restEndTime!=null && restDays!=null && festivalRestFlag!=null 
 				&& signInRule!=null && signOutRule!=null && onPunchCardRule!=null 
 				&& offPunchCardRule!=null && employeeIdList!=null && autoClassesFlag!=null){
 			//获取要排班的人员列表
@@ -65,7 +66,7 @@ public class ClassesServiceImpl implements ClassesService{
 			classesType.setOnDutyTime(onDutyTime.toString().trim());
 			classesType.setOffDutyTime(offDutyTime.toString().trim());
 			classesType.setMorrowDutyTimeFlag(morrowFlag.toString().trim());
-			classesType.setRestTime(restTime.toString().trim());
+			classesType.setRestTime(restStartTime.toString().trim()+"-"+restEndTime.toString().trim());
 			classesType.setRestDays(restDays.toString().trim());
 			classesType.setFestivalRestFlag(festivalRestFlag.toString().trim());
 			classesType.setSignInRule(signInRule.toString().trim());
@@ -128,6 +129,8 @@ public class ClassesServiceImpl implements ClassesService{
 						classesEmployee.setClassesId(typeUUID);
 						//设置人员班次上班打卡时间（人员班次从创建班次类型的次日开始排）
 						classesEmployee.setOnDutySchedulingDate(new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime())+" "+onDutyTime.toString().trim());
+						//设置当天的休息时间段：开始时间
+						classesEmployee.setRestStartTime(new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime())+restStartTime);
 						
 						//设置上班日期对应的星期
 						if(cal.get(Calendar.DAY_OF_WEEK)-1==0){
@@ -140,10 +143,13 @@ public class ClassesServiceImpl implements ClassesService{
 						if(nextDayFlag.equals("1")){
 							cal.add(Calendar.DAY_OF_MONTH,1);
 						}
+						//判断休息时间是否跨日
+						/*if(){
+							
+						}*/
 						//下班时间
 						classesEmployee.setOffDutySchedulingDate(new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime())+" "+offDutyTime.toString().trim());
-						//设置当天的休息时间段
-						classesEmployee.setRestStartTime("");
+						//
 						/*classesEmployee.setRestEndTime(restEndTime);*/
 						
 						addClassesEmp = classesEmployeeMapper.insertSelective(classesEmployee);

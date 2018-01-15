@@ -34,7 +34,8 @@ public class ClassesController {
 	         "on_duty_time":"09:00",(上班时间)
 	         "off_duty_time":"18:00",（下班时间）
 	         "morrowFlag":"0/1",(是否是次日的这个时间下班 0:不是 1:是)
-	         "restTime":"12:00-13:00",每天的休息时间段
+	         "restStartTime":"12:00",每天的休息时间段:开始时间
+	         "restEndTime":"13:00",每天的休息时间段:结束时间
 	         "restDays":"67"，一周的休息日（6、7表示周六和周日休息）
 	         "festivalRestFlag":"0/1"(法定假日是否休息标志位0:不休息 1:休息)
 			 “signInRule”:”20”（签到晚20分钟不算迟到）
