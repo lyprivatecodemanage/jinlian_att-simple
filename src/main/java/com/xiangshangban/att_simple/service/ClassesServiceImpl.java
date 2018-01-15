@@ -1,12 +1,14 @@
 package com.xiangshangban.att_simple.service;
 
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -17,6 +19,8 @@ import com.xiangshangban.att_simple.dao.ClassesTypeMapper;
 import com.xiangshangban.att_simple.utils.FormatUtil;
 import com.xiangshangban.att_simple.utils.TimeUtil;
 
+@Service
+@Transactional
 public class ClassesServiceImpl implements ClassesService{
 	
 	@Autowired
@@ -71,7 +75,7 @@ public class ClassesServiceImpl implements ClassesService{
 			classesType.setAutoClassesFlag(autoClassesFlag.toString().trim());
 			classesType.setCompanyId(companyId);
 			//创建该班次类型的时间
-			classesType.setCreateTime(TimeUtil.getCurrentDate());
+			classesType.setCreateTime(TimeUtil.getCurrentTime());
 			
 			int addClassesType = classesTypeMapper.insertSelective(classesType);
 			
@@ -79,45 +83,79 @@ public class ClassesServiceImpl implements ClassesService{
 			if(addClassesType>0){
 				//判断当前时间是不是本月的最后一天
 				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(new Date());
 				int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
 				//初始化需要排班的天数
 				int scheduleDays = 0;
-				
 				if(TimeUtil.getCurrentMaxDate()==dayOfMonth){
-					calendar.set(Calendar.MONTH,1);
 					//是本月的最后一天(则排完下一个整月========》获取下一个月的天数)
-					scheduleDays = calendar.get(Calendar.MONTH)+1;
+					calendar.add(Calendar.MONTH, 1);//切换到下个月
+					scheduleDays = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);//获取下个月的天数
 				}else{
 					//不是本月的最后一天（先排完当前月，然后再排一个整月）
-					
+					int temp = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)-dayOfMonth;//本月剩余天数
+					calendar.add(Calendar.MONTH, 1);//切换到下个月
+					scheduleDays = temp+calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+					//重新切换回上个月
+					calendar.add(Calendar.MONTH, -1);
 				}
-				//初始化班次生效时间(从nextDay时间开始排)
-				String nextDay = TimeUtil.getDateAfter(TimeUtil.getCurrentDate(),1);
 				
+				//TODO ============》添加人员班次
+				String nextDayFlag = morrowFlag.toString().trim(); //次日下班标志
+				//定义添加班次后的结果
+				int addClassesEmp = 0;
 				for(int i = 0;i<empArray.size();i++){
+					
+					//创建Calendar对象
+					Calendar cal = Calendar.getInstance();
+					
+					//班次生效时间为次日生效
+					cal.add(Calendar.DAY_OF_MONTH,1); 
+					
 					JSONObject emp = JSONObject.parseObject(empArray.get(i).toString());
-					//(每一个人一次添加一个月，如果当前时间不是月尾的话，则要排完当前的一个月，然后再排一个整月)
-					/*for(){
-					  
-					}*/
-					ClassesEmployee classesEmployee = new ClassesEmployee();
-					classesEmployee.setId(FormatUtil.createUuid());
-					classesEmployee.setEmpId(emp.get("empId").toString());
-					classesEmployee.setEmpCompanyId(companyId);
-					classesEmployee.setClassesId(typeUUID);
 					
-					//设置人员班次上班打卡时间（人员班次从创建班次类型的次日开始排）
-					classesEmployee.setOnDutySchedulingDate(nextDay+" "+onDutyTime.toString().trim());
-					//下班时间
-					classesEmployee.setOffDutySchedulingDate(nextDay+" "+offDutyTime.toString().trim());
-					//设置上班日期对应的星期
-					/*classesEmployee.setWeek(week);*/
-					
-					
-					classesEmployeeMapper.insertSelective(classesEmployee);
+					for(int s=0;s<scheduleDays;s++){
+						
+						//次日下班的时候，上班日期是前一次排班下班的日期
+						if(!nextDayFlag.equals("1")){
+							cal.add(Calendar.DAY_OF_MONTH,1); 
+						}
+						
+						ClassesEmployee classesEmployee = new ClassesEmployee();
+						
+						classesEmployee.setId(FormatUtil.createUuid());
+						classesEmployee.setEmpId(emp.get("empId").toString());
+						classesEmployee.setEmpCompanyId(companyId);
+						classesEmployee.setClassesId(typeUUID);
+						//设置人员班次上班打卡时间（人员班次从创建班次类型的次日开始排）
+						classesEmployee.setOnDutySchedulingDate(new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime())+" "+onDutyTime.toString().trim());
+						
+						//设置上班日期对应的星期
+						if(cal.get(Calendar.DAY_OF_WEEK)-1==0){
+							classesEmployee.setWeek("7");
+						}else{
+							classesEmployee.setWeek(String.valueOf(cal.get(Calendar.DAY_OF_WEEK)-1));
+						}
+						
+						//判断是否设置下班时间为次日
+						if(nextDayFlag.equals("1")){
+							cal.add(Calendar.DAY_OF_MONTH,1);
+						}
+						//下班时间
+						classesEmployee.setOffDutySchedulingDate(new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime())+" "+offDutyTime.toString().trim());
+						//设置当天的休息时间段
+						classesEmployee.setRestStartTime("");
+						/*classesEmployee.setRestEndTime(restEndTime);*/
+						
+						addClassesEmp = classesEmployeeMapper.insertSelective(classesEmployee);
+					}
 				}
 				
+				//添加：结果
+				if(addClassesType>0 && addClassesEmp>0){
+					result = true;
+				}else{
+					result = false;
+				}
 			}
 			
 		}

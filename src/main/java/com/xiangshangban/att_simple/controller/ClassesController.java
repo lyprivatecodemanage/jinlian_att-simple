@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.service.ClassesService;
 
 /**
@@ -50,22 +51,22 @@ public class ClassesController {
 	 * @return
 	 */
 	@PostMapping("/addClassesType")
-	public Map<String,Object> addClassesType(@RequestBody String requestParam,HttpServletRequest request){
+	public ReturnData addClassesType(@RequestBody String requestParam,HttpServletRequest request){
 		//初始化返回内容
-		Map<String,Object> result = new HashMap<>();
+		ReturnData result = new ReturnData();
 		String companyId = request.getHeader("companyId");
 		if(companyId!=null && !companyId.isEmpty()){
 			boolean addNewClassesType = classesService.addNewClassesType(requestParam, companyId);
 			if(addNewClassesType){
-				result.put("returnCode","3000");
-				result.put("message","添加成功");
+				result.setReturnCode("3000");
+				result.setMessage("添加成功");
 			}else{
-				result.put("returnCode","3001");
-				result.put("message","添加失败");
+				result.setReturnCode("3001");
+				result.setMessage("添加失败");
 			}
 		}else{
-			result.put("returnCode","3013");
-			result.put("message","请求头参数缺失【未知的登录人（公司）ID】");
+			result.setReturnCode("3013");
+			result.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
 		}
 		return result;
 	}
