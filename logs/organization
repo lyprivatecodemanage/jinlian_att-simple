@@ -1,6 +1,4 @@
-<<<<<<< HEAD
 2018-01-12 14:06:35 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
-=======
 2018-01-15 11:20:06 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
   2018-01-15 11:21:55 INFO [com.xiangshangban.att_simple.service.ApplicationServiceImpl]: org.springframework.jdbc.BadSqlGrammarException: 
 ### Error querying database.  Cause: org.postgresql.util.PSQLException: ERROR: column "companyid" does not exist
@@ -88,5 +86,15 @@
   2018-01-15 11:42:27 INFO [com.xiangshangban.att_simple.service.ApplicationServiceImpl]: java.lang.NullPointerException
   2018-01-15 11:43:28 INFO [com.xiangshangban.att_simple.service.ApplicationServiceImpl]: java.lang.NullPointerException
   2018-01-15 11:45:40 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
->>>>>>> master
+
+2018-01-15 10:29:53 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-15 10:37:41 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-15 10:52:58 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-15 10:55:21 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-15 13:14:47 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-15 13:24:42 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-15 13:27:05 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-15 13:43:54 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-15 15:12:51 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-15 15:15:44 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
   

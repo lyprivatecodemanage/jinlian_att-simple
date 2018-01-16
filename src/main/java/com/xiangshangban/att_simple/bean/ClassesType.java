@@ -1,35 +1,35 @@
 package com.xiangshangban.att_simple.bean;
 
 public class ClassesType {
-    private String id;
+    private String id;//主键（班次ID）
 
-    private String classesName;
+    private String classesName;//班次名称
 
-    private String onDutyTime;
+    private String onDutyTime;//上班时间
 
-    private String offDutyTime;
+    private String offDutyTime;//下班时间
 
-    private String morrowDutyTimeFlag;
+    private String morrowDutyTimeFlag;//（标志位）是否是次日当前时刻下班
 
-    private String restTime;
+    private String restTime;//一天的休息时间段（12:00-13:00）
 
-    private String restDays;
+    private String restDays;//一周的哪几天休息
 
-    private String festivalRestFlag;
+    private String festivalRestFlag;//节假日是否放假标志位（0:不放假 1:放假）
 
-    private String signInRule;
+    private String signInRule;//签到迟到xx分钟不算迟到
 
-    private String signOutRule;
+    private String signOutRule;//签退提早xx分钟不算早退
 
-    private String onPunchCardTime;
+    private String onPunchCardTime;//上班允许提前xx分钟打卡
 
-    private String offPunchCardTime;
+    private String offPunchCardTime;//下班允许推迟xx分钟打卡
 
-    private String autoClassesFlag;
+    private String autoClassesFlag;//自动排班标志位（1：一个月进行一次排班 2：一个季度进行一次排班）
 
-    private String createTime;
+    private String createTime;//该班次类型生成的时间
 
-    private String companyId;
+    private String companyId;//公司ID
 
     public String getId() {
         return id;

@@ -2,90 +2,50 @@ package com.xiangshangban.att_simple.bean;
 
 public class ReportDaily extends ReportDailyKey {
     private String reportId;
-
-    private String deptId;
-
-    private String paibanRemark;
-
-    private String checkInfo;
-
-    private String workTime;
-
-    private String realWorkTime;
-
-    private String realAttendanceTime;
-
-    private String late;
-
-    private String lateTime;
-
-    private String early;
-
-    private String earlyTime;
-
-    private String absent;
-
-    private String absentTime;
-
-    private String normalOverWork;
-
-    private String weekOverWork;
-
-    private String holidayOverWork;
-
-    private String changeTime;
-
-    private String leaveAbsence;
-
-    private String leaveDaysOff;
-
-    private String leaveAnnual;
-
-    private String leaveSick;
-
-    private String leaveMarriage;
-
-    private String leaveMaternity;
-
-    private String leaveMaternityCheck;
-
-    private String leavePaternity;
-
-    private String leaveFuneral;
-
-    private String leaveNursing;
-
-    private String leaveWelfare;
-
-    private String newWelfare;
-
-    private String leaveLongSick;
-
-    private String outTimeHoliday;
-
-    private String outTimeWeek;
-
-    private String outTimeWork;
-
-    private String evectionTimeHoliday;
-
-    private String evectionTimeWeek;
-
-    private String evectionTimeWork;
-
-    private String deptName;
-
-    private String beginTime1;
-
-    private String endTime1;
-
-    private String leaveOther;
-
-    private String leaveAmblosis;
-
-    private String leavePregnancy;
-
-    private String workDay;
+    private String deptId;//部门ID
+    private String paibanRemark;//排班描述
+    private String checkInfo;//打卡有效时段描述
+    private String workTime;//应该工作时间，理论
+    private String realWorkTime;//实际工作时间，实际
+    private String realAttendanceTime;//实际考勤时间，实际
+    private String late;//迟到次数
+    private String lateTime;//迟到时长
+    private String early;//早退次数
+    private String earlyTime;//早退次数
+    private String absent;//旷工次数
+    private String absentTime;//旷工时长
+    private String normalOverWork;//平日加班时长
+    private String weekOverWork;//周末加班时长
+    private String holidayOverWork;//节日加班时长
+    private String changeTime;//新增调休时间
+    private String leaveAbsence;//事假
+    private String leaveDaysOff;//调休假
+    private String leaveAnnual;//年假
+    private String leaveSick;//病假
+    private String leaveMarriage;//婚假
+    private String leaveMaternity;//产假
+    private String leaveMaternityCheck;//产检假
+    private String leavePaternity;//陪产假
+    private String leaveFuneral;//丧假
+    private String leaveNursing;//哺乳假
+    private String leaveWelfare;//福利日使用额度
+    private String newWelfare;//福利日生成额度
+    private String leaveLongSick;//长病假
+    private String outTimeHoliday;//节假日外出时间
+    private String outTimeWeek;//周末外出时间
+    private String outTimeWork;//工作日外出时间
+    private String evectionTimeHoliday;//节假日出差时间
+    private String evectionTimeWeek;//周末出差时间
+    private String evectionTimeWork;//工作日出差时间
+    private String deptName;//部门名称
+    private String beginTime1;//上班时间
+    private String endTime1;//下班时间
+    private String leaveAmblosis;//流产假
+    private String leavePregnancy;//孕期工间休息假
+    private String leaveOther="";//其他假
+    private String workDay;//应出天数
+    private String signInTime;//签到
+    private String signOutTime;//签退
 
     public String getReportId() {
         return reportId;
@@ -430,4 +390,20 @@ public class ReportDaily extends ReportDailyKey {
     public void setWorkDay(String workDay) {
         this.workDay = workDay;
     }
+
+	public String getSignInTime() {
+		return signInTime;
+	}
+
+	public void setSignInTime(String signInTime) {
+		this.signInTime = signInTime;
+	}
+
+	public String getSignOutTime() {
+		return signOutTime;
+	}
+
+	public void setSignOutTime(String signOutTime) {
+		this.signOutTime = signOutTime;
+	}
 }

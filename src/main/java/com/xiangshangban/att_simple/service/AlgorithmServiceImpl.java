@@ -1,13 +1,21 @@
 package com.xiangshangban.att_simple.service;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.xiangshangban.att_simple.bean.AlgorithmParam;
 import com.xiangshangban.att_simple.bean.AlgorithmReport;
 import com.xiangshangban.att_simple.bean.AlgorithmResult;
 import com.xiangshangban.att_simple.bean.AlgorithmSign;
+import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ApplicationOutgoing;
+import com.xiangshangban.att_simple.bean.ClassesEmployee;
 import com.xiangshangban.att_simple.bean.ReportDaily;
 import com.xiangshangban.att_simple.bean.ReportExcept;
+import com.xiangshangban.att_simple.dao.AlgorithmMapper;
 import com.xiangshangban.att_simple.dao.ClassesEmployeeMapper;
 import com.xiangshangban.att_simple.dao.ReportDailyMapper;
 import com.xiangshangban.att_simple.dao.ReportExceptMapper;
@@ -22,6 +30,8 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 	ReportDailyMapper reportDailyMapper;
 	@Autowired
 	ReportExceptMapper reportExceptMapper;
+	@Autowired
+	AlgorithmMapper algorithmMapper;
 	/**
 	 * 核心计算开始
 	 */
@@ -36,104 +46,204 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		}
 	}
 	/**
-	 * 标准工时计算方式：区分有排班、无排班
+	 * 区分有排班、无排班
 	 * @param algorithmParam
 	 * @return
 	 */
 	public AlgorithmResult calculateStandard(AlgorithmParam algorithmParam, AlgorithmResult result) {
 		//有排班
-		if(true){
+		if(algorithmParam.getClassesEmployee()!=null 
+				&& StringUtils.isNotEmpty(algorithmParam.getClassesEmployee().getClassesId())){
+			//休息时间
+			algorithmParam.getClassesEmployee().getClassesType().getRestTime();
 			return this.havePlan(algorithmParam, result);
 		}else{//无排班
 			return this.noPlan(algorithmParam, result);
 		}
 	}
 	/**
-	 * 标准工时：有排班的计算方式，区分一个时段和两个时段
+	 * 无排班的计算方式
+	 * @param algorithmParam
+	 * @return
+	 */
+	public AlgorithmResult noPlan(AlgorithmParam algorithmParam, AlgorithmResult result) {
+		//开始确定打卡有效区间
+		//抓取前一天的排班班次
+		ClassesEmployee classesLast = algorithmMapper.getPlanByDate(algorithmParam.getCompanyId(),
+				algorithmParam.getEmployeeId(), TimeUtil.getLongAfter(
+						algorithmParam.getCountDate()+" 00:00:00", -1, Calendar.DATE));
+		//检查前一天班次打卡结束时间是否在当天
+		if(classesLast!=null && StringUtils.isNotEmpty(classesLast.getOffDutySchedulingDate())
+				&& StringUtils.isNotEmpty(classesLast.getOnDutySchedulingDate()) 
+				&& classesLast.getClassesType()!=null 
+				&& StringUtils.isNotEmpty(classesLast.getClassesType().getOffPunchCardTime())){
+			String lastDateCardEnd = TimeUtil.getLongAfter(
+					classesLast.getOffDutySchedulingDate(), 
+					Integer.parseInt(classesLast.getClassesType().getOffPunchCardTime()), 
+					Calendar.MINUTE);//前一天班次打卡结束时间
+			if(TimeUtil.compareTime(lastDateCardEnd, algorithmParam.getCountDate()+" 00:00:00")){//前一天班次打卡结束时间在当天
+				algorithmParam.setSignInLimitLine(lastDateCardEnd);
+			}else{
+				algorithmParam.setSignInLimitLine(algorithmParam.getCountDate()+" 00:00:00");
+			}
+		}else{//前一天无排班
+			algorithmParam.setSignInLimitLine(algorithmParam.getCountDate()+" 00:00:00");
+		}
+		//抓取后一天的排班班次
+		//检查后一天班次打卡结束时间是否在当天
+		ClassesEmployee classesNext = algorithmMapper.getPlanByDate(algorithmParam.getCompanyId(),
+				algorithmParam.getEmployeeId(), TimeUtil.getLongAfter(
+						algorithmParam.getCountDate()+" 00:00:00", 1, Calendar.DATE));
+		//检查次日班次打卡开始时间是否在当天
+		if(classesNext!=null && StringUtils.isNotEmpty(classesNext.getOnDutySchedulingDate())
+				&& StringUtils.isNotEmpty(classesNext.getOffDutySchedulingDate()) 
+				&& classesNext.getClassesType()!=null 
+				&& StringUtils.isNotEmpty(classesNext.getClassesType().getOnPunchCardTime())){
+			String lastDateCardEnd = TimeUtil.getLongAfter(
+					classesNext.getOffDutySchedulingDate(), 
+					-1*Integer.parseInt(classesNext.getClassesType().getOffPunchCardTime()), 
+					Calendar.MINUTE);//次日班次打卡开始时间
+			if(TimeUtil.compareTime(lastDateCardEnd, algorithmParam.getCountDate()+" 00:00:00")){//次日班次打卡开始时间在当天
+				algorithmParam.setSignOutLimitLine(lastDateCardEnd);
+			}else{
+				algorithmParam.setSignOutLimitLine(algorithmParam.getCountDate()+" 00:00:00");
+			}
+		}else{//次日无排班
+			algorithmParam.setSignOutLimitLine(algorithmParam.getCountDate()+" 00:00:00");
+		}
+		this.getNoPlanSign(algorithmParam, result);
+		return result;
+	}
+	/**
+	 * 有排班的计算方式，区分有请假和无请假方式
 	 * @param algorithmParam
 	 * @return
 	 */
 	public AlgorithmResult havePlan(AlgorithmParam algorithmParam, AlgorithmResult result) {
-		
+		//请假、外出、出差，将影响应在岗时间
+		this.countLeave(algorithmParam, result);
+		this.countOut(algorithmParam, result);
+		this.countBusiness(algorithmParam, result);
+		//根据centerLine区分签到签退的中间线， attBeginLine应在岗的最早时间，attEndLine应在岗的最晚时间， 获得签到签退时间
+		this.getSign(algorithmParam, result);
+		//根据centerLine区分签到签退的中间线， attBeginLine应在岗的最早时间，attEndLine应在岗的最晚时间， 签到签退时间，检查异常
+		this.checkException(algorithmParam, result);
 		return result;
 	}
 	/**
-	 *  标准工时：有排班，排班仅有一个时段
+	 * 计算请假
 	 * @param algorithmParam
 	 * @param result
 	 */
-	public void oneTimePlan(AlgorithmParam algorithmParam, AlgorithmResult result) {
-		/*algorithmParam.setPlanTimeNum("1");
-		//预计算应出
-		String beginTime1 = algorithmParam.getAttendancePlan().getBeginTime1();//班次时段1的开始时间
-		String endTime1 = algorithmParam.getAttendancePlan().getEndTime1();//班次时段1的结束时间
-		//排班描述
-		result.getReportDaily().setPaibanRemark("时段："+beginTime1+"~"+endTime1);
-		result.getReportDaily().setBeginTime1(beginTime1);
-		result.getReportDaily().setEndTime1(endTime1);
-		result.getReportDaily().setBeginTime2("");
-		result.getReportDaily().setEndTime2("");
+	public void countLeave(AlgorithmParam algorithmParam, AlgorithmResult result) {
+		//查询与班次有交集的请假
+		List<Application> applicationList = algorithmMapper.getLeaveByTime(algorithmParam.getCompanyId(),
+				algorithmParam.getEmployeeId(), algorithmParam.getClassesEmployee().getOnDutySchedulingDate(),
+				algorithmParam.getClassesEmployee().getOffDutySchedulingDate());
+		long timeLength = this.countApplyByClasses(algorithmParam, result, applicationList);
 		
-		//计算打卡有效时段
-		String checkSignInMax = algorithmParam.getAttendancePlan().getCheckSignInMax();
-		String checkSignOutMax = algorithmParam.getAttendancePlan().getCheckSignOutMax();
-		String checkSignInBegin = TimeUtil.getLongAfter(beginTime1, -1*Integer.parseInt(checkSignInMax), Calendar.MINUTE);
-		String checkSignOutEnd = TimeUtil.getLongAfter(endTime1, -1*Integer.parseInt(checkSignOutMax), Calendar.MINUTE);
-		algorithmParam.getAttendancePlan().setCheckSignInBeginTime(
-				TimeUtil.getLongAfter(beginTime1, 
-						-1*Integer.parseInt(checkSignInMax), Calendar.MINUTE));
-		algorithmParam.getAttendancePlan().setCheckSignOutEndTime(
-				TimeUtil.getLongAfter(endTime1, 
-						-1*Integer.parseInt(checkSignOutMax), Calendar.MINUTE));
-		String restBeginTime1 = algorithmParam.getAttendancePlan().getRestBeginTime1();
-		String restEndTime1 = algorithmParam.getAttendancePlan().getRestEndTime1();
-		this.planTimeOne(algorithmParam, result, beginTime1, endTime1, 
-				checkSignInBegin, checkSignOutEnd, restBeginTime1, restEndTime1, "1");
-		//外出、派工、出差计算处理
-		this.calculateOut(algorithmParam, result, beginTime1, endTime1, "", "", "1");*/
 	}
-	
 	/**
-	 * 出差、外出、派工计算处理
+	 * 计算外出
 	 * @param algorithmParam
 	 * @param result
-	 * @param beginTime1
-	 * @param endTime1
-	 * @param beginTime2
-	 * @param endTime2
-	 * @param timeNum 时段数 0：无排班，1：排班中有一个时段，2：排班中有两个时段
 	 */
-	public void calculateOut(AlgorithmParam algorithmParam, AlgorithmResult result, String beginTime1, String endTime1,
-			String beginTime2, String endTime2, String timeNum) {
-		//出差
-		/*for(ErrandApplication app:algorithmParam.getEvectionList()){
-			this.getOutTime(algorithmParam, result, beginTime1, endTime1, beginTime2, endTime2, timeNum, app, "Evection");
+	public void countOut(AlgorithmParam algorithmParam, AlgorithmResult result) {
+		//查询与班次有交集的外出
+		List<Application> applicationList = algorithmMapper.getOutByTime(algorithmParam.getCompanyId(),
+				algorithmParam.getEmployeeId(), algorithmParam.getClassesEmployee().getOnDutySchedulingDate(),
+				algorithmParam.getClassesEmployee().getOffDutySchedulingDate());
+		long timeLength = this.countApplyByClasses(algorithmParam, result, applicationList);
+		//半小时为单位，处理
+		
+	}
+	/**
+	 * 计算出差
+	 * @param algorithmParam
+	 * @param result
+	 */
+	public void countBusiness(AlgorithmParam algorithmParam, AlgorithmResult result) {
+		//查询与班次有交集的出差
+		List<Application> applicationList = algorithmMapper.getBusinessByTime(algorithmParam.getCompanyId(),
+				algorithmParam.getEmployeeId(), algorithmParam.getClassesEmployee().getOnDutySchedulingDate(),
+				algorithmParam.getClassesEmployee().getOffDutySchedulingDate());
+		long timeLength = this.countApplyByClasses(algorithmParam, result, applicationList);
+		
+	}
+	/**
+	 * 计算请假、外出、出差；改变应在岗的最早时间，应在岗的最晚时间
+	 * @param algorithmParam
+	 * @param result
+	 * @return 总时长，单位分钟
+	 */
+	public long countApplyByClasses(AlgorithmParam algorithmParam, AlgorithmResult result, List<Application> applicationList){
+		long timeLength=0;
+		String attBeginLine = algorithmParam.getAttBeginLine();//应在岗的最早时间
+		String attEndLine = algorithmParam.getAttEndLine();//应在岗的最晚时间
+		//String restBeginTime = 
+		//请假类型(1:事假;2:年假;3:调休假;4:婚假;5:产假;6:丧假)
+		for(Application application : applicationList){
+			if(TimeUtil.compareTime(attBeginLine, application.getStartTime())){//左，外
+				
+			}else{
+				
+			}
+			
+			if(TimeUtil.compareTime(attBeginLine, application.getStartTime())){//左，外
+				
+			}
 		}
-		//外出
-		for(ErrandApplication app:algorithmParam.getEvectionList()){
-			this.getOutTime(algorithmParam, result, beginTime1, endTime1, beginTime2, endTime2, timeNum, app, "Out");
-		}*/
-		
-		
+		return 0;
 	}
-	
 	/**
-	 * 计算出差，外出， 派工时长
+	 * 检查异常，并记录异常
 	 * @param algorithmParam
 	 * @param result
-	 * @param beginTime1
-	 * @param endTime1
-	 * @param beginTime2
-	 * @param endTime2
-	 * @param timeNum
-	 * @param errandApplication
-	 * @param outType 外出类型，Evection：出差，Out:外出， Dispatch:派工
 	 */
-	public void getOutTime(AlgorithmParam algorithmParam, AlgorithmResult result, String beginTime1, String endTime1, String beginTime2,
-			String endTime2, String timeNum, ApplicationOutgoing errandApplication, String outType) {
+	public void checkException(AlgorithmParam algorithmParam, AlgorithmResult result) {
+		//检查异常
+		
+		//记录异常
 		
 	}
-	
+	/**
+	 * 无排班情况下，
+	 * 根据signInLimitLine上班打卡开始时间，signOutLimitLine下班班打卡结束时间
+	 * 获得签到签退时间
+	 * @param algorithmParam
+	 * @param result
+	 */
+	public void getNoPlanSign(AlgorithmParam algorithmParam, AlgorithmResult result){
+		result.getReportDaily().setSignInTime(
+				algorithmMapper.getMinSignIn(algorithmParam.getCompanyId(),
+						algorithmParam.getEmployeeId(), algorithmParam.getSignInLimitLine(),
+						algorithmParam.getSignOutLimitLine()));
+		result.getReportDaily().setSignOutTime(
+				algorithmMapper.getMaxSignOut(algorithmParam.getCompanyId(),
+						algorithmParam.getEmployeeId(), algorithmParam.getSignInLimitLine(),
+						algorithmParam.getSignOutLimitLine()));
+	}
+	/**
+	 * 有排班情况下，
+	 * 根据centerLine区分签到签退的中间线，
+	 * attBeginLine应在岗的最早时间，attEndLine应在岗的最晚时间，
+	 * signInLimitLine上班打卡开始时间，signOutLimitLine下班班打卡结束时间
+	 * 获得签到签退时间
+	 * @param algorithmParam
+	 * @param result
+	 */
+	public void getSign(AlgorithmParam algorithmParam, AlgorithmResult result){
+		String centerLine = TimeUtil.getCenter(algorithmParam.getAttBeginLine(), algorithmParam.getAttEndLine());
+		algorithmParam.setCenterLine(centerLine);
+		result.getReportDaily().setSignInTime(
+				algorithmMapper.getMinSignIn(algorithmParam.getCompanyId(),
+						algorithmParam.getEmployeeId(), algorithmParam.getSignInLimitLine(),
+						centerLine));
+		result.getReportDaily().setSignOutTime(
+				algorithmMapper.getMaxSignOut(algorithmParam.getCompanyId(),
+						algorithmParam.getEmployeeId(), centerLine,
+						algorithmParam.getSignOutLimitLine()));
+	}
 	
 	/**
 	 * 更新最新的上班时间（左请假，内请假执行）
@@ -260,58 +370,26 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		}
 		
 	}
-	/**
-	 * 无排班的计算方式
-	 * @param algorithmParam
-	 * @return
-	 */
-	public AlgorithmResult noPlan(AlgorithmParam algorithmParam, AlgorithmResult result) {
-		
-		return result;
-	}
-	/**
-	 * 综合工时计算方式
-	 * @param algorithmParam
-	 * @return
-	 */
-	public AlgorithmResult calculateSynthesize(AlgorithmParam algorithmParam, AlgorithmResult result) {
-		
-		return result;
-	}
-	/**
-	 * 不定时工时计算方式
-	 * @param algorithmParam
-	 * @param result
-	 * @return
-	 */
-	public AlgorithmResult calculateFlexible(AlgorithmParam algorithmParam, AlgorithmResult result) {
-		
-		return result;
-	}
+	
+	
 	@Override
 	public boolean preCondition(String companyId, String employeeId, String countDate) {
-		// 判断是否关账  ***此处有查询
-		
+		boolean noCheckAtt = true;//***此处有查询
+		//查询是否为不考勤人员
+		if(noCheckAtt){//不考勤
+			return false;
+		}
 		return true;
 	}
 
 	@Override
 	public AlgorithmParam generateAlgorithmParam(String companyId, Employee employee, String countDate) {
-		AlgorithmParam algorithmParam = new AlgorithmParam();//***此处有查询
+		AlgorithmParam algorithmParam = new AlgorithmParam();
 		algorithmParam.setEmployeeId(employee.getEmployeeId());
 		algorithmParam.setEmployee(employee);
 		algorithmParam.setCompanyId(companyId);
 		algorithmParam.setCountDate(countDate);
-		//查询人员，部门，岗位
-		//Employee employee = new Employee();
-		
-		
-		
-		//查询加班申请
-		
-		//查询请假申请
-		
-		//查询外出、派工、出差
+		//***此处有查询，查询今天的排班
 		
 		return algorithmParam;
 	}

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiangshangban.att_simple.dao.AlgorithMapper">
+  <resultMap id="ClassesEmployee" type="com.xiangshangban.att_simple.bean.ClassesEmployee">
+    <result column="emp_id" jdbcType="VARCHAR" property="empId" />
+    <result column="emp_company_id" jdbcType="VARCHAR" property="empCompanyId" />
+    <result column="classes_id" jdbcType="VARCHAR" property="classesId" />
+    <result column="on_duty_scheduling_date" jdbcType="VARCHAR" property="onDutySchedulingDate" />
+    <result column="off_duty_scheduling_date" jdbcType="VARCHAR" property="offDutySchedulingDate" />
+    <result column="week" jdbcType="VARCHAR" property="week" />
+    <association property="classesType" resultMap="ClassesMap"></association>
+  </resultMap>
+  <resultMap id="ClassesMap" type="com.xiangshangban.att_simple.bean.ClassesType">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="classes_name" jdbcType="VARCHAR" property="classesName" />
+    <result column="on_duty_time" jdbcType="VARCHAR" property="onDutyTime" />
+    <result column="off_duty_time" jdbcType="VARCHAR" property="offDutyTime" />
+    <result column="morrow_duty_time_flag" jdbcType="VARCHAR" property="morrowDutyTimeFlag" />
+    <result column="rest_time" jdbcType="VARCHAR" property="restTime" />
+    <result column="rest_days" jdbcType="VARCHAR" property="restDays" />
+    <result column="festival_rest_flag" jdbcType="VARCHAR" property="festivalRestFlag" />
+    <result column="sign_in_rule" jdbcType="VARCHAR" property="signInRule" />
+    <result column="sign_out_rule" jdbcType="VARCHAR" property="signOutRule" />
+    <result column="on_punch_card_time" jdbcType="VARCHAR" property="onPunchCardTime" />
+    <result column="off_punch_card_time" jdbcType="VARCHAR" property="offPunchCardTime" />
+    <result column="auto_classes_flag" jdbcType="VARCHAR" property="autoClassesFlag" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+  </resultMap>
+  <resultMap id="ApplicationMap" type="com.xiangshangban.att_simple.bean.Application">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="employee_id" jdbcType="VARCHAR" property="employeeId" />
+    <result column="company_id" jdbcType="VARCHAR" property="companyId" />
+    <result column="start_time" jdbcType="VARCHAR" property="startTime" />
+    <result column="end_time" jdbcType="VARCHAR" property="endTime" />
+    <result column="applicaiton_type" jdbcType="VARCHAR" property="applicaitonType"/>
+    <result column="applicaiton_children_type" property="applicaitonChildrenType"/>
+  </resultMap>
+  <select id="getPlanByDate" resultMap="ClassesEmployee">
+  	select a.emp_id, a.emp_company_id, a.classes_id, a.on_duty_scheduling_date, a.off_duty_scheduling_date, a.week,
+	    b.classes_name, b.on_duty_time, b.off_duty_time, b.morrow_duty_time_flag, b.rest_time, 
+	    b.rest_days, b.festival_rest_flag, b.sign_in_rule, b.sign_out_rule, b.on_punch_card_time, b.off_punch_card_time, 
+	    b.auto_classes_flag
+	FROM classes_employee_ AS a
+	LEFT JOIN classes_type AS b ON a.classes_id=b."id"
+	WHERE a.company_id=#{companyId} AND a.emp_id=#{employeeId} AND a.on_duty_scheduling_date::DATE=#{countDate}::DATE
+  </select>
+  <select id="getMinSignIn" resultType="String">
+  	SELECT min(record_date) 
+	FROM(
+		SELECT a.record_date
+		FROM device.door_record AS a
+		LEFT JOIN device.door_ AS b ON a.door_id=b.door_id
+		WHERE a.employee_id=#{employeeId} AND b.company_id=#{companyId}
+		 AND (a.record_date BETWEEN #{beginTime} AND #{endTime})
+		 AND (a.record_type='2' OR a.record_type='3' OR a.record_type='6' OR a.record_type='7' OR a.record_type='8')
+	  UNION
+		SELECT a.fill_card_time AS record_date
+		FROM application_fill_card_ b
+		WHERE b.employee_id=#{employeeId} AND b.company_id=#{companyId}
+	   AND (b.fill_card_time BETWEEN #{beginTime} AND #{endTime})
+	) AS c 
+  </select>
+  <select id="getMaxSignOut" resultType="String">
+  	SELECT max(record_date) 
+	FROM(
+		SELECT a.record_date
+		FROM device.door_record AS a
+		LEFT JOIN device.door_ AS b ON a.door_id=b.door_id
+		WHERE a.employee_id=#{employeeId} AND b.company_id=#{companyId}
+		 AND (a.record_date BETWEEN #{beginTime} AND #{endTime})
+		 AND (a.record_type='2' OR a.record_type='3' OR a.record_type='6' OR a.record_type='7' OR a.record_type='8')
+	  UNION
+		SELECT a.fill_card_time AS record_date
+		FROM application_fill_card_ b
+		WHERE b.employee_id=#{employeeId} AND b.company_id=#{companyId}
+	   AND (b.fill_card_time BETWEEN #{beginTime} AND #{endTime})
+	) AS c 
+  </select>
+  <select id="getLeaveByTime" resultMap="ApplicationMap">
+  	SELECT DISTINCT a.start_time,a.end_time,a.employee_id,
+  			a.department_id,a.company_id, '1' AS application_type,
+  			leave_type AS applicaiton_children_type
+	FROM application_leave_ a
+	WHERE a.employee_id=#{employeeId} AND a.company_id=#{companyId}
+	AND ((#{endTime} BETWEEN a.start_time AND a.end_time)
+			OR (a.end_time BETWEEN #{beginTime} AND #{endTime}))
+	ORDER BY a.start_time
+  </select>
+  <select id="getOutByTime" resultMap="ApplicationMap">
+  	SELECT DISTINCT a.start_time,a.end_time,a.employee_id,
+  		a.department_id,a.company_id, '4' AS application_type
+	FROM application_outgoing_ a
+	WHERE a.employee_id=#{employeeId} AND a.company_id=#{companyId}
+	AND ((#{endTime} BETWEEN a.start_time AND a.end_time)
+			OR (a.end_time BETWEEN #{beginTime} AND #{endTime}))
+	ORDER BY a.start_time
+  </select>
+    <select id="getBusinessByTime" resultMap="ApplicationMap">
+  	SELECT DISTINCT a.start_time,a.end_time,a.employee_id,
+  		a.department_id,a.company_id, '3' AS application_type
+	FROM application_business_travel_ a
+	WHERE a.employee_id=#{employeeId} AND a.company_id=#{companyId}
+	AND ((#{endTime} BETWEEN a.start_time AND a.end_time)
+			OR (a.end_time BETWEEN #{beginTime} AND #{endTime}))
+	ORDER BY a.start_time
+  </select>
+</mapper>

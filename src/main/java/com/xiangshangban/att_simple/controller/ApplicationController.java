@@ -8,14 +8,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.xiangshangban.att_simple.bean.Application;
@@ -25,6 +17,14 @@ import com.xiangshangban.att_simple.service.ApplicationService;
 import com.xiangshangban.att_simple.utils.DateCompareUtil;
 import com.xiangshangban.att_simple.utils.FormatUtil;
 import com.xiangshangban.att_simple.utils.GainData;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
 /**
  * 
  * @author 李业
@@ -281,5 +281,4 @@ public class ApplicationController {
 				return result;
 			}
 		}
-
 	}
