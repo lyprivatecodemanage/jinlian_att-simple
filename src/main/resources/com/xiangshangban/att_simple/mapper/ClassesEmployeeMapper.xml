@@ -8,6 +8,9 @@
     <result column="classes_id" jdbcType="VARCHAR" property="classesId" />
     <result column="on_duty_scheduling_date" jdbcType="VARCHAR" property="onDutySchedulingDate" />
     <result column="off_duty_scheduling_date" jdbcType="VARCHAR" property="offDutySchedulingDate" />
+    <result column="rest_start_time" jdbcType="VARCHAR" property="restStartTime" />
+    <result column="rest_end_time" jdbcType="VARCHAR" property="restEndTime" />
+    <result column="the_date" jdbcType="VARCHAR" property="theDate" />
     <result column="week" jdbcType="VARCHAR" property="week" />
   </resultMap>
   <sql id="Base_Column_List">
@@ -60,6 +63,9 @@
       <if test="restEndTime != null">
         rest_end_time,
       </if>
+      <if test="theDate != null">
+        the_date,
+      </if>
       <if test="week != null">
         week,
       </if>
@@ -88,6 +94,9 @@
       </if>
       <if test="restEndTime != null">
         #{restEndTime,jdbcType=VARCHAR},
+      </if>
+      <if test="theDate != null">
+       	#{theDate,jdbcType=VARCHAR},
       </if>
       <if test="week != null">
         #{week,jdbcType=VARCHAR},
@@ -128,4 +137,34 @@
       week = #{week,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  
+  <!-- 查询指定公司使用指定班次的人员列表 -->
+  <select id="selectPointClassesTypeEmp" parameterType="Map" resultType="Map">
+  	SELECT
+	COALESCE(A.emp_id,'') AS emp_id,
+	COALESCE(B.department_id,'') AS department_id
+	FROM
+		(
+			SELECT DISTINCT
+				emp_company_id,
+				emp_id
+			FROM
+				att_simple.classes_employee_
+			WHERE
+				classes_id = #{classesTypeId}
+			AND emp_company_id = #{companyId}
+		) A
+	LEFT JOIN organization.employee_ B ON A .emp_id = B.employee_id
+	AND A .emp_company_id = B.company_id
+  </select>
+  
+  <!-- 查询指定人员指定时间区间的班次信息 -->
+  <select id="selectPointTimeClasses" parameterType="Map" resultMap="BaseResultMap">
+  	SELECT
+  	COALESCE(classes_id,'') AS classes_id,
+  	COALESCE(on_duty_scheduling_date,'') AS on_duty_scheduling_date,
+  	COALESCE(off_duty_scheduling_date,'') AS off_duty_scheduling_date
+  	FROM classes_employee_
+  	WHERE emp_id = #{empId} and emp_company_id = #{companyId} and the_date between #{startTime} and #{endTime} ORDER BY on_duty_scheduling_date
+  </select>
 </mapper>

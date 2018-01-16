@@ -1,3 +1,27 @@
+2018-01-16 10:40:15 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-16 10:44:03 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-16 10:49:33 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-16 10:53:18 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-16 10:57:23 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-16 10:59:10 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-16 11:04:53 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-16 11:10:59 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-16 11:12:08 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-16 12:48:52 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-16 12:51:25 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-16 12:39:50 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-16 12:52:32 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-16 13:01:30 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-16 13:13:42 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-16 14:44:17 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-16 14:42:24 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-16 14:48:24 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-16 14:52:59 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-16 15:15:40 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-16 15:17:51 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-16 15:20:55 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-16 15:22:07 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-16 15:23:18 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
 2018-01-15 11:20:06 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
   2018-01-15 11:21:55 INFO [com.xiangshangban.att_simple.service.ApplicationServiceImpl]: org.springframework.jdbc.BadSqlGrammarException: 
 ### Error querying database.  Cause: org.postgresql.util.PSQLException: ERROR: column "companyid" does not exist

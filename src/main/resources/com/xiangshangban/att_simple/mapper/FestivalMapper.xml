@@ -79,4 +79,9 @@
       work_type = #{workType,jdbcType=VARCHAR}
     where festival_id = #{festivalId,jdbcType=VARCHAR}
   </update>
+  
+  <!-- 查询当年所有的法定节假日 -->
+  <select id = "selectAllFestivalInfo" resultMap = "BaseResultMap">
+  	select * from festival
+  </select>
 </mapper>

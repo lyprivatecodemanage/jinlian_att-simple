@@ -17,9 +17,13 @@ public class ClassesEmployee {
     private String restStartTime;//当天的休息时间段：开始时间
     
     private String restEndTime;//当天的休息时间段：结束时间
+    
+    private String theDate;//当前日期
+    
     private String week;//上班时间所在日期的星期
     
     private ClassesType classesType;
+
 	public String getId() {
 		return id;
 	}
@@ -38,6 +42,10 @@ public class ClassesEmployee {
 
 	public String getEmpCompanyId() {
 		return empCompanyId;
+	}
+
+	public void setEmpCompanyId(String empCompanyId) {
+		this.empCompanyId = empCompanyId;
 	}
 
 	public String getClassesId() {
@@ -80,6 +88,14 @@ public class ClassesEmployee {
 		this.restEndTime = restEndTime;
 	}
 
+	public String getTheDate() {
+		return theDate;
+	}
+
+	public void setTheDate(String theDate) {
+		this.theDate = theDate;
+	}
+
 	public String getWeek() {
 		return week;
 	}
@@ -94,10 +110,6 @@ public class ClassesEmployee {
 
 	public void setClassesType(ClassesType classesType) {
 		this.classesType = classesType;
-	}
-
-	public void setEmpCompanyId(String empCompanyId) {
-		this.empCompanyId = empCompanyId;
 	}
 
 }

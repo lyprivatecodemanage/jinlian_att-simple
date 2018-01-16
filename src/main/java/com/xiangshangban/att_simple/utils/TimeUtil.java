@@ -661,10 +661,12 @@ public class TimeUtil {
 		}
 		return false;
 	}
+	
 	public static void main(String[] args) {
 //		System.out.println(isCrossDay("2017-10-16 10:00:00", "2017-10-17 10:05:00"));
 //		System.out.println(getDateAfter(getCurrentDate(),1));
-		System.out.println(getCurrentMaxDate());
+		/*System.out.println(getCurrentMaxDate());*/
+		System.out.println(compareTime("2018-01-15 21:00:01","2018-01-15 01:00:01"));
 	}
 	
 }
