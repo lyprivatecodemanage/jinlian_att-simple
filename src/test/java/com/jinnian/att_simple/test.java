@@ -1,9 +1,9 @@
 package com.jinnian.att_simple;
 
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
-import com.xiangshangban.att_simple.bean.ApplicationLeave;
 import com.xiangshangban.att_simple.bean.MessageBean;
 
 public class test {
@@ -13,7 +13,7 @@ public class test {
 		mb.setEmployeeId("123456");
 		System.out.println(al.getEmployeeId());*/
 		
-		try {
+		/*try {
 			Object obj = new test().getName(Class.forName("com.xiangshangban.att_simple.bean.ApplicationLeave"));
 			ApplicationLeave applicationLeave = (ApplicationLeave)obj;
 			applicationLeave.setApplicationNo("123");
@@ -26,6 +26,20 @@ public class test {
 		new test().setValue(list);
 		for(int i=0;i<list.size();i++){
 			System.out.println(list.get(i));
+		}*/
+		try{
+	     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");  
+	        String str1 = "2012-02";  
+	        String str2 = "2010-01";  
+	        Calendar bef = Calendar.getInstance();  
+	        Calendar aft = Calendar.getInstance();  
+	        bef.setTime(sdf.parse(str1));  
+	        aft.setTime(sdf.parse(str2));  
+	        int result = aft.get(Calendar.MONTH) - bef.get(Calendar.MONTH);  
+	        int month = (aft.get(Calendar.YEAR) - bef.get(Calendar.YEAR)) * 12;  
+	        System.out.println(Math.abs(month + result));
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 		
 	}
