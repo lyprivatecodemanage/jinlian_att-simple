@@ -59,22 +59,22 @@ public class ClassesController {
 	@PostMapping("/addClassesType")
 	public ReturnData addClassesType(@RequestBody String requestParam,HttpServletRequest request){
 		//初始化返回内容
-		ReturnData result = new ReturnData();
+		ReturnData returnData = new ReturnData();
 		String companyId = request.getHeader("companyId");
 		if(companyId!=null && !companyId.isEmpty()){
 			boolean addNewClassesType = classesService.addNewClassesType(requestParam, companyId.trim());
 			if(addNewClassesType){
-				result.setReturnCode("3000");
-				result.setMessage("添加成功");
+				returnData.setReturnCode("3000");
+				returnData.setMessage("添加成功");
 			}else{
-				result.setReturnCode("3001");
-				result.setMessage("添加失败");
+				returnData.setReturnCode("3001");
+				returnData.setMessage("添加失败");
 			}
 		}else{
-			result.setReturnCode("3013");
-			result.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
+			returnData.setReturnCode("3013");
+			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
 		}
-		return result;
+		return returnData;
 	}
 	
 	/**
@@ -152,8 +152,25 @@ public class ClassesController {
 	 * @return
 	 */
 	@PostMapping("/delClassesType")
-	public Map<String,Object> deleteClassesType(@RequestBody String requestParam,HttpServletRequest request){
-		return null;
+	public ReturnData deleteClassesType(@RequestBody String requestParam,HttpServletRequest request){
+		//获取公司ID
+		String companyId = request.getHeader("companyId");
+		//初始化返回的数据
+		ReturnData returnData = new ReturnData();
+		if(companyId!=null && !companyId.isEmpty()){
+			boolean deleteAppointClassesType = classesService.deleteAppointClassesType(requestParam,companyId.trim());
+			if(deleteAppointClassesType){
+				returnData.setReturnCode("3000");
+				returnData.setMessage("删除成功");
+			}else{
+				returnData.setReturnCode("3001");
+				returnData.setMessage("删除失败");
+			}
+		}else{
+			returnData.setReturnCode("3013");
+			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
+		}
+		return returnData;
 	}
 	
 	

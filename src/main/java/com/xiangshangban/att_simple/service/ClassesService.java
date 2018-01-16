@@ -80,4 +80,5 @@ public interface ClassesService {
 	 * @return
 	 */
 	boolean autoScheduling();
+	
 }

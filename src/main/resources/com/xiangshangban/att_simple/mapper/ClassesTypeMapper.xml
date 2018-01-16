@@ -232,4 +232,9 @@
 	WHERE
 		company_id = #{companyId} 
   </select>
+  
+  <!-- 删除指定的班次类型 -->
+  <delete id="removeAppointClassesType" parameterType="Map">
+  	delete from classes_type where company_id = #{companyId} and id = #{classesTypeId}
+  </delete>
 </mapper>

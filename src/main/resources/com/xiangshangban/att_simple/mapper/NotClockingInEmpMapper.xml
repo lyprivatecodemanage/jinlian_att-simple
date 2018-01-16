@@ -57,5 +57,4 @@
   <delete id="removeNotClockingInEmp" parameterType="String">
   	delete from not_clocking_in_emp where emp_company_id = #{companyId}
   </delete>
-  
 </mapper>

@@ -245,8 +245,25 @@ public class ClassesServiceImpl implements ClassesService{
 
 	@Override
 	public boolean deleteAppointClassesType(String requestParam, String companyId) {
-		// TODO Auto-generated method stub
-		return false;
+		
+		JSONObject parseObject = JSONObject.parseObject(requestParam);
+		Object object = parseObject.get("classesTypeId");
+		//初始化返回的结果
+		boolean result = false;
+		if(object!=null){
+			Map<String,String> param = new HashMap<>();
+			param.put("classesTypeId",object.toString().trim());
+			param.put("companyId", companyId);
+			
+			int removeAppointClassesType = classesTypeMapper.removeAppointClassesType(param);
+			
+			if(removeAppointClassesType>0){
+				result = true;
+			}else{
+				result = false;
+			}
+		}
+		return result;
 	}
 
 	@Override
