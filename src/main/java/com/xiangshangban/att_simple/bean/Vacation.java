@@ -24,20 +24,28 @@ public class Vacation {
     
     /*----------------------------------扩展属性------------------------------------*/
     
-    //年假总额排序
-    private String annualLeaveTotalRank;
-    //年假余额排序
-    private String annualLeaveBalanceRank;
-    //调休总额排序
-    private String adjustRestTotalRank;
-    //调休余额排序
-    private String adjustRestBalanceRank;
-    //分页数据总数
-    private Integer pageTotalNumber;
-    //每页显示数据条数
-    private Integer pageNum;
+    //部门名称
+    private String departmentName;
+    //姓名
+    private String employeeName;
     
-    public String getVacationId() {
+	public String getDepartmentName() {
+		return departmentName;
+	}
+
+	public void setDepartmentName(String departmentName) {
+		this.departmentName = departmentName;
+	}
+
+	public String getEmployeeName() {
+		return employeeName;
+	}
+
+	public void setEmployeeName(String employeeName) {
+		this.employeeName = employeeName;
+	}
+
+	public String getVacationId() {
         return vacationId;
     }
 
@@ -100,54 +108,6 @@ public class Vacation {
     public void setAdjustRestBalance(String adjustRestBalance) {
         this.adjustRestBalance = adjustRestBalance;
     }
-
-	public String getAnnualLeaveTotalRank() {
-		return annualLeaveTotalRank;
-	}
-
-	public void setAnnualLeaveTotalRank(String annualLeaveTotalRank) {
-		this.annualLeaveTotalRank = annualLeaveTotalRank;
-	}
-
-	public String getAnnualLeaveBalanceRank() {
-		return annualLeaveBalanceRank;
-	}
-
-	public void setAnnualLeaveBalanceRank(String annualLeaveBalanceRank) {
-		this.annualLeaveBalanceRank = annualLeaveBalanceRank;
-	}
-
-	public String getAdjustRestTotalRank() {
-		return adjustRestTotalRank;
-	}
-
-	public void setAdjustRestTotalRank(String adjustRestTotalRank) {
-		this.adjustRestTotalRank = adjustRestTotalRank;
-	}
-
-	public String getAdjustRestBalanceRank() {
-		return adjustRestBalanceRank;
-	}
-
-	public void setAdjustRestBalanceRank(String adjustRestBalanceRank) {
-		this.adjustRestBalanceRank = adjustRestBalanceRank;
-	}
-
-	public Integer getPageTotalNumber() {
-		return pageTotalNumber;
-	}
-
-	public void setPageTotalNumber(Integer pageTotalNumber) {
-		this.pageTotalNumber = pageTotalNumber;
-	}
-
-	public Integer getPageNum() {
-		return pageNum;
-	}
-
-	public void setPageNum(Integer pageNum) {
-		this.pageNum = pageNum;
-	}
 
 	public Vacation() {
 		super();
