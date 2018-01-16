@@ -301,4 +301,17 @@ public class ClassesServiceImpl implements ClassesService{
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public List<ClassesEmployee> queryPointTimeClasses(String empId, String companyId, String startTime,
+			String endTime) {
+		Map<String,String> param = new HashMap<>();
+		param.put("empId", empId.trim());
+		param.put("companyId", companyId.trim());
+		param.put("startTime", startTime.trim());
+		param.put("endTime",endTime.trim());
+		
+		List<ClassesEmployee> selectPointTimeClasses = classesEmployeeMapper.selectPointTimeClasses(param);
+		return selectPointTimeClasses;
+	}
 }
