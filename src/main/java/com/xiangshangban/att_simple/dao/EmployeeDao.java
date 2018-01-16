@@ -99,4 +99,14 @@ public interface EmployeeDao {
 	 * @return
 	 */
 	Employee selectAdminEmployeeDetails(@Param("employeeId")String employeeId,@Param("companyId")String companyId);
+	/**
+	 * 常用联系人分页
+	 * @param employeeId
+	 * @param companyId
+	 * @param type
+	 * @param page
+	 * @param count
+	 * @return
+	 */
+	List<Employee> selectCommonContactPeoplePage(@Param("employeeId")String employeeId,@Param("companyId")String companyId,@Param("page")String page,@Param("count")String count);
 }

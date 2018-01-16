@@ -20,6 +20,7 @@ public class Application {
 	private String approverNmae;//审批人姓名
 	//private String copyPersonId;//抄送人id
 	//private String copyPersonName;//抄送人姓名
+	private List<ApplicationCommonContactPeople> commonContactPeopleList;//常用联系人集合
 	private List<ApplicationToCopyPerson> copyPersonList;//抄送人集合
 	private String isCopy;//是否抄送(0:否;1:是)
 	private String isReject;//是否驳回(0:否;1:是)
@@ -35,6 +36,8 @@ public class Application {
 	private String outgoningLocation;//外出地点
 	private String applicationHour;//申请小时数
 	private String isComplete;//0:未完成,1:已完成
+	private String isSetCommonContactPeople;//是否设置常用联系人 0:否;1是
+	private String fillCardTime;//补卡时间
 	public String getApplicationNo() {
 		return applicationNo;
 	}
@@ -226,6 +229,24 @@ public class Application {
 	}
 	public void setIsComplete(String isComplete) {
 		this.isComplete = isComplete;
+	}
+	public List<ApplicationCommonContactPeople> getCommonContactPeopleList() {
+		return commonContactPeopleList;
+	}
+	public void setCommonContactPeopleList(List<ApplicationCommonContactPeople> commonContactPeopleList) {
+		this.commonContactPeopleList = commonContactPeopleList;
+	}
+	public String getIsSetCommonContactPeople() {
+		return isSetCommonContactPeople;
+	}
+	public void setIsSetCommonContactPeople(String isSetCommonContactPeople) {
+		this.isSetCommonContactPeople = isSetCommonContactPeople;
+	}
+	public String getFillCardTime() {
+		return fillCardTime;
+	}
+	public void setFillCardTime(String fillCardTime) {
+		this.fillCardTime = fillCardTime;
 	}
 	
 	

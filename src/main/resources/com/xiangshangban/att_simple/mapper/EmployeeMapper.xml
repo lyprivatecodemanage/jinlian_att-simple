@@ -242,7 +242,7 @@
 		from organization.employee_ e
 		where e.company_id=#{companyId}
 		and
-		e.employee_status = '0'
+		e.employee_status = '0' order by employee_name
 	</select>
 	<select id="findBydeptemployee" parameterType="java.lang.String"
 		resultMap="Employee">
@@ -618,4 +618,11 @@
 		left join organization.post_ p on p.post_id = cep.post_id
 		where e.employee_id = #{employeeId} and e.company_id = #{companyId}
 	</select>
+	<!-- 常用联系人分页 -->
+	<select id="selectCommonContactPeoplePage" parameterType="java.lang.String" resultMap="Employee">
+		select e.employee_id,e.employee_name,d.department_name from organization.employee_ e
+		left join organization.department_ d on d.company_id = #{companyId} and d.department_id = e.department_id and status = '1'
+		where e.employee_id != #{employeeId} and e.company_id = #{companyId} and e.employee_status = '0' order by d.department_name limit #{count}::integer offset #{page}::integer
+	</select>
+	
 </mapper>
