@@ -25,6 +25,7 @@ import com.xiangshangban.att_simple.service.ApplicationService;
 import com.xiangshangban.att_simple.utils.DateCompareUtil;
 import com.xiangshangban.att_simple.utils.FormatUtil;
 import com.xiangshangban.att_simple.utils.GainData;
+
 /**
  * 
  * @author 李业
@@ -281,5 +282,4 @@ public class ApplicationController {
 				return result;
 			}
 		}
-
 	}
