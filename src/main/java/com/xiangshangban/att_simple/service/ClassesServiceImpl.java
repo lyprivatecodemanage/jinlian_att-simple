@@ -14,8 +14,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xiangshangban.att_simple.bean.ClassesEmployee;
 import com.xiangshangban.att_simple.bean.ClassesType;
+import com.xiangshangban.att_simple.bean.Festival;
 import com.xiangshangban.att_simple.dao.ClassesEmployeeMapper;
 import com.xiangshangban.att_simple.dao.ClassesTypeMapper;
+import com.xiangshangban.att_simple.dao.FestivalMapper;
 import com.xiangshangban.att_simple.utils.FormatUtil;
 import com.xiangshangban.att_simple.utils.TimeUtil;
 
@@ -28,6 +30,9 @@ public class ClassesServiceImpl implements ClassesService{
 	
 	@Autowired
 	private ClassesEmployeeMapper classesEmployeeMapper;
+	
+	@Autowired
+	private FestivalMapper festivalMapper;
 	
 	@Override
 	public boolean addNewClassesType(String requestParam, String companyId) {
@@ -104,6 +109,7 @@ public class ClassesServiceImpl implements ClassesService{
 				String nextDayFlag = morrowFlag.toString().trim(); //次日下班标志
 				//定义添加班次后的结果
 				int addClassesEmp = 0;
+				
 				for(int i = 0;i<empArray.size();i++){
 					
 					//创建Calendar对象
@@ -129,8 +135,6 @@ public class ClassesServiceImpl implements ClassesService{
 						classesEmployee.setClassesId(typeUUID);
 						//设置人员班次上班打卡时间（人员班次从创建班次类型的次日开始排）
 						classesEmployee.setOnDutySchedulingDate(new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime())+" "+onDutyTime.toString().trim());
-						//设置当天的休息时间段：开始时间
-						classesEmployee.setRestStartTime(new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime())+restStartTime);
 						
 						//设置上班日期对应的星期
 						if(cal.get(Calendar.DAY_OF_WEEK)-1==0){
@@ -143,15 +147,53 @@ public class ClassesServiceImpl implements ClassesService{
 						if(nextDayFlag.equals("1")){
 							cal.add(Calendar.DAY_OF_MONTH,1);
 						}
-						//判断休息时间是否跨日
-						/*if(){
-							
-						}*/
 						//下班时间
 						classesEmployee.setOffDutySchedulingDate(new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime())+" "+offDutyTime.toString().trim());
-						//
-						/*classesEmployee.setRestEndTime(restEndTime);*/
 						
+						
+						String offset = classesEmployee.getOnDutySchedulingDate().split(" ")[0]+" "+restStartTime.toString().trim()+":00";
+						String last = classesEmployee.getOnDutySchedulingDate().split(" ")[0]+" "+restEndTime.toString().trim()+":00";
+						
+						//两个休息时间点，都是小于上班时间点的时候，表明两个休息时间点都是在第二天(休息时间段：下班的日期+时间点)
+						if(TimeUtil.compareTime(classesEmployee.getOnDutySchedulingDate()+":00",offset) && 
+								TimeUtil.compareTime(classesEmployee.getOnDutySchedulingDate()+":00",last)){
+							//设置当天的休息时间段：开始时间
+							classesEmployee.setRestStartTime(classesEmployee.getOffDutySchedulingDate().split(" ")[0]+" "+restStartTime.toString().trim());
+							classesEmployee.setRestEndTime(classesEmployee.getOffDutySchedulingDate().split(" ")[0]+" "+restEndTime.toString().trim());
+						}else if(TimeUtil.compareTime(offset,last)){  //休息时间结束点<休息时间开始点 （表明时间跨天）
+							classesEmployee.setRestStartTime(classesEmployee.getOnDutySchedulingDate().split(" ")[0]+" "+restStartTime.toString().trim());
+							classesEmployee.setRestEndTime(classesEmployee.getOffDutySchedulingDate().split(" ")[0]+" "+restEndTime.toString().trim());
+						}else{
+							//默认休息时间点在一天
+							classesEmployee.setRestStartTime(classesEmployee.getOnDutySchedulingDate().split(" ")[0]+" "+restStartTime.toString().trim());
+							classesEmployee.setRestEndTime(classesEmployee.getOnDutySchedulingDate().split(" ")[0]+" "+restEndTime.toString().trim());
+						}
+						
+						//添加当前日期
+						classesEmployee.setTheDate(classesEmployee.getOnDutySchedulingDate().split(" ")[0]);
+						
+						//TODO 排除休息日
+						if(classesType.getRestDays().contains(classesEmployee.getWeek())){
+							//当天没有安排班次
+							classesEmployee.setClassesId("");
+							classesEmployee.setOnDutySchedulingDate("");
+							classesEmployee.setOffDutySchedulingDate("");
+							classesEmployee.setRestStartTime("");
+							classesEmployee.setRestEndTime("");
+						}else{
+							//TODO 排除法定节假日
+							List<Festival> allFestivalInfo = festivalMapper.selectAllFestivalInfo();
+							
+							for (Festival festival : allFestivalInfo) {
+								if(classesEmployee.getOnDutySchedulingDate().split(" ")[0].equals(festival.getFestivalDate())){
+									classesEmployee.setClassesId("");
+									classesEmployee.setOnDutySchedulingDate("");
+									classesEmployee.setOffDutySchedulingDate("");
+									classesEmployee.setRestStartTime("");
+									classesEmployee.setRestEndTime("");
+								}
+							}
+						}
 						addClassesEmp = classesEmployeeMapper.insertSelective(classesEmployee);
 					}
 				}

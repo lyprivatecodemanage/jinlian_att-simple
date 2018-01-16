@@ -1,5 +1,7 @@
 package com.xiangshangban.att_simple.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import com.xiangshangban.att_simple.bean.Festival;
@@ -17,6 +19,7 @@ public interface FestivalMapper {
 
 	int updateByPrimaryKey(Festival record);
 
-
+	//查询当年所有的法定节假日
+	List<Festival> selectAllFestivalInfo();
 	
 }
