@@ -32,9 +32,10 @@ public class ClassesController {
 	private NotClockingInEmpService notClockingInEmpService;
 	
 	/**
-	 * 新增班次类型
+	 * 新增/修改班次类型
 	 * @param requestParam
 	 * {
+	 * 		 "classesId":"",(通过有无班次ID,来判断用户进行的是新增的操作还是更新的操作)
 	         "classesName":"常白班",（班次名称）
 	         "on_duty_time":"09:00",(上班时间)
 	         "off_duty_time":"18:00",（下班时间）
@@ -48,10 +49,11 @@ public class ClassesController {
 	 		 “onPunchCardRule”：“20”(上班打卡限制,允许提前20分钟)
 			 “offPunchCardRule”:”20”(下班打卡限制，允许推迟20分钟) 
 			 “employeeIdList”:”[  (排班人员列表)
-			 {“empId”:”XFGCDSDSFSDFSDF13213”},
-			 {“empId”:”XFGCDSDSFSDFSDF46557”}
-			]”
-		 	“autoClassesFlag”：“1/2”(自动排班周期类型 1：月 2：周)
+				 {“empId”:”XFGCDSDSFSDFSDF13213”},
+				 {“empId”:”XFGCDSDSFSDFSDF46557”}
+			  ]”
+		 	 “autoClassesFlag”：“1/2”(自动排班周期类型 1：月 2：周)
+		 	 "validDate":"2018-01-16"(该班次生效时间)
 		}
 	 * @param request
 	 * @return
@@ -172,6 +174,7 @@ public class ClassesController {
 		}
 		return returnData;
 	}
+	
 	
 	
 	/**

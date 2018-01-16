@@ -80,6 +80,12 @@ public interface ClassesEmployeeMapper {
 	 */
 	int deleteAppointEmpDateClasses(Map map);
 	
+	/**
+	 * 删除指定班次类型，指定时间之后的人员排班
+	 * @return
+	 */
+	int deleteAppointClassesTypeEmp(Map map);
+	
 	//########################<自动排班>############################
 	
 	/**

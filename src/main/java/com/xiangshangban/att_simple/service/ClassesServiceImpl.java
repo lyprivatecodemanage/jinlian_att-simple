@@ -1,9 +1,11 @@
 package com.xiangshangban.att_simple.service;
 
 import java.io.OutputStream;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +45,9 @@ public class ClassesServiceImpl implements ClassesService{
 	public boolean addNewClassesType(String requestParam, String companyId) {
 		//处理请求参数
 		JSONObject jsonObject = JSONObject.parseObject(requestParam);
+		//获取操作标志
+		Object operateFlag = jsonObject.get("classesId");
+		
 		Object classesName = jsonObject.get("classesName");
 		Object onDutyTime = jsonObject.get("on_duty_time");
 		Object offDutyTime = jsonObject.get("off_duty_time");
@@ -57,6 +62,7 @@ public class ClassesServiceImpl implements ClassesService{
 		Object offPunchCardRule = jsonObject.get("offPunchCardRule");
 		Object employeeIdList = jsonObject.get("employeeIdList");
 		Object autoClassesFlag = jsonObject.get("autoClassesFlag");
+		Object validDate = jsonObject.get("validDate");
 		
 		//声明要返回的数据
 		boolean result = false;
@@ -65,6 +71,25 @@ public class ClassesServiceImpl implements ClassesService{
 				&& restStartTime!=null && restEndTime!=null && restDays!=null && festivalRestFlag!=null 
 				&& signInRule!=null && signOutRule!=null && onPunchCardRule!=null 
 				&& offPunchCardRule!=null && employeeIdList!=null && autoClassesFlag!=null){
+			
+			//判断操作标志是否有数据
+			if(operateFlag!=null && !operateFlag.toString().trim().equals("")){
+				//先删除，传递上来的班次类型和使用该班次类型的人员班次信息(删除从指定生效日往后的班次)
+				Map<String,String> delParam = new HashMap<>();
+				delParam.put("classesTypeId",operateFlag.toString().trim());
+				delParam.put("companyId", companyId.toString());
+				//删除班次类型
+				classesTypeMapper.removeAppointClassesType(delParam);
+				//删除人员班次
+				//设置班次生效时间
+				if(validDate==null){
+					//默认次日生效
+					Calendar.getInstance().add(Calendar.DAY_OF_MONTH,1); 
+				}else{
+					
+				}
+			}
+			
 			//获取要排班的人员列表
 			JSONArray empArray = JSONArray.parseArray(JSONObject.toJSONString(employeeIdList));
 			//TODO ①：添加班次类型
@@ -120,8 +145,19 @@ public class ClassesServiceImpl implements ClassesService{
 					//创建Calendar对象
 					Calendar cal = Calendar.getInstance();
 					
-					//班次生效时间为次日生效
-					cal.add(Calendar.DAY_OF_MONTH,1); 
+					//设置班次生效时间
+					if(validDate==null){
+						//默认次日生效
+						cal.add(Calendar.DAY_OF_MONTH,1); 
+					}else{
+						try {
+							Date parse = new SimpleDateFormat("yyyy-MM-dd").parse(validDate.toString().trim());
+							cal.setTime(parse);
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+					}
+					
 					
 					JSONObject emp = JSONObject.parseObject(empArray.get(i).toString());
 					
