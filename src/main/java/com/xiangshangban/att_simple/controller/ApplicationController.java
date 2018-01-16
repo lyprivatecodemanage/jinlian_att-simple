@@ -40,7 +40,7 @@ public class ApplicationController {
 		private static final Logger logger = Logger.getLogger(ApplicationController.class);
 		@Autowired
 		private ApplicationService applicationService;
-	
+		
 		/**
 		 * app申请页面
 		 * @param jsonString
