@@ -1,6 +1,7 @@
 package com.xiangshangban.att_simple.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,7 @@ import com.xiangshangban.att_simple.service.ApplicationService;
 import com.xiangshangban.att_simple.utils.DateCompareUtil;
 import com.xiangshangban.att_simple.utils.FormatUtil;
 import com.xiangshangban.att_simple.utils.GainData;
+import com.xiangshangban.att_simple.utils.TimeUtil;
 
 /**
  * 
@@ -91,11 +93,8 @@ public class ApplicationController {
 			application.setOperaterTime(date);//操作时间
 			application.setApplicationTime(date);//申请发起时间
 			application.setIsComplete("0");//未完成
-			//调用申请小时数计算
-			
-			//...
-			String applicationHour = "";//计算得出的申请小时数
-			application.setApplicationHour(applicationHour);
+			Date startTime =null;//开始时间
+			Date endTime=null;//结束时间
 			//申请类型{ 1:请假,2:加班,3:出差,4:外出,5:补卡 }
 			if(!"5".equals(application.getApplicationType())){
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -108,36 +107,68 @@ public class ApplicationController {
 					int i = DateCompareUtil.compareTowDate(sdf.parse(application.getStartTime()), sdf.parse(application.getEndTime()));
 					if(i!=1){
 						returnData.setMessage("开始时间必须小于结束时间");
-						returnData.setReturnCode("");
+						returnData.setReturnCode("9999");
 						return returnData;
 					}
 					//判断申请时间段是否与已存在的申请重复
 					if(applicationService.isRepeatWithOtherApplication(application)){
 						returnData.setMessage("申请的起止时间与别的申请起止时间重叠");
-						returnData.setReturnCode("");
+						returnData.setReturnCode("9999");
 						return returnData;
+					}
+					//请假、加班、出差、外出申请的开始时间和结束时间不能选择一个月以后的时间
+					startTime = sdf.parse(application.getStartTime());//开始时间
+					endTime = sdf.parse(application.getEndTime());//结束时间
+					if(endTime.getTime()>sdf.parse(date).getTime()){
+						SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+						int m = TimeUtil.monthOfDate(sdf1.format(endTime),sdf1.format(date));
+						if(m>1){
+							returnData.setMessage("申请的起止时间只能在当前时间的下一个月之内");
+							returnData.setReturnCode("9999");
+							return returnData;
+						}
 					}
 				}catch(Exception e){
 					logger.info(e);
 					returnData.setMessage("时间格式错误");
-					returnData.setReturnCode("3008");
+					returnData.setReturnCode("9999");
 					return returnData;
 				}
 			}
+			if("3".equals(application.getApplicationType())||"4".equals(application.getApplicationType())){
+				if(StringUtils.isEmpty(application.getIsSkipRestDay())){
+					returnData.setMessage("必传参数为空");
+					returnData.setReturnCode("3006");
+					return returnData;
+				}
+			}
+			//调用申请小时数计算,并发起申请
+			int applicationHour = 0;//计算得出的申请小时数
 			switch(application.getApplicationType()){
-			   case "1":
+			   case "1"://请假
+				   
+				   for(){
+					   if(startTime.getTime()>){
+						   
+					   }
+				   }
+				   application.setApplicationHour(applicationHour);
 				   returnData = applicationService.leaveApplication(application);
 				   break;
-			   case "2":
+			   case "2"://加班
+				   application.setApplicationHour(applicationHour);
 				   returnData = applicationService.overTimeApplication(application);
 				   break;
-			   case "3":
+			   case "3"://出差
+				   application.setApplicationHour(applicationHour);
 				   returnData = applicationService.businessTravelApplication(application);
 				   break;
-			   case "4":
+			   case "4"://外出
+				   application.setApplicationHour(applicationHour);
 				   returnData = applicationService.outgoingApplication(application);
 				   break;
-			   case "5":
+			   case "5"://补卡
+				   application.setApplicationHour(applicationHour);
 				   returnData = applicationService.fillCardApplication(application);
 				   break;
 			   default :

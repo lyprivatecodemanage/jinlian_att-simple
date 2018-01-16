@@ -79,7 +79,9 @@ public class MessageBean<T> {
     public void setCommonContactPeopleName(String commonContactPeopleName){
     	this.setValue("commonContactPeopleName", commonContactPeopleName);
     }
-	
+	public void setIsSkipRestDay(String isSkipRestDay){
+		this.setValue("isSkipRestDay", isSkipRestDay);
+	}
 	
 	private void setValue(String key,String value){
 		Class c = t.getClass();
