@@ -1,7 +1,6 @@
 package com.xiangshangban.att_simple.controller;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -21,8 +20,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ApplicationCommonContactPeople;
+import com.xiangshangban.att_simple.bean.ClassesEmployee;
 import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.service.ApplicationService;
+import com.xiangshangban.att_simple.service.ClassesService;
 import com.xiangshangban.att_simple.utils.DateCompareUtil;
 import com.xiangshangban.att_simple.utils.FormatUtil;
 import com.xiangshangban.att_simple.utils.GainData;
@@ -40,7 +41,8 @@ public class ApplicationController {
 		private static final Logger logger = Logger.getLogger(ApplicationController.class);
 		@Autowired
 		private ApplicationService applicationService;
-		
+		@Autowired
+		private ClassesService classesService;
 		/**
 		 * app申请页面
 		 * @param jsonString
@@ -84,8 +86,11 @@ public class ApplicationController {
 				returnData.setReturnCode("3006");
 				return returnData;
 			}
+			SimpleDateFormat dfs = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
 			//系统当前时间
-			String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(System.currentTimeMillis()));
+			String date = sdf.format(new Date(System.currentTimeMillis()));
 			application.setApplicationId(employeeId);//申请人id
 			application.setCompanyId(companyId);//公司id
 			application.setApplicationNo(FormatUtil.createUuid());//申请单号
@@ -97,7 +102,6 @@ public class ApplicationController {
 			Date endTime=null;//结束时间
 			//申请类型{ 1:请假,2:加班,3:出差,4:外出,5:补卡 }
 			if(!"5".equals(application.getApplicationType())){
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				try{
 					if(StringUtils.isEmpty(application.getStartTime())||StringUtils.isEmpty(application.getEndTime())){
 						returnData.setMessage("必传参数为空");
@@ -120,7 +124,6 @@ public class ApplicationController {
 					startTime = sdf.parse(application.getStartTime());//开始时间
 					endTime = sdf.parse(application.getEndTime());//结束时间
 					if(endTime.getTime()>sdf.parse(date).getTime()){
-						SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
 						int m = TimeUtil.monthOfDate(sdf1.format(endTime),sdf1.format(date));
 						if(m>1){
 							returnData.setMessage("申请的起止时间只能在当前时间的下一个月之内");
@@ -146,29 +149,73 @@ public class ApplicationController {
 			int applicationHour = 0;//计算得出的申请小时数
 			switch(application.getApplicationType()){
 			   case "1"://请假
-				   
-				   for(){
-					   if(startTime.getTime()>){
-						   
+				   List<ClassesEmployee> classesEmployeeList = classesService.queryPointTimeClasses(employeeId, companyId, new SimpleDateFormat("yyyy-MM-dd").format(startTime), new SimpleDateFormat("yyyy-MM-dd").format(endTime));
+				   try{
+					   for(ClassesEmployee classesEmployee:classesEmployeeList){
+						   String start = "";
+						   String end = "";
+						   if(!StringUtils.isEmpty(classesEmployee.getClassesId())&&!StringUtils.isEmpty(classesEmployee.getOnDutySchedulingDate())&&!StringUtils.isEmpty(classesEmployee.getOffDutySchedulingDate())){
+							   if(startTime.getTime()>sdf.parse(classesEmployee.getOnDutySchedulingDate()).getTime()){
+							         start = sdf.format(startTime);
+							   }else{
+								   start = classesEmployee.getOnDutySchedulingDate();
+							   }
+							   if(endTime.getTime()>sdf.parse(classesEmployee.getOffDutySchedulingDate()).getTime()){
+								   end = classesEmployee.getOffDutySchedulingDate();
+							   }else{
+								   end = sdf.format(endTime);
+							   }
+							   long between=(dfs.parse(end).getTime()-dfs.parse(start).getTime())/1000;//除以1000是为了转换成秒
+							   applicationHour=applicationHour+((int)Math.ceil(between/60/30))/2;
+						   }
 					   }
+				   }catch(Exception e){
+					   logger.info(e);
+					   returnData.setMessage("服务器错误");
+					   returnData.setReturnCode("3001");
+					   return returnData;
 				   }
-				   application.setApplicationHour(applicationHour);
+				   if(applicationHour==0){
+					   returnData.setMessage("请检查申请是时间是否填写正确");
+					   returnData.setReturnCode("9999");
+					   return returnData;
+				   }
+				   application.setApplicationHour(String.valueOf(applicationHour));
 				   returnData = applicationService.leaveApplication(application);
 				   break;
 			   case "2"://加班
-				   application.setApplicationHour(applicationHour);
+				   //加班的申请时长=结束时间-开始时间	
+				   long between =(endTime.getTime()-startTime.getTime())/1000;
+				   applicationHour=applicationHour+((int)Math.ceil(between/60/30))/2;
+				   if(applicationHour==0){
+					   returnData.setMessage("请检查申请是时间是否填写正确");
+					   returnData.setReturnCode("9999");
+					   return returnData;
+				   }
+				   application.setApplicationHour(String.valueOf(applicationHour));
 				   returnData = applicationService.overTimeApplication(application);
 				   break;
 			   case "3"://出差
-				   application.setApplicationHour(applicationHour);
+				   
+				   if(applicationHour==0){
+					   returnData.setMessage("请检查申请是时间是否填写正确");
+					   returnData.setReturnCode("9999");
+					   return returnData;
+				   }
+				   application.setApplicationHour(String.valueOf(applicationHour));
 				   returnData = applicationService.businessTravelApplication(application);
 				   break;
 			   case "4"://外出
-				   application.setApplicationHour(applicationHour);
+				   if(applicationHour==0){
+					   returnData.setMessage("请检查申请是时间是否填写正确");
+					   returnData.setReturnCode("9999");
+					   return returnData;
+				   }
+				   application.setApplicationHour(String.valueOf(applicationHour));
 				   returnData = applicationService.outgoingApplication(application);
 				   break;
 			   case "5"://补卡
-				   application.setApplicationHour(applicationHour);
+				   
 				   returnData = applicationService.fillCardApplication(application);
 				   break;
 			   default :
@@ -312,5 +359,48 @@ public class ApplicationController {
 				result.put("returnCode", "3001");
 				return result;
 			}
+		}
+		
+		private int calculateApplicationHour(String type,String isSkipRestTime,String employeeId,String companyId,Date startTime,Date endTime,int applicationHour){
+			SimpleDateFormat dfs = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			 List<ClassesEmployee> classesEmployeeList = classesService.queryPointTimeClasses(employeeId, companyId, new SimpleDateFormat("yyyy-MM-dd").format(startTime), new SimpleDateFormat("yyyy-MM-dd").format(endTime));
+			   try{
+				   for(ClassesEmployee classesEmployee:classesEmployeeList){
+					   String start = "";
+					   String end = "";
+					   if(!StringUtils.isEmpty(classesEmployee.getClassesId())&&!StringUtils.isEmpty(classesEmployee.getOnDutySchedulingDate())&&!StringUtils.isEmpty(classesEmployee.getOffDutySchedulingDate())){
+						   if(startTime.getTime()>sdf.parse(classesEmployee.getOnDutySchedulingDate()).getTime()){
+						         start = sdf.format(startTime);
+						   }else{
+							   start = classesEmployee.getOnDutySchedulingDate();
+						   }
+						   if(endTime.getTime()>sdf.parse(classesEmployee.getOffDutySchedulingDate()).getTime()){
+							   end = classesEmployee.getOffDutySchedulingDate();
+						   }else{
+							   end = sdf.format(endTime);
+						   }
+						   long between=(dfs.parse(end).getTime()-dfs.parse(start).getTime())/1000;//除以1000是为了转换成秒
+						   applicationHour=applicationHour+((int)Math.ceil(between/60/30))/2;
+					   }else if("3".equals(type)||"4".equals(type)){
+						   if("0".equals(isSkipRestTime)){
+							   if(startTime.getTime()>sdf.parse(classesEmployee.getTheDate()).getTime()){
+							         start = sdf.format(startTime);
+							   }else{
+								   start = classesEmployee.getOnDutySchedulingDate();
+							   }
+							   if(endTime.getTime()>sdf.parse(classesEmployee.getOffDutySchedulingDate()).getTime()){
+								   end = classesEmployee.getOffDutySchedulingDate();
+							   }else{
+								   end = sdf.format(endTime);
+							   }
+						   }
+					   }
+				   }
+				   return applicationHour;
+			   }catch(Exception e){
+				   logger.info(e);
+				   return -1;
+			   }
 		}
 	}
