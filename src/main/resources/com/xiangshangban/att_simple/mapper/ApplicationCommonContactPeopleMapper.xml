@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiangshangban.att_simple.dao.ApplicationCommonContactPeopleMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.ApplicationCommonContactPeople">
+    <id column="id"  property="id" />
+    <result column="employee_id"  property="employeeId" />
+    <result column="company_id"  property="companyId" />
+    <result column="common_contact_people_id"  property="commonContactPeopleId" />
+    <result column="common_contact_people_name"  property="commonContactPeopleName" />
+    <result column="type"  property="type" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, employee_id, company_id, common_Contact_people_id, common_Contact_people_name, type
+  </sql>
+  <!-- 分页查询常用联系人 -->
+  <select id="commonContactPeopleList" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List"/> from application_common_contact_people_
+  	where employeeId = #{employeeId} and companyId = #{companyId} and type =#{type} 
+  	limit #{count}::integer offset #{page}::integer order by common_contact_people_name
+  </select>
+  <!-- 查询employeId对应的常用联系人个数 -->
+  <select id="selectCountByEmployeeIdAndCompanyId" parameterType="java.lang.String" resultType="java.lang.Integer">
+  	select count(id) from application_common_contact_people_
+  	where employee_id = #{employeeId} and company_id = #{companyId} and type = #{type}
+  </select>
+  <!-- 查询不同类型的常用联系人 -->
+  <select id="selectByEmployeeIdAndCompanyIdAndType" parameterType="com.xiangshangban.att_simple.bean.Application" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List"/> from application_common_contact_people_
+  	where employee_id = #{ApplicationId} and company_id = #{companyId} and type = #{type}
+  </select>
+  <!-- 查询联系人是否已存在 -->
+  <select id="selectByAll" parameterType="com.xiangshangban.att_simple.bean.ApplicationCommonContactPeople" resultType="java.lang.Integer">
+  	select count(id) from att_simple.application_common_contact_people_
+  		where 
+  		employee_id = #{commonContactPeople.employeeId}
+  		and company_id = #{commonContactPeople.companyId}
+  		and common_contact_people_id = #{commonContactPeople.commonContactPeopleId}
+  		and type = #{commonContactPeople.type}
+  </select>
+  <!-- 删除常用联系人,条件:employeeId,companyId,type -->
+	<delete id="deleteByEmployeeIdAndCompanyIdAndType" parameterType="com.xiangshangban.att_simple.bean.Application">
+		delete from application_common_contact_people_ where employee_id = #{employeeId} and company_id = #{companyId} and type = #{type}
+	</delete>  
+  
+  <!-- 系统 -->
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from application_common_contact_people_
+    where id = #{id}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from application_common_contact_people_
+    where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.ApplicationCommonContactPeople">
+    insert into application_common_contact_people_ (id, employee_id, company_id, 
+      common_Contact_people_id, common_Contact_people_name, type
+      )
+    values (#{id}, #{employeeId}, #{companyId}, 
+      #{commonContactPeopleId}, #{commonContactPeopleName}, #{type}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationCommonContactPeople">
+    insert into application_common_contact_people_
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="employeeId != null">
+        employee_id,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="commonContactPeopleId != null">
+        common_Contact_people_id,
+      </if>
+      <if test="commonContactPeopleName != null">
+        common_Contact_people_name,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id},
+      </if>
+      <if test="employeeId != null">
+        #{employeeId},
+      </if>
+      <if test="companyId != null">
+        #{companyId},
+      </if>
+      <if test="commonContactPeopleId != null">
+        #{commonContactPeopleId},
+      </if>
+      <if test="commonContactPeopleName != null">
+        #{commonContactPeopleName},
+      </if>
+      <if test="type != null">
+        #{type},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationCommonContactPeople">
+    update application_common_contact_people_
+    <set>
+      <if test="employeeId != null">
+        employee_id = #{employeeId},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId},
+      </if>
+      <if test="commonContactPeopleId != null">
+        common_Contact_people_id = #{commonContactPeopleId},
+      </if>
+      <if test="commonContactPeopleName != null">
+        common_Contact_people_name = #{commonContactPeopleName},
+      </if>
+      <if test="type != null">
+        type = #{type},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ApplicationCommonContactPeople">
+    update application_common_contact_people_
+    set employee_id = #{employeeId},
+      company_id = #{companyId},
+      common_Contact_people_id = #{commonContactPeopleId},
+      common_Contact_people_name = #{commonContactPeopleName},
+      type = #{type}
+    where id = #{id}
+  </update>
+</mapper>

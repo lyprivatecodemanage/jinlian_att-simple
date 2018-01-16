@@ -22,4 +22,101 @@
   2018-01-16 15:20:55 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
   2018-01-16 15:22:07 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
   2018-01-16 15:23:18 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+2018-01-15 11:20:06 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-15 11:21:55 INFO [com.xiangshangban.att_simple.service.ApplicationServiceImpl]: org.springframework.jdbc.BadSqlGrammarException: 
+### Error querying database.  Cause: org.postgresql.util.PSQLException: ERROR: column "companyid" does not exist
+  建议：Perhaps you meant to reference the column "application_common_contact_people_.company_id".
+  位置：88
+### The error may exist in file [D:\eclipse-jee-mars-2-win32-x86_64\workspace\att-simple\target\classes\com\xiangshangban\att_simple\mapper\ApplicationCommonContactPeopleMapper.xml]
+### The error may involve com.xiangshangban.att_simple.dao.ApplicationCommonContactPeopleMapper.selectCountByEmployeeIdAndCompanyId-Inline
+### The error occurred while setting parameters
+### SQL: select count(id) from application_common_contact_people_    where employee_id = ? and companyId = ? and type = ?
+### Cause: org.postgresql.util.PSQLException: ERROR: column "companyid" does not exist
+  建议：Perhaps you meant to reference the column "application_common_contact_people_.company_id".
+  位置：88
+; bad SQL grammar []; nested exception is org.postgresql.util.PSQLException: ERROR: column "companyid" does not exist
+  建议：Perhaps you meant to reference the column "application_common_contact_people_.company_id".
+  位置：88
+  2018-01-15 11:24:11 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-15 11:24:22 INFO [com.xiangshangban.att_simple.service.ApplicationServiceImpl]: org.springframework.jdbc.BadSqlGrammarException: 
+### Error querying database.  Cause: org.postgresql.util.PSQLException: ERROR: syntax error at or near "order"
+  位置：270
+### The error may exist in file [D:\eclipse-jee-mars-2-win32-x86_64\workspace\att-simple\target\classes\com\xiangshangban\att_simple\mapper\EmployeeMapper.xml]
+### The error may involve com.xiangshangban.att_simple.dao.EmployeeDao.selectCommonContactPeoplePage-Inline
+### The error occurred while setting parameters
+### SQL: select e.employee_id,e.employee_name,d.department_name from organization.employee_ e   left join organization.department_ d on d.company_id = ? and d.department_id = e.department_id and status = '1'   where company_id = ? and employee_status = '0' limit ? offset ? order by d.department_name
+### Cause: org.postgresql.util.PSQLException: ERROR: syntax error at or near "order"
+  位置：270
+; bad SQL grammar []; nested exception is org.postgresql.util.PSQLException: ERROR: syntax error at or near "order"
+  位置：270
+  2018-01-15 11:26:58 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-15 11:27:36 INFO [com.xiangshangban.att_simple.service.ApplicationServiceImpl]: org.springframework.jdbc.BadSqlGrammarException: 
+### Error querying database.  Cause: org.postgresql.util.PSQLException: ERROR: column reference "company_id" is ambiguous
+  位置：209
+### The error may exist in file [D:\eclipse-jee-mars-2-win32-x86_64\workspace\att-simple\target\classes\com\xiangshangban\att_simple\mapper\EmployeeMapper.xml]
+### The error may involve com.xiangshangban.att_simple.dao.EmployeeDao.selectCommonContactPeoplePage-Inline
+### The error occurred while setting parameters
+### SQL: select e.employee_id,e.employee_name,d.department_name from organization.employee_ e   left join organization.department_ d on d.company_id = ? and d.department_id = e.department_id and status = '1'   where company_id = ? and employee_status = '0' order by d.department_name limit ? offset ?
+### Cause: org.postgresql.util.PSQLException: ERROR: column reference "company_id" is ambiguous
+  位置：209
+; bad SQL grammar []; nested exception is org.postgresql.util.PSQLException: ERROR: column reference "company_id" is ambiguous
+  位置：209
+  2018-01-15 11:28:31 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-15 11:28:35 INFO [com.xiangshangban.att_simple.service.ApplicationServiceImpl]: org.springframework.jdbc.BadSqlGrammarException: 
+### Error querying database.  Cause: org.postgresql.util.PSQLException: ERROR: argument of OFFSET must be type bigint, not type character varying
+  位置：298
+### The error may exist in file [D:\eclipse-jee-mars-2-win32-x86_64\workspace\att-simple\target\classes\com\xiangshangban\att_simple\mapper\EmployeeMapper.xml]
+### The error may involve com.xiangshangban.att_simple.dao.EmployeeDao.selectCommonContactPeoplePage-Inline
+### The error occurred while setting parameters
+### SQL: select e.employee_id,e.employee_name,d.department_name from organization.employee_ e   left join organization.department_ d on d.company_id = ? and d.department_id = e.department_id and status = '1'   where e.company_id = ? and e.employee_status = '0' order by d.department_name limit ? offset ?
+### Cause: org.postgresql.util.PSQLException: ERROR: argument of OFFSET must be type bigint, not type character varying
+  位置：298
+; bad SQL grammar []; nested exception is org.postgresql.util.PSQLException: ERROR: argument of OFFSET must be type bigint, not type character varying
+  位置：298
+  2018-01-15 11:29:26 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-15 11:29:37 INFO [com.xiangshangban.att_simple.service.ApplicationServiceImpl]: org.springframework.dao.DataIntegrityViolationException: 
+### Error querying database.  Cause: org.postgresql.util.PSQLException: ERROR: OFFSET must not be negative
+### The error may exist in file [D:\eclipse-jee-mars-2-win32-x86_64\workspace\att-simple\target\classes\com\xiangshangban\att_simple\mapper\EmployeeMapper.xml]
+### The error may involve com.xiangshangban.att_simple.dao.EmployeeDao.selectCommonContactPeoplePage-Inline
+### The error occurred while setting parameters
+### SQL: select e.employee_id,e.employee_name,d.department_name from organization.employee_ e   left join organization.department_ d on d.company_id = ? and d.department_id = e.department_id and status = '1'   where e.company_id = ? and e.employee_status = '0' order by d.department_name limit ?::integer offset ?::integer
+### Cause: org.postgresql.util.PSQLException: ERROR: OFFSET must not be negative
+; SQL []; ERROR: OFFSET must not be negative; nested exception is org.postgresql.util.PSQLException: ERROR: OFFSET must not be negative
+  2018-01-15 11:41:18 INFO [com.xiangshangban.att_simple.service.ApplicationServiceImpl]: org.springframework.dao.DataIntegrityViolationException: 
+### Error querying database.  Cause: org.postgresql.util.PSQLException: ERROR: OFFSET must not be negative
+### The error may exist in file [D:\eclipse-jee-mars-2-win32-x86_64\workspace\att-simple\target\classes\com\xiangshangban\att_simple\mapper\EmployeeMapper.xml]
+### The error may involve com.xiangshangban.att_simple.dao.EmployeeDao.selectCommonContactPeoplePage-Inline
+### The error occurred while setting parameters
+### SQL: select e.employee_id,e.employee_name,d.department_name from organization.employee_ e   left join organization.department_ d on d.company_id = ? and d.department_id = e.department_id and status = '1'   where e.company_id = ? and e.employee_status = '0' order by d.department_name limit ?::integer offset ?::integer
+### Cause: org.postgresql.util.PSQLException: ERROR: OFFSET must not be negative
+; SQL []; ERROR: OFFSET must not be negative; nested exception is org.postgresql.util.PSQLException: ERROR: OFFSET must not be negative
+  2018-01-15 11:41:47 INFO [com.xiangshangban.att_simple.service.ApplicationServiceImpl]: org.springframework.dao.DataIntegrityViolationException: 
+### Error querying database.  Cause: org.postgresql.util.PSQLException: ERROR: OFFSET must not be negative
+### The error may exist in file [D:\eclipse-jee-mars-2-win32-x86_64\workspace\att-simple\target\classes\com\xiangshangban\att_simple\mapper\EmployeeMapper.xml]
+### The error may involve com.xiangshangban.att_simple.dao.EmployeeDao.selectCommonContactPeoplePage-Inline
+### The error occurred while setting parameters
+### SQL: select e.employee_id,e.employee_name,d.department_name from organization.employee_ e   left join organization.department_ d on d.company_id = ? and d.department_id = e.department_id and status = '1'   where e.company_id = ? and e.employee_status = '0' order by d.department_name limit ?::integer offset ?::integer
+### Cause: org.postgresql.util.PSQLException: ERROR: OFFSET must not be negative
+; SQL []; ERROR: OFFSET must not be negative; nested exception is org.postgresql.util.PSQLException: ERROR: OFFSET must not be negative
+  2018-01-15 11:42:19 INFO [com.xiangshangban.att_simple.service.ApplicationServiceImpl]: org.springframework.dao.DataIntegrityViolationException: 
+### Error querying database.  Cause: org.postgresql.util.PSQLException: ERROR: OFFSET must not be negative
+### The error may exist in file [D:\eclipse-jee-mars-2-win32-x86_64\workspace\att-simple\target\classes\com\xiangshangban\att_simple\mapper\EmployeeMapper.xml]
+### The error may involve com.xiangshangban.att_simple.dao.EmployeeDao.selectCommonContactPeoplePage-Inline
+### The error occurred while setting parameters
+### SQL: select e.employee_id,e.employee_name,d.department_name from organization.employee_ e   left join organization.department_ d on d.company_id = ? and d.department_id = e.department_id and status = '1'   where e.company_id = ? and e.employee_status = '0' order by d.department_name limit ?::integer offset ?::integer
+### Cause: org.postgresql.util.PSQLException: ERROR: OFFSET must not be negative
+; SQL []; ERROR: OFFSET must not be negative; nested exception is org.postgresql.util.PSQLException: ERROR: OFFSET must not be negative
+  2018-01-15 11:42:27 INFO [com.xiangshangban.att_simple.service.ApplicationServiceImpl]: java.lang.NullPointerException
+  2018-01-15 11:43:28 INFO [com.xiangshangban.att_simple.service.ApplicationServiceImpl]: java.lang.NullPointerException
+  2018-01-15 11:45:40 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+2018-01-15 10:29:53 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-15 10:37:41 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-15 10:52:58 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-15 10:55:21 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-15 13:14:47 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-15 13:24:42 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-15 13:27:05 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-15 13:43:54 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-15 15:12:51 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-15 15:15:44 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
   

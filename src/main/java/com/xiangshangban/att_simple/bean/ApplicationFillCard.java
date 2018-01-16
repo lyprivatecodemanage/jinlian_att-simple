@@ -1,43 +1,29 @@
 package com.xiangshangban.att_simple.bean;
 
-import org.apache.poi.ss.formula.functions.T;
-
-/**
- * 请假申请记录表
- * @author mian
- */
-public class ApplicationLeave{
-    //申请单号(uuid)
+public class ApplicationFillCard {
     private String applicationNo;
-    //申请人id
-    private String employeeId;
-    //申请人部门id
-    private String departmentId;
-    //申请人公司id
-    private String companyId;
-    //请假类型(1:事假;2:年假;3:调休假;4:婚假;5:产假;6:丧假)
-    private String leaveType;
-    //开始时间
-    private String startTime;
-    //结束时间
-    private String endTime;
-    //请假说明
-    private String reason;
-    //上传的凭证
-    private String uploadVoucher;
-    //审批人id
-    private String approver;
-    //抄送人id
-    private String copyToPerson;
-    //操作时间
-    private String operaterTime;
-    //是否转移(0:否;1:是)
-    private String isTransfer;
-    //申请小时数(单位:小时)
-    private String applicationHour;
-    //申请发起时间
-    private String applicationTime;
 
+    private String employeeId;
+
+    private String departmentId;
+
+    private String companyId;
+
+    private String fillCardType;
+
+    private String fillCardTime;
+
+    private String reason;
+
+    private String uploadVoucher;
+
+    private String approver;
+
+    private String operaterTime;
+
+    private String isTransfer;
+
+    private String applicationTime;
 
     public String getApplicationNo() {
         return applicationNo;
@@ -71,28 +57,20 @@ public class ApplicationLeave{
         this.companyId = companyId;
     }
 
-    public String getLeaveType() {
-        return leaveType;
+    public String getFillCardType() {
+        return fillCardType;
     }
 
-    public void setLeaveType(String leaveType) {
-        this.leaveType = leaveType;
+    public void setFillCardType(String fillCardType) {
+        this.fillCardType = fillCardType;
     }
 
-    public String getStartTime() {
-        return startTime;
+    public String getFillCardTime() {
+        return fillCardTime;
     }
 
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
-    }
-
-    public String getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
+    public void setFillCardTime(String fillCardTime) {
+        this.fillCardTime = fillCardTime;
     }
 
     public String getReason() {
@@ -119,14 +97,6 @@ public class ApplicationLeave{
         this.approver = approver;
     }
 
-    public String getCopyToPerson() {
-        return copyToPerson;
-    }
-
-    public void setCopyToPerson(String copyToPerson) {
-        this.copyToPerson = copyToPerson;
-    }
-
     public String getOperaterTime() {
         return operaterTime;
     }
@@ -141,14 +111,6 @@ public class ApplicationLeave{
 
     public void setIsTransfer(String isTransfer) {
         this.isTransfer = isTransfer;
-    }
-
-    public String getApplicationHour() {
-        return applicationHour;
-    }
-
-    public void setApplicationHour(String applicationHour) {
-        this.applicationHour = applicationHour;
     }
 
     public String getApplicationTime() {
