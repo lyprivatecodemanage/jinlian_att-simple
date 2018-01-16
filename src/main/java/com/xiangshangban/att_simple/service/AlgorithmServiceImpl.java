@@ -1,17 +1,11 @@
 package com.xiangshangban.att_simple.service;
-
-import java.util.Calendar;
-
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.xiangshangban.att_simple.bean.AlgorithmParam;
 import com.xiangshangban.att_simple.bean.AlgorithmReport;
 import com.xiangshangban.att_simple.bean.AlgorithmResult;
 import com.xiangshangban.att_simple.bean.AlgorithmSign;
-import com.xiangshangban.att_simple.bean.ClassesEmployee;
-import com.xiangshangban.att_simple.bean.OutgoingApplicationRecord;
+import com.xiangshangban.att_simple.bean.ApplicationOutgoing;
 import com.xiangshangban.att_simple.bean.ReportDaily;
 import com.xiangshangban.att_simple.bean.ReportExcept;
 import com.xiangshangban.att_simple.dao.ClassesEmployeeMapper;
@@ -19,8 +13,6 @@ import com.xiangshangban.att_simple.dao.ReportDailyMapper;
 import com.xiangshangban.att_simple.dao.ReportExceptMapper;
 import com.xiangshangban.att_simple.utils.TimeUtil;
 import com.xiangshangban.organization.bean.Employee;
-
-import scala.annotation.meta.setter;
 
 @Service("AlgorithmService")
 public class AlgorithmServiceImpl implements AlgorithmService {
@@ -138,7 +130,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 	 * @param outType 外出类型，Evection：出差，Out:外出， Dispatch:派工
 	 */
 	public void getOutTime(AlgorithmParam algorithmParam, AlgorithmResult result, String beginTime1, String endTime1, String beginTime2,
-			String endTime2, String timeNum, OutgoingApplicationRecord errandApplication, String outType) {
+			String endTime2, String timeNum, ApplicationOutgoing errandApplication, String outType) {
 		
 	}
 	

@@ -1,7 +1,9 @@
 package com.xiangshangban.att_simple.dao;
 
-import com.xiangshangban.att_simple.bean.Festival;
+import org.apache.ibatis.annotations.Mapper;
 
+import com.xiangshangban.att_simple.bean.Festival;
+@Mapper
 public interface FestivalMapper {
     int deleteByPrimaryKey(String festivalId);
 

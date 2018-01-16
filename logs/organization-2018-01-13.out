@@ -1,0 +1,8 @@
+2018-01-13 17:00:23 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  2018-01-13 17:01:05 INFO [com.xiangshangban.att_simple.service.ApplicationServiceImpl]: org.apache.ibatis.builder.IncompleteElementException: Could not find result map java.lang.Integer
+  2018-01-13 17:01:28 INFO [com.xiangshangban.att_simple.service.ApplicationServiceImpl]: org.apache.ibatis.builder.IncompleteElementException: Could not find result map java.lang.Integer
+  2018-01-13 17:43:49 INFO [com.xiangshangban.att_simple.controller.ApplicationController]: org.apache.ibatis.builder.IncompleteElementException: Could not find result map java.lang.Integer
+  2018-01-13 17:44:46 INFO [com.xiangshangban.att_simple.controller.ApplicationController]: org.apache.ibatis.builder.IncompleteElementException: Could not find result map java.lang.Integer
+  2018-01-13 17:46:01 INFO [com.xiangshangban.att_simple.controller.ApplicationController]: org.apache.ibatis.builder.IncompleteElementException: Could not find result map java.lang.Integer
+  2018-01-13 17:51:55 INFO [com.xiangshangban.att_simple.AttSimple]: 启动成功
+  

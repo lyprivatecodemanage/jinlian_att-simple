@@ -3,15 +3,15 @@ package com.xiangshangban.att_simple.bean;
 import java.util.List;
 
 public class Application {
-	private String applicaitonNo;//申请单号
+	private String applicationNo;//申请单号
 	private String applicationId;//申请人id
 	private String applicatrionPersonName;//申请人姓名
 	private String departmentId;//部门id
 	private String departmentName;//部门名称
 	private String companyId;//公司id
 	private String companyName;//公司名称
-	private String applicaitonType;//申请类型(申请类型(请假:'1';加班:'2';出差'3';外出:'4';'补卡5'))
-	private String applicaitonChildrenType;//申请子类型
+	private String applicationType;//申请类型(申请类型(请假:'1';加班:'2';出差'3';外出:'4';'补卡5'))
+	private String applicationChildrenType;//申请子类型
 	private String startTime;//开始时间
 	private String endTime;//结束时间
 	private String reason;//申请说明
@@ -20,6 +20,7 @@ public class Application {
 	private String approverNmae;//审批人姓名
 	//private String copyPersonId;//抄送人id
 	//private String copyPersonName;//抄送人姓名
+	private List<ApplicationCommonContactPeople> commonContactPeopleList;//常用联系人集合
 	private List<ApplicationToCopyPerson> copyPersonList;//抄送人集合
 	private String isCopy;//是否抄送(0:否;1:是)
 	private String isReject;//是否驳回(0:否;1:是)
@@ -29,14 +30,19 @@ public class Application {
 	private List<ApplicationTransferRecord> transferRecordList;//移交列表
 	//private String transferExplain;//移交说明
 	private String applicationTime;//申请发起时间
+	private String operaterId;//last操作人id
+	private String operaterName;//操作人姓名
 	private String operaterTime;//操作时间
 	private String outgoningLocation;//外出地点
 	private String applicationHour;//申请小时数
-	public String getApplicaitonNo() {
-		return applicaitonNo;
+	private String isComplete;//0:未完成,1:已完成
+	private String isSetCommonContactPeople;//是否设置常用联系人 0:否;1是
+	private String fillCardTime;//补卡时间
+	public String getApplicationNo() {
+		return applicationNo;
 	}
-	public void setApplicaitonNo(String applicaitonNo) {
-		this.applicaitonNo = applicaitonNo;
+	public void setApplicationNo(String applicationNo) {
+		this.applicationNo = applicationNo;
 	}
 	public String getApplicationId() {
 		return applicationId;
@@ -74,17 +80,17 @@ public class Application {
 	public void setCompanyName(String companyName) {
 		this.companyName = companyName;
 	}
-	public String getApplicaitonType() {
-		return applicaitonType;
+	public String getApplicationType() {
+		return applicationType;
 	}
-	public void setApplicaitonType(String applicaitonType) {
-		this.applicaitonType = applicaitonType;
+	public void setApplicationType(String applicationType) {
+		this.applicationType = applicationType;
 	}
-	public String getApplicaitonChildrenType() {
-		return applicaitonChildrenType;
+	public String getApplicationChildrenType() {
+		return applicationChildrenType;
 	}
-	public void setApplicaitonChildrenType(String applicaitonChildrenType) {
-		this.applicaitonChildrenType = applicaitonChildrenType;
+	public void setApplicationChildrenType(String applicationChildrenType) {
+		this.applicationChildrenType = applicationChildrenType;
 	}
 	public String getStartTime() {
 		return startTime;
@@ -205,6 +211,42 @@ public class Application {
 	}
 	public void setTransferRecordList(List<ApplicationTransferRecord> transferRecordList) {
 		this.transferRecordList = transferRecordList;
+	}
+	public String getOperaterId() {
+		return operaterId;
+	}
+	public void setOperaterId(String operaterId) {
+		this.operaterId = operaterId;
+	}
+	public String getOperaterName() {
+		return operaterName;
+	}
+	public void setOperaterName(String operaterName) {
+		this.operaterName = operaterName;
+	}
+	public String getIsComplete() {
+		return isComplete;
+	}
+	public void setIsComplete(String isComplete) {
+		this.isComplete = isComplete;
+	}
+	public List<ApplicationCommonContactPeople> getCommonContactPeopleList() {
+		return commonContactPeopleList;
+	}
+	public void setCommonContactPeopleList(List<ApplicationCommonContactPeople> commonContactPeopleList) {
+		this.commonContactPeopleList = commonContactPeopleList;
+	}
+	public String getIsSetCommonContactPeople() {
+		return isSetCommonContactPeople;
+	}
+	public void setIsSetCommonContactPeople(String isSetCommonContactPeople) {
+		this.isSetCommonContactPeople = isSetCommonContactPeople;
+	}
+	public String getFillCardTime() {
+		return fillCardTime;
+	}
+	public void setFillCardTime(String fillCardTime) {
+		this.fillCardTime = fillCardTime;
 	}
 	
 	

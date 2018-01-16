@@ -17,10 +17,10 @@ public class AlgorithmParam {
 	private String countDate;//计算日期
 	private ClassesType attendancePlan = new ClassesType();//当天排班
 	private List<AlgorithmAttLog> algorithmAttLog = new ArrayList<AlgorithmAttLog>();//门禁记录+外勤记录
-	private List<LeaveApplicationRecord> algorithmLeave = new ArrayList<LeaveApplicationRecord>();//请假记录
-	private List<BusinessTravelApplicationRecord> evectionList = new ArrayList<BusinessTravelApplicationRecord>();// 出差申请
-	private List<OutgoingApplicationRecord> outList = new ArrayList<OutgoingApplicationRecord>();// 外出申请
-	private List<OvertimeApplicationRecord> overWorkList = new ArrayList<OvertimeApplicationRecord>();// 有效加班申请
+	private List<ApplicationLeave> algorithmLeave = new ArrayList<ApplicationLeave>();//请假记录
+	private List<ApplicationBusinessTravel> evectionList = new ArrayList<ApplicationBusinessTravel>();// 出差申请
+	private List<ApplicationOutgoing> outList = new ArrayList<ApplicationOutgoing>();// 外出申请
+	private List<ApplicationOvertime> overWorkList = new ArrayList<ApplicationOvertime>();// 有效加班申请
 	public String getEmployeeId() {
 		return employeeId;
 	}
@@ -57,28 +57,28 @@ public class AlgorithmParam {
 	public void setAlgorithmAttLog(List<AlgorithmAttLog> algorithmAttLog) {
 		this.algorithmAttLog = algorithmAttLog;
 	}
-	public List<LeaveApplicationRecord> getAlgorithmLeave() {
+	public List<ApplicationLeave> getAlgorithmLeave() {
 		return algorithmLeave;
 	}
-	public void setAlgorithmLeave(List<LeaveApplicationRecord> algorithmLeave) {
+	public void setAlgorithmLeave(List<ApplicationLeave> algorithmLeave) {
 		this.algorithmLeave = algorithmLeave;
 	}
-	public List<BusinessTravelApplicationRecord> getEvectionList() {
+	public List<ApplicationBusinessTravel> getEvectionList() {
 		return evectionList;
 	}
-	public void setEvectionList(List<BusinessTravelApplicationRecord> evectionList) {
+	public void setEvectionList(List<ApplicationBusinessTravel> evectionList) {
 		this.evectionList = evectionList;
 	}
-	public List<OutgoingApplicationRecord> getOutList() {
+	public List<ApplicationOutgoing> getOutList() {
 		return outList;
 	}
-	public void setOutList(List<OutgoingApplicationRecord> outList) {
+	public void setOutList(List<ApplicationOutgoing> outList) {
 		this.outList = outList;
 	}
-	public List<OvertimeApplicationRecord> getOverWorkList() {
+	public List<ApplicationOvertime> getOverWorkList() {
 		return overWorkList;
 	}
-	public void setOverWorkList(List<OvertimeApplicationRecord> overWorkList) {
+	public void setOverWorkList(List<ApplicationOvertime> overWorkList) {
 		this.overWorkList = overWorkList;
 	}
 	
