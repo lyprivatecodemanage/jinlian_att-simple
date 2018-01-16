@@ -163,7 +163,8 @@
   	SELECT
   	COALESCE(classes_id,'') AS classes_id,
   	COALESCE(on_duty_scheduling_date,'') AS on_duty_scheduling_date,
-  	COALESCE(off_duty_scheduling_date,'') AS off_duty_scheduling_date
+  	COALESCE(off_duty_scheduling_date,'') AS off_duty_scheduling_date,
+  	COALESCE(the_date,'') AS the_date
   	FROM classes_employee_
   	WHERE emp_id = #{empId} and emp_company_id = #{companyId} and the_date between #{startTime} and #{endTime} ORDER BY on_duty_scheduling_date
   </select>
