@@ -10,13 +10,75 @@
     <result column="annual_leave_balance" jdbcType="VARCHAR" property="annualLeaveBalance" />
     <result column="adjust_rest_total" jdbcType="VARCHAR" property="adjustRestTotal" />
     <result column="adjust_rest_balance" jdbcType="VARCHAR" property="adjustRestBalance" />
+    <result column="department_name" jdbcType="VARCHAR" property="departmentName" />
+    <result column="employee_name" jdbcType="VARCHAR" property="employeeName" />
   </resultMap>
+  
   <sql id="Base_Column_List">
     vacation_id, company_id, department_id, employee_id, annual_leave_total, annual_leave_balance, 
     adjust_rest_total, adjust_rest_balance
   </sql>
   
+  <sql id="Vacation_Employee_Column_List">
+    vacation_id, company_id, department_id,employee_id,annual_leave_total,annual_leave_balance,
+adjust_rest_total,adjust_rest_balance,department_name,employee_name
+  </sql>
+  
+  <sql id="Vacation_Employee_Column_List1">
+    v.vacation_id, v.company_id, v.department_id, v.employee_id, v.annual_leave_total, v.annual_leave_balance,
+v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name
+  </sql>
+  
   <!-- select -->
+  <select id="SelectFuzzyPagel" parameterType="com.xiangshangban.att_simple.bean.paging" resultMap="BaseResultMap">
+  	select 
+  	<include refid="Vacation_Employee_Column_List"/>
+	from 
+	(select <include refid="Vacation_Employee_Column_List1"/>,
+	<trim prefix="row_number() over(order by " suffix=") rn">
+		<if test="annualLeaveTotalRank != null">
+			v.annual_leave_total ${annualLeaveTotalRank}
+		</if>
+		<if test="annualLeaveBalanceRank != null">
+			v.annual_leave_balance ${annualLeaveBalanceRank}
+		</if>
+		<if test="adjustRestTotalRank != null">
+			v.adjust_rest_total ${adjustRestTotalRank}
+		</if>
+		<if test="adjustRestBalanceRank != null">
+			v.adjust_rest_balance ${adjustRestBalanceRank}
+		</if>
+	</trim>
+	from vacation v 
+	left join organization.employee_ e 
+	on v.employee_id = e.employee_id and v.company_id = e.company_id and v.department_id = e.department_id 
+	left join organization.department_ d 
+	on e.department_id = d.department_id and e.company_id = d.company_id 
+	<where>
+		v.company_id = #{companyId} 
+		<if test="departmentId != null">
+			and v.department_id = #{departmentId}
+		</if>
+		<if test="employeeName != null">
+			and e.employee_name = #{employeeName}
+		</if>
+	</where>
+	)t
+	where t.rn > ${pageExcludeNumber}
+	limit ${pageNum}
+  </select>
+  <select id="SelectTotalNumber" resultType="java.lang.Integer">
+  	select count(vacation_id) from vacation v
+	LEFT JOIN organization.employee_ e
+	on v.employee_id = e.employee_id and v.company_id = e.company_id and v.department_id = e.department_id
+	where v.company_id = #{companyId}
+	<if test="departmentId != null">
+		and v.department_id = #{departmentId}
+	</if>
+	<if test="employeeName != null">
+		and e.employee_name = #{employeeName}
+	</if>
+  </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -27,11 +89,19 @@
   	select
   	<include refid="Base_Column_List"></include>
   	from vacation
-  	where company_id = #{companyId}
-  	and department_id = #{deparmentId}
-  	and employee_id = #{employeeId}
+  	<where>
+  		<if test="companyId != null">
+  			company_id = #{companyId}
+  		</if>
+  		<if test="deparmentId != null">
+  			and department_id = #{deparmentId}
+  		</if>
+  		<if test="employeeId != null">
+  			and employee_id = #{employeeId}
+  		</if>
+  	</where>
   </select>
-  
+	  
   <!-- delete -->
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from vacation
@@ -104,6 +174,16 @@
   </insert>
   
   <!-- update -->
+  <update id="UpdateAdjustRest">
+  	update vacation
+  	set adjust_rest_total = #{adjustRestTotal,jdbcType=VARCHAR},adjust_rest_balance = #{adjustRestBalance,jdbcType=VARCHAR}
+  	where vacation_id = #{vacationId,jdbcType=VARCHAR}
+  </update>
+  <update id="UpdateAnnualLeave">
+  	update vacation
+  	set annual_leave_total = #{annualLeaveTotal,jdbcType=VARCHAR},annual_leave_balance = #{annualLeaveBalance,jdbcType=VARCHAR}
+  	where vacation_id = #{vacationId,jdbcType=VARCHAR}
+  </update>
   <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.Vacation">
     update vacation
     <set>
