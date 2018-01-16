@@ -4,6 +4,8 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
+import com.xiangshangban.att_simple.bean.ClassesType;
+
 /**
  * @author 王勇辉
  * TODO 班次管理业务层 
@@ -72,14 +74,6 @@ public interface ClassesService {
 	 * @param companyId
 	 */
 	void exportRecordToExcel(String requestParam, String excelName, OutputStream out,String companyId);
-	
-	/**
-	 * 添加无需考勤人员信息
-	 * @param requestParam
-	 * @param companyId
-	 * @return
-	 */
-	boolean addNotClockingInEmpInfo(String requestParam,String 	companyId);
 	
 	/**
 	 * 自动排班

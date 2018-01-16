@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiangshangban.att_simple.dao.NotClockingInEmpMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.NotClockingInEmp">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="emp_id" jdbcType="VARCHAR" property="empId" />
+    <result column="emp_company_id" jdbcType="VARCHAR" property="empCompanyId" />
+  </resultMap>
+  
+  <!-- 添加无需考勤人员 -->
+  <insert id="insertNotClockingInEmp" parameterType="com.xiangshangban.att_simple.bean.NotClockingInEmp">
+    insert into not_clocking_in_emp
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="empId != null">
+        emp_id,
+      </if>
+      <if test="empCompanyId != null">
+        emp_company_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="empId != null">
+        #{empId,jdbcType=VARCHAR},
+      </if>
+      <if test="empCompanyId != null">
+        #{empCompanyId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 查询当前公司无需考勤人员列表 -->
+  <select id="selectNotClockingInEmp" parameterType="String" resultType="Map">
+  	SELECT
+	COALESCE(A.emp_id,'') AS emp_id,
+	COALESCE(B.department_id,'') AS department_id
+	FROM
+		(
+			SELECT 
+				emp_company_id,
+				emp_id
+			FROM
+				att_simple.not_clocking_in_emp
+			WHERE
+				emp_company_id = #{companyId}
+		) A
+	LEFT JOIN organization.employee_ B ON A .emp_id = B.employee_id
+	AND A .emp_company_id = B.company_id
+  </select>
+  
+  <!-- 删除当前公司所有的无需考勤人员 -->
+  <delete id="removeNotClockingInEmp" parameterType="String">
+  	delete from not_clocking_in_emp where emp_company_id = #{companyId}
+  </delete>
+  
+</mapper>

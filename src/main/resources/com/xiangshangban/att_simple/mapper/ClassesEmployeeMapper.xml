@@ -134,4 +134,24 @@
       week = #{week,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  
+  <!-- 查询指定公司使用指定班次的人员列表 -->
+  <select id="selectPointClassesTypeEmp" parameterType="Map" resultType="Map">
+  	SELECT
+	COALESCE(A.emp_id,'') AS emp_id,
+	COALESCE(B.department_id,'') AS department_id
+	FROM
+		(
+			SELECT DISTINCT
+				emp_company_id,
+				emp_id
+			FROM
+				att_simple.classes_employee_
+			WHERE
+				classes_id = #{classesTypeId}
+			AND emp_company_id = #{companyId}
+		) A
+	LEFT JOIN organization.employee_ B ON A .emp_id = B.employee_id
+	AND A .emp_company_id = B.company_id
+  </select>
 </mapper>

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
 <generatorConfiguration>
-    <classPathEntry
-        location="D:/SOFTS/apache-maven/repository/org/postgresql/postgresql/9.4-1206/postgresql-9.4-1206-jdbc41.jar" />
+    <classPathEntry 
+    	 location="D:/SOFTS/apache-maven/repository/org/postgresql/postgresql/9.4-1206/postgresql-9.4-1206-jdbc41.jar"/>
+    	 
     <context id="testTables">
             <!--去除注释 -->
         <commentGenerator>
@@ -38,9 +39,9 @@
         <table tableName="total_will_complete_application_" domainObjectName="TotalWillCompleteApplication" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
         <table tableName="common_submit_people_" domainObjectName="CommonSubmitPeople" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
          -->
-        <table tableName="classes_employee_" domainObjectName="ClassesEmployee" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
-       <!--  <table tableName="total_application_record_" domainObjectName="TotalApplicationRecord" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table> -->
-        <table tableName="report_except" domainObjectName="ReportExcept" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
-        <table tableName="report_daily" domainObjectName="ReportDaily" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
+       <!--  <table tableName="classes_employee_" domainObjectName="ClassesEmployee" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
+        <table tableName="total_application_record_" domainObjectName="TotalApplicationRecord" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
+        <table tableName="report_except" domainObjectName="ReportExcept" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>-->
+        <table tableName="report_daily" domainObjectName="ReportDaily" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table> 
     </context>
 </generatorConfiguration>

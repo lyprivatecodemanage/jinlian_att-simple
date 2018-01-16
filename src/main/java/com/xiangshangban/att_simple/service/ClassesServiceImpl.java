@@ -2,7 +2,9 @@ package com.xiangshangban.att_simple.service;
 
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +36,9 @@ public class ClassesServiceImpl implements ClassesService{
 	@Autowired
 	private FestivalMapper festivalMapper;
 	
+	/**
+	 * 添加新的班次类型
+	 */
 	@Override
 	public boolean addNewClassesType(String requestParam, String companyId) {
 		//处理请求参数
@@ -209,11 +214,33 @@ public class ClassesServiceImpl implements ClassesService{
 		}
 		return result;
 	}
-
+	
+	/**
+	 * 查询当前公司所有的班次类型（以及使用该班次的人员列表信息）
+	 * 以及该班次的详细信息
+	 */
 	@Override
 	public List<Map> queryAllClassesTypeInfo(String companyId) {
-		// TODO Auto-generated method stub
-		return null;
+		//TODO 当前公司的班次类型
+		List<ClassesType> allClassesTypeInfo = classesTypeMapper.selectAllClassesTypeInfo(companyId);
+		//定义返回的数据格式
+		List<Map> classesTypeList = new ArrayList<>();
+		//TODO 获取使用每个班次的人员
+		for (ClassesType classesType : allClassesTypeInfo) {
+			//查询使用当前班次的人员列表
+			Map<String,String> param = new HashMap<String,String>();
+			param.put("classesTypeId",classesType.getId());
+			param.put("companyId",companyId);
+			
+			List<Map> classesEmpList = classesEmployeeMapper.selectPointClassesTypeEmp(param);
+			
+			Map<String,Object> returnData = new HashMap<>();
+			returnData.put("classesType",classesType);
+			returnData.put("classesEmp",classesEmpList);
+			
+			classesTypeList.add(returnData);
+		}
+		return classesTypeList;
 	}
 
 	@Override
@@ -250,12 +277,6 @@ public class ClassesServiceImpl implements ClassesService{
 	public void exportRecordToExcel(String requestParam, String excelName, OutputStream out, String companyId) {
 		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public boolean addNotClockingInEmpInfo(String requestParam, String companyId) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override

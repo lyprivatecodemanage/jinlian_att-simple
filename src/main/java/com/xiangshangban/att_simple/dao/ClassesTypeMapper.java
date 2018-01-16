@@ -37,5 +37,5 @@ public interface ClassesTypeMapper {
 	 * @param companyId
 	 * @return
 	 */
-	List<Map> selectAllClassesTypeInfo(String companyId);
+	List<ClassesType> selectAllClassesTypeInfo(String companyId);
 }

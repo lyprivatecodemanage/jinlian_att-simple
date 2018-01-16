@@ -210,4 +210,26 @@
       company_id = #{companyId,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  
+  <!-- 查询当前公司所有的班次类型信息（默认显示） -->
+  <select id="selectAllClassesTypeInfo" parameterType="String" resultMap="BaseResultMap">
+  	SELECT
+	COALESCE(ID,'') AS ID,
+	COALESCE(classes_name,'') AS classes_name,
+	COALESCE(on_duty_time,'') AS on_duty_time,
+	COALESCE(off_duty_time,'') AS off_duty_time,
+	COALESCE(morrow_duty_time_flag,'') AS morrow_duty_time_flag,
+	COALESCE(rest_time,'') AS rest_time,
+	COALESCE(rest_days,'') AS rest_days,
+	COALESCE(festival_rest_flag,'') AS festival_rest_flag,
+	COALESCE(sign_in_rule,'') AS sign_in_rule,
+	COALESCE(sign_out_rule,'') AS sign_out_rule,
+	COALESCE(on_punch_card_time,'') AS on_punch_card_time,
+	COALESCE(off_punch_card_time,'') AS off_punch_card_time,
+	COALESCE(auto_classes_flag,'') AS auto_classes_flag
+	FROM
+		classes_type
+	WHERE
+		company_id = #{companyId} 
+  </select>
 </mapper>

@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import com.xiangshangban.att_simple.bean.ClassesEmployee;
 @Mapper
 public interface ClassesEmployeeMapper {
+	
     int deleteByPrimaryKey(String id);
 
     int insert(ClassesEmployee record);
@@ -31,6 +32,11 @@ public interface ClassesEmployeeMapper {
 	 * @return
 	 */
 	List<Map> selectClassesInfo(Map map);
+	
+	/**
+	 * 查询当前公司使用指定班次的人员列表
+	 */
+	List<Map> selectPointClassesTypeEmp(Map map);
 	
 	/**
 	 * 查询指定人员排的最后一个班次的时间
