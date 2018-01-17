@@ -93,6 +93,13 @@ public interface ClassesEmployeeMapper {
 	 */
 	int deleteAppointClassesTypeEmp(Map map);
 	
+	/**
+	 * (更新/添加)指定人员指定日期的班次
+	 * @param classesEmployee
+	 * @return
+	 */
+	int updateAppointEmpDateClasses(ClassesEmployee classesEmployee);
+	
 	//########################<自动排班>############################
 	
 	/**

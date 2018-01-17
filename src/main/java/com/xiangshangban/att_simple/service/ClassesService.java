@@ -53,7 +53,7 @@ public interface ClassesService {
 	boolean oneButtonScheduling(String requestParam,String companyId);
 	
 	/**
-	 * 给指定的人员添加指定日期的排班(班次类型不变，允许微调上下班时间)
+	 * 给指定的人员添加指定日期的排班
 	 * @param requestParam
 	 * @param companyId
 	 * @return

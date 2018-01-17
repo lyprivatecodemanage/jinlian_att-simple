@@ -347,8 +347,52 @@ public class ClassesServiceImpl implements ClassesService{
 
 	@Override
 	public boolean addEmpDutyTime(String requestParam, String companyId) {
-		// TODO Auto-generated method stub
-		return false;
+		//解析请求参数
+		JSONObject parseObject = JSONObject.parseObject(requestParam);
+		Object empId = parseObject.get("empId");
+		Object pointDate = parseObject.get("pointDate");
+		Object onDutyTime = parseObject.get("onDutyTime");
+		Object offDutyTime = parseObject.get("offDutyTime");
+		Object restStartTime = parseObject.get("restStartTime");
+		Object restEndTime = parseObject.get("restEndTime");
+		Object signInRule = parseObject.get("signInRule");
+		Object signOutRule = parseObject.get("signOutRule");
+		Object onPunchCardRule = parseObject.get("onPunchCardRule");
+		Object offPunchCardRule = parseObject.get("offPunchCardRule");
+		
+		//定义返回的结果
+		boolean result = false;
+		
+		if(empId!=null && pointDate!=null && onDutyTime!=null && offDutyTime!=null 
+				&& restStartTime!=null && restEndTime!=null && signInRule!=null 
+				&& signOutRule!=null && onPunchCardRule!=null && offPunchCardRule!=null){
+			
+			ClassesEmployee classesEmployee = new ClassesEmployee();
+			
+			classesEmployee.setClassesId(FormatUtil.createUuid());
+			classesEmployee.setClassesName("临时班次");
+			classesEmployee.setEmpId(empId.toString().trim());
+			classesEmployee.setEmpCompanyId(companyId.trim());
+			classesEmployee.setTheDate(pointDate.toString().trim());
+			classesEmployee.setOnDutySchedulingDate(pointDate.toString().trim()+" "+onDutyTime.toString().trim());
+			classesEmployee.setOffDutySchedulingDate(pointDate.toString().trim()+" "+offDutyTime.toString().trim());
+			classesEmployee.setRestStartTime(pointDate.toString().trim()+" "+restStartTime.toString().trim());
+			classesEmployee.setRestEndTime(pointDate.toString().trim()+" "+restEndTime.toString().trim());
+			classesEmployee.setSignInRule(signInRule.toString().trim());
+			classesEmployee.setSignOutRule(signOutRule.toString().trim());
+			classesEmployee.setOnPunchCardRule(onPunchCardRule.toString().trim());
+			classesEmployee.setOffPunchCardRule(offPunchCardRule.toString().trim());
+			classesEmployee.setDivideColor("3");
+			
+			int updateAppointEmpDateClasses = classesEmployeeMapper.updateAppointEmpDateClasses(classesEmployee);
+			
+			if(updateAppointEmpDateClasses>0){
+				result = true;
+			}else{
+				result = true;
+			}
+		}
+		return result;
 	}
 
 	@Override

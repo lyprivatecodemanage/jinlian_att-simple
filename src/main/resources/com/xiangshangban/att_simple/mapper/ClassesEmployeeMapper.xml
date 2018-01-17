@@ -240,4 +240,26 @@
   	rest_end_time = '' 
   	where emp_id = #{empId} and emp_company_id = #{companyId} and the_date = #{pointDate}
   </update>
+  
+  <!-- 更新指定人员指定日期的班次 -->
+  <update id="updateAppointEmpDateClasses" parameterType="com.xiangshangban.att_simple.bean.ClassesEmployee">
+  	update classes_employee_ set 
+	  	classes_id = #{classesId},
+	  	classes_name = #{classesName},
+	  	on_duty_scheduling_date = #{onDutySchedulingDate},
+	  	off_duty_scheduling_date = #{offDutySchedulingDate},
+	  	rest_start_time = #{restStartTime},
+	  	rest_end_time = #{restEndTime},
+	  	sign_in_rule = #{signInRule},
+	  	sign_out_rule = #{signOutRule},
+	  	on_punch_card_rule = #{onPunchCardRule},
+	  	off_punch_card_rule = #{offPunchCardRule},
+	  	divide_color = #{divideColor}
+  	where
+  		emp_id = #{empId}
+  	and
+  		emp_company_id = #{empCompanyId}
+  	and 
+  		the_date = #{theDate}
+  </update>
 </mapper>

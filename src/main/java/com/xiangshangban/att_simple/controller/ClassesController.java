@@ -238,22 +238,41 @@ public class ClassesController {
 	 * 给指定的人员添加指定日期的排班(班次类型不变，允许微调上下班时间)
 	 * 请求参数：
 	 * 	{
-	 * 		"classesId":"SDASDASDA"-------->班次ID
 			"empId":"CASCASCA"--------->人员ID
 			"pointDate":"2018-01-10"----->指定的排班日期
 			"onDutyTime":"08:00"-------->该班次微调后的上班时间
-			"offDutyTime":"18:00"------>该班次微调后的下班时间
+			"offDutyTime":"18:00"------>该班次微调后的下班时间(添加单天的班次的时候不允许跨日)
 			"restStartTime":"12:00"------->开始休息时间点
 			"restEndTime":"13:00"--------->结束休息时间点
+			"signInRule":"15",----------->签到迟到15分钟不算迟到
+			"signOutRule":"15"----------->签退提前15分钟不算早退
+			"onPunchCardRule":"20",------>上班打卡允许提前20分钟
+			"offPunchCardRule":"20"------>下班允许推迟20分钟打卡
 		}
 	 * @param reuestParam 
 	 * @param request
 	 * @return
 	 */
 	@PostMapping("/addOneDateClasses")
-	public Map<String,Object> addEmpOneDateClasses(@RequestBody String reuestParam,HttpServletRequest request){
-		
-		return null;
+	public ReturnData addEmpOneDateClasses(@RequestBody String requestParam,HttpServletRequest request){
+		//获取公司ID
+		String companyId = request.getHeader("companyId");
+		//初始化返回的数据
+		ReturnData returnData = new ReturnData();
+		if(companyId!=null && !companyId.isEmpty()){
+			boolean deleteAppointClassesType = classesService.addEmpDutyTime(requestParam,companyId.trim());
+			if(deleteAppointClassesType){
+				returnData.setReturnCode("3000");
+				returnData.setMessage("添加成功");
+			}else{
+				returnData.setReturnCode("3001");
+				returnData.setMessage("添加失败");
+			}
+		}else{
+			returnData.setReturnCode("3013");
+			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
+		}
+		return returnData;
 	}
 	
 	/**
