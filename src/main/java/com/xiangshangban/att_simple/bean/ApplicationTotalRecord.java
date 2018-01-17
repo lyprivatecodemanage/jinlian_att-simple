@@ -32,6 +32,7 @@ public class ApplicationTotalRecord {
     
     private String isComplete;
     
+    private String isSkipRestDay;
     
 
     public String getIsComplete() {
@@ -137,4 +138,14 @@ public class ApplicationTotalRecord {
     public void setIsTransfer(String isTransfer) {
         this.isTransfer = isTransfer;
     }
+
+	public String getIsSkipRestDay() {
+		return isSkipRestDay;
+	}
+
+	public void setIsSkipRestDay(String isSkipRestDay) {
+		this.isSkipRestDay = isSkipRestDay;
+	}
+    
+    
 }

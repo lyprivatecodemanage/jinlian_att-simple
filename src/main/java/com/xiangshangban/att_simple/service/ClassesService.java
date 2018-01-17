@@ -4,6 +4,9 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
+import com.xiangshangban.att_simple.bean.ClassesEmployee;
+import com.xiangshangban.att_simple.bean.ClassesType;
+
 /**
  * @author 王勇辉
  * TODO 班次管理业务层 
@@ -74,16 +77,19 @@ public interface ClassesService {
 	void exportRecordToExcel(String requestParam, String excelName, OutputStream out,String companyId);
 	
 	/**
-	 * 添加无需考勤人员信息
-	 * @param requestParam
-	 * @param companyId
-	 * @return
-	 */
-	boolean addNotClockingInEmpInfo(String requestParam,String 	companyId);
-	
-	/**
 	 * 自动排班
 	 * @return
 	 */
 	boolean autoScheduling();
+	
+	/**
+	 * 查询指定人员指定时间区间的班次信息
+	 * @param empId 人员ID
+	 * @param companyId 人员公司ID
+	 * @param startTime 搜索开始时间
+	 * @param endTime 结束时间
+	 * @return
+	 */
+	List<ClassesEmployee> queryPointTimeClasses(String empId,String companyId,String startTime,String endTime);
+	
 }
