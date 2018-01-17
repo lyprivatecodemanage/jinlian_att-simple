@@ -68,6 +68,24 @@ public interface ClassesService {
 	boolean deleteEmpDutyTime(String requestParam,String companyId);
 	
 	/**
+	 * 获取指定人员指定日期的班次信息
+	 * @param requestParam
+	 * @param companyId
+	 * @return
+	 */
+	Map queryPointEmpDateClasses(String requestParam,String companyId);
+	
+	/**
+	 * 查询指定人员指定时间区间的班次信息
+	 * @param empId 人员ID
+	 * @param companyId 人员公司ID
+	 * @param startTime 搜索开始时间    如:2018-01-01 
+	 * @param endTime 结束时间    如:2018-01-02
+	 * @return
+	 */
+	List<ClassesEmployee> queryPointTimeClasses(String empId,String companyId,String startTime,String endTime);
+	
+	/**
 	 * 根据条件导出排班信息
 	 * @param requestParam 查询条件
 	 * @param excelName 导出的Excel表格的名称
@@ -81,15 +99,5 @@ public interface ClassesService {
 	 * @return
 	 */
 	boolean autoScheduling();
-	
-	/**
-	 * 查询指定人员指定时间区间的班次信息
-	 * @param empId 人员ID
-	 * @param companyId 人员公司ID
-	 * @param startTime 搜索开始时间
-	 * @param endTime 结束时间
-	 * @return
-	 */
-	List<ClassesEmployee> queryPointTimeClasses(String empId,String companyId,String startTime,String endTime);
 	
 }

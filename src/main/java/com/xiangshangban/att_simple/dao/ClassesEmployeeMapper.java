@@ -39,6 +39,13 @@ public interface ClassesEmployeeMapper {
 	List<Map> selectPointClassesTypeEmp(Map map);
 	
 	/**
+	 * 查询指定人员指定日期的班次信息
+	 * @param map
+	 * @return
+	 */
+	ClassesEmployee selectPointEmpDateClasses(Map map);
+	
+	/**
 	 * 查询指定人员指定时间区间的班次信息
 	 * @param map
 	 * 参数详情:

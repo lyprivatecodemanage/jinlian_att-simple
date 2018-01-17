@@ -26,7 +26,7 @@ import com.xiangshangban.att_simple.utils.FormatUtil;
 import com.xiangshangban.att_simple.utils.TimeUtil;
 
 @Service
-/*@Transactional*/
+@Transactional
 public class ClassesServiceImpl implements ClassesService{
 	
 	@Autowired
@@ -38,11 +38,15 @@ public class ClassesServiceImpl implements ClassesService{
 	@Autowired
 	private FestivalMapper festivalMapper;
 	
+	//定义访问次数标志
+	private static int access_count = 0;
+	
 	/**
 	 * 添加新的班次类型
 	 */
 	@Override
 	public boolean addNewClassesType(String requestParam, String companyId) {
+		
 		//处理请求参数
 		JSONObject jsonObject = JSONObject.parseObject(requestParam);
 		//获取操作标志
@@ -119,6 +123,13 @@ public class ClassesServiceImpl implements ClassesService{
 			
 			//TODO 添加班次类型成功====》添加人员班次
 			if(addClassesType>0){
+				
+				//根据访问次数，来确定排班修改的次数（每修改一次，改变一次颜色）
+				access_count++;
+				if(access_count==3){
+					access_count=1;
+				}
+				
 				//初始化需要排班的天数
 				int scheduleDays = 0;
 				
@@ -174,6 +185,7 @@ public class ClassesServiceImpl implements ClassesService{
 						classesEmployee.setEmpId(emp.get("empId").toString());
 						classesEmployee.setEmpCompanyId(companyId);
 						classesEmployee.setClassesId(typeUUID);
+						classesEmployee.setClassesName(classesName.toString().trim());
 						//设置人员班次上班打卡时间（人员班次从创建班次类型的次日开始排）
 						classesEmployee.setOnDutySchedulingDate(new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime())+" "+onDutyTime.toString().trim());
 						
@@ -210,17 +222,32 @@ public class ClassesServiceImpl implements ClassesService{
 							classesEmployee.setRestEndTime(classesEmployee.getOnDutySchedulingDate().split(" ")[0]+" "+restEndTime.toString().trim());
 						}
 						
+						//设置签到签退规则
+						classesEmployee.setSignInRule(signInRule.toString().trim());
+						classesEmployee.setSignOutRule(signOutRule.toString().trim());
+						//设置打卡规则
+						classesEmployee.setOnPunchCardRule(onPunchCardRule.toString().trim());
+						classesEmployee.setOffPunchCardRule(offPunchCardRule.toString().trim());
+						
 						//添加当前日期
 						classesEmployee.setTheDate(classesEmployee.getOnDutySchedulingDate().split(" ")[0]);
+						//设置分隔颜色
+						classesEmployee.setDivideColor(String.valueOf(access_count));
 						
 						//TODO 排除休息日
 						if(classesType.getRestDays().contains(classesEmployee.getWeek())){
 							//当天没有安排班次
 							classesEmployee.setClassesId("");
+							classesEmployee.setClassesName("");
 							classesEmployee.setOnDutySchedulingDate("");
 							classesEmployee.setOffDutySchedulingDate("");
 							classesEmployee.setRestStartTime("");
 							classesEmployee.setRestEndTime("");
+							classesEmployee.setSignInRule("");
+							classesEmployee.setSignOutRule("");
+							classesEmployee.setOnPunchCardRule("");
+							classesEmployee.setOffPunchCardRule("");
+							classesEmployee.setDivideColor("");
 						}else{
 							//TODO 排除法定节假日
 							List<Festival> allFestivalInfo = festivalMapper.selectAllFestivalInfo();
@@ -228,17 +255,22 @@ public class ClassesServiceImpl implements ClassesService{
 							for (Festival festival : allFestivalInfo) {
 								if(classesEmployee.getOnDutySchedulingDate().split(" ")[0].equals(festival.getFestivalDate())){
 									classesEmployee.setClassesId("");
+									classesEmployee.setClassesName("");
 									classesEmployee.setOnDutySchedulingDate("");
 									classesEmployee.setOffDutySchedulingDate("");
 									classesEmployee.setRestStartTime("");
 									classesEmployee.setRestEndTime("");
+									classesEmployee.setSignInRule("");
+									classesEmployee.setSignOutRule("");
+									classesEmployee.setOnPunchCardRule("");
+									classesEmployee.setOffPunchCardRule("");
+									classesEmployee.setDivideColor("");
 								}
 							}
 						}
 						addClassesEmp = classesEmployeeMapper.insertSelective(classesEmployee);
 					}
 				}
-				
 				//添加：结果
 				if(addClassesType>0 && addClassesEmp>0){
 					result = true;
@@ -246,7 +278,6 @@ public class ClassesServiceImpl implements ClassesService{
 					result = false;
 				}
 			}
-			
 		}
 		return result;
 	}
@@ -322,8 +353,28 @@ public class ClassesServiceImpl implements ClassesService{
 
 	@Override
 	public boolean deleteEmpDutyTime(String requestParam, String companyId) {
-		// TODO Auto-generated method stub
-		return false;
+		//解析请求参数
+		JSONObject parseObject = JSONObject.parseObject(requestParam);
+		Object empId = parseObject.get("empId");
+		Object pointDate = parseObject.get("pointDate");
+		//定义返回的结果
+		boolean result = false;
+		
+		if(empId!=null && pointDate!=null){
+			Map<String,String> param = new HashMap<>();
+			param.put("empId",empId.toString().trim());
+			param.put("pointDate",pointDate.toString().trim());
+			param.put("companyId",companyId.toString().trim());
+			
+			int deleteAppointEmpDateClasses = classesEmployeeMapper.deleteAppointEmpDateClasses(param);
+			
+			if(deleteAppointEmpDateClasses>0){
+				result = true;
+			}else{
+				result = true;
+			}
+		}
+		return result;
 	}
 
 	@Override
@@ -337,17 +388,21 @@ public class ClassesServiceImpl implements ClassesService{
 		// TODO Auto-generated method stub
 		return false;
 	}
-
+	
+	
 	@Override
 	public List<ClassesEmployee> queryPointTimeClasses(String empId, String companyId, String startTime,
 			String endTime) {
-		Map<String,String> param = new HashMap<>();
-		param.put("empId", empId.trim());
-		param.put("companyId", companyId.trim());
-		param.put("startTime", startTime.trim());
-		param.put("endTime",endTime.trim());
-		
-		List<ClassesEmployee> selectPointTimeClasses = classesEmployeeMapper.selectPointTimeClasses(param);
+		List<ClassesEmployee> selectPointTimeClasses = new ArrayList<>();
+		if(empId!=null && !empId.isEmpty() && companyId!=null && !companyId.isEmpty() && startTime!=null && !startTime.isEmpty()){
+			Map<String,String> param = new HashMap<>();
+			param.put("empId", empId.trim());
+			param.put("companyId", companyId.trim());
+			param.put("startTime", startTime.trim());
+			param.put("endTime",endTime.trim());
+			
+			selectPointTimeClasses = classesEmployeeMapper.selectPointTimeClasses(param);
+		}
 		return selectPointTimeClasses;
 	}
 	
@@ -380,5 +435,39 @@ public class ClassesServiceImpl implements ClassesService{
 			calendar.add(Calendar.MONTH, -1);
 		}
 		return count;
+	}
+
+	@Override
+	public Map queryPointEmpDateClasses(String requestParam, String companyId) {
+		//解析请求参数
+		JSONObject parseObject = JSONObject.parseObject(requestParam);
+		Object empId = parseObject.get("empId");
+		Object pointDate = parseObject.get("pointDate");
+		//定义返回的结果
+		Map<String,String> result = new HashMap<>();
+		
+		if(empId!=null && pointDate!=null){
+			Map<String,String> param = new HashMap<>();
+			param.put("empId",empId.toString().trim());
+			param.put("pointDate",pointDate.toString().trim());
+			param.put("companyId",companyId.toString().trim());
+			
+			ClassesEmployee selectPointEmpDateClasses = classesEmployeeMapper.selectPointEmpDateClasses(param);
+			
+			if(selectPointEmpDateClasses!=null){
+				result.put("classesDate",(selectPointEmpDateClasses.getOnDutySchedulingDate()!=null && !selectPointEmpDateClasses.getOnDutySchedulingDate().isEmpty())?selectPointEmpDateClasses.getOnDutySchedulingDate().split(" ")[0]:"");
+				
+				result.put("classesWeek",selectPointEmpDateClasses.getWeek()!=null?selectPointEmpDateClasses.getWeek():"");
+				
+				result.put("onDutyTime",(selectPointEmpDateClasses.getOnDutySchedulingDate()!=null && !selectPointEmpDateClasses.getOnDutySchedulingDate().isEmpty())?selectPointEmpDateClasses.getOnDutySchedulingDate().split(" ")[1]:"");
+				
+				result.put("offDutyTime",(selectPointEmpDateClasses.getOffDutySchedulingDate()!=null && !selectPointEmpDateClasses.getOffDutySchedulingDate().isEmpty())?selectPointEmpDateClasses.getOffDutySchedulingDate().split(" ")[1]:"");
+				
+				result.put("restStartTime",(selectPointEmpDateClasses.getRestStartTime()!=null && !selectPointEmpDateClasses.getRestStartTime().isEmpty())?selectPointEmpDateClasses.getRestStartTime().split(" ")[1]:"");
+				
+				result.put("restEndTime",(selectPointEmpDateClasses.getRestEndTime()!=null && !selectPointEmpDateClasses.getRestEndTime().isEmpty())?selectPointEmpDateClasses.getRestEndTime().split(" ")[1]:"");
+			}
+		}
+		return result;
 	}
 }

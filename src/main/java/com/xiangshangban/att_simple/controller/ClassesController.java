@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
+import com.xiangshangban.att_simple.bean.ClassesEmployee;
 import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.service.ClassesService;
 import com.xiangshangban.att_simple.service.NotClockingInEmpService;
@@ -35,7 +36,7 @@ public class ClassesController {
 	 * 新增/修改班次类型
 	 * @param requestParam
 	 {
-  		 "classesId":"",(通过有无班次ID<没有的时候传递null>,来判断用户进行的是新增的操作还是更新的操作)
+  		 "classesId":"",(通过有无班次ID,来判断用户进行的是新增的操作还是更新的操作)
          "classesName":"常白班",（班次名称）
          "on_duty_time":"09:00",(上班时间)
          "off_duty_time":"18:00",（下班时间）
@@ -53,7 +54,7 @@ public class ClassesController {
 			 {"empId":"XFGCDSDSFSDFSDF46557"}
 		  ],
 	 	 "autoClassesFlag":"1/2",(自动排班周期 1:月  2:季度)
-	 	 "validDate":"2018-01-16"(当前班次生效的时间，没有的时候不传为null)
+	 	 "validDate":"2018-01-16"(当前班次生效的时间，没有的时候不传)
 	 }
 	 * @param request
 	 * @return
@@ -177,7 +178,7 @@ public class ClassesController {
 	
 	
 	/**
-	 * 根据条件查询当前公司人员的班次排列，以及人数最多的三个班次（班次类型有几个显	示几个）的人数
+	 * 根据条件查询当前公司人员的班次排列，以及人数最多的三个班次（班次类型有几个显示几个）的人数
 	 * @param requestParam
 	 * 	{
 			“classesType”:”常白班”（班次类型）
@@ -198,7 +199,26 @@ public class ClassesController {
 	}
 	
 	/**
-	 * 一键排班
+	 * 根据条件导出人员班次信息
+	 * @param requestParam
+	 * {
+			“classesType”:”常白班”（班次类型）
+			“empDept”:”研发部”（人员部门）
+			“empName”:”小青”（人员名称）
+			“perviousWeek”:”0/1”（是否查看上周的数据0：没有该搜索条件 1：有该搜索条件）
+			“thisWeek”：“0/1”(是否查看本周班次 0：不查看 1：查看)
+			“nextWeek”:”0/1”(是否查看下一周的班次 0：不查看 1：查看)
+			“currentDate”:”2018-01-09”（隐藏条件<后台自己准备>，根据当前时间划定一周时间）
+		}
+	 * @param request
+	 * @param response
+	 */
+	public void exportScheduling(@RequestBody String requestParam, HttpServletRequest request, HttpServletResponse response){
+		
+	}
+	
+	/**
+	 * 一键排班(一次排一个周期)
 	 * @param requestParam
 	 * {
 			“employeeIdList”:”[ (需要进行一键排班的人员)
@@ -218,12 +238,15 @@ public class ClassesController {
 	 * 给指定的人员添加指定日期的排班(班次类型不变，允许微调上下班时间)
 	 * 请求参数：
 	 * 	{
-			“empId”:”CASCASCA”--------->人员ID
-			“dateInfo”:”2018-01-10”----->指定的排班日期
-			“on_duty_time”:”08:00”-------->该班次微调后的上班时间
-			“off_dutyy_time”:”18:00”------>该班次微调后的下班时间
+	 * 		"classesId":"SDASDASDA"-------->班次ID
+			"empId":"CASCASCA"--------->人员ID
+			"pointDate":"2018-01-10"----->指定的排班日期
+			"onDutyTime":"08:00"-------->该班次微调后的上班时间
+			"offDutyTime":"18:00"------>该班次微调后的下班时间
+			"restStartTime":"12:00"------->开始休息时间点
+			"restEndTime":"13:00"--------->结束休息时间点
 		}
-	 * @param reuestParam
+	 * @param reuestParam 
 	 * @param request
 	 * @return
 	 */
@@ -237,34 +260,76 @@ public class ClassesController {
 	 * 删除指定人员指定日期的排班
 	 * @param reuestParam
 	 * {
-			“empId”:”CASCASCA”--------->人员ID
-			“dateInfo”:”2018-01-10”----->指定的排班日期
+			"empId":"CASCASCA"--------->人员ID
+			"pointDate":"2018-01-10"----->指定的排班日期
 	   }
 	 * @param request
 	 * @return
 	 */
-	public Map<String,Object> deleteEmpOneDateClasses(@RequestBody String reuestParam,HttpServletRequest request){
-		
-		return null;
+	@PostMapping("/delPointEmpDateClasses")
+	public ReturnData deleteEmpOneDateClasses(@RequestBody String requestParam,HttpServletRequest request){
+		//获取公司ID
+		String companyId = request.getHeader("companyId");
+		//初始化返回的数据
+		ReturnData returnData = new ReturnData();
+		if(companyId!=null && !companyId.isEmpty()){
+			boolean deleteEmpDutyTime = classesService.deleteEmpDutyTime(requestParam, companyId.trim());
+			if(deleteEmpDutyTime){
+				returnData.setReturnCode("3000");
+				returnData.setMessage("删除成功");
+			}else{
+				returnData.setReturnCode("3001");
+				returnData.setMessage("删除失败");
+			}
+		}else{
+			returnData.setReturnCode("3013");
+			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
+		}
+		return returnData;
 	}
 	
 	/**
-	 * 根据条件导出人员班次信息
+	 * 查询指定人员指定日期的班次信息
 	 * @param requestParam
 	 * {
-			“classesType”:”常白班”（班次类型）
-			“empDept”:”研发部”（人员部门）
-			“empName”:”小青”（人员名称）
-			“perviousWeek”:”0/1”（是否查看上周的数据0：没有该搜索条件 1：有该搜索条件）
-			“thisWeek”：“0/1”(是否查看本周班次 0：不查看 1：查看)
-			“nextWeek”:”0/1”(是否查看下一周的班次 0：不查看 1：查看)
-			“currentDate”:”2018-01-09”（隐藏条件<后台自己准备>，根据当前时间划定一周时间）
-		}
-	 * @param request
-	 * @param response
+			"empId":"CASCASCA"--------->人员ID
+			"pointDate":"2018-01-10"----->指定的排班日期
+	   }
+	 * @param request 获取头信息
+	 * @return
+	 * {
+		  "employeeId": null,
+		  "data": {
+		    "restStartTime": "24:00",
+		    "restEndTime": "1:00",
+		    "classesDate": "2018-01-18",
+		    "onDutyTime": "20:00",
+		    "offDutyTime": "07:00",
+		    "classesWeek": "4"
+		  },
+		  "totalPages": null,
+		  "message": "请求数据成功",
+		  "returnCode": "3000",
+		  "pagecountNum": null,
+		  "companyName": null
+	   }
 	 */
-	public void exportScheduling(@RequestBody String requestParam, HttpServletRequest request, HttpServletResponse response){
-		
+	@PostMapping("/getPointEmpDateClasses")
+	public ReturnData getPointEmpDateClasses(@RequestBody String requestParam,HttpServletRequest request){
+		//获取公司ID
+		String companyId = request.getHeader("companyId");
+		//初始化返回的数据
+		ReturnData returnData = new ReturnData();
+		if(companyId!=null && !companyId.isEmpty()){
+			Map queryPointEmpDateClasses = classesService.queryPointEmpDateClasses(requestParam, companyId.trim());
+			returnData.setData(queryPointEmpDateClasses);
+			returnData.setReturnCode("3000");
+			returnData.setMessage("请求数据成功");
+		}else{
+			returnData.setReturnCode("3013");
+			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
+		}
+		return returnData;
 	}
 	
 	/**
