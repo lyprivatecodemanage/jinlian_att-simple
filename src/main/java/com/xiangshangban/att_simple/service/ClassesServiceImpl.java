@@ -26,7 +26,7 @@ import com.xiangshangban.att_simple.utils.FormatUtil;
 import com.xiangshangban.att_simple.utils.TimeUtil;
 
 @Service
-@Transactional
+/*@Transactional*/
 public class ClassesServiceImpl implements ClassesService{
 	
 	@Autowired
@@ -80,16 +80,15 @@ public class ClassesServiceImpl implements ClassesService{
 				delParam.put("companyId", companyId.toString());
 				//TODO 删除班次类型
 				classesTypeMapper.removeAppointClassesType(delParam);
-				//删除人员班次
-				if(validDate==null){
-					//默认次日生效
+				//删除人员班次(删除当前设置的班次生效时间之后的所有班次)
+				if(validDate!=null && !validDate.toString().trim().equals("")){
+					delParam.put("offSetTime",validDate.toString().trim());
+				}else{
 					Calendar instance = Calendar.getInstance();
 					instance.add(Calendar.DAY_OF_MONTH,1); 
 					delParam.put("offSetTime",new SimpleDateFormat("yyyy-MM-dd").format(instance.getTime()));
-				}else{
-					delParam.put("offSetTime",validDate.toString().trim());
 				}
-				//TODO 删除人员班次
+				//TODO 删除当前公司使用该班次类型指定日期之后的人员班次
 				classesEmployeeMapper.deleteAppointClassesTypeEmp(delParam);
 			}
 			
@@ -120,45 +119,43 @@ public class ClassesServiceImpl implements ClassesService{
 			
 			//TODO 添加班次类型成功====》添加人员班次
 			if(addClassesType>0){
-				//判断当前时间是不是本月的最后一天
-				Calendar calendar = Calendar.getInstance();
-				int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
 				//初始化需要排班的天数
 				int scheduleDays = 0;
-				if(TimeUtil.getCurrentMaxDate()==dayOfMonth){
-					//是本月的最后一天(则排完下一个整月========》获取下一个月的天数)
-					calendar.add(Calendar.MONTH, 1);//切换到下个月
-					scheduleDays = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);//获取下个月的天数
+				
+				if(validDate!=null && !validDate.toString().trim().equals("")){
+					//--------------班次生效时间由用户决定(计算要排班的天数)-------------------
+					try {
+						//解析用户传递的生效时间
+						Date parseDate = new SimpleDateFormat("yyyy-MM-dd").parse(validDate.toString().trim());
+						scheduleDays = getScheduleDays(parseDate);
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
 				}else{
-					//不是本月的最后一天（先排完当前月，然后再排一个整月）
-					int temp = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)-dayOfMonth;//本月剩余天数
-					calendar.add(Calendar.MONTH, 1);//切换到下个月
-					scheduleDays = temp+calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-					//重新切换回上个月
-					calendar.add(Calendar.MONTH, -1);
+					//-----------------默认班次次日生效(计算要排班的天数)-----------------------
+					scheduleDays = getScheduleDays(null);
 				}
 				
 				//TODO ============》添加人员班次
 				String nextDayFlag = morrowFlag.toString().trim(); //次日下班标志
 				//定义添加班次后的结果
 				int addClassesEmp = 0;
-				
 				for(int i = 0;i<empArray.size();i++){
 					
 					//创建Calendar对象
 					Calendar cal = Calendar.getInstance();
 					
 					//设置班次生效时间
-					if(validDate==null){
-						//默认次日生效
-						cal.add(Calendar.DAY_OF_MONTH,1); 
-					}else{
+					if(validDate!=null && !validDate.toString().trim().equals("")){
 						try {
 							Date parse = new SimpleDateFormat("yyyy-MM-dd").parse(validDate.toString().trim());
 							cal.setTime(parse);
 						} catch (ParseException e) {
 							e.printStackTrace();
 						}
+					}else{
+						//默认次日生效
+						cal.add(Calendar.DAY_OF_MONTH,1); 
 					}
 					
 					
@@ -352,5 +349,36 @@ public class ClassesServiceImpl implements ClassesService{
 		
 		List<ClassesEmployee> selectPointTimeClasses = classesEmployeeMapper.selectPointTimeClasses(param);
 		return selectPointTimeClasses;
+	}
+	
+	//=========================公共方法：计算排班天数===========================
+	/**
+	 * 计算排班天数
+	 * @param date 指定的班次生效时间（为null的时候，表示次日生效）
+	 * @return
+	 */
+	public int getScheduleDays(Date date){
+		int count = 0;
+		Calendar calendar = Calendar.getInstance();
+		if(date!=null){
+			calendar.setTime(date);
+			//下方代码适用的是次日生效，而所以用户传入的时间就是成效时间，所以要减去一天，才能适用下方的代码
+			calendar.add(Calendar.DAY_OF_MONTH, -1);
+		}
+		int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+		if(TimeUtil.getCurrentMaxDate()==dayOfMonth){ //是本月的最后一天(则排完下一个整月========》获取下一个月的天数)
+			
+			calendar.add(Calendar.MONTH, 1);//切换到下个月
+			count = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);//获取下个月的天数
+			
+		}else{//不是本月的最后一天（先排完当前月，然后再排一个整月）
+			
+			int temp = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)-dayOfMonth;//本月剩余天数
+			calendar.add(Calendar.MONTH, 1);//切换到下个月
+			count = temp+calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+			//重新切换回上个月
+			calendar.add(Calendar.MONTH, -1);
+		}
+		return count;
 	}
 }

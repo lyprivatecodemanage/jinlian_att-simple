@@ -34,27 +34,27 @@ public class ClassesController {
 	/**
 	 * 新增/修改班次类型
 	 * @param requestParam
-	 * {
-	 * 		 "classesId":"",(通过有无班次ID,来判断用户进行的是新增的操作还是更新的操作)
-	         "classesName":"常白班",（班次名称）
-	         "on_duty_time":"09:00",(上班时间)
-	         "off_duty_time":"18:00",（下班时间）
-	         "morrowFlag":"0/1",(是否是次日的这个时间下班 0:不是 1:是)
-	         "restStartTime":"12:00",每天的休息时间段:开始时间
-	         "restEndTime":"13:00",每天的休息时间段:结束时间
-	         "restDays":"67"，一周的休息日（6、7表示周六和周日休息）
-	         "festivalRestFlag":"0/1"(法定假日是否休息标志位0:不休息 1:休息)
-			 “signInRule”:”20”（签到晚20分钟不算迟到）
-			 “signOutRule”：“20”(签退早20分钟不算早退)
-	 		 “onPunchCardRule”：“20”(上班打卡限制,允许提前20分钟)
-			 “offPunchCardRule”:”20”(下班打卡限制，允许推迟20分钟) 
-			 “employeeIdList”:”[  (排班人员列表)
-				 {“empId”:”XFGCDSDSFSDFSDF13213”},
-				 {“empId”:”XFGCDSDSFSDFSDF46557”}
-			  ]”
-		 	 “autoClassesFlag”：“1/2”(自动排班周期类型 1：月 2：周)
-		 	 "validDate":"2018-01-16"(该班次生效时间)
-		}
+	 {
+  		 "classesId":"",(通过有无班次ID<没有的时候传递null>,来判断用户进行的是新增的操作还是更新的操作)
+         "classesName":"常白班",（班次名称）
+         "on_duty_time":"09:00",(上班时间)
+         "off_duty_time":"18:00",（下班时间）
+         "morrowFlag":"0/1",(是否是次日的这个时间下班 0:不是 1:是)
+         "restStartTime":"12:00",每天的休息时间段:开始时间
+         "restEndTime":"13:00",每天的休息时间段:结束时间
+         "restDays":"67",一周的休息日（6、7表示周六和周日休息）
+         "festivalRestFlag":"0/1",(法定假日是否休息标志位0:不休息 1:休息)
+		 "signInRule":"20",（签到晚20分钟不算迟到）
+		 "signOutRule":"20",(签退早20分钟不算早退)
+ 		 "onPunchCardRule":"20", (上班打卡限制，允许提前20分钟)
+		 "offPunchCardRule":"20", (下班打卡限制，允许推迟20分钟)
+		 "employeeIdList":[  (使用改排班的人员列表)
+			 {"empId":"XFGCDSDSFSDFSDF13213"},
+			 {"empId":"XFGCDSDSFSDFSDF46557"}
+		  ],
+	 	 "autoClassesFlag":"1/2",(自动排班周期 1:月  2:季度)
+	 	 "validDate":"2018-01-16"(当前班次生效的时间，没有的时候不传为null)
+	 }
 	 * @param request
 	 * @return
 	 */
@@ -176,7 +176,6 @@ public class ClassesController {
 	}
 	
 	
-	
 	/**
 	 * 根据条件查询当前公司人员的班次排列，以及人数最多的三个班次（班次类型有几个显	示几个）的人数
 	 * @param requestParam
@@ -269,14 +268,14 @@ public class ClassesController {
 	}
 	
 	/**
-	 * 添加无需考勤人员信息
+	 * (添加/更新)无需考勤人员信息
 	 * @param requestParam
 	 * {
-	 * 	 "flag":"0/1",(0:新增人员 1:更新人员)
-         "employeeIdList":"[ (不需要考勤的人员列表)
-			{“empId”:”CBAJKSCBJAKSA12111”},
-			{“empId”:”CAHBCJKSHADCBA5646”}
-		 ]",（班次名称）
+	  	 "flag":"0/1",(0:新增无需考勤人员 1:更新无需考勤人员)
+         "employeeIdList":[
+			{"empId":"newCBAJKSCBJAKSA12111"},
+			{"empId":"newCAHBCJKSHADCBA5646"}
+		 ]
 	   }
 	 * @param request
 	 * @return
