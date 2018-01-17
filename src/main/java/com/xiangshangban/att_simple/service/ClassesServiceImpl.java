@@ -72,22 +72,25 @@ public class ClassesServiceImpl implements ClassesService{
 				&& signInRule!=null && signOutRule!=null && onPunchCardRule!=null 
 				&& offPunchCardRule!=null && employeeIdList!=null && autoClassesFlag!=null){
 			
-			//判断操作标志是否有数据
+			//判断是否有操作标志
 			if(operateFlag!=null && !operateFlag.toString().trim().equals("")){
 				//先删除，传递上来的班次类型和使用该班次类型的人员班次信息(删除从指定生效日往后的班次)
 				Map<String,String> delParam = new HashMap<>();
 				delParam.put("classesTypeId",operateFlag.toString().trim());
 				delParam.put("companyId", companyId.toString());
-				//删除班次类型
+				//TODO 删除班次类型
 				classesTypeMapper.removeAppointClassesType(delParam);
 				//删除人员班次
-				//设置班次生效时间
 				if(validDate==null){
 					//默认次日生效
-					Calendar.getInstance().add(Calendar.DAY_OF_MONTH,1); 
+					Calendar instance = Calendar.getInstance();
+					instance.add(Calendar.DAY_OF_MONTH,1); 
+					delParam.put("offSetTime",new SimpleDateFormat("yyyy-MM-dd").format(instance.getTime()));
 				}else{
-					
+					delParam.put("offSetTime",validDate.toString().trim());
 				}
+				//TODO 删除人员班次
+				classesEmployeeMapper.deleteAppointClassesTypeEmp(delParam);
 			}
 			
 			//获取要排班的人员列表

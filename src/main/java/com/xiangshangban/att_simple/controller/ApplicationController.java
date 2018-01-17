@@ -146,7 +146,6 @@ public class ApplicationController {
 			int applicationHour = 0;//计算得出的申请小时数
 			switch(application.getApplicationType()){
 			   case "1"://请假
-				   
 				   for(){
 					   if(startTime.getTime()>){
 						   

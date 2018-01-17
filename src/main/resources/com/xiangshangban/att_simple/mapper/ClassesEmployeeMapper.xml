@@ -168,4 +168,9 @@
   	FROM classes_employee_
   	WHERE emp_id = #{empId} and emp_company_id = #{companyId} and the_date between #{startTime} and #{endTime} ORDER BY on_duty_scheduling_date
   </select>
+  
+  <!-- 删除指定班次人员，某个日期之后的班次 -->
+  <delete id="deleteAppointClassesTypeEmp" parameterType="Map">
+  	delete from classes_employee_ where classes_id = #{classesTypeId} and the_date >= #{offSetTime}
+  </delete>
 </mapper>
