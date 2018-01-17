@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.bean.Vacation;
 import com.xiangshangban.att_simple.bean.VacationDetails;
 import com.xiangshangban.att_simple.dao.VacationDetailsMapper;
@@ -23,10 +24,10 @@ public class VacationDetailsServiceImpl implements VacationDetailsService {
 	VacationMapper vacationMapper;
 	
 	@Override
-	public Map<String,Object> SelectVacationDetails(String vacationId, String vacationType, String changingReason,
+	public ReturnData SelectVacationDetails(String vacationId, String vacationType, String changingReason,
 			String changeingDateRank, String pageExcludeNumber, String pageNum) {
 		// TODO Auto-generated method stub
-		Map<String,Object> map = new HashMap<>();
+		ReturnData returndata = new ReturnData();
 		
 		List<VacationDetails> list = vacationDetailsMapper.SelectVacationDetails(vacationId, vacationType, changingReason, changeingDateRank, pageExcludeNumber, pageNum);
 		
@@ -41,19 +42,21 @@ public class VacationDetailsServiceImpl implements VacationDetailsService {
 					pageNo = count/Integer.parseInt(pageNum)+1;
 				}
 				
-				
+				Map<String, Object> map = new HashMap<>();
 				map.put("ketData",JSONObject.toJSON(v));
 				map.put("listData",JSONObject.toJSON(list));
-				map.put("returnCode", "3000");
-				map.put("message", "数据请求成功");
-				map.put("totalNum", count);
-				map.put("pageNo",pageNo);
-		        return map;
+				
+				returndata.setData(map);
+				returndata.setTotalPages(count);
+				returndata.setPagecountNum(pageNo);
+				returndata.setReturnCode("3000");
+				returndata.setMessage("数据请求成功");
+		        return returndata;
 			}
 		}
-		map.put("returnCode", "3001");
-		map.put("message", "服务器错误");
-        return map;		
+		returndata.setReturnCode("3001");
+		returndata.setMessage("服务器错误");
+        return returndata;		
 	}
 
 }

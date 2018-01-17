@@ -30,7 +30,7 @@ v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name
   </sql>
   
   <!-- select -->
-  <select id="SelectFuzzyPagel" parameterType="com.xiangshangban.att_simple.bean.paging" resultMap="BaseResultMap">
+  <select id="SelectFuzzyPagel" parameterType="com.xiangshangban.att_simple.bean.Paging" resultMap="BaseResultMap">
   	select 
   	<include refid="Vacation_Employee_Column_List"/>
 	from 

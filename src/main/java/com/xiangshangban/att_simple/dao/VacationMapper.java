@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.xiangshangban.att_simple.bean.Vacation;
-import com.xiangshangban.att_simple.bean.paging;
+import com.xiangshangban.att_simple.bean.Paging;
 
 @Mapper
 public interface VacationMapper {
@@ -45,7 +45,7 @@ public interface VacationMapper {
      * @param vacation
      * @return
      */
-    List<Vacation> SelectFuzzyPagel(paging paging);
+    List<Vacation> SelectFuzzyPagel(Paging paging);
     
     /**
      * 根据vacationId 对单个员工进行年假调整 修改年假总数、剩余

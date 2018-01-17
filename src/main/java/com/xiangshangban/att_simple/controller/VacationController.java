@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.xiangshangban.att_simple.bean.paging;
+import com.xiangshangban.att_simple.bean.ReturnData;
+import com.xiangshangban.att_simple.bean.Paging;
 import com.xiangshangban.att_simple.service.AdjustRestDateCalculateService;
 import com.xiangshangban.att_simple.service.VacationService;
 
@@ -33,9 +34,9 @@ public class VacationController {
 	 * @return
 	 */
 	@RequestMapping(value="/SelectFuzzyPagel",produces = "application/json;charset=utf-8",method=RequestMethod.POST)
-	public Map<String,Object> SelectFuzzyPagel(@RequestBody String jsonString,HttpServletRequest request){
-		Map<String,Object> result = new HashMap<>();
-		paging v = new paging();
+	public ReturnData SelectFuzzyPagel(@RequestBody String jsonString,HttpServletRequest request){
+		ReturnData result = new ReturnData();
+		Paging v = new Paging();
 		JSONObject json = JSON.parseObject(jsonString);
 		String companyId = request.getHeader("companyId");
 		
@@ -61,8 +62,8 @@ public class VacationController {
 	 * @return
 	 */
 	@RequestMapping(value="AnnualLeaveAdjustment",produces="application/json;charset=utf-8",method=RequestMethod.POST)
-	public Map<String,Object> AnnualLeaveAdjustment(@RequestBody String jsonStirng,HttpServletRequest request){
-		Map<String,Object> result = new HashMap<>();
+	public ReturnData AnnualLeaveAdjustment(@RequestBody String jsonStirng,HttpServletRequest request){
+		ReturnData result = new ReturnData();
 		
 		String auditorEmployeeId = request.getHeader("accessUserId");
 		
@@ -84,8 +85,8 @@ public class VacationController {
 	 * @return
 	 */
 	@RequestMapping(value="AdjustRestAdjustment",produces="application/json;charset=utf-8",method=RequestMethod.POST)
-	public Map<String,Object> AdjustRestAdjustment(@RequestBody String jsonStirng,HttpServletRequest request){
-		Map<String,Object> result = new HashMap<>();
+	public ReturnData AdjustRestAdjustment(@RequestBody String jsonStirng,HttpServletRequest request){
+		ReturnData result = new ReturnData();
 		
 		String auditorEmployeeId = request.getHeader("accessUserId");
 		

@@ -4,7 +4,17 @@ package com.xiangshangban.att_simple.bean;
  * 分页
  * @author mian
  */
-public class paging {
+public class Paging {
+	//年份
+	private String year;
+	//月份
+	private String month;
+	//请假类型
+	private String leaveType;
+	//请假时长
+	private String applicationHourRank;
+	//发起时间
+	private String applicationTimeRank;
 	//公司ID
     private String companyId;
 	//部门ID
@@ -26,7 +36,47 @@ public class paging {
     //每页显示数据条数
     private String pageNum;
     
-    public String getCompanyId() {
+    public String getLeaveType() {
+		return leaveType;
+	}
+
+	public void setLeaveType(String leaveType) {
+		this.leaveType = leaveType;
+	}
+
+	public String getYear() {
+		return year;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
+	}
+
+	public String getMonth() {
+		return month;
+	}
+
+	public void setMonth(String month) {
+		this.month = month;
+	}
+
+	public String getApplicationHourRank() {
+		return applicationHourRank;
+	}
+
+	public void setApplicationHourRank(String applicationHourRank) {
+		this.applicationHourRank = applicationHourRank;
+	}
+
+	public String getApplicationTimeRank() {
+		return applicationTimeRank;
+	}
+
+	public void setApplicationTimeRank(String applicationTimeRank) {
+		this.applicationTimeRank = applicationTimeRank;
+	}
+
+	public String getCompanyId() {
 		return companyId;
 	}
 

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.service.VacationDetailsService;
 
 @RestController
@@ -26,8 +27,8 @@ public class VacationDetailsController {
 	 * @return
 	 */
 	@RequestMapping(value="SelectVacationDetailsAndKeyData",produces = "application/json;charset=utf-8",method=RequestMethod.POST)
-	public Map<String,Object> SelectVacationDetailsAndKeyData(@RequestBody String jsonString){
-		Map<String,Object> resulet = new HashMap<>();
+	public ReturnData SelectVacationDetailsAndKeyData(@RequestBody String jsonString){
+		ReturnData resulet = new ReturnData();
 		
 		JSONObject obj = JSON.parseObject(jsonString);
 		String vacationId =	obj.getString("vacationId");

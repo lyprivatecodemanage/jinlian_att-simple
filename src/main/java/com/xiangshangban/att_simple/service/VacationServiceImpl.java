@@ -12,9 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.bean.Vacation;
 import com.xiangshangban.att_simple.bean.VacationDetails;
-import com.xiangshangban.att_simple.bean.paging;
+import com.xiangshangban.att_simple.bean.Paging;
 import com.xiangshangban.att_simple.dao.VacationDetailsMapper;
 import com.xiangshangban.att_simple.dao.VacationMapper;
 import com.xiangshangban.att_simple.utils.FormatUtil;
@@ -31,14 +32,14 @@ public class VacationServiceImpl implements VacationService {
 	VacationDetailsMapper vacationDetailsMapper;
 
 	@Override
-	public Map<String,Object> SelectFuzzyPagel(paging paging) {
+	public ReturnData SelectFuzzyPagel(Paging paging) {
 		// TODO Auto-generated method stub
-		Map<String,Object> map = new HashMap<>();
+		ReturnData returndata = new ReturnData();
 		
 		if(StringUtils.isEmpty(paging.getPageNum()) || StringUtils.isEmpty(paging.getVarPageNo())){
-			map.put("returnCode", "3006");
-			map.put("message", "参数为空");
-            return map;
+			returndata.setReturnCode("3006");
+			returndata.setMessage("参数为空");
+            return returndata;
 		}
 
 		List<Vacation> list = vacationMapper.SelectFuzzyPagel(paging);
@@ -49,30 +50,30 @@ public class VacationServiceImpl implements VacationService {
 			
 			int pageNo = count%Integer.parseInt(paging.getPageNum())==0?count/Integer.parseInt(paging.getPageNum()):count/Integer.parseInt(paging.getPageNum())+1;
 			
-			map.put("totalNum", count);
-			map.put("pageNo", pageNo);
-			map.put("data",JSONObject.toJSON(list));
-			map.put("returnCode", "3000");
-			map.put("message", "数据请求成功");
-	        return map;
+			returndata.setTotalPages(count);
+			returndata.setPagecountNum(pageNo);
+			returndata.setData(JSONObject.toJSON(list));
+			returndata.setReturnCode("3000");
+			returndata.setMessage("数据请求成功");
+	        return returndata;
 		}
 		
-        map.put("returnCode", "3001");
-		map.put("message", "服务器错误");
-        return map;
+		returndata.setReturnCode("3001");
+		returndata.setMessage("服务器错误");
+        return returndata;
 	}
 
 	@Override
-	public Map<String, Object> AnnualLeaveAdjustment(String vacationId, String vacationMold, String annualLeave,
+	public ReturnData AnnualLeaveAdjustment(String vacationId, String vacationMold, String annualLeave,
 			String adjustingInstruction,String auditorEmployeeId) {
 		// TODO Auto-generated method stub
-		Map<String, Object> map = new HashMap<>();
+		ReturnData returndata = new ReturnData();
 		int limitChange = 0;
 		
 		if (StringUtils.isEmpty(vacationId) || StringUtils.isEmpty(vacationMold) || StringUtils.isEmpty(annualLeave)){
-			map.put("returnCode", "3006");
-			map.put("message", "参数为空");
-            return map;
+			returndata.setReturnCode("3006");
+			returndata.setMessage("参数为空");
+            return returndata;
 		}
 		
 		//判断调整增减
@@ -107,9 +108,9 @@ public class VacationServiceImpl implements VacationService {
 			if(num > 0){
 				vacationMapper.UpdateAnnualLeave(vacationId, String.valueOf(limitChange), String.valueOf(limitChange));
 				
-				map.put("returnCode", "3000");
-				map.put("message", "数据请求成功");
-		        return map;
+				returndata.setReturnCode("3000");
+				returndata.setMessage("数据请求成功");
+		        return returndata;
 			}
 		}else{
 			//使用查询出来最后一条结果的总额和余额  加上调整的值
@@ -134,28 +135,28 @@ public class VacationServiceImpl implements VacationService {
 			if(num > 0){
 				vacationMapper.UpdateAnnualLeave(vacationId,String.valueOf(i),String.valueOf(o));
 				
-				map.put("returnCode", "3000");
-				map.put("message", "数据请求成功");
-		        return map;
+				returndata.setReturnCode("3000");
+				returndata.setMessage("数据请求成功");
+		        return returndata;
 			}
 		}
 		
-		map.put("returnCode", "3001");
-		map.put("message", "服务器错误");
-        return map;
+		returndata.setReturnCode("3001");
+		returndata.setMessage("服务器错误");
+        return returndata;
 	}
 
 	@Override
-	public Map<String, Object> AdjustRestAdjustment(String vacationId, String vacationMold, String adjustRest,
+	public ReturnData AdjustRestAdjustment(String vacationId, String vacationMold, String adjustRest,
 			String adjustingInstruction, String auditorEmployeeId) {
 		// TODO Auto-generated method stub
-		Map<String, Object> map = new HashMap<>();
+		ReturnData returndata = new ReturnData();
 		int limitChange = 0;
 		
 		if (StringUtils.isEmpty(vacationId) || StringUtils.isEmpty(vacationMold) || StringUtils.isEmpty(adjustRest)){
-			map.put("returnCode", "3006");
-			map.put("message", "参数为空");
-            return map;
+			returndata.setReturnCode("3006");
+			returndata.setMessage("参数为空");
+            return returndata;
 		}
 		
 		//判断调整增减
@@ -190,9 +191,9 @@ public class VacationServiceImpl implements VacationService {
 			if(num > 0){
 				vacationMapper.UpdateAdjustRest(vacationId, String.valueOf(limitChange), String.valueOf(limitChange));
 				
-				map.put("returnCode", "3000");
-				map.put("message", "数据请求成功");
-		        return map;
+				returndata.setReturnCode("3000");
+				returndata.setMessage("数据请求成功");
+		        return returndata;
 			}
 		}else{
 			//使用查询出来最后一条结果的总额和余额  加上调整的值
@@ -217,15 +218,15 @@ public class VacationServiceImpl implements VacationService {
 			if(num > 0){
 				vacationMapper.UpdateAdjustRest(vacationId,String.valueOf(i),String.valueOf(o));
 				
-				map.put("returnCode", "3000");
-				map.put("message", "数据请求成功");
-		        return map;
+				returndata.setReturnCode("3000");
+				returndata.setMessage("数据请求成功");
+		        return returndata;
 			}
 		}
 		
-		map.put("returnCode", "3001");
-		map.put("message", "服务器错误");
-        return map;
+		returndata.setReturnCode("3000");
+		returndata.setMessage("服务器错误");
+        return returndata;
 	}
 
 }

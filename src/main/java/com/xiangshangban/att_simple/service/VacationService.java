@@ -5,7 +5,8 @@ import java.util.Map;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.xiangshangban.att_simple.bean.paging;
+import com.xiangshangban.att_simple.bean.ReturnData;
+import com.xiangshangban.att_simple.bean.Paging;
 
 @Transactional(propagation=Propagation.REQUIRES_NEW)
 public interface VacationService {
@@ -15,7 +16,7 @@ public interface VacationService {
      * @param vacation
      * @return
      */
-	Map<String,Object> SelectFuzzyPagel(paging paging);
+	ReturnData SelectFuzzyPagel(Paging paging);
 	
 	/**
 	 * 年假微调
@@ -26,7 +27,7 @@ public interface VacationService {
 	 * @param auditorEmployeeId
 	 * @return
 	 */
-	Map<String,Object> AnnualLeaveAdjustment(String vacationId,String vacationMold,String annualLeave,String adjustingInstruction,String auditorEmployeeId);
+	ReturnData AnnualLeaveAdjustment(String vacationId,String vacationMold,String annualLeave,String adjustingInstruction,String auditorEmployeeId);
 	
 	/**
 	 * 调休调整
@@ -37,6 +38,6 @@ public interface VacationService {
 	 * @param auditorEmployeeId
 	 * @return
 	 */
-	Map<String,Object> AdjustRestAdjustment(String vacationId,String vacationMold,String adjustRest,String changingReason,String auditorEmployeeId);
+	ReturnData AdjustRestAdjustment(String vacationId,String vacationMold,String adjustRest,String changingReason,String auditorEmployeeId);
     
 }
