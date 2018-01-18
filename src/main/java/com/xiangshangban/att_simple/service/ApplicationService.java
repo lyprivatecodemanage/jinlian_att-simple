@@ -1,8 +1,11 @@
 package com.xiangshangban.att_simple.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.xiangshangban.att_simple.bean.Application;
+import com.xiangshangban.att_simple.bean.ApplicationCommonContactPeople;
+import com.xiangshangban.att_simple.bean.ReturnData;
 
 public interface ApplicationService {
 	/**
@@ -17,31 +20,50 @@ public interface ApplicationService {
 	 * @param params
 	 * @return
 	 */
-	Map<String,Object> leaveApplication(Application application);
+	ReturnData leaveApplication(Application application);
 	/**
 	 * 加班申请
 	 * @param params
 	 * @return
 	 */
-	Map<String,Object> overTimeApplication(Map<String,String> params);
+	ReturnData overTimeApplication(Application application);
 	/**
 	 * 出差申请
 	 * @param params
 	 * @return
 	 */
-	Map<String,Object> businessTravelApplication(Map<String,String> params);
+	ReturnData businessTravelApplication(Application application);
 	/**
 	 * 外出申请
 	 * @param params
 	 * @return
 	 */
-	Map<String,Object> outgoingApplication(Map<String,String> params);
+	ReturnData outgoingApplication(Application application);
 	/**
 	 * 补卡申请
 	 * @param params
 	 * @return
 	 */
-	Map<String,Object> fillCardApplication(Map<String,String> params);
-	
-	
+	ReturnData fillCardApplication(Application application);
+	/**
+	 * 判断申请的时间段是否和别的重复
+	 * @return
+	 */
+	boolean isRepeatWithOtherApplication(Application application);
+	/**
+	 * 设置常用联系人
+	 * @param application
+	 * @return
+	 */
+	boolean commonContactPeople(Application application);
+	/**
+	 * 获取常用联系人列表
+	 * @param employeeId
+	 * @param companyId
+	 * @param type
+	 * @param page
+	 * @param count
+	 * @return
+	 */
+	List<ApplicationCommonContactPeople> commonContactPeopleList(String employeeId,String companyId,String type,String page,String count);
 }

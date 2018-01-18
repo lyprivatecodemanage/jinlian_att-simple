@@ -2,21 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xiangshangban.att_simple.dao.ApplicationLeaveMapper">
   <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.ApplicationLeave">
-    <result column="application_no" jdbcType="VARCHAR" property="applicationNo" />
-    <result column="employee_id" jdbcType="VARCHAR" property="employeeId" />
-    <result column="department_id" jdbcType="VARCHAR" property="departmentId" />
-    <result column="company_id" jdbcType="VARCHAR" property="companyId" />
-    <result column="leave_type" jdbcType="VARCHAR" property="leaveType" />
-    <result column="start_time" jdbcType="VARCHAR" property="startTime" />
-    <result column="end_time" jdbcType="VARCHAR" property="endTime" />
-    <result column="reason" jdbcType="VARCHAR" property="reason" />
-    <result column="upload_voucher" jdbcType="VARCHAR" property="uploadVoucher" />
-    <result column="approver" jdbcType="VARCHAR" property="approver" />
-    <result column="copy_to_person" jdbcType="VARCHAR" property="copyToPerson" />
-    <result column="operater_time" jdbcType="VARCHAR" property="operaterTime" />
-    <result column="is_transfer" jdbcType="VARCHAR" property="isTransfer" />
-    <result column="application_hour" jdbcType="VARCHAR" property="applicationHour" />
-    <result column="application_time" jdbcType="VARCHAR" property="applicationTime" />
+    <result column="application_no"  property="applicationNo" />
+    <result column="employee_id"  property="employeeId" />
+    <result column="department_id"  property="departmentId" />
+    <result column="company_id"  property="companyId" />
+    <result column="leave_type"  property="leaveType" />
+    <result column="start_time"  property="startTime" />
+    <result column="end_time"  property="endTime" />
+    <result column="reason"  property="reason" />
+    <result column="upload_voucher"  property="uploadVoucher" />
+    <result column="approver"  property="approver" />
+    <result column="copy_to_person"  property="copyToPerson" />
+    <result column="operater_time"  property="operaterTime" />
+    <result column="is_transfer"  property="isTransfer" />
+    <result column="application_hour"  property="applicationHour" />
+    <result column="application_time"  property="applicationTime" />
   </resultMap>
   <sql id="Base_Column_List">
     application_no, employee_id, department_id, company_id, leave_type, start_time, 
@@ -24,15 +24,15 @@
     application_hour, application_time
   </sql>
   
-  <!-- 添加请假记录 -->
-  <insert id="insertApplicationRecord" parameterType="com.xiangshangban.att_simple.bean.Application">
+  <!-- 添加请假申请记录 -->
+  <insert id="insertApplicationRecord" parameterType="com.xiangshangban.att_simple.bean.ApplicationLeave">
   	insert into application_leave_
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="applicationNo != null">application_no,</if>
-      <if test="applicationId != null">employee_id,</if>
+      <if test="employeeId != null">employee_id,</if>
       <if test="departmentId != null">department_id,</if>
       <if test="companyId != null">company_id,</if>
-      <if test="applicationChildrenType != null">leave_type,</if>
+      <if test="leaveType != null">leave_type,</if>
       <if test="startTime != null">start_time,</if>
       <if test="endTime != null">end_time,</if>
       <if test="reason != null">reason,</if>
@@ -45,10 +45,10 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="applicationNo != null">#{applicationNo},</if>
-      <if test="applicationId != null">#{applicationId},</if>
+      <if test="employeeId != null">#{employeeId},</if>
       <if test="departmentId != null">#{departmentId},</if>
       <if test="companyId != null">#{companyId},</if>
-      <if test="applicationChildrenType != null">#{applicationChildrenType},</if>
+      <if test="leaveType != null">#{leaveType},</if>
       <if test="startTime != null">#{startTime},</if>
       <if test="endTime != null">#{endTime},</if>
       <if test="reason != null">#{reason},</if>
@@ -60,7 +60,23 @@
       <if test="applicationTime != null">#{applicationTime},</if>
     </trim>
   </insert>
-  
+  <!-- 查询申请的时间段是否有重复 -->
+  <select id="selectStartTimeIsRepeat" parameterType="com.xiangshangban.att_simple.bean.Application" resultType="java.lang.Integer">
+  select count(applcation_no) from 
+application_total_record_ atr
+LEFT JOIN application_leave_ al on atr.applcation_no = al.application_no
+LEFT JOIN application_overtime_ ao on atr.applcation_no = ao.application_no
+left join application_business_travel_ abt on atr.applcation_no = abt.application_no
+left join application_outgoing_ aot on atr.applcation_no = aot.application_no
+where ((#{startTime} between al.start_time and al.end_time) or (#{endTime} between al.start_time and al.end_time) 
+	or (#{startTime} between ao.start_time and ao.end_time) or (#{endTime} between ao.start_time and ao.end_time)
+	or (#{startTime} between abt.start_time and abt.end_time) or (#{endTime} between abt.start_time and abt.end_time) 
+	or (#{startTime} between aot.start_time and aot.end_time) or (#{endTime} between aot.start_time and aot.end_time)) or
+	((al.start_time between #{startTime} and #{endTime}) or (al.end_time between #{startTime} and #{endTime}) 
+	or (ao.start_time between #{startTime} and #{endTime}) or (ao.end_time between #{startTime} and #{endTime}) 
+	or (abt.start_time between #{startTime} and #{endTime}) or (abt.end_time between #{startTime} and #{endTime})
+	or (aot.start_time between #{startTime} and #{endTime}) or (aot.end_time between #{startTime} and #{endTime}))
+  </select>
   
   
   

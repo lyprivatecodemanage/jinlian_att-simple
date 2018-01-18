@@ -5,8 +5,6 @@ package com.xiangshangban.att_simple.bean;
  * @author mian
  */
 public class ApplicationOvertime {
-	//uuid
-    private String id;
     //申请单号(uuid)
     private String applicationNo;
     //申请人id
@@ -35,14 +33,6 @@ public class ApplicationOvertime {
     private String applicationHour;
     //申请发起时间
     private String applicationTime;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getApplicationNo() {
         return applicationNo;
