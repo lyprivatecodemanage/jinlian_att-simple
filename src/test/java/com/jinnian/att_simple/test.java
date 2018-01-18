@@ -2,6 +2,7 @@ package com.jinnian.att_simple;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import com.xiangshangban.att_simple.bean.MessageBean;
@@ -27,7 +28,7 @@ public class test {
 		for(int i=0;i<list.size();i++){
 			System.out.println(list.get(i));
 		}*/
-		try{
+		/*try{
 	     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");  
 	        String str1 = "2012-02";  
 	        String str2 = "2010-01";  
@@ -40,7 +41,8 @@ public class test {
 	        System.out.println(Math.abs(month + result));
 		}catch(Exception e){
 			e.printStackTrace();
-		}
+		}*/
+		System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(getTimesnight())));
 		
 	}
 	
@@ -66,4 +68,13 @@ public class test {
 		}
 		return null;
 	}
+	public static int getTimesnight(){ 
+		  Calendar cal = Calendar.getInstance(); 
+		  cal.set(Calendar.HOUR_OF_DAY, 24); 
+		  cal.set(Calendar.SECOND, 0); 
+		  cal.set(Calendar.MINUTE, 0); 
+		  cal.set(Calendar.MILLISECOND, 0); 
+		  
+		  return (int) (cal.getTimeInMillis()/1000); 
+		 }
 }
