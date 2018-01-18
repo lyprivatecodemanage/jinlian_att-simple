@@ -5,6 +5,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.util.StringUtils;
 
@@ -678,11 +680,44 @@ public class TimeUtil {
 		return false;
 	}
 	
+	/**
+	 * 获取指定日期所在周的周一和周日的日期
+	 * @param date 日期字符串:2018-01-18
+	 * @return
+	 * key:monday   value:2018-01-15    (周一日期)
+	 * key:weekend  value:2018-01-21	(周末日期)
+	 * @throws ParseException 
+	 */
+	public static Map<String,String> getMondayAndWeekendDate(String date){
+		//初始化要返回的数据
+		Map<String,String> returnData = new HashMap<>();
+		Calendar calendar = Calendar.getInstance();
+		try {
+			calendar.setTime(new SimpleDateFormat("yyyy-MM-dd").parse(date.trim()));
+			//获取当前日期对应的星期
+			int currentWeek = calendar.get(Calendar.DAY_OF_WEEK)-1;
+			if(currentWeek==0){
+				currentWeek = 7;
+			}
+			//获取周一日期
+			calendar.add(Calendar.DAY_OF_WEEK,-currentWeek+1);
+			returnData.put("monday",new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime()));
+			//获取周日日期
+			calendar.add(Calendar.DAY_OF_WEEK,6);
+			returnData.put("weekend",new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime()));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return returnData;
+	}
+	
 	public static void main(String[] args) {
 //		System.out.println(isCrossDay("2017-10-16 10:00:00", "2017-10-17 10:05:00"));
 //		System.out.println(getDateAfter(getCurrentDate(),1));
-		/*System.out.println(getCurrentMaxDate());*/
-		System.out.println(compareTime("2018-01-15 21:00:01","2018-01-15 01:00:01"));
+//		System.out.println(getCurrentMaxDate());
+//		System.out.println(compareTime("2018-01-15 21:00:01","2018-01-15 01:00:01"));
+		Map map = getMondayAndWeekendDate("2018-01-10");
+		System.out.println(map.get("monday"));
+		System.out.println(map.get("weekend"));
 	}
-	
 }
