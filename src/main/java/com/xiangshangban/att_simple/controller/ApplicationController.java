@@ -215,7 +215,6 @@ public class ApplicationController {
 				   returnData = applicationService.outgoingApplication(application);
 				   break;
 			   case "5"://补卡
-				   
 				   returnData = applicationService.fillCardApplication(application);
 				   break;
 			   default :
@@ -364,8 +363,10 @@ public class ApplicationController {
 		private int calculateApplicationHour(String type,String isSkipRestTime,String employeeId,String companyId,Date startTime,Date endTime,int applicationHour){
 			SimpleDateFormat dfs = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
 			 List<ClassesEmployee> classesEmployeeList = classesService.queryPointTimeClasses(employeeId, companyId, new SimpleDateFormat("yyyy-MM-dd").format(startTime), new SimpleDateFormat("yyyy-MM-dd").format(endTime));
 			   try{
+				   int i=0;
 				   for(ClassesEmployee classesEmployee:classesEmployeeList){
 					   String start = "";
 					   String end = "";
@@ -382,20 +383,30 @@ public class ApplicationController {
 						   }
 						   long between=(dfs.parse(end).getTime()-dfs.parse(start).getTime())/1000;//除以1000是为了转换成秒
 						   applicationHour=applicationHour+((int)Math.ceil(between/60/30))/2;
-					   }else if("3".equals(type)||"4".equals(type)){
-						   if("0".equals(isSkipRestTime)){
-							   if(startTime.getTime()>sdf.parse(classesEmployee.getTheDate()).getTime()){
-							         start = sdf.format(startTime);
-							   }else{
-								   start = classesEmployee.getOnDutySchedulingDate();
-							   }
-							   if(endTime.getTime()>sdf.parse(classesEmployee.getOffDutySchedulingDate()).getTime()){
-								   end = classesEmployee.getOffDutySchedulingDate();
-							   }else{
-								   end = sdf.format(endTime);
+					   }else {
+							  if("3".equals(type)||"4".equals(type)){
+							   if("0".equals(isSkipRestTime)){
+								   //休息日
+								   if(i==0){
+									   start = sdf.format(startTime);
+									   if(sdf1.parse(sdf1.format(endTime)).getTime()>sdf1.parse(classesEmployee.getTheDate()).getTime()){
+										   
+									   }
+								   }
+								   if(startTime.getTime()>sdf.parse(classesEmployee.getTheDate()).getTime()){
+								         start = sdf.format(startTime);
+								   }else{
+									   start = classesEmployee.getOnDutySchedulingDate();
+								   }
+								   if(endTime.getTime()>sdf.parse(classesEmployee.getOffDutySchedulingDate()).getTime()){
+									   end = classesEmployee.getOffDutySchedulingDate();
+								   }else{
+									   end = sdf.format(endTime);
+								   }
 							   }
 						   }
 					   }
+					   i+=1;
 				   }
 				   return applicationHour;
 			   }catch(Exception e){

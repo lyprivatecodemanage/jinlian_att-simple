@@ -19,14 +19,42 @@ public class VacationDetails {
     private String vacationTotal;
     //假期余额
     private String vacationBalance;
-    //额度改变原因
+    //增减原因(1.系统调整2.人工调整)
     private String changingReason;
     //操作人ID
     private String auditorEmployeeId;
     //调整时间
     private String changeingDate;
+    //调整说明
+    private String adjustingInstruction;
+    
+    /*----------------------------------扩展属性------------------------------------*/
+    
+    public static String Tweaks = "系统调整";
+    
+    public static String manualAdjustment = "人工调整";
+    
+    private String vacationTypeName;
+    
+    private String employeeName;
+    
+    public String getVacationTypeName() {
+		return vacationTypeName;
+	}
 
-    public String getVacationDetailsId() {
+	public void setVacationTypeName(String vacationTypeName) {
+		this.vacationTypeName = vacationTypeName;
+	}
+
+	public String getEmployeeName() {
+		return employeeName;
+	}
+
+	public void setEmployeeName(String employeeName) {
+		this.employeeName = employeeName;
+	}
+
+	public String getVacationDetailsId() {
         return vacationDetailsId;
     }
 
@@ -105,4 +133,13 @@ public class VacationDetails {
     public void setChangeingDate(String changeingDate) {
         this.changeingDate = changeingDate;
     }
+
+	public String getAdjustingInstruction() {
+		return adjustingInstruction;
+	}
+
+	public void setAdjustingInstruction(String adjustingInstruction) {
+		this.adjustingInstruction = adjustingInstruction;
+	}
+    
 }

@@ -12,30 +12,111 @@
     <result column="changing_reason" jdbcType="VARCHAR" property="changingReason" />
     <result column="auditor_employee_id" jdbcType="VARCHAR" property="auditorEmployeeId" />
     <result column="changeing_date" jdbcType="VARCHAR" property="changeingDate" />
+    <result column="adjusting_instruction" jdbcType="VARCHAR" property="adjustingInstruction"/>
   </resultMap>
+  
+  <resultMap id="DetailsEmployeeMap" type="com.xiangshangban.att_simple.bean.VacationDetails">
+    <id column="vacation_details_id" jdbcType="VARCHAR" property="vacationDetailsId" />
+    <result column="vd.vacation_id" jdbcType="VARCHAR" property="vacationId" />
+    <result column="vacation_type" jdbcType="VARCHAR" property="vacationType" />
+    <result column="vacation_mold" jdbcType="VARCHAR" property="vacationMold" />
+    <result column="limit_change" jdbcType="VARCHAR" property="limitChange" />
+    <result column="vacation_total" jdbcType="VARCHAR" property="vacationTotal" />
+    <result column="vacation_balance" jdbcType="VARCHAR" property="vacationBalance" />
+    <result column="changing_reason" jdbcType="VARCHAR" property="changingReason" />
+    <result column="auditor_employee_id" jdbcType="VARCHAR" property="auditorEmployeeId" />
+    <result column="changeing_date" jdbcType="VARCHAR" property="changeingDate" />
+    <result column="adjusting_instruction" jdbcType="VARCHAR" property="adjustingInstruction"/>
+    <result column="vacation_type_name" jdbcType="VARCHAR" property="vacationTypeName"/>
+    <result column="employee_name" jdbcType="VARCHAR" property="employeeName"/>
+  </resultMap>
+  
   <sql id="Base_Column_List">
-    vacation_details_id, vacation_id, vacation_type, vacation_mold, limit_change, vacation_total, 
-    vacation_balance, changing_reason, auditor_employee_id, changeing_date
+    vacation_details_id,vacation_id,vacation_type, vacation_mold, limit_change, vacation_total, 
+    vacation_balance, changing_reason, auditor_employee_id,changeing_date,adjusting_instruction
   </sql>
+  <sql id="Details_Employee_List">
+    vacation_details_id,vacation_id,vacation_type,vacation_type_name,vacation_mold, limit_change, vacation_total, 
+    vacation_balance, changing_reason, auditor_employee_id,employee_name,changeing_date,adjusting_instruction
+  </sql>
+  
+  <!-- select -->
+  <select id="SelectTotalNum" parameterType="java.lang.String" resultType="java.lang.Integer">
+  	select count(vacation_details_id) from vacation_details
+	where vacation_id = #{vacationId}
+	<if test="vacationType != null">
+		and vacation_type = #{vacationType}
+	</if>
+	<if test="changingReason != null">
+		and changing_reason = #{changingReason}
+	</if>
+  </select>
+  <select id="SelectVacationDetails" parameterType="java.lang.String" resultMap="DetailsEmployeeMap">
+  	select 
+  	<include refid="Details_Employee_List"/> 
+  	from (select vacation_details_id, vd.vacation_id, vacation_type,
+	CASE 
+		WHEN(vacation_type='1'::VARCHAR) 
+		THEN '调休假'::TEXT 
+		WHEN(vacation_type='0'::VARCHAR) 
+		THEN '年假'::TEXT
+		END AS vacation_type_name , 
+	vacation_mold, limit_change, vacation_total, 
+	vacation_balance, changing_reason, auditor_employee_id,e.employee_name,changeing_date,adjusting_instruction,
+	<trim prefix="row_number() over(" suffix=") rn">
+		order by changeing_date ${changeingDateRank}
+	</trim>
+	from vacation_details vd
+	LEFT join vacation v
+	on vd.vacation_id = v.vacation_id
+	LEFT JOIN organization.employee_ e
+	on vd.auditor_employee_id = e.employee_id and v.company_id = e.company_id
+	<where>
+		<if test="vacationType != null">
+			vacation_type = #{vacationType}
+		</if>
+		<if test="changingReason != null">
+			and vd.changing_reason = #{changingReason} 
+		</if>
+		<if test="vacationId != null">
+			and vd.vacation_id = #{vacationId}
+		</if>
+	</where>
+	)t
+	where rn > ${pageExcludeNumber}
+	LIMIT ${pageNum}
+  </select>
+  <select id="SelectVacationIdByEndResult" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select
+  	<include refid="Base_Column_List" />
+    from vacation_details
+    where vacation_id = #{vacationId,jdbcType=VARCHAR}
+    and vacation_type = #{vacationType,jdbcType=VARCHAR}
+    order by changeing_date DESC
+	LIMIT 1
+  </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from vacation_details
     where vacation_details_id = #{vacationDetailsId,jdbcType=VARCHAR}
   </select>
+  <!-- delete -->
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from vacation_details
     where vacation_details_id = #{vacationDetailsId,jdbcType=VARCHAR}
   </delete>
+  
+  <!-- insert -->
   <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.VacationDetails">
     insert into vacation_details (vacation_details_id, vacation_id, vacation_type, 
       vacation_mold, limit_change, vacation_total, 
       vacation_balance, changing_reason, auditor_employee_id, 
-      changeing_date)
+      changeing_date,adjusting_instruction)
     values (#{vacationDetailsId,jdbcType=VARCHAR}, #{vacationId,jdbcType=VARCHAR}, #{vacationType,jdbcType=VARCHAR}, 
       #{vacationMold,jdbcType=VARCHAR}, #{limitChange,jdbcType=VARCHAR}, #{vacationTotal,jdbcType=VARCHAR}, 
       #{vacationBalance,jdbcType=VARCHAR}, #{changingReason,jdbcType=VARCHAR}, #{auditorEmployeeId,jdbcType=VARCHAR}, 
-      #{changeingDate,jdbcType=VARCHAR})
+      #{changeingDate,jdbcType=VARCHAR},#{adjustingInstruction,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.VacationDetails">
     insert into vacation_details
@@ -70,6 +151,9 @@
       <if test="changeingDate != null">
         changeing_date,
       </if>
+      <if test="adjustingInstruction != null">
+      	adjusting_instruction,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="vacationDetailsId != null">
@@ -102,8 +186,13 @@
       <if test="changeingDate != null">
         #{changeingDate,jdbcType=VARCHAR},
       </if>
+      <if test="adjustingInstruction != null">
+      	#{adjustingInstruction,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
+  
+  <!-- update -->
   <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.VacationDetails">
     update vacation_details
     <set>
@@ -134,6 +223,9 @@
       <if test="changeingDate != null">
         changeing_date = #{changeingDate,jdbcType=VARCHAR},
       </if>
+      <if test="adjustingInstruction != null">
+      	adjusting_instruction = #{adjustingInstruction,jdbcType=VARCHAR},
+      </if>
     </set>
     where vacation_details_id = #{vacationDetailsId,jdbcType=VARCHAR}
   </update>
@@ -147,7 +239,8 @@
       vacation_balance = #{vacationBalance,jdbcType=VARCHAR},
       changing_reason = #{changingReason,jdbcType=VARCHAR},
       auditor_employee_id = #{auditorEmployeeId,jdbcType=VARCHAR},
-      changeing_date = #{changeingDate,jdbcType=VARCHAR}
+      changeing_date = #{changeingDate,jdbcType=VARCHAR},
+      adjusting_instruction = #{adjustingInstruction,jdbcType=VARCHAR}
     where vacation_details_id = #{vacationDetailsId,jdbcType=VARCHAR}
   </update>
 </mapper>
