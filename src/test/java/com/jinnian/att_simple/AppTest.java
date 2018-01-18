@@ -35,4 +35,11 @@ public class AppTest
     {
         assertTrue( true );
     }
+    
+    public static void main(String[] args) {
+    	long a=10;
+    	double x=a;
+    	double y=3;
+		System.out.println(Math.ceil(x/y));
+	}
 }
