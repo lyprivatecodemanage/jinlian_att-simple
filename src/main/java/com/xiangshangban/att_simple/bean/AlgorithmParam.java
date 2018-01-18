@@ -3,8 +3,6 @@ package com.xiangshangban.att_simple.bean;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.xiangshangban.organization.bean.Employee;
-
 /**
  * 考勤计算参数
  * @author 韦友弟

@@ -2,7 +2,7 @@ package com.xiangshangban.att_simple.service;
 
 import com.xiangshangban.att_simple.bean.AlgorithmParam;
 import com.xiangshangban.att_simple.bean.AlgorithmResult;
-import com.xiangshangban.organization.bean.Employee;
+import com.xiangshangban.att_simple.bean.Employee;
 
 public interface AlgorithmService {
 	/**
