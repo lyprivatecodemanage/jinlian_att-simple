@@ -1,6 +1,7 @@
 package com.xiangshangban.att_simple.service;
 
 import java.io.OutputStream;
+import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -403,7 +404,8 @@ public class ClassesServiceImpl implements ClassesService{
 		        }
 		      ],
 		      "empName": "测试unknown",
-		      "postName": "测试人员"
+		      "postName": "测试人员",
+		      "thisWeekHours": 50
 		    }
 		  ],
 		  "totalPages": 0,
@@ -488,6 +490,10 @@ public class ClassesServiceImpl implements ClassesService{
 	             map.put("week", selectClassesInfo.get(i).get("week"));
 	             map.put("classesId", selectClassesInfo.get(i).get("id"));
 	             map.put("classesName", selectClassesInfo.get(i).get("classes_name"));
+	             map.put("onDutySchedulingDate", selectClassesInfo.get(i).get("on_duty_scheduling_date"));
+	             map.put("offDutySchedulingDate", selectClassesInfo.get(i).get("off_duty_scheduling_date"));
+	             map.put("restStartTime", selectClassesInfo.get(i).get("rest_start_time"));
+	             map.put("restEndTime", selectClassesInfo.get(i).get("rest_end_time"));
 	             map.put("colorFlag", selectClassesInfo.get(i).get("divide_color"));
 	             //获取到该list，向其中添加map数据
 	             listMap.get(selectClassesInfo.get(i).get("emp_id").toString()).add(map);
@@ -501,6 +507,10 @@ public class ClassesServiceImpl implements ClassesService{
 	             map.put("week", selectClassesInfo.get(i).get("week"));
 	             map.put("classesId", selectClassesInfo.get(i).get("id"));
 	             map.put("classesName", selectClassesInfo.get(i).get("classes_name"));
+	             map.put("onDutySchedulingDate", selectClassesInfo.get(i).get("on_duty_scheduling_date"));
+	             map.put("offDutySchedulingDate", selectClassesInfo.get(i).get("off_duty_scheduling_date"));
+	             map.put("restStartTime", selectClassesInfo.get(i).get("rest_start_time"));
+	             map.put("restEndTime", selectClassesInfo.get(i).get("rest_end_time"));
 	             map.put("colorFlag", selectClassesInfo.get(i).get("divide_color"));
 	             List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 	             list.add(map);
@@ -517,6 +527,9 @@ public class ClassesServiceImpl implements ClassesService{
 			outterMap.put("deptName",listMap.get(key).get(0).get("deptName"));
 			outterMap.put("postName",listMap.get(key).get(0).get("postName"));
 			
+			//初始化本周工时
+			float theWeekhour = 0;
+			
 			List<Map<String,Object>> innerList = new ArrayList<>();
 			for(int s=0;s<listMap.get(key).size();s++){
 				Map<String,Object> innerMap = new HashMap<>();
@@ -526,14 +539,30 @@ public class ClassesServiceImpl implements ClassesService{
 				innerMap.put("classesName", listMap.get(key).get(s).get("classesName"));
 				innerMap.put("colorFlag", listMap.get(key).get(s).get("colorFlag"));
 				
+				//计算当天的工时
+				String onDutyTime = listMap.get(key).get(s).get("onDutySchedulingDate").toString();
+				String offDutyTime = listMap.get(key).get(s).get("offDutySchedulingDate").toString();
+				String restStartTime = listMap.get(key).get(s).get("restStartTime").toString();
+				String restEndTime = listMap.get(key).get(s).get("restEndTime").toString();
+				
+				if(!onDutyTime.isEmpty() && !offDutyTime.isEmpty() && !restStartTime.isEmpty() && !restEndTime.isEmpty()){
+					//返回两个时间相差的分钟数
+					float dutyTimeLength = Float.valueOf(String.valueOf(TimeUtil.minuteOfTime(offDutyTime+":00", onDutyTime+":00")))/60;
+					
+					float restTimtLength = Float.valueOf(String.valueOf(TimeUtil.minuteOfTime(restEndTime+":00", restStartTime+":00")))/60;
+					
+					theWeekhour+=(dutyTimeLength-restTimtLength);
+				}
 				innerList.add(innerMap);
 			}
 			outterMap.put("classesList", innerList);
+			//添加本周工时到集合中
+			outterMap.put("thisWeekHours", String.valueOf(theWeekhour));
 			realData.add(outterMap);
 		}
 		
 		//查询班次类型使用人数排行榜前三名
-		List<Map> selectTopThreeClassesType = classesEmployeeMapper.selectTopThreeClassesType(companyId.trim());
+		List<Map<String,String>> selectTopThreeClassesType = classesEmployeeMapper.selectTopThreeClassesType(companyId.trim());
 		
 		//最终数据
 		List<Map<String,Object>> finallyData = new ArrayList<>();
@@ -567,8 +596,8 @@ public class ClassesServiceImpl implements ClassesService{
 		resultInfo.setClassesTopInfo(selectTopThreeClassesType);
 		resultInfo.setMessage("请求数据成功");
 		resultInfo.setReturnCode("3000");
-		resultInfo.setPagecountNum(totalPage);
-		resultInfo.setTotalPages(totalRows);
+		resultInfo.setPagecountNum(String.valueOf(totalPage));
+		resultInfo.setTotalPages(String.valueOf(totalRows));
 		
 		return resultInfo;
 	}

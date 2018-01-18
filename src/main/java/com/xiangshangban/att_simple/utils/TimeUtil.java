@@ -334,7 +334,7 @@ public class TimeUtil {
 		return (int) hour;
 	}
 	/**
-	 * 两个日期相差的小时数
+	 * 两个日期相差的分钟数
 	 * @param date1 较大日期
 	 * @param date2 较小日期
 	 * @return
@@ -716,8 +716,18 @@ public class TimeUtil {
 //		System.out.println(getDateAfter(getCurrentDate(),1));
 //		System.out.println(getCurrentMaxDate());
 //		System.out.println(compareTime("2018-01-15 21:00:01","2018-01-15 01:00:01"));
-		Map map = getMondayAndWeekendDate("2018-01-10");
-		System.out.println(map.get("monday"));
-		System.out.println(map.get("weekend"));
+//		Map map = getMondayAndWeekendDate("2018-01-10");
+//		System.out.println(map.get("monday"));
+//		System.out.println(map.get("weekend"));
+		
+		System.out.println(hourOfTime("2018-01-18 19:30:00","2018-01-18 09:00:00"));
+		
+		System.out.println(minuteOfTime("2018-01-19 07:30:00","2018-01-18 21:00:00"));
+		
+		
+		Float valueOf = Float.valueOf(String.valueOf(630));
+		
+		System.out.println(valueOf/60);
+		
 	}
 }

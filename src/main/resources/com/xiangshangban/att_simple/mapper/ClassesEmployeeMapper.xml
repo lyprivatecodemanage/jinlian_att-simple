@@ -271,6 +271,10 @@
 	COALESCE (emp_company_id, '') AS emp_company_id,
 	COALESCE (classes_id, '') AS classes_id,
 	COALESCE (classes_name, '') AS classes_name,
+	COALESCE (on_duty_scheduling_date, '') AS on_duty_scheduling_date,
+  	COALESCE (off_duty_scheduling_date, '') AS off_duty_scheduling_date,
+	COALESCE (rest_start_time, '') AS rest_start_time,
+	COALESCE (rest_end_time, '') AS rest_end_time,
 	COALESCE (the_date, '') AS the_date,
 	COALESCE (week, '') AS week,
 	COALESCE (divide_color, '') AS divide_color,
@@ -293,14 +297,17 @@
 						emp_company_id,
 						classes_id,
 						classes_name,
+						on_duty_scheduling_date,
+						off_duty_scheduling_date,
+						rest_start_time,
+						rest_end_time,
 						the_date,
 						week,
 						divide_color
 					FROM
 						classes_employee_
 					WHERE
-						the_date BETWEEN #{startDate}
-					AND #{endDate}
+						the_date BETWEEN #{startDate} AND #{endDate}
 					AND emp_company_id = #{companyId}
 				) H
 			LEFT JOIN (
@@ -352,7 +359,7 @@
   <!-- 查询班次类型使用人数排行榜前三名 -->
   <select id="selectTopThreeClassesType" parameterType="String" resultType="Map">
   	SELECT
-	COUNT (1) totalnum,
+	CAST(COUNT (1) AS VARCHAR) totalnum,
 	classes_name
 	FROM
 		classes_employee_
