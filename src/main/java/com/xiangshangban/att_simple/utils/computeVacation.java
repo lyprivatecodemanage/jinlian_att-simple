@@ -25,7 +25,7 @@ public class computeVacation {
 	    int workYear = cal.get(Calendar.YEAR);
 	    int workMonth = cal.get(Calendar.MONTH);
 	    int workDay = cal.get(Calendar.DAY_OF_MONTH);
-
+	    
 	    //得到工龄
 	    year = nowYear - workYear; //得到年差
 	    //若目前月数少于开始工作时间的月数，年差-1
