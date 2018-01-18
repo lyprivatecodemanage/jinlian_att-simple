@@ -81,11 +81,11 @@ public interface ClassesEmployeeMapper {
 	int insertSelective(ClassesEmployee record);
 	
 	/**
-	 * 删除指定人员指定日期的排班
-	 * @param map
+	 * 删除指定班次
+	 * @param classesEmpId 班次ID
 	 * @return
 	 */
-	int deleteAppointEmpDateClasses(Map map);
+	int deleteAppointEmpDateClasses(String classesEmpId);
 	
 	/**
 	 * 删除指定班次类型，指定时间之后的人员排班

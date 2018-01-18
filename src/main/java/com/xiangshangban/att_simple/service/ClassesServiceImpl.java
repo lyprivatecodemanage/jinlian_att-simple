@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.xiangshangban.att_simple.bean.ClassesEmployee;
 import com.xiangshangban.att_simple.bean.ClassesType;
 import com.xiangshangban.att_simple.bean.Festival;
+import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.dao.ClassesEmployeeMapper;
 import com.xiangshangban.att_simple.dao.ClassesTypeMapper;
 import com.xiangshangban.att_simple.dao.FestivalMapper;
@@ -310,6 +311,12 @@ public class ClassesServiceImpl implements ClassesService{
 		return classesTypeList;
 	}
 
+	/**
+	 * 删除指定的班次类型
+	 * @param requestParam
+	 * @param companyId
+	 * @return
+	 */
 	@Override
 	public boolean deleteAppointClassesType(String requestParam, String companyId) {
 		
@@ -332,19 +339,115 @@ public class ClassesServiceImpl implements ClassesService{
 		}
 		return result;
 	}
-
+	
+	/**
+	 * 查询当前公司人员的班次信息
+	 * @param requestParam
+	 * @param companyId
+	 * @return
+	 */
 	@Override
-	public List<Map> queryClassesInfo(String requestParam, String companyId) {
-		// TODO Auto-generated method stub
-		return null;
+	public ReturnData queryClassesInfo(String requestParam, String companyId) {
+		//解析请求参数
+		JSONObject parseObject = JSONObject.parseObject(requestParam);
+		
+		Object classesId = parseObject.get("classesId");
+		Object deptId = parseObject.get("deptId");
+		Object empName = parseObject.get("empName");
+		Object perviousWeek = parseObject.get("perviousWeek");
+		Object thisWeek = parseObject.get("thisWeek");
+		Object nextWeek = parseObject.get("nextWeek");
+		Object page = parseObject.get("page");
+		Object rows = parseObject.get("rows");
+		
+		//定义返回的结果
+		ReturnData resultInfo = new ReturnData();
+		
+		Map<String,String> param = new HashMap<>();
+		
+		param.put("companyId",companyId.trim());
+		param.put("classesId",(classesId!=null && !classesId.toString().isEmpty())?classesId.toString().trim():null);
+		param.put("deptId", (deptId!=null && !deptId.toString().isEmpty())?deptId.toString().trim():null);
+		param.put("empName", (empName!=null && !empName.toString().isEmpty())?"%"+empName.toString().trim()+"%":null);
+		
+		//获取当前时间
+		Calendar calendar = Calendar.getInstance();
+		if(perviousWeek!=null && !perviousWeek.toString().trim().isEmpty()){ //上周
+			if(perviousWeek.toString().trim().equals("1")){
+				//切换到上一周的今天
+				calendar.add(Calendar.WEEK_OF_MONTH, -1);
+				//获取上一周周一和周日的日期
+				Map<String, String> mondayAndWeekendDate = TimeUtil.getMondayAndWeekendDate(new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime()));
+				param.put("startDate", mondayAndWeekendDate.get("monday"));
+				param.put("endDate", mondayAndWeekendDate.get("weekend"));
+			}
+		}
+		if(thisWeek!=null && !thisWeek.toString().trim().isEmpty()){ //本周
+			if(thisWeek.toString().trim().equals("1")){
+				//获取本周周一和周日的日期
+				Map<String, String> mondayAndWeekendDate = TimeUtil.getMondayAndWeekendDate(new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime()));
+				param.put("startDate", mondayAndWeekendDate.get("monday"));
+				param.put("endDate", mondayAndWeekendDate.get("weekend"));
+			}
+		}
+		if(nextWeek!=null && !nextWeek.toString().trim().isEmpty()){ //下周
+			if(nextWeek.toString().trim().equals("1")){
+				//切换到下一周的今天
+				calendar.add(Calendar.WEEK_OF_MONTH, 1);
+				//获取下一周周一和周日的日期
+				Map<String, String> mondayAndWeekendDate = TimeUtil.getMondayAndWeekendDate(new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime()));
+				param.put("startDate", mondayAndWeekendDate.get("monday"));
+				param.put("endDate", mondayAndWeekendDate.get("weekend"));
+			}
+		}
+		
+	    //初始化(数据总行数/数据总页数)
+       /* int totalRows = 0;
+        int totalPage = 0;
+        
+		if ((rows!=null && !rows.toString().trim().isEmpty()) && (page!=null && !page.toString().trim().isEmpty())){
+            param.put("rows",rows.toString().trim());
+            param.put("offset",String.valueOf((Integer.parseInt(page.toString().trim())-1)*Integer.parseInt(rows.toString().trim())));
+            //获取数据的总行数
+            totalRows = classesEmployeeMapper.selectCountByCondition(param);
+            //设置总页数
+            totalPage = totalRows%Integer.parseInt(rows.toString().trim())==0?totalRows/Integer.parseInt(rows.toString().trim()):totalRows/Integer.parseInt(rows.toString().trim())+1;
+        }else{
+            param.put("rows",null);
+            param.put("offset",null);
+        }*/
+		
+		List<Map> selectClassesInfo = classesEmployeeMapper.selectClassesInfo(param);
+		System.out.println(JSONObject.toJSONString(selectClassesInfo));
+		
+		
+		/*resultInfo.setData(selectClassesInfo);
+		resultInfo.setMessage("请求数据成功");
+		resultInfo.setReturnCode("3000");
+		resultInfo.setPagecountNum(totalPage);
+		resultInfo.setTotalPages(totalRows);*/
+		
+		return resultInfo;
 	}
 
+	/**
+	 * 一键排班
+	 * @param requestParam
+	 * @param companyId
+	 * @return
+	 */
 	@Override
 	public boolean oneButtonScheduling(String requestParam, String companyId) {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
+	
+	/**
+	 * 给指定人员添加指定日期的班次
+	 * @param requestParam
+	 * @param companyId
+	 * @return
+	 */
 	@Override
 	public boolean addEmpDutyTime(String requestParam, String companyId) {
 		//解析请求参数
@@ -395,23 +498,20 @@ public class ClassesServiceImpl implements ClassesService{
 		return result;
 	}
 
+	/**
+	 * 删除指定班次
+	 * @param requestParam
+	 * @return
+	 */
 	@Override
-	public boolean deleteEmpDutyTime(String requestParam, String companyId) {
+	public boolean deleteEmpDutyTime(String requestParam) {
 		//解析请求参数
 		JSONObject parseObject = JSONObject.parseObject(requestParam);
-		Object empId = parseObject.get("empId");
-		Object pointDate = parseObject.get("pointDate");
+		Object classesEmpId = parseObject.get("classesEmpId");
 		//定义返回的结果
 		boolean result = false;
-		
-		if(empId!=null && pointDate!=null){
-			Map<String,String> param = new HashMap<>();
-			param.put("empId",empId.toString().trim());
-			param.put("pointDate",pointDate.toString().trim());
-			param.put("companyId",companyId.toString().trim());
-			
-			int deleteAppointEmpDateClasses = classesEmployeeMapper.deleteAppointEmpDateClasses(param);
-			
+		if(classesEmpId!=null){
+			int deleteAppointEmpDateClasses = classesEmployeeMapper.deleteAppointEmpDateClasses(classesEmpId.toString().trim());
 			if(deleteAppointEmpDateClasses>0){
 				result = true;
 			}else{
@@ -420,13 +520,24 @@ public class ClassesServiceImpl implements ClassesService{
 		}
 		return result;
 	}
-
+	
+	/**
+	 * 导出班次信息
+	 * @param requestParam
+	 * @param excelName
+	 * @param out
+	 * @param companyId
+	 */
 	@Override
 	public void exportRecordToExcel(String requestParam, String excelName, OutputStream out, String companyId) {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
+	/**
+	 * 自动排班
+	 * @return
+	 */
 	@Override
 	public boolean autoScheduling() {
 		// TODO Auto-generated method stub
@@ -434,6 +545,14 @@ public class ClassesServiceImpl implements ClassesService{
 	}
 	
 	
+	/**
+	 * 查询指定公司人员，指定时间区间的班次信息
+	 * @param empId
+	 * @param companyId
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
 	@Override
 	public List<ClassesEmployee> queryPointTimeClasses(String empId, String companyId, String startTime,
 			String endTime) {
@@ -450,37 +569,12 @@ public class ClassesServiceImpl implements ClassesService{
 		return selectPointTimeClasses;
 	}
 	
-	//=========================公共方法：计算排班天数===========================
 	/**
-	 * 计算排班天数
-	 * @param date 指定的班次生效时间（为null的时候，表示次日生效）
+	 * 查询当前公司指定人员指定日期的班次信息
+	 * @param requestParam
+	 * @param companyId
 	 * @return
 	 */
-	public int getScheduleDays(Date date){
-		int count = 0;
-		Calendar calendar = Calendar.getInstance();
-		if(date!=null){
-			calendar.setTime(date);
-			//下方代码适用的是次日生效，而所以用户传入的时间就是成效时间，所以要减去一天，才能适用下方的代码
-			calendar.add(Calendar.DAY_OF_MONTH, -1);
-		}
-		int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-		if(TimeUtil.getCurrentMaxDate()==dayOfMonth){ //是本月的最后一天(则排完下一个整月========》获取下一个月的天数)
-			
-			calendar.add(Calendar.MONTH, 1);//切换到下个月
-			count = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);//获取下个月的天数
-			
-		}else{//不是本月的最后一天（先排完当前月，然后再排一个整月）
-			
-			int temp = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)-dayOfMonth;//本月剩余天数
-			calendar.add(Calendar.MONTH, 1);//切换到下个月
-			count = temp+calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-			//重新切换回上个月
-			calendar.add(Calendar.MONTH, -1);
-		}
-		return count;
-	}
-
 	@Override
 	public Map queryPointEmpDateClasses(String requestParam, String companyId) {
 		//解析请求参数
@@ -513,5 +607,36 @@ public class ClassesServiceImpl implements ClassesService{
 			}
 		}
 		return result;
+	}
+	
+	//=========================公共方法：计算排班天数===========================
+	/**
+	 * 计算排班天数
+	 * @param date 指定的班次生效时间（为null的时候，表示次日生效）
+	 * @return
+	 */
+	public int getScheduleDays(Date date){
+		int count = 0;
+		Calendar calendar = Calendar.getInstance();
+		if(date!=null){
+			calendar.setTime(date);
+			//下方代码适用的是次日生效，而所以用户传入的时间就是成效时间，所以要减去一天，才能适用下方的代码
+			calendar.add(Calendar.DAY_OF_MONTH, -1);
+		}
+		int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+		if(TimeUtil.getCurrentMaxDate()==dayOfMonth){ //是本月的最后一天(则排完下一个整月========》获取下一个月的天数)
+			
+			calendar.add(Calendar.MONTH, 1);//切换到下个月
+			count = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);//获取下个月的天数
+			
+		}else{//不是本月的最后一天（先排完当前月，然后再排一个整月）
+			
+			int temp = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)-dayOfMonth;//本月剩余天数
+			calendar.add(Calendar.MONTH, 1);//切换到下个月
+			count = temp+calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+			//重新切换回上个月
+			calendar.add(Calendar.MONTH, -1);
+		}
+		return count;
 	}
 }

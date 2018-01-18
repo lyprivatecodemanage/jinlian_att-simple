@@ -238,7 +238,7 @@
   	off_duty_scheduling_date = '',
   	rest_start_time = '',
   	rest_end_time = '' 
-  	where emp_id = #{empId} and emp_company_id = #{companyId} and the_date = #{pointDate}
+  	where id = #{classesEmpId}
   </update>
   
   <!-- 更新指定人员指定日期的班次 -->
@@ -262,4 +262,90 @@
   	and 
   		the_date = #{theDate}
   </update>
+  
+  <!-- 查询当前公司人员的班次信息 -->
+  <select id="selectClassesInfo" parameterType="Map" resultType="Map">
+  	SELECT
+	COALESCE (W. ID, '') AS ID,
+	COALESCE (emp_id, '') AS emp_id,
+	COALESCE (emp_company_id, '') AS emp_company_id,
+	COALESCE (classes_id, '') AS classes_id,
+	COALESCE (classes_name, '') AS classes_name,
+	COALESCE (the_date, '') AS the_date,
+	COALESCE (week, '') AS week,
+	COALESCE (divide_color, '') AS divide_color,
+	COALESCE (employee_name, '') AS employee_name,
+	COALESCE (department_id, '') AS department_id,
+	COALESCE (department_name, '') AS department_name,
+	COALESCE (post_name, '') AS post_name
+	FROM
+		(
+			SELECT DISTINCT
+				H.*, J.employee_name,
+				department_id,
+				department_name,
+				post_name
+			FROM
+				(
+					SELECT
+						ID,
+						emp_id,
+						emp_company_id,
+						classes_id,
+						classes_name,
+						the_date,
+						week,
+						divide_color
+					FROM
+						classes_employee_
+					WHERE
+						the_date BETWEEN #{startDate}
+					AND #{endDate}
+					AND emp_company_id = #{companyId}
+				) H
+			LEFT JOIN (
+				SELECT
+					E.employee_id,
+					E.department_id,
+					E.company_id,
+					E.employee_name,
+					E.department_name,
+					F.post_name
+				FROM
+					(
+						SELECT
+							C .*, D.department_name
+						FROM
+							(
+								SELECT
+									A .employee_id,
+									A .post_id,
+									A .department_id,
+									A .company_id,
+									B.employee_name
+								FROM
+									organization.connect_emp_post_ A
+								LEFT JOIN organization.employee_ B ON A .employee_id = B.employee_id
+								AND A .company_id = B.company_id
+							) C
+						LEFT JOIN organization.department_ D ON C .department_id = D.department_id
+					) E
+				LEFT JOIN organization.post_ F ON E.post_id = F.post_id
+			) J ON H.emp_id = J.employee_id
+			AND H.emp_company_id = J.company_id
+			ORDER BY
+				H.the_date
+		) W
+	<where>
+		<if test='classesId!=null and classesId!=""'>
+			W.classes_id = #{classesId}
+		</if>
+		<if test='deptId!=null and deptId!=""'>
+			and W.department_id = #{deptId}
+		</if>
+		<if test='empName!=null and empName!=""'>
+			and W.employee_name like #{empName}
+		</if>
+	</where>
+  </select>
 </mapper>

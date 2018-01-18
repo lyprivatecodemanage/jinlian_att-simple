@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.xiangshangban.att_simple.bean.ClassesEmployee;
-import com.xiangshangban.att_simple.bean.ClassesType;
+import com.xiangshangban.att_simple.bean.ReturnData;
 
 /**
  * @author 王勇辉
@@ -42,7 +42,7 @@ public interface ClassesService {
 	 * @param companyId
 	 * @return
 	 */
-	List<Map> queryClassesInfo(String requestParam,String companyId);
+	ReturnData queryClassesInfo(String requestParam,String companyId);
 
 	/**
 	 * 一键排班
@@ -61,11 +61,10 @@ public interface ClassesService {
 	boolean addEmpDutyTime(String requestParam,String companyId);
 	
 	/**
-	 * 删除指定人员指定日期的排班(数据列表中点击某天的排班，进行删除操作) 	
+	 * 删除指定班次	
 	 * @param requestParam
-	 * @param companyId
 	 */
-	boolean deleteEmpDutyTime(String requestParam,String companyId);
+	boolean deleteEmpDutyTime(String requestParam);
 	
 	/**
 	 * 获取指定人员指定日期的班次信息

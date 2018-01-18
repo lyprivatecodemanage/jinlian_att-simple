@@ -181,21 +181,31 @@ public class ClassesController {
 	 * 根据条件查询当前公司人员的班次排列，以及人数最多的三个班次（班次类型有几个显示几个）的人数
 	 * @param requestParam
 	 * 	{
-			“classesType”:”常白班”（班次类型）
-			“empDept”:”研发部”（人员部门）
-			“empName”:”小青”（人员名称）
-			“perviousWeek”:”0/1”（是否查看上周的数据0：没有该搜索条件 1：有该搜索条件）
-			“thisWeek”：“0/1”(是否查看本周班次 0：不查看 1：查看)
-			“nextWeek”:”0/1”(是否查看下一周的班次 0：不查看 1：查看)
-			“page”:”1”(当前页码)
-			“rows”:”5”（每一页要显示的行数）
-			“currentDate”:”2018-01-09”（隐藏条件<后台自己准备>，根据当前时间划定一周时间）
+			"classesId":"常白班"（班次编号）
+			"deptId":"研发部”（人员部门编号）
+			"empName":"小青"（人员名称）
+			"perviousWeek":"0/1"（是否查看上周的数据0：没有该搜索条件 1：有该搜索条件）
+			"thisWeek":"0/1"(是否查看本周班次 0：不查看 1：查看)------->默认显示本周的
+			"nextWeek":"0/1"(是否查看下一周的班次 0：不查看 1：查看)
+			"page":"1"(当前页码)
+			"rows":"5"（每一页要显示的行数）
 		}
 	 * @param request
 	 * @return
 	 */
-	public Map<String,Object> getClassesInfo(@RequestBody String requestParam,HttpServletRequest request){
-		return null;
+	@PostMapping("/getEmpClassesInfo")
+	public ReturnData getEmpClassesInfo(@RequestBody String requestParam,HttpServletRequest request){
+		//获取公司ID
+		String companyId = request.getHeader("companyId");
+		//初始化返回的数据
+		ReturnData returnData = new ReturnData();
+		if(companyId!=null && !companyId.isEmpty()){
+			returnData = classesService.queryClassesInfo(requestParam,companyId.trim());
+		}else{
+			returnData.setReturnCode("3013");
+			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
+		}
+		return returnData;
 	}
 	
 	/**
@@ -276,33 +286,25 @@ public class ClassesController {
 	}
 	
 	/**
-	 * 删除指定人员指定日期的排班
+	 * 删除指定的班次
 	 * @param reuestParam
 	 * {
-			"empId":"CASCASCA"--------->人员ID
-			"pointDate":"2018-01-10"----->指定的排班日期
+			"classesEmpId":"82FC223D03C34A4E8EEF49EC129F1C9C"
 	   }
 	 * @param request
 	 * @return
 	 */
 	@PostMapping("/delPointEmpDateClasses")
-	public ReturnData deleteEmpOneDateClasses(@RequestBody String requestParam,HttpServletRequest request){
-		//获取公司ID
-		String companyId = request.getHeader("companyId");
+	public ReturnData deleteEmpOneDateClasses(@RequestBody String requestParam){
 		//初始化返回的数据
 		ReturnData returnData = new ReturnData();
-		if(companyId!=null && !companyId.isEmpty()){
-			boolean deleteEmpDutyTime = classesService.deleteEmpDutyTime(requestParam, companyId.trim());
-			if(deleteEmpDutyTime){
-				returnData.setReturnCode("3000");
-				returnData.setMessage("删除成功");
-			}else{
-				returnData.setReturnCode("3001");
-				returnData.setMessage("删除失败");
-			}
+		boolean deleteEmpDutyTime = classesService.deleteEmpDutyTime(requestParam);
+		if(deleteEmpDutyTime){
+			returnData.setReturnCode("3000");
+			returnData.setMessage("删除成功");
 		}else{
-			returnData.setReturnCode("3013");
-			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
+			returnData.setReturnCode("3001");
+			returnData.setMessage("删除失败");
 		}
 		return returnData;
 	}
