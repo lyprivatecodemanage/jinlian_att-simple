@@ -12,6 +12,7 @@ public class ReturnData {
 	private String returnCode;//请求状态编码
 	private Object pagecountNum;//总页数
 	private String companyName;//公司名称
+	private Object classesTopInfo;//班次使用人数排行榜
 	
 	
 	public String getCompanyName() {
@@ -56,5 +57,13 @@ public class ReturnData {
 	public void setEmployeeId(String employeeId) {
 		this.employeeId = employeeId;
 	}
+	public Object getClassesTopInfo() {
+		return classesTopInfo;
+	}
+	public void setClassesTopInfo(Object classesTopInfo) {
+		this.classesTopInfo = classesTopInfo;
+	}
+	
+	
 	
 }

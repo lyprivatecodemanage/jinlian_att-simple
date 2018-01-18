@@ -176,7 +176,6 @@ public class ClassesController {
 		return returnData;
 	}
 	
-	
 	/**
 	 * 根据条件查询当前公司人员的班次排列，以及人数最多的三个班次（班次类型有几个显示几个）的人数
 	 * @param requestParam

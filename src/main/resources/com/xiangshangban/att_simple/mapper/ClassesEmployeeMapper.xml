@@ -348,4 +348,24 @@
 		</if>
 	</where>
   </select>
+  
+  <!-- 查询班次类型使用人数排行榜前三名 -->
+  <select id="selectTopThreeClassesType" parameterType="String" resultType="Map">
+  	SELECT
+	COUNT (1) totalnum,
+	classes_name
+	FROM
+		classes_employee_
+	GROUP BY
+		classes_id,
+		classes_name,
+		emp_company_id
+	HAVING
+		classes_name != ''
+	AND
+		emp_company_id = #{companyId}
+	ORDER BY
+		totalnum DESC OFFSET 0
+	LIMIT 3
+  </select>
 </mapper>
