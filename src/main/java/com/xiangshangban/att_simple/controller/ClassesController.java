@@ -181,7 +181,7 @@ public class ClassesController {
 	 * 根据条件查询当前公司人员的班次排列，以及人数最多的三个班次（班次类型有几个显示几个）的人数
 	 * @param requestParam
 	 * 	{
-			"classesId":"常白班"（班次编号）
+			"classesTypeId":"常白班"（班次编号）
 			"deptId":"研发部”（人员部门编号）
 			"empName":"小青"（人员名称）
 			"perviousWeek":"0/1"（是否查看上周的数据0：没有该搜索条件 1：有该搜索条件）

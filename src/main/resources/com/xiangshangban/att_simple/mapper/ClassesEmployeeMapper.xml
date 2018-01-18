@@ -338,7 +338,7 @@
 		) W
 	<where>
 		<if test='classesId!=null and classesId!=""'>
-			W.classes_id = #{classesId}
+			W.classes_id = #{classesTypeId}
 		</if>
 		<if test='deptId!=null and deptId!=""'>
 			and W.department_id = #{deptId}
