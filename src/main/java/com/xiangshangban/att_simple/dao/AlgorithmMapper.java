@@ -74,4 +74,12 @@ public interface AlgorithmMapper {
 	List<Application> getBusinessByTime(@Param("companyId")String companyId, 
 			@Param("employeeId")String employeeId, @Param("beginTime") String beginTime,
 			@Param("endTime") String endTime);
+	/**
+	 * 查询某天的加班记录
+	 * @param companyId
+	 * @param employeeId
+	 * @param beginTime
+	 * @return
+	 */
+	List<Application> getOverByTime(String companyId, String employeeId, String beginTime);
 }

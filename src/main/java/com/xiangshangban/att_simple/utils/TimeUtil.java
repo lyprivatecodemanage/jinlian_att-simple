@@ -229,6 +229,22 @@ public class TimeUtil {
 	    return fomat.format(calendar.getTime());
 	}
 	/**
+	 * 或取某个日期的前一天日期(默认返回当前日期前一天)
+	 * @param date 设定日期字符串
+	 * @return
+	 */
+	public static String getNextDayDate(String date){
+		SimpleDateFormat fomat = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar calendar = Calendar.getInstance();
+		try {
+			calendar.setTime(fomat.parse(date));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	    calendar.set(Calendar.DATE,calendar.get(Calendar.DATE)+1);
+	    return fomat.format(calendar.getTime());
+	}
+	/**
 	 * 两个日期相差的月份
 	 * @param date1 较大日期
 	 * @param date2 较小日期
