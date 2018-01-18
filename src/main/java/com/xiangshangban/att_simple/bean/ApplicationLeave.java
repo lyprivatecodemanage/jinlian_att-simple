@@ -37,9 +37,61 @@ public class ApplicationLeave{
     private String applicationHour;
     //申请发起时间
     private String applicationTime;
+    
+    /*----------------------------------扩展属性------------------------------------*/
 
+    //部门名称
+    private String departmentName;
+    //员工姓名
+    private String employeeName;
+    //请假类型名称
+    private String leaveTypeName;
+    //审核人姓名
+    private String approverName;
+    //假期次数
+    private String leaveCount;
+    
+    public String getLeaveCount() {
+		return leaveCount;
+	}
 
-    public String getApplicationNo() {
+	public void setLeaveCount(String leaveCount) {
+		this.leaveCount = leaveCount;
+	}
+
+	public String getDepartmentName() {
+		return departmentName;
+	}
+
+	public void setDepartmentName(String departmentName) {
+		this.departmentName = departmentName;
+	}
+
+	public String getEmployeeName() {
+		return employeeName;
+	}
+
+	public void setEmployeeName(String employeeName) {
+		this.employeeName = employeeName;
+	}
+
+	public String getLeaveTypeName() {
+		return leaveTypeName;
+	}
+
+	public void setLeaveTypeName(String leaveTypeName) {
+		this.leaveTypeName = leaveTypeName;
+	}
+
+	public String getApproverName() {
+		return approverName;
+	}
+
+	public void setApproverName(String approverName) {
+		this.approverName = approverName;
+	}
+
+	public String getApplicationNo() {
         return applicationNo;
     }
 

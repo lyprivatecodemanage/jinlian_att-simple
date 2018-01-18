@@ -21,8 +21,31 @@ public class Vacation {
     private String adjustRestTotal;
     //调休余额
     private String adjustRestBalance;
+    
+    /*----------------------------------扩展属性------------------------------------*/
+    
+    //部门名称
+    private String departmentName;
+    //姓名
+    private String employeeName;
+    
+	public String getDepartmentName() {
+		return departmentName;
+	}
 
-    public String getVacationId() {
+	public void setDepartmentName(String departmentName) {
+		this.departmentName = departmentName;
+	}
+
+	public String getEmployeeName() {
+		return employeeName;
+	}
+
+	public void setEmployeeName(String employeeName) {
+		this.employeeName = employeeName;
+	}
+
+	public String getVacationId() {
         return vacationId;
     }
 
