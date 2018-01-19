@@ -25,7 +25,16 @@ public interface ApplicationTotalRecordMapper {
 	 */
 	List<ApplicationTotalRecord> selectApplicationList(@Param("employeeId")String employeeId,
 			@Param("companyId")String companyId,@Param("page")String page,@Param("count")String count);
-	
+	/**
+	 * 审批列表分页查询
+	 * @param employeeId
+	 * @param companyId
+	 * @param page
+	 * @param count
+	 * @return
+	 */
+	List<ApplicationTotalRecord> selectApproverList(@Param("employeeId")String employeeId,
+			@Param("companyId")String companyId,@Param("page")String page,@Param("count")String count);
 	
 	
 	

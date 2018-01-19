@@ -430,8 +430,10 @@ public class ApplicationController {
 				returnData.setReturnCode("3006");
 				return returnData;
 			}
-			
-			
+			Application application = applicationService.applicationDetails(applicationNo, employeeId, null, companyId);
+			returnData.setMessage("成功");
+			returnData.setReturnCode("3000");
+			returnData.setData(application);
 			return returnData;
 			}catch(Exception e){
 				logger.info(e);
@@ -441,7 +443,17 @@ public class ApplicationController {
 				return returnData;
 			}
 		}
-		
+		/**
+		 * 申请小时数计算
+		 * @param type
+		 * @param isSkipRestTime
+		 * @param employeeId
+		 * @param companyId
+		 * @param startTime
+		 * @param endTime
+		 * @param applicationHour
+		 * @return
+		 */
 		private int calculateApplicationHour(String type,String isSkipRestTime,String employeeId,String companyId,Date startTime,Date endTime,int applicationHour){
 			SimpleDateFormat dfs = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -524,6 +536,11 @@ public class ApplicationController {
 				   return -1;
 			   }
 		}
+		/**
+		 * application赋值
+		 * @param jsonString
+		 * @param application
+		 */
 		private void setApplication(String jsonString,Application application){
 			JSONObject jobj = JSON.parseObject(jsonString);
 			application.setApplicationType(jobj.getString("applicationType"));

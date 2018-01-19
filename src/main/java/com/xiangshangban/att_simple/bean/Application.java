@@ -39,7 +39,7 @@ public class Application {
 	private String isSetCommonContactPeople;//是否设置常用联系人 0:否;1是
 	private String fillCardTime;//补卡时间
 	private String isSkipRestDay;//（只有外出和出差需要此状态）是否跳过休息日（0：否；1：是）
-	private String statusDescription;//审批中,已完成,已驳回
+	private String statusDescription;//申请时:(审批中,已完成,已驳回);审批时:(全部,未审批,已转移,已完成,已驳回,抄送);
 	public String getApplicationNo() {
 		return applicationNo;
 	}

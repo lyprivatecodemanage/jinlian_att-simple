@@ -64,7 +64,13 @@
   	limit #{count}::integer offset #{page}::integer
   </select>
   
-  
+  <!-- 审批列表 -->
+  <select id="selectApproverList" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List"/>
+  	from att_simple.application_total_record_ atr
+  	where atr.last_approver = #{employeeId} and atr.company_id = #{companyId} and is_complete = '0' order by atr.operater_time DESC
+  	limit #{count}::integer offset #{page}::integer
+  </select>
   
   
   
