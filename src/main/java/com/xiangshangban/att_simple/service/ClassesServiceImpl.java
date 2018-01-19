@@ -620,7 +620,7 @@ public class ClassesServiceImpl implements ClassesService{
 	}
 	
 	/**
-	 * 给指定人员添加指定日期的班次
+	 * 给指定人员添加指定日期的班次（添加临时班次）
 	 * @param requestParam
 	 * @param companyId
 	 * @return
@@ -630,7 +630,6 @@ public class ClassesServiceImpl implements ClassesService{
 		//解析请求参数
 		JSONObject parseObject = JSONObject.parseObject(requestParam);
 		Object empId = parseObject.get("empId");
-		Object pointDate = parseObject.get("pointDate");
 		Object onDutyTime = parseObject.get("onDutyTime");
 		Object offDutyTime = parseObject.get("offDutyTime");
 		Object restStartTime = parseObject.get("restStartTime");
@@ -640,12 +639,20 @@ public class ClassesServiceImpl implements ClassesService{
 		Object onPunchCardRule = parseObject.get("onPunchCardRule");
 		Object offPunchCardRule = parseObject.get("offPunchCardRule");
 		
+		Object empClassesId = parseObject.get("empClassesId");
+		Object pointDate = parseObject.get("pointDate");
+		Object pointWeek = parseObject.get("pointWeek");
+		
+		
 		//定义返回的结果
 		boolean result = false;
 		
 		if(empId!=null && pointDate!=null && onDutyTime!=null && offDutyTime!=null 
 				&& restStartTime!=null && restEndTime!=null && signInRule!=null 
-				&& signOutRule!=null && onPunchCardRule!=null && offPunchCardRule!=null){
+				&& signOutRule!=null && onPunchCardRule!=null && offPunchCardRule!=null && pointWeek!=null){
+			
+			//初始化执行结果
+			int executeResult = 0;
 			
 			ClassesEmployee classesEmployee = new ClassesEmployee();
 			
@@ -654,6 +661,7 @@ public class ClassesServiceImpl implements ClassesService{
 			classesEmployee.setEmpId(empId.toString().trim());
 			classesEmployee.setEmpCompanyId(companyId.trim());
 			classesEmployee.setTheDate(pointDate.toString().trim());
+			classesEmployee.setWeek(pointWeek.toString().trim());
 			classesEmployee.setOnDutySchedulingDate(pointDate.toString().trim()+" "+onDutyTime.toString().trim());
 			classesEmployee.setOffDutySchedulingDate(pointDate.toString().trim()+" "+offDutyTime.toString().trim());
 			classesEmployee.setRestStartTime(pointDate.toString().trim()+" "+restStartTime.toString().trim());
@@ -664,9 +672,18 @@ public class ClassesServiceImpl implements ClassesService{
 			classesEmployee.setOffPunchCardRule(offPunchCardRule.toString().trim());
 			classesEmployee.setDivideColor("3");
 			
-			int updateAppointEmpDateClasses = classesEmployeeMapper.updateAppointEmpDateClasses(classesEmployee);
+			//根据有无empClassesId（人员单天班次ID）判断，是休息日没有排上下班时间，还是压根就不存在该次排班
+			if(empClassesId!=null && !empClassesId.toString().trim().isEmpty()){
+				//为班次添加上下班时间和休息时间
+				classesEmployee.setId(empClassesId.toString().trim());
+				executeResult = classesEmployeeMapper.updateAppointEmpDateClasses(classesEmployee);
+			}else{
+				//添加新的班次
+				classesEmployee.setId(FormatUtil.createUuid());
+				executeResult = classesEmployeeMapper.insertSelective(classesEmployee);
+			}
 			
-			if(updateAppointEmpDateClasses>0){
+			if(executeResult>0){
 				result = true;
 			}else{
 				result = true;
@@ -684,7 +701,7 @@ public class ClassesServiceImpl implements ClassesService{
 	public boolean deleteEmpDutyTime(String requestParam) {
 		//解析请求参数
 		JSONObject parseObject = JSONObject.parseObject(requestParam);
-		Object classesEmpId = parseObject.get("classesEmpId");
+		Object classesEmpId = parseObject.get("empClassesId");
 		//定义返回的结果
 		boolean result = false;
 		if(classesEmpId!=null){

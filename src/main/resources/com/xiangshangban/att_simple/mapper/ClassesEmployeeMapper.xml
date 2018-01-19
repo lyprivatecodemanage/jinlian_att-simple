@@ -238,7 +238,7 @@
   	off_duty_scheduling_date = '',
   	rest_start_time = '',
   	rest_end_time = '' 
-  	where id = #{classesEmpId}
+  	where id = #{empClassesId}
   </update>
   
   <!-- 更新指定人员指定日期的班次 -->
@@ -256,11 +256,7 @@
 	  	off_punch_card_rule = #{offPunchCardRule},
 	  	divide_color = #{divideColor}
   	where
-  		emp_id = #{empId}
-  	and
-  		emp_company_id = #{empCompanyId}
-  	and 
-  		the_date = #{theDate}
+  		id = #{id}
   </update>
   
   <!-- 查询当前公司人员的班次信息 -->

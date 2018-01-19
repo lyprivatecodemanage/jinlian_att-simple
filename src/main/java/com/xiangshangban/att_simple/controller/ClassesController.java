@@ -244,13 +244,16 @@ public class ClassesController {
 	}
 	
 	/**
-	 * 给指定的人员添加指定日期的排班(班次类型不变，允许微调上下班时间)
+	 * 给指定的人员添加指定日期的排班(临时班次)
 	 * 请求参数：
 	 * 	{
+	  		"empClassesId":""----------->人员班次ID
+	  		（传递的时候表示，该天的班次是因为休息日原因没有安排上下班时间<该条记录是在数据库中存在的>/不传递的时候表示，该天就没有排班次<数据库中没有该条记录>）
 			"empId":"CASCASCA"--------->人员ID
 			"pointDate":"2018-01-10"----->指定的排班日期
-			"onDutyTime":"08:00"-------->该班次微调后的上班时间
-			"offDutyTime":"18:00"------>该班次微调后的下班时间(添加单天的班次的时候不允许跨日)
+			"pointWeek":"4"------------->指定的星期
+			"onDutyTime":"08:00"-------->上班时间
+			"offDutyTime":"18:00"------>下班时间(添加单天的班次的时候不允许跨日)
 			"restStartTime":"12:00"------->开始休息时间点
 			"restEndTime":"13:00"--------->结束休息时间点
 			"signInRule":"15",----------->签到迟到15分钟不算迟到
@@ -285,10 +288,10 @@ public class ClassesController {
 	}
 	
 	/**
-	 * 删除指定的班次
+	 * 删除人员指定日期的班次
 	 * @param reuestParam
 	 * {
-			"classesEmpId":"82FC223D03C34A4E8EEF49EC129F1C9C"
+			"empClassesId":"82FC223D03C34A4E8EEF49EC129F1C9C" ------>人员单天班次ID
 	   }
 	 * @param request
 	 * @return
