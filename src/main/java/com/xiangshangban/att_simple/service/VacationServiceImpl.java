@@ -36,7 +36,7 @@ public class VacationServiceImpl implements VacationService {
 		// TODO Auto-generated method stub
 		ReturnData returndata = new ReturnData();
 		
-		if(StringUtils.isEmpty(paging.getPageNum()) || StringUtils.isEmpty(paging.getVarPageNo())){
+		if(StringUtils.isEmpty(paging.getPageNum()) || StringUtils.isEmpty(paging.getVarPageNo()) || StringUtils.isEmpty(paging.getYear())){
 			returndata.setReturnCode("3006");
 			returndata.setMessage("参数为空");
             return returndata;
@@ -46,7 +46,7 @@ public class VacationServiceImpl implements VacationService {
 		
 		if(list != null){
 			//查询出条件筛选后的总条数
-			int count = vacationMapper.SelectTotalNumber(paging.getCompanyId(), paging.getDepartmentId(), paging.getEmployeeName());
+			int count = vacationMapper.SelectTotalNumber(paging.getCompanyId(), paging.getDepartmentId(), paging.getEmployeeName(),paging.getYear());
 			
 			int pageNo = count%Integer.parseInt(paging.getPageNum())==0?count/Integer.parseInt(paging.getPageNum()):count/Integer.parseInt(paging.getPageNum())+1;
 			
@@ -65,12 +65,12 @@ public class VacationServiceImpl implements VacationService {
 
 	@Override
 	public ReturnData AnnualLeaveAdjustment(String vacationId, String vacationMold, String annualLeave,
-			String adjustingInstruction,String auditorEmployeeId) {
+			String adjustingInstruction,String auditorEmployeeId,String year) {
 		// TODO Auto-generated method stub
 		ReturnData returndata = new ReturnData();
 		int limitChange = 0;
 		
-		if (StringUtils.isEmpty(vacationId) || StringUtils.isEmpty(vacationMold) || StringUtils.isEmpty(annualLeave)){
+		if (StringUtils.isEmpty(vacationId) || StringUtils.isEmpty(vacationMold) || StringUtils.isEmpty(annualLeave) || StringUtils.isEmpty(year)){
 			returndata.setReturnCode("3006");
 			returndata.setMessage("参数为空");
             return returndata;
@@ -85,7 +85,7 @@ public class VacationServiceImpl implements VacationService {
 		}
 		
 		//查询年假假期详情最后一次修改的值
-		VacationDetails vacationDetails = vacationDetailsMapper.SelectVacationIdByEndResult(vacationId,"0");
+		VacationDetails vacationDetails = vacationDetailsMapper.SelectVacationIdByEndResult(vacationId,"0",year);
 		
 		//若员工没有任何假期操作
 		if(vacationDetails == null){
@@ -102,11 +102,12 @@ public class VacationServiceImpl implements VacationService {
 			vd.setAdjustingInstruction(adjustingInstruction);
 			vd.setAuditorEmployeeId(auditorEmployeeId);
 			vd.setChangeingDate(sdf.format(new Date()));
+			vd.setYear(year);
 			
 			int num = vacationDetailsMapper.insertSelective(vd);
 			
 			if(num > 0){
-				vacationMapper.UpdateAnnualLeave(vacationId, String.valueOf(limitChange), String.valueOf(limitChange));
+				vacationMapper.UpdateAnnualLeave(vacationId, String.valueOf(limitChange), String.valueOf(limitChange),year);
 				
 				returndata.setReturnCode("3000");
 				returndata.setMessage("数据请求成功");
@@ -129,11 +130,12 @@ public class VacationServiceImpl implements VacationService {
 			vd.setAdjustingInstruction(adjustingInstruction);
 			vd.setAuditorEmployeeId(auditorEmployeeId);
 			vd.setChangeingDate(sdf.format(new Date()));
+			vd.setYear(year);
 			
 			int num = vacationDetailsMapper.insertSelective(vd);
 			
 			if(num > 0){
-				vacationMapper.UpdateAnnualLeave(vacationId,String.valueOf(i),String.valueOf(o));
+				vacationMapper.UpdateAnnualLeave(vacationId,String.valueOf(i),String.valueOf(o),year);
 				
 				returndata.setReturnCode("3000");
 				returndata.setMessage("数据请求成功");
@@ -148,7 +150,7 @@ public class VacationServiceImpl implements VacationService {
 
 	@Override
 	public ReturnData AdjustRestAdjustment(String vacationId, String vacationMold, String adjustRest,
-			String adjustingInstruction, String auditorEmployeeId) {
+			String adjustingInstruction, String auditorEmployeeId,String year) {
 		// TODO Auto-generated method stub
 		ReturnData returndata = new ReturnData();
 		int limitChange = 0;
@@ -168,7 +170,7 @@ public class VacationServiceImpl implements VacationService {
 		}
 		
 		//查询调休假期详情最后一次修改的值
-		VacationDetails vacationDetails = vacationDetailsMapper.SelectVacationIdByEndResult(vacationId,"1");
+		VacationDetails vacationDetails = vacationDetailsMapper.SelectVacationIdByEndResult(vacationId,"1",year);
 		
 		//若员工没有任何假期操作
 		if(vacationDetails == null){
@@ -185,6 +187,7 @@ public class VacationServiceImpl implements VacationService {
 			vd.setChangingReason(vd.manualAdjustment);
 			vd.setAuditorEmployeeId(auditorEmployeeId);
 			vd.setChangeingDate(sdf.format(new Date()));
+			vd.setYear(year);
 			
 			int num = vacationDetailsMapper.insertSelective(vd);
 			
@@ -212,6 +215,7 @@ public class VacationServiceImpl implements VacationService {
 			vd.setChangingReason(vd.manualAdjustment);
 			vd.setAuditorEmployeeId(auditorEmployeeId);
 			vd.setChangeingDate(sdf.format(new Date()));
+			vd.setYear(year);
 			
 			int num = vacationDetailsMapper.insertSelective(vd);
 			

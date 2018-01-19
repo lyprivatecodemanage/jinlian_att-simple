@@ -591,14 +591,6 @@
 	</select>
 	
 	
-	<resultMap type="com.xiangshangban.organization.bean.UusersRoles" id="UserRole">
-		<result column="userid" property="userId"/>
-		<result column="roleid" property="roleId"/>
-		<result column="company_id" property="companyId"/>
-	</resultMap>
-	<select id="selectRoleIdByEmployeeId" parameterType="java.lang.String" resultMap="UserRole">
-		select userid,roleid,company_id from organization.u_users_roles where userid=#{userId}
-	</select>
 	<resultMap type="com.xiangshangban.att_simple.bean.Employee" id="AdminEmployeeResult">
 		<result column="employee_name" property="employeeName"/>
 		<result column="description" property="description"/>

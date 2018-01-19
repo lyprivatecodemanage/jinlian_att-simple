@@ -27,7 +27,8 @@ public class VacationDetails {
     private String changeingDate;
     //调整说明
     private String adjustingInstruction;
-    
+    //年份
+    private String year;
     /*----------------------------------扩展属性------------------------------------*/
     
     public static String Tweaks = "系统调整";
@@ -38,7 +39,15 @@ public class VacationDetails {
     
     private String employeeName;
     
-    public String getVacationTypeName() {
+    public String getYear() {
+		return year;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
+	}
+
+	public String getVacationTypeName() {
 		return vacationTypeName;
 	}
 

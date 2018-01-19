@@ -29,7 +29,7 @@ public interface VacationDetailsMapper {
      * @param vacationId
      * @return
      */
-    VacationDetails SelectVacationIdByEndResult(@Param("vacationId")String vacationId,@Param("vacationType")String vacationType);
+    VacationDetails SelectVacationIdByEndResult(@Param("vacationId")String vacationId,@Param("vacationType")String vacationType,@Param("year")String year);
     
     /**
      * 查询假期详情表 某位员工的记录条数

@@ -1,19 +1,23 @@
 package com.xiangshangban.att_simple.utils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 public class computeVacation {
 
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	
 	/**
-	 * 计算工龄
-	 * @param nowTime
-	 * @param workTime
+	 * 计算工作时长年
+	 * @param nowTime 
+	 * @param workTime	
 	 * @return
 	 */
 	public int workAge(Date nowTime, Date workTime){
 	    int year = 0;
-	    //当前时间的年月日
+	    //结束工作时间的年月日
 	    Calendar cal = Calendar.getInstance();
 	    cal.setTime(nowTime);
 	    int nowYear = cal.get(Calendar.YEAR);
@@ -41,7 +45,8 @@ public class computeVacation {
 	}
 	
 	/**
-	 * 计算年假天数
+	 * 计算企业工龄时长
+	 * 输入试用期结束日期计算年假天数
 	 * @param workTime
 	 * @return
 	 */
@@ -53,7 +58,21 @@ public class computeVacation {
 		//计算工龄
 		int year = workAge(date,workTime);
 		
-		//职工累计工作已满1年不满10年的，年休假5天;已满10年不满20年的，年休假10天;已满20年的，年休假15天
+		AVday = AnnualLeave(year);
+		
+		return AVday;
+	}
+	
+	
+	/**
+	 * 根据工龄时长  按照国家年假计算规定 计算相应年假天数
+	 * 职工累计工作已满1年不满10年的，年休假5天;已满10年不满20年的，年休假10天;已满20年的，年休假15天
+	 * @param year
+	 * @return
+	 */
+	public int AnnualLeave(int year){
+		int AVday = 0;
+		
 		if(year<1){
 			AVday = 0;
 		}else if(year<10){
@@ -66,4 +85,31 @@ public class computeVacation {
 		
 		return AVday;
 	}
+	
+	/**
+	 * 根据  社会工龄年假数*设置系数+公司工龄年假数*设置系数+基数 = 实际年假数
+	 * @param socialService
+	 * @param socialServicePercent
+	 * @param companyService
+	 * @param companyServicePercent
+	 * @param cardinalNumber
+	 * @return  
+	 * @throws ParseException 
+	 */
+	public int ABCAnnualFormula(String socialService,double socialServicePercent,String workTime,double companyServicePercent,Integer cardinalNumber) throws ParseException{
+		
+		//根据传入社会工龄值计算享有年假数
+		int socialAnnualVacationDay = AnnualLeave(Integer.parseInt(socialService));
+		
+		//传入试用结束日期得到享有年假数
+		int companyAnnualVacationDay = computeAnnualVacation(sdf.parse(workTime));
+		
+		double b = socialAnnualVacationDay*socialServicePercent+companyAnnualVacationDay*companyServicePercent+cardinalNumber;
+		
+		int t = (int)Math.floor(b);
+		
+		return t;
+	}
+	
+	
 }

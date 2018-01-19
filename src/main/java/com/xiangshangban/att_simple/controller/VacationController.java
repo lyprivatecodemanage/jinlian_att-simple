@@ -1,5 +1,7 @@
 package com.xiangshangban.att_simple.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,18 +17,16 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.bean.Paging;
-import com.xiangshangban.att_simple.service.AdjustRestDateCalculateService;
 import com.xiangshangban.att_simple.service.VacationService;
 
 @RestController
 @RequestMapping("/VacationController")
 public class VacationController {
 	
-	@Autowired
-	VacationService vacationService;
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
 	
 	@Autowired
-	AdjustRestDateCalculateService adjustRestDateCalculateService;
+	VacationService vacationService;
 	
 	/**
 	 * 焦振/假期列表模糊分页查询
@@ -47,9 +47,10 @@ public class VacationController {
 		v.setAnnualLeaveBalanceRank(json.getString("annualLeaveBalanceRank"));
 		v.setAdjustRestTotalRank(json.getString("adjustRestTotalRank"));
 		v.setAdjustRestBalanceRank(json.getString("adjustRestBalanceRank"));
-		v.setVarPageNo(json.getString("varPageNo"));
-		v.setPageNum(json.getString("pageNum"));
-		v.setPageExcludeNumber(String.valueOf((Integer.parseInt(json.getString("varPageNo"))-1)*Integer.parseInt(json.getString("pageNum"))));
+		v.setVarPageNo(json.getString("pageNum"));
+		v.setPageNum(json.getString("pageRecordNum"));
+		v.setYear(json.getString("year"));
+		v.setPageExcludeNumber(String.valueOf((Integer.parseInt(json.getString("pageNum"))-1)*Integer.parseInt(json.getString("pageRecordNum"))));
 		
 		result = vacationService.SelectFuzzyPagel(v);
 		
@@ -72,8 +73,9 @@ public class VacationController {
 		String vacationMold = obj.getString("vacationMold");
 		String annualLeave = obj.getString("annualLeave");
 		String adjustingInstruction = obj.getString("adjustingInstruction");
+		String year = obj.getString("year");
 		
-		result = vacationService.AnnualLeaveAdjustment(vacationId, vacationMold, annualLeave, adjustingInstruction, auditorEmployeeId);
+		result = vacationService.AnnualLeaveAdjustment(vacationId, vacationMold, annualLeave, adjustingInstruction, auditorEmployeeId,year);
 		
 		return result;
 	}
@@ -95,8 +97,9 @@ public class VacationController {
 		String vacationMold = obj.getString("vacationMold");
 		String adjustRest = obj.getString("adjustRest");
 		String adjustingInstruction = obj.getString("adjustingInstruction");
+		String year = "0";
 		
-		result = vacationService.AdjustRestAdjustment(vacationId, vacationMold, adjustRest, adjustingInstruction, auditorEmployeeId);
+		result = vacationService.AdjustRestAdjustment(vacationId, vacationMold, adjustRest, adjustingInstruction, auditorEmployeeId,year);
 		
 		return result;
 	}

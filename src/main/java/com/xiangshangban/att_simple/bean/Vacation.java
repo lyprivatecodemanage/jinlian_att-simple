@@ -21,7 +21,8 @@ public class Vacation {
     private String adjustRestTotal;
     //调休余额
     private String adjustRestBalance;
-    
+    //年份
+    private String year;
     /*----------------------------------扩展属性------------------------------------*/
     
     //部门名称
@@ -29,6 +30,14 @@ public class Vacation {
     //姓名
     private String employeeName;
     
+	public String getYear() {
+		return year;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
+	}
+
 	public String getDepartmentName() {
 		return departmentName;
 	}
