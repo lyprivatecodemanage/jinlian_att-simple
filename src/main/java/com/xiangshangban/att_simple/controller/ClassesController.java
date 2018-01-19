@@ -94,7 +94,7 @@ public class ClassesController {
 		        "offDutyTime": "07:00",
 		        "morrowDutyTimeFlag": "1",
 		        "restTime": "23:00-1:00",
-		        "restDays": "67",
+		        "restDays": "67",（返回67表明按照周为周期进行排班、返回“6,2”表示按照做6休2的周期进行排班）
 		        "festivalRestFlag": "1",
 		        "signInRule": "20",
 		        "signOutRule": "20",

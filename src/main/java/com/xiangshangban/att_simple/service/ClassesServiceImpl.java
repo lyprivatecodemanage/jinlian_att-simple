@@ -120,18 +120,14 @@ public class ClassesServiceImpl implements ClassesService{
 			classesType.setCompanyId(companyId);
 			//创建该班次类型的时间
 			classesType.setCreateTime(TimeUtil.getCurrentTime());
-			
 			int addClassesType = classesTypeMapper.insertSelective(classesType);
-			
 			//TODO 添加班次类型成功====》添加人员班次
 			if(addClassesType>0){
-				
 				//根据访问次数，来确定排班修改的次数（每修改一次，改变一次颜色）
 				access_count++;
 				if(access_count==3){
 					access_count=1;
 				}
-				
 				//初始化需要排班的天数
 				int scheduleDays = 0;
 				
@@ -148,7 +144,6 @@ public class ClassesServiceImpl implements ClassesService{
 					//-----------------默认班次次日生效(计算要排班的天数)-----------------------
 					scheduleDays = getScheduleDays(null);
 				}
-				
 				//TODO ============》添加人员班次
 				String nextDayFlag = morrowFlag.toString().trim(); //次日下班标志
 				//定义添加班次后的结果
@@ -168,32 +163,26 @@ public class ClassesServiceImpl implements ClassesService{
 							e.printStackTrace();
 						}
 					}
-					
 					JSONObject emp = JSONObject.parseObject(empArray.get(i).toString());
-					
 					//TODO 做x休x模式，获取工作天数和休息天数(限制for循环的执行次数)
 					int workDaysCount = 0;
 					int restDaysCount = 0;
 					//初始化工作天数限制变量、休息天数限制变量
 					int workDaysLimit = 0;
 					int restDaysLimit = 0;
-					
 					if(classesType.getRestDays().contains(",")){ //做x休x模式
 						//获取工作天数
 						workDaysCount = Integer.parseInt(classesType.getRestDays().trim().split(",")[0]);
 						//获取休息的天数
 						restDaysCount = Integer.parseInt(classesType.getRestDays().trim().split(",")[1]);
 					}
-					
 					for(int s=0;s<scheduleDays;s++){
 						
 						//默认班次次日生效
 						if(!nextDayFlag.equals("1")){
 							cal.add(Calendar.DAY_OF_MONTH,1); 
 						}
-						
 						ClassesEmployee classesEmployee = new ClassesEmployee();
-						
 						classesEmployee.setId(FormatUtil.createUuid());
 						classesEmployee.setEmpId(emp.get("empId").toString());
 						classesEmployee.setEmpCompanyId(companyId);
@@ -201,25 +190,20 @@ public class ClassesServiceImpl implements ClassesService{
 						classesEmployee.setClassesName(classesName.toString().trim());
 						//设置人员班次上班打卡时间（人员班次从创建班次类型的次日开始排）
 						classesEmployee.setOnDutySchedulingDate(new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime())+" "+onDutyTime.toString().trim());
-						
 						//设置上班日期对应的星期
 						if(cal.get(Calendar.DAY_OF_WEEK)-1==0){
 							classesEmployee.setWeek("7");
 						}else{
 							classesEmployee.setWeek(String.valueOf(cal.get(Calendar.DAY_OF_WEEK)-1));
 						}
-						
 						//判断是否设置下班时间为次日
 						if(nextDayFlag.equals("1")){
 							cal.add(Calendar.DAY_OF_MONTH,1);
 						}
 						//下班时间
 						classesEmployee.setOffDutySchedulingDate(new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime())+" "+offDutyTime.toString().trim());
-						
-						
 						String offset = classesEmployee.getOnDutySchedulingDate().split(" ")[0]+" "+restStartTime.toString().trim()+":00";
 						String last = classesEmployee.getOnDutySchedulingDate().split(" ")[0]+" "+restEndTime.toString().trim()+":00";
-						
 						//两个休息时间点，都是小于上班时间点的时候，表明两个休息时间点都是在第二天(休息时间段：下班的日期+时间点)
 						if(TimeUtil.compareTime(classesEmployee.getOnDutySchedulingDate()+":00",offset) && 
 								TimeUtil.compareTime(classesEmployee.getOnDutySchedulingDate()+":00",last)){
@@ -234,19 +218,16 @@ public class ClassesServiceImpl implements ClassesService{
 							classesEmployee.setRestStartTime(classesEmployee.getOnDutySchedulingDate().split(" ")[0]+" "+restStartTime.toString().trim());
 							classesEmployee.setRestEndTime(classesEmployee.getOnDutySchedulingDate().split(" ")[0]+" "+restEndTime.toString().trim());
 						}
-						
 						//设置签到签退规则
 						classesEmployee.setSignInRule(signInRule.toString().trim());
 						classesEmployee.setSignOutRule(signOutRule.toString().trim());
 						//设置打卡规则
 						classesEmployee.setOnPunchCardRule(onPunchCardRule.toString().trim());
 						classesEmployee.setOffPunchCardRule(offPunchCardRule.toString().trim());
-						
 						//添加当前日期
 						classesEmployee.setTheDate(classesEmployee.getOnDutySchedulingDate().split(" ")[0]);
 						//设置分隔颜色
 						classesEmployee.setDivideColor(String.valueOf(access_count));
-						
 					    if(classesType.getRestDays().contains(",")){ //做x休x模式 
 					    	workDaysLimit++;
 					    	if(workDaysLimit>workDaysCount){
@@ -410,17 +391,17 @@ public class ClassesServiceImpl implements ClassesService{
 		      ],
 		      "empName": "测试unknown",
 		      "postName": "测试人员",
-		      "thisWeekHours": 50
+		      "thisWeekHours": "50.0"
 		    }
 		  ],
-		  "totalPages": 0,
+		  "totalPages": "0",
 		  "message": "请求数据成功",
 		  "returnCode": "3000",
-		  "pagecountNum": 0,
+		  "pagecountNum": "0",
 		  "companyName": null,
 		  "classesTopInfo": [
 		    {
-		      "totalnum": 50,
+		      "totalnum": "50",
 		      "classes_name": "常白班"
 		    }
 		  ]
@@ -442,6 +423,9 @@ public class ClassesServiceImpl implements ClassesService{
 		
 		//定义返回的结果
 		ReturnData resultInfo = new ReturnData();
+		 //初始化(数据总行数/数据总页数)
+       	int totalRows = 0;
+        int totalPage = 0;
 		
 		Map<String,String> param = new HashMap<>();
 		
@@ -482,128 +466,156 @@ public class ClassesServiceImpl implements ClassesService{
 		}
 
 		List<Map> selectClassesInfo = classesEmployeeMapper.selectClassesInfo(param);
-		//根据人员ID将数据进行分组处理
-		Map<String,List<Map<String,Object>>> listMap = new HashMap<>();
-		for (int i = 0; i < selectClassesInfo.size(); i++) {
-	         if (listMap.containsKey(selectClassesInfo.get(i).get("emp_id"))) {//存在该map
-	             Map<String,Object> map = new HashMap();
-	             map.put("empId", selectClassesInfo.get(i).get("emp_id"));
-	             map.put("empName", selectClassesInfo.get(i).get("employee_name"));
-	             map.put("postName", selectClassesInfo.get(i).get("post_name"));
-	             map.put("deptName", selectClassesInfo.get(i).get("department_name"));
-	             map.put("theDate", selectClassesInfo.get(i).get("the_date"));
-	             map.put("week", selectClassesInfo.get(i).get("week"));
-	             map.put("classesId", selectClassesInfo.get(i).get("id"));
-	             map.put("classesName", selectClassesInfo.get(i).get("classes_name"));
-	             map.put("onDutySchedulingDate", selectClassesInfo.get(i).get("on_duty_scheduling_date"));
-	             map.put("offDutySchedulingDate", selectClassesInfo.get(i).get("off_duty_scheduling_date"));
-	             map.put("restStartTime", selectClassesInfo.get(i).get("rest_start_time"));
-	             map.put("restEndTime", selectClassesInfo.get(i).get("rest_end_time"));
-	             map.put("colorFlag", selectClassesInfo.get(i).get("divide_color"));
-	             //获取到该list，向其中添加map数据
-	             listMap.get(selectClassesInfo.get(i).get("emp_id").toString()).add(map);
-	         } else {
-	             Map<String,Object> map = new HashMap();
-	             map.put("empId", selectClassesInfo.get(i).get("emp_id"));
-	             map.put("empName", selectClassesInfo.get(i).get("employee_name"));
-	             map.put("postName", selectClassesInfo.get(i).get("post_name"));
-	             map.put("deptName", selectClassesInfo.get(i).get("department_name"));
-	             map.put("theDate", selectClassesInfo.get(i).get("the_date"));
-	             map.put("week", selectClassesInfo.get(i).get("week"));
-	             map.put("classesId", selectClassesInfo.get(i).get("id"));
-	             map.put("classesName", selectClassesInfo.get(i).get("classes_name"));
-	             map.put("onDutySchedulingDate", selectClassesInfo.get(i).get("on_duty_scheduling_date"));
-	             map.put("offDutySchedulingDate", selectClassesInfo.get(i).get("off_duty_scheduling_date"));
-	             map.put("restStartTime", selectClassesInfo.get(i).get("rest_start_time"));
-	             map.put("restEndTime", selectClassesInfo.get(i).get("rest_end_time"));
-	             map.put("colorFlag", selectClassesInfo.get(i).get("divide_color"));
-	             List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
-	             list.add(map);
-	             listMap.put(selectClassesInfo.get(i).get("emp_id").toString(), list);
-	         }
-         }
-		//精简数据(改变数据结构)
-		List<Map<String,Object>> realData = new ArrayList<>();
-		for (String key:listMap.keySet()) {
-			Map<String,Object> outterMap = new HashMap<>();
-			outterMap.put("empId", listMap.get(key).get(0).get("empId"));
-			outterMap.put("empName", listMap.get(key).get(0).get("empName"));
-			outterMap.put("postName",listMap.get(key).get(0).get("postName"));
-			outterMap.put("deptName",listMap.get(key).get(0).get("deptName"));
-			outterMap.put("postName",listMap.get(key).get(0).get("postName"));
-			
-			//初始化本周工时
-			float theWeekhour = 0;
-			
-			List<Map<String,Object>> innerList = new ArrayList<>();
-			for(int s=0;s<listMap.get(key).size();s++){
-				Map<String,Object> innerMap = new HashMap<>();
-				innerMap.put("theDate", listMap.get(key).get(s).get("theDate"));
-				innerMap.put("week", listMap.get(key).get(s).get("week"));
-				innerMap.put("classesId", listMap.get(key).get(s).get("classesId"));
-				innerMap.put("classesName", listMap.get(key).get(s).get("classesName"));
-				innerMap.put("colorFlag", listMap.get(key).get(s).get("colorFlag"));
-				
-				//计算当天的工时
-				String onDutyTime = listMap.get(key).get(s).get("onDutySchedulingDate").toString();
-				String offDutyTime = listMap.get(key).get(s).get("offDutySchedulingDate").toString();
-				String restStartTime = listMap.get(key).get(s).get("restStartTime").toString();
-				String restEndTime = listMap.get(key).get(s).get("restEndTime").toString();
-				
-				if(!onDutyTime.isEmpty() && !offDutyTime.isEmpty() && !restStartTime.isEmpty() && !restEndTime.isEmpty()){
-					//返回两个时间相差的分钟数
-					float dutyTimeLength = Float.valueOf(String.valueOf(TimeUtil.minuteOfTime(offDutyTime+":00", onDutyTime+":00")))/60;
-					
-					float restTimtLength = Float.valueOf(String.valueOf(TimeUtil.minuteOfTime(restEndTime+":00", restStartTime+":00")))/60;
-					
-					theWeekhour+=(dutyTimeLength-restTimtLength);
-				}
-				innerList.add(innerMap);
-			}
-			outterMap.put("classesList", innerList);
-			//添加本周工时到集合中
-			outterMap.put("thisWeekHours", String.valueOf(theWeekhour));
-			realData.add(outterMap);
-		}
 		
+		if(selectClassesInfo!=null && selectClassesInfo.size()>0){
+			//根据人员ID将数据进行分组处理
+			Map<String,List<Map<String,Object>>> listMap = new HashMap<>();
+			for (int i = 0; i < selectClassesInfo.size(); i++) {
+		         if (listMap.containsKey(selectClassesInfo.get(i).get("emp_id"))) {//存在该map
+		             Map<String,Object> map = new HashMap();
+		             //数据分组处理
+		             dataDiviceGroup(map,selectClassesInfo,i);
+		             //获取到该list，向其中添加map数据
+		             listMap.get(selectClassesInfo.get(i).get("emp_id").toString()).add(map);
+		         } else {
+		             Map<String,Object> map = new HashMap();
+		             //数据分组处理
+		             dataDiviceGroup(map,selectClassesInfo,i);
+		             List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+		             list.add(map);
+		             listMap.put(selectClassesInfo.get(i).get("emp_id").toString(), list);
+		         }
+	         }
+			//精简数据(改变数据结构)
+			List<Map<String,Object>> realData = new ArrayList<>();
+			for (String key:listMap.keySet()) {
+				Map<String,Object> outterMap = new HashMap<>();
+				outterMap.put("empId", listMap.get(key).get(0).get("empId"));
+				outterMap.put("empName", listMap.get(key).get(0).get("empName"));
+				outterMap.put("postName",listMap.get(key).get(0).get("postName"));
+				outterMap.put("deptName",listMap.get(key).get(0).get("deptName"));
+				outterMap.put("postName",listMap.get(key).get(0).get("postName"));
+				
+				//初始化本周工时
+				float theWeekhour = 0;
+				
+				List<Map<String,Object>> innerList = new ArrayList<>();
+				for(int s=0;s<listMap.get(key).size();s++){
+					Map<String,Object> innerMap = new HashMap<>();
+					innerMap.put("theDate", listMap.get(key).get(s).get("theDate"));
+					innerMap.put("week", listMap.get(key).get(s).get("week"));
+					innerMap.put("classesId", listMap.get(key).get(s).get("classesId"));
+					innerMap.put("classesName", listMap.get(key).get(s).get("classesName"));
+					innerMap.put("colorFlag", listMap.get(key).get(s).get("colorFlag"));
+					
+					//计算当天的工时
+					String onDutyTime = listMap.get(key).get(s).get("onDutySchedulingDate").toString();
+					String offDutyTime = listMap.get(key).get(s).get("offDutySchedulingDate").toString();
+					String restStartTime = listMap.get(key).get(s).get("restStartTime").toString();
+					String restEndTime = listMap.get(key).get(s).get("restEndTime").toString();
+					
+					if(!onDutyTime.isEmpty() && !offDutyTime.isEmpty() && !restStartTime.isEmpty() && !restEndTime.isEmpty()){
+						//返回两个时间相差的分钟数
+						float dutyTimeLength = Float.valueOf(String.valueOf(TimeUtil.minuteOfTime(offDutyTime+":00", onDutyTime+":00")))/60;
+						
+						float restTimtLength = Float.valueOf(String.valueOf(TimeUtil.minuteOfTime(restEndTime+":00", restStartTime+":00")))/60;
+						
+						theWeekhour+=(dutyTimeLength-restTimtLength);
+					}
+					innerList.add(innerMap);
+				}
+				
+				//将数据完善为一整个周的数据(避免有的班次没有排，造成前端列表展示困难)
+				if(innerList.size()<7){
+					try {
+						//获取数据集合第一个和最后一个元素的week字段值,和theDate字段值
+						int firstNum = Integer.parseInt(innerList.get(0).get("week").toString().trim());
+						Calendar firstDate = Calendar.getInstance();
+						firstDate.setTime(new SimpleDateFormat("yyyy-MM-dd").parse(innerList.get(0).get("theDate").toString().trim()));
+						
+						int lastNum = Integer.parseInt(innerList.get(innerList.size()-1).get("week").toString().trim());
+						Calendar lastDate = Calendar.getInstance();
+						lastDate.setTime(new SimpleDateFormat("yyyy-MM-dd").parse(innerList.get(innerList.size()-1).get("theDate").toString().trim()));
+						
+						if(firstNum!=1){
+							//添加空排班(集合前端元素)
+							for(int q=0;q<(firstNum-1);q++){
+								Map<String,Object> emptyMap = new HashMap<>();
+								emptyMap.put("classesName","");
+								emptyMap.put("classesId","");
+								emptyMap.put("colorFlag","");
+								//时间倒退一天
+								firstDate.add(Calendar.DAY_OF_MONTH,-1);
+								//获取星期数
+								if(firstDate.get(Calendar.DAY_OF_WEEK)-1==0){
+									emptyMap.put("week", "7");
+								}else{
+									emptyMap.put("week",String.valueOf(firstDate.get(Calendar.DAY_OF_WEEK)-1));
+								}
+								emptyMap.put("theDate",new SimpleDateFormat("yyyy-MM-dd").format(firstDate.getTime()));
+								innerList.add(0, emptyMap);
+							}
+						}
+						if(lastNum!=7){
+							//集合后端加元素
+							for(int w=0;w<(7-lastNum);w++){
+								Map<String,Object> emptyMap = new HashMap<>();
+								emptyMap.put("classesName","");
+								emptyMap.put("classesId","");
+								emptyMap.put("colorFlag","");
+								//时间增加一天
+								lastDate.add(Calendar.DAY_OF_MONTH,+1);
+								//获取星期数
+								if(lastDate.get(Calendar.DAY_OF_WEEK)-1==0){
+									emptyMap.put("week", "7");
+								}else{
+									emptyMap.put("week",String.valueOf(lastDate.get(Calendar.DAY_OF_WEEK)-1));
+								}
+								emptyMap.put("theDate",new SimpleDateFormat("yyyy-MM-dd").format(lastDate.getTime()));
+								innerList.add(innerList.size(), emptyMap);
+							}
+						}
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+				}
+				outterMap.put("classesList", innerList);
+				//添加本周工时到集合中
+				outterMap.put("thisWeekHours", String.valueOf(theWeekhour));
+				realData.add(outterMap);
+			}
+			//最终数据
+			List<Map<String,Object>> finallyData = new ArrayList<>();
+			if ((rows!=null && !rows.toString().trim().isEmpty()) && (page!=null && !page.toString().trim().isEmpty())){
+				if(realData!=null && realData.size()>0){
+	                int pageIndex = Integer.parseInt(page.toString());
+	                int pageSize = Integer.parseInt(rows.toString());
+
+	                for (int i = ((pageIndex - 1) * pageSize); i < (pageSize * pageIndex); i++) {
+	                    if(i==realData.size()){
+	                        break;
+	                    }
+	                    finallyData.add(realData.get(i));
+	                }
+	                //获取数据的总行数
+	                totalRows = realData.size();
+	                //设置总页数
+	                totalPage = totalRows%Integer.parseInt(rows.toString().trim())==0?totalRows/Integer.parseInt(rows.toString().trim()):totalRows/Integer.parseInt(rows.toString().trim())+1;
+				}
+				resultInfo.setData(finallyData);
+	        }else{
+	        	resultInfo.setData(realData);
+	        }
+		}else{
+			resultInfo.setData(selectClassesInfo);
+		}
 		//查询班次类型使用人数排行榜前三名
 		List<Map<String,String>> selectTopThreeClassesType = classesEmployeeMapper.selectTopThreeClassesType(companyId.trim());
-		
-		//最终数据
-		List<Map<String,Object>> finallyData = new ArrayList<>();
-		
-		 //初始化(数据总行数/数据总页数)
-       	int totalRows = 0;
-        int totalPage = 0;
-        
-		if ((rows!=null && !rows.toString().trim().isEmpty()) && (page!=null && !page.toString().trim().isEmpty())){
-			if(realData!=null && realData.size()>0){
-                int pageIndex = Integer.parseInt(page.toString());
-                int pageSize = Integer.parseInt(rows.toString());
-
-                for (int i = ((pageIndex - 1) * pageSize); i < (pageSize * pageIndex); i++) {
-                    if(i==realData.size()){
-                        break;
-                    }
-                    finallyData.add(realData.get(i));
-                }
-                //获取数据的总行数
-                totalRows = realData.size();
-                //设置总页数
-                totalPage = totalRows%Integer.parseInt(rows.toString().trim())==0?totalRows/Integer.parseInt(rows.toString().trim()):totalRows/Integer.parseInt(rows.toString().trim())+1;
-			}
-			resultInfo.setData(finallyData);
-        }else{
-        	resultInfo.setData(realData);
-        }
-		
-		//添加排行榜信息
 		resultInfo.setClassesTopInfo(selectTopThreeClassesType);
 		resultInfo.setMessage("请求数据成功");
 		resultInfo.setReturnCode("3000");
 		resultInfo.setPagecountNum(String.valueOf(totalPage));
 		resultInfo.setTotalPages(String.valueOf(totalRows));
-		
 		return resultInfo;
 	}
 
@@ -803,7 +815,11 @@ public class ClassesServiceImpl implements ClassesService{
 		return result;
 	}
 	
-	//=========================公共方法===========================
+	/********************************************************************************
+	 * 
+	 * =========================公共方法区=============================================
+	 * 
+	 ********************************************************************************/
 	/**
 	 * 计算排班天数
 	 * @param date 指定的班次生效时间（为null的时候，表示次日生效）
@@ -850,5 +866,24 @@ public class ClassesServiceImpl implements ClassesService{
 		classesEmployee.setOnPunchCardRule("");
 		classesEmployee.setOffPunchCardRule("");
 		classesEmployee.setDivideColor("");
+	}
+	
+	/**
+	 * 查询公司人员班次信息列表（抽取代码）,数据进行分组处理
+	 */
+	public void dataDiviceGroup(Map<String,Object> map,List<Map> selectClassesInfo,int i){
+		map.put("empId", selectClassesInfo.get(i).get("emp_id"));
+        map.put("empName", selectClassesInfo.get(i).get("employee_name"));
+        map.put("postName", selectClassesInfo.get(i).get("post_name"));
+        map.put("deptName", selectClassesInfo.get(i).get("department_name"));
+        map.put("theDate", selectClassesInfo.get(i).get("the_date"));
+        map.put("week", selectClassesInfo.get(i).get("week"));
+        map.put("classesId", selectClassesInfo.get(i).get("id"));
+        map.put("classesName", selectClassesInfo.get(i).get("classes_name"));
+        map.put("onDutySchedulingDate", selectClassesInfo.get(i).get("on_duty_scheduling_date"));
+        map.put("offDutySchedulingDate", selectClassesInfo.get(i).get("off_duty_scheduling_date"));
+        map.put("restStartTime", selectClassesInfo.get(i).get("rest_start_time"));
+        map.put("restEndTime", selectClassesInfo.get(i).get("rest_end_time"));
+        map.put("colorFlag", selectClassesInfo.get(i).get("divide_color"));
 	}
 }
