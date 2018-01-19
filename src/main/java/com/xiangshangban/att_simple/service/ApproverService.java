@@ -11,5 +11,7 @@ public interface ApproverService {
 	   Map<String,Object> approverDetails();
 	   
 	   Map<String,Object> approverTransfer();
+	   
+	   
 
 }

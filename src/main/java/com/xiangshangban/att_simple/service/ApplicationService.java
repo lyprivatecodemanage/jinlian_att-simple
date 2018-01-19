@@ -66,4 +66,6 @@ public interface ApplicationService {
 	 * @return
 	 */
 	List<ApplicationCommonContactPeople> commonContactPeopleList(String employeeId,String companyId,String type,String page,String count);
+	
+	List<Application> applicationList(String employeeId,String CompanyId,String page,String count);
 }

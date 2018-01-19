@@ -17,9 +17,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ApplicationCommonContactPeople;
+import com.xiangshangban.att_simple.bean.ApplicationToCopyPerson;
+import com.xiangshangban.att_simple.bean.ApplicationTransferRecord;
 import com.xiangshangban.att_simple.bean.ClassesEmployee;
 import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.service.ApplicationService;
@@ -79,7 +82,10 @@ public class ApplicationController {
 				returnData.setReturnCode("3013");
 				return returnData;
 			}
+			/*Application application = new Application();
+			this.setApplication(jsonString, application);*/
 			Application application = JSON.parseObject(jsonString, Application.class);
+			
 			if(application==null||StringUtils.isEmpty(application.getApplicationType())||StringUtils.isEmpty(application.getIsSetCommonContactPeople())
 					||StringUtils.isEmpty(application.getIsCopy())){
 				returnData.setMessage("必传参数为空");
@@ -149,7 +155,7 @@ public class ApplicationController {
 			int applicationHour = 0;//计算得出的申请小时数
 			switch(application.getApplicationType()){
 			   case "1"://请假
-				   List<ClassesEmployee> classesEmployeeList = classesService.queryPointTimeClasses(employeeId, companyId, new SimpleDateFormat("yyyy-MM-dd").format(startTime), new SimpleDateFormat("yyyy-MM-dd").format(endTime));
+				   /*List<ClassesEmployee> classesEmployeeList = classesService.queryPointTimeClasses(employeeId, companyId, new SimpleDateFormat("yyyy-MM-dd").format(startTime), new SimpleDateFormat("yyyy-MM-dd").format(endTime));
 				   try{
 					   for(ClassesEmployee classesEmployee:classesEmployeeList){
 						   String start = "";
@@ -174,9 +180,14 @@ public class ApplicationController {
 					   returnData.setMessage("服务器错误");
 					   returnData.setReturnCode("3001");
 					   return returnData;
-				   }
+				   }*/
+				   applicationHour = this.calculateApplicationHour("1", application.getIsSkipRestDay(), employeeId, companyId, startTime, endTime, applicationHour);
 				   if(applicationHour==0){
 					   returnData.setMessage("请检查申请是时间是否填写正确");
+					   returnData.setReturnCode("9999");
+					   return returnData;
+				   }else if(applicationHour==-2){
+					   returnData.setMessage("您当前申请时间段内没有排班,请联系企业管理员");
 					   returnData.setReturnCode("9999");
 					   return returnData;
 				   }
@@ -196,7 +207,7 @@ public class ApplicationController {
 				   returnData = applicationService.overTimeApplication(application);
 				   break;
 			   case "3"://出差
-				   
+				   applicationHour = this.calculateApplicationHour("3", application.getIsSkipRestDay(), employeeId, companyId, startTime, endTime, applicationHour);
 				   if(applicationHour==0){
 					   returnData.setMessage("请检查申请是时间是否填写正确");
 					   returnData.setReturnCode("9999");
@@ -206,6 +217,7 @@ public class ApplicationController {
 				   returnData = applicationService.businessTravelApplication(application);
 				   break;
 			   case "4"://外出
+				   applicationHour = this.calculateApplicationHour("4", application.getIsSkipRestDay(), employeeId, companyId, startTime, endTime, applicationHour);
 				   if(applicationHour==0){
 					   returnData.setMessage("请检查申请是时间是否填写正确");
 					   returnData.setReturnCode("9999");
@@ -276,7 +288,7 @@ public class ApplicationController {
 			return returnData;
 		}
 		/**
-		 * 常用联系人设置
+		 * 常用联系人设置(不使用这个接口,设置在申请接口内部)
 		 * @param jsonString
 		 * @param request
 		 * @return
@@ -327,9 +339,9 @@ public class ApplicationController {
 		public Map<String,Object> applicationList(@RequestBody String jsonString ,HttpServletRequest request) {
 			Map<String,Object> result = new HashMap<String,Object>();
 			try{
-			GainData data = new GainData(jsonString, request);
-			String employeeId = data.getData("accessUserId").toString();//员工id
-			String companyId = data.getData("companyId").toString();//公司id
+			String employeeId = request.getHeader("accessUserId");//员工id
+			String companyId = request.getHeader("companyId");//公司id
+			
 			return result;
 			}catch(Exception e){
 				logger.info(e);
@@ -365,6 +377,11 @@ public class ApplicationController {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
 			 List<ClassesEmployee> classesEmployeeList = classesService.queryPointTimeClasses(employeeId, companyId, new SimpleDateFormat("yyyy-MM-dd").format(startTime), new SimpleDateFormat("yyyy-MM-dd").format(endTime));
+			 if("1".equals(type)){
+				 if(classesEmployeeList.size()<1){
+					 return -2;
+				 }
+			 }
 			   try{
 				   int i=0;
 				   for(ClassesEmployee classesEmployee:classesEmployeeList){
@@ -390,18 +407,41 @@ public class ApplicationController {
 								   if(i==0){
 									   start = sdf.format(startTime);
 									   if(sdf1.parse(sdf1.format(endTime)).getTime()>sdf1.parse(classesEmployee.getTheDate()).getTime()){
-										   
+										   int time= (int)Math.ceil((double)(dfs.parse(classesEmployee.getTheDate()+" 23:59:59").getTime()-dfs.parse(dfs.format(startTime)).getTime()/1000/60/30)/2);
+										   if(time>8){
+											   applicationHour =applicationHour+8;
+										   }else{
+											   applicationHour = applicationHour +time;
+										   }
+									   }else{
+										   int time= (int)Math.ceil((double)(dfs.parse(dfs.format(endTime)).getTime()-dfs.parse(dfs.format(startTime)).getTime()/1000/60/30)/2);
+										   if(time>8){
+											   applicationHour =applicationHour+8;
+										   }else{
+											   applicationHour = applicationHour +time;
+										   }
 									   }
-								   }
-								   if(startTime.getTime()>sdf.parse(classesEmployee.getTheDate()).getTime()){
-								         start = sdf.format(startTime);
 								   }else{
-									   start = classesEmployee.getOnDutySchedulingDate();
-								   }
-								   if(endTime.getTime()>sdf.parse(classesEmployee.getOffDutySchedulingDate()).getTime()){
-									   end = classesEmployee.getOffDutySchedulingDate();
-								   }else{
-									   end = sdf.format(endTime);
+									   if(!StringUtils.isEmpty(classesEmployeeList.get(i-1).getClassesId())&&!StringUtils.isEmpty(classesEmployeeList.get(i-1).getOnDutySchedulingDate())&&!StringUtils.isEmpty(classesEmployeeList.get(i-1).getOffDutySchedulingDate())){
+										   start= classesEmployeeList.get(i-1).getOffDutySchedulingDate();
+									   }else{
+										   start = sdf.format(classesEmployee.getTheDate());
+									   }
+									   if(sdf1.parse(sdf1.format(endTime)).getTime()>sdf1.parse(classesEmployee.getTheDate()).getTime()){
+										   int time= (int)Math.ceil((double)(dfs.parse(classesEmployee.getTheDate()+" 23:59:59").getTime()-dfs.parse(dfs.format(startTime)).getTime()/1000/60/30)/2);
+										   if(time>8){
+											   applicationHour =applicationHour+8;
+										   }else{
+											   applicationHour = applicationHour +time;
+										   }
+									   }else{
+										   int time= (int)Math.ceil((double)(dfs.parse(dfs.format(endTime)).getTime()-dfs.parse(dfs.format(startTime)).getTime()/1000/60/30)/2);
+										   if(time>8){
+											   applicationHour =applicationHour+8;
+										   }else{
+											   applicationHour = applicationHour +time;
+										   }
+									   }
 								   }
 							   }
 						   }
@@ -413,5 +453,48 @@ public class ApplicationController {
 				   logger.info(e);
 				   return -1;
 			   }
+		}
+		private void setApplication(String jsonString,Application application){
+			JSONObject jobj = JSON.parseObject(jsonString);
+			application.setApplicationType(jobj.getString("applicationType"));
+			application.setApplicationChildrenType(jobj.getString("applicationChildrenType"));
+			application.setStartTime(jobj.getString("startTime"));
+			application.setEndTime(jobj.getString("endTime"));
+			application.setReason(jobj.getString("reason"));
+			application.setUploadVoucher(jobj.getString("uploadVoucher"));
+			application.setApprover(jobj.getString("approver"));
+			application.setIsCopy(jobj.getString("isCopy"));
+			application.setIsReject(jobj.getString("isReject"));
+			application.setIsTransfer(jobj.getString("isTransfer"));
+			application.setIsSetCommonContactPeople(jobj.getString("isSetCommonContactPeople"));
+			application.setApplicationStatus(jobj.getString("applicationStatus"));
+			application.setRejectReason(jobj.getString("rejectReason"));
+			application.setoutgoingLocation(jobj.getString("outgoingLocation"));
+			application.setFillCardTime(jobj.getString("fillCardTime"));
+			application.setIsSkipRestDay(jobj.getString("isSkipRestDay"));
+			JSONArray copyPersonListArray = JSONArray.parseArray(jobj.getString("copyPersonList"));
+			for(int i=0;i<copyPersonListArray.size();i++){
+				JSONObject jobj1 = JSON.parseObject(copyPersonListArray.get(i).toString());
+				ApplicationToCopyPerson copyPerson = new ApplicationToCopyPerson();
+				copyPerson.setCopyPersonId(jobj1.getString("copyPersonId"));
+				copyPerson.setCopyPersonName(jobj1.getString("copyPersonName"));
+			}
+			JSONArray transferRecordListArray = JSONArray.parseArray(jobj.getString("transferRecordList"));
+			for(int i=0;i<transferRecordListArray.size();i++){
+				JSONObject jobj1 = JSON.parseObject(transferRecordListArray.get(i).toString());
+				ApplicationTransferRecord transferRecord = new ApplicationTransferRecord();
+				transferRecord.setTransferPersonId(jobj1.getString("transferPersonId"));
+				transferRecord.setTransferPersionAccessId(jobj1.getString("transferPersionAccessId"));
+				transferRecord.setTransferExplain(jobj1.getString("transferExplain"));
+			}
+			JSONArray commonContactPeopleListArray = JSONArray.parseArray(jobj.getString("commonContactPeopleList"));
+			for(int i=0;i<commonContactPeopleListArray.size();i++){
+				JSONObject jobj1 = JSON.parseObject(commonContactPeopleListArray.get(i).toString());
+				ApplicationCommonContactPeople commonContactPeople = new ApplicationCommonContactPeople();
+				commonContactPeople.setCommonContactPeopleId(jobj1.getString("commonContactPeopleId"));
+				commonContactPeople.setCommonContactPeopleName(jobj1.getString("commonContactPeopleName"));
+				commonContactPeople.setType(jobj1.getString("type"));
+			}
+			
 		}
 	}
