@@ -6,13 +6,20 @@
     <result column="emp_id" jdbcType="VARCHAR" property="empId" />
     <result column="emp_company_id" jdbcType="VARCHAR" property="empCompanyId" />
     <result column="classes_id" jdbcType="VARCHAR" property="classesId" />
+    <result column="classes_name" jdbcType="VARCHAR" property="classesName" /> 
     <result column="on_duty_scheduling_date" jdbcType="VARCHAR" property="onDutySchedulingDate" />
     <result column="off_duty_scheduling_date" jdbcType="VARCHAR" property="offDutySchedulingDate" />
     <result column="rest_start_time" jdbcType="VARCHAR" property="restStartTime" />
     <result column="rest_end_time" jdbcType="VARCHAR" property="restEndTime" />
+    <result column="sign_in_rule" jdbcType="VARCHAR" property="signInRule" />
+    <result column="sign_out_rule" jdbcType="VARCHAR" property="signOutRule" />
+    <result column="on_punch_card_rule" jdbcType="VARCHAR" property="onPunchCardRule" />
+    <result column="off_punch_card_rule" jdbcType="VARCHAR" property="offPunchCardRule" />
     <result column="the_date" jdbcType="VARCHAR" property="theDate" />
     <result column="week" jdbcType="VARCHAR" property="week" />
+    <result column="divide_color" jdbcType="VARCHAR" property="divideColor" />
   </resultMap>
+  
   <sql id="Base_Column_List">
     id, emp_id, emp_company_id, classes_id, on_duty_scheduling_date, off_duty_scheduling_date, 
     week
@@ -35,6 +42,7 @@
       #{classesId,jdbcType=VARCHAR}, #{onDutySchedulingDate,jdbcType=VARCHAR}, #{offDutySchedulingDate,jdbcType=VARCHAR}, 
       #{week,jdbcType=VARCHAR})
   </insert>
+  
   <!-- 添加新的人员班次 -->
   <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ClassesEmployee">
     insert into classes_employee_
@@ -51,6 +59,9 @@
       <if test="classesId != null">
         classes_id,
       </if>
+      <if test="classesName != null">
+        classes_name,
+      </if>
       <if test="onDutySchedulingDate != null">
         on_duty_scheduling_date,
       </if>
@@ -63,11 +74,26 @@
       <if test="restEndTime != null">
         rest_end_time,
       </if>
+      <if test="signInRule != null">
+        sign_in_rule,
+      </if>
+      <if test="signOutRule != null">
+        sign_out_rule,
+      </if>
+      <if test="onPunchCardRule != null">
+        on_punch_card_rule,
+      </if>
+      <if test="offPunchCardRule != null">
+        off_punch_card_rule,
+      </if>
       <if test="theDate != null">
         the_date,
       </if>
       <if test="week != null">
         week,
+      </if>
+      <if test="divideColor != null">
+        divide_color,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -83,6 +109,9 @@
       <if test="classesId != null">
         #{classesId,jdbcType=VARCHAR},
       </if>
+      <if test="classesName != null">
+        #{classesName,jdbcType=VARCHAR},
+      </if>
       <if test="onDutySchedulingDate != null">
         #{onDutySchedulingDate,jdbcType=VARCHAR},
       </if>
@@ -95,11 +124,26 @@
       <if test="restEndTime != null">
         #{restEndTime,jdbcType=VARCHAR},
       </if>
+      <if test="signInRule != null">
+        #{signInRule,jdbcType=VARCHAR},
+      </if>
+      <if test="signOutRule != null">
+        #{signOutRule,jdbcType=VARCHAR},
+      </if>
+      <if test="onPunchCardRule != null">
+        #{onPunchCardRule,jdbcType=VARCHAR},
+      </if>
+      <if test="offPunchCardRule != null">
+        #{offPunchCardRule,jdbcType=VARCHAR},
+      </if>
       <if test="theDate != null">
        	#{theDate,jdbcType=VARCHAR},
       </if>
       <if test="week != null">
         #{week,jdbcType=VARCHAR},
+      </if>
+      <if test="divideColor != null">
+        #{divideColor,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -158,6 +202,18 @@
 	AND A .emp_company_id = B.company_id
   </select>
   
+  <!-- 查询指定人员指定日期的班次信息 -->
+  <select id="selectPointEmpDateClasses" parameterType="Map" resultMap="BaseResultMap">
+  	SELECT
+  	COALESCE(on_duty_scheduling_date,'') AS on_duty_scheduling_date,
+  	COALESCE(off_duty_scheduling_date,'') AS off_duty_scheduling_date,
+  	COALESCE(rest_start_time,'') AS rest_start_time,
+  	COALESCE(rest_end_time,'') AS rest_end_time,
+  	COALESCE(week,'') AS week
+  	FROM classes_employee_
+  	WHERE emp_id = #{empId} and emp_company_id = #{companyId} and the_date = #{pointDate}
+  </select>
+  
   <!-- 查询指定人员指定时间区间的班次信息 -->
   <select id="selectPointTimeClasses" parameterType="Map" resultMap="BaseResultMap">
   	SELECT
@@ -167,5 +223,149 @@
   	COALESCE(the_date,'') AS the_date
   	FROM classes_employee_
   	WHERE emp_id = #{empId} and emp_company_id = #{companyId} and the_date between #{startTime} and #{endTime} ORDER BY on_duty_scheduling_date
+  </select>
+  
+  <!-- 删除指定班次人员，某个日期之后的班次 -->
+  <delete id="deleteAppointClassesTypeEmp" parameterType="Map">
+  	delete from classes_employee_ where (classes_id = #{classesTypeId} or classes_id = '') and emp_company_Id = #{companyId} and the_date >= #{offSetTime} 
+  </delete>
+  
+  <!-- 删除指定人员指定日期的排班 -->
+  <update id="deleteAppointEmpDateClasses" parameterType="Map">
+  	update classes_employee_ set 
+  	classes_id = '',
+  	on_duty_scheduling_date = '',
+  	off_duty_scheduling_date = '',
+  	rest_start_time = '',
+  	rest_end_time = '' 
+  	where id = #{classesEmpId}
+  </update>
+  
+  <!-- 更新指定人员指定日期的班次 -->
+  <update id="updateAppointEmpDateClasses" parameterType="com.xiangshangban.att_simple.bean.ClassesEmployee">
+  	update classes_employee_ set 
+	  	classes_id = #{classesId},
+	  	classes_name = #{classesName},
+	  	on_duty_scheduling_date = #{onDutySchedulingDate},
+	  	off_duty_scheduling_date = #{offDutySchedulingDate},
+	  	rest_start_time = #{restStartTime},
+	  	rest_end_time = #{restEndTime},
+	  	sign_in_rule = #{signInRule},
+	  	sign_out_rule = #{signOutRule},
+	  	on_punch_card_rule = #{onPunchCardRule},
+	  	off_punch_card_rule = #{offPunchCardRule},
+	  	divide_color = #{divideColor}
+  	where
+  		emp_id = #{empId}
+  	and
+  		emp_company_id = #{empCompanyId}
+  	and 
+  		the_date = #{theDate}
+  </update>
+  
+  <!-- 查询当前公司人员的班次信息 -->
+  <select id="selectClassesInfo" parameterType="Map" resultType="Map">
+  	SELECT
+	COALESCE (W. ID, '') AS ID,
+	COALESCE (emp_id, '') AS emp_id,
+	COALESCE (emp_company_id, '') AS emp_company_id,
+	COALESCE (classes_id, '') AS classes_id,
+	COALESCE (classes_name, '') AS classes_name,
+	COALESCE (the_date, '') AS the_date,
+	COALESCE (week, '') AS week,
+	COALESCE (divide_color, '') AS divide_color,
+	COALESCE (employee_name, '') AS employee_name,
+	COALESCE (department_id, '') AS department_id,
+	COALESCE (department_name, '') AS department_name,
+	COALESCE (post_name, '') AS post_name
+	FROM
+		(
+			SELECT DISTINCT
+				H.*, J.employee_name,
+				department_id,
+				department_name,
+				post_name
+			FROM
+				(
+					SELECT
+						ID,
+						emp_id,
+						emp_company_id,
+						classes_id,
+						classes_name,
+						the_date,
+						week,
+						divide_color
+					FROM
+						classes_employee_
+					WHERE
+						the_date BETWEEN #{startDate}
+					AND #{endDate}
+					AND emp_company_id = #{companyId}
+				) H
+			LEFT JOIN (
+				SELECT
+					E.employee_id,
+					E.department_id,
+					E.company_id,
+					E.employee_name,
+					E.department_name,
+					F.post_name
+				FROM
+					(
+						SELECT
+							C .*, D.department_name
+						FROM
+							(
+								SELECT
+									A .employee_id,
+									A .post_id,
+									A .department_id,
+									A .company_id,
+									B.employee_name
+								FROM
+									organization.connect_emp_post_ A
+								LEFT JOIN organization.employee_ B ON A .employee_id = B.employee_id
+								AND A .company_id = B.company_id
+							) C
+						LEFT JOIN organization.department_ D ON C .department_id = D.department_id
+					) E
+				LEFT JOIN organization.post_ F ON E.post_id = F.post_id
+			) J ON H.emp_id = J.employee_id
+			AND H.emp_company_id = J.company_id
+			ORDER BY
+				H.the_date
+		) W
+	<where>
+		<if test='classesId!=null and classesId!=""'>
+			W.classes_id = #{classesTypeId}
+		</if>
+		<if test='deptId!=null and deptId!=""'>
+			and W.department_id = #{deptId}
+		</if>
+		<if test='empName!=null and empName!=""'>
+			and W.employee_name like #{empName}
+		</if>
+	</where>
+  </select>
+  
+  <!-- 查询班次类型使用人数排行榜前三名 -->
+  <select id="selectTopThreeClassesType" parameterType="String" resultType="Map">
+  	SELECT
+	COUNT (1) totalnum,
+	classes_name
+	FROM
+		classes_employee_
+	GROUP BY
+		classes_id,
+		classes_name,
+		emp_company_id
+	HAVING
+		classes_name != ''
+	AND
+		emp_company_id = #{companyId}
+	ORDER BY
+		totalnum DESC OFFSET 0
+	LIMIT 3
   </select>
 </mapper>

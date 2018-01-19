@@ -1,6 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-		 
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.jinnian</groupId>
@@ -256,45 +255,17 @@
 			<groupId>net.sourceforge.htmlunit</groupId>
 			<artifactId>htmlunit</artifactId>
 		</dependency>
-		<!-- organization2.0.jar -->
-		<dependency>
-			<groupId>com.xiangshangban</groupId>
-			<artifactId>organization</artifactId>
-			<version>2.0</version>  
-			<scope>system</scope>  
-			<systemPath>${project.basedir}/lib/organization-2.0.jar</systemPath>  
-        </dependency>
-        <dependency>
-        	<groupId>org.apache.hadoop</groupId>
-        	<artifactId>hadoop-core</artifactId>
-        	<version>1.0.0</version>
-        </dependency>
-        <dependency>
-        	<groupId>org.springframework.boot</groupId>
-        	<artifactId>spring-boot-starter-undertow</artifactId>
-        </dependency>
 	</dependencies>
 
 
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>com.xiangshangban</groupId>
-				<artifactId>organization</artifactId>
-				<configuration>
-					<webResources>
-						<resource>
-							<directory>${project.basedir}/lib</directory>
-							<targetPath>WEB-INF/lib</targetPath>
-							<filtering>false</filtering>
-							<includes>
-								<include>**/*.jar</include>
-							</includes>
-						</resource>
-					</webResources>
-				</configuration>
-				<version>2.0</version>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>
+
+
 </project>
