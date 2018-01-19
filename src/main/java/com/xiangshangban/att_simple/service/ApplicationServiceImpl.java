@@ -200,7 +200,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 	public ReturnData outgoingApplication(Application application) {
 		ReturnData returnData = new ReturnData();
 		try{
-			if(StringUtils.isEmpty(application)||StringUtils.isEmpty(application.getOutgoningLocation())){
+			if(StringUtils.isEmpty(application)||StringUtils.isEmpty(application.getOutgoingLocation())){
 				returnData.setMessage("必传参数为空");
 				returnData.setReturnCode("3006");
 				return returnData;
@@ -329,6 +329,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 		
 		}catch(Exception e){
 			logger.info(e);
+			e.printStackTrace();
 		}
 		return commonContactPeopleList;
 	}
@@ -336,8 +337,12 @@ public class ApplicationServiceImpl implements ApplicationService {
 	public <T>T setValue(String setValueType,List<Employee> employeeList,Application application,Class<T> c,
 			List<ApplicationCommonContactPeople> applicationCommonContactPeopleList){
 		try {
-		T t = c.newInstance();
-		MessageBean<T> mb = new MessageBean<T>(t);
+			T t = null;
+			MessageBean<T> mb  = null;
+		if(c!=null){
+			t = c.newInstance();
+			mb = new MessageBean<T>(t);
+		}
 		if("1".equals(setValueType)||"2".equals(setValueType)||
 				"3".equals(setValueType)||"4".equals(setValueType)||
 				"5".equals(setValueType)){
@@ -369,7 +374,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 			mb.setBusinessTravelType(application.getApplicationChildrenType());
 			break;
 		case"4"://外出申请实体类设值
-			mb.setOutgoningLocation(application.getOutgoningLocation());
+			mb.setOutgoingLocation(application.getOutgoingLocation());
 			break;
 		case"5"://补卡申请实体类设值
 			mb.setFillCardType(application.getApplicationChildrenType());
@@ -396,4 +401,13 @@ public class ApplicationServiceImpl implements ApplicationService {
 		}
 		return null;
 	}
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED,rollbackForClassName="Exception")
+	public List<Application> applicationList(String employeeId, String CompanyId, String page, String count) {
+		
+		return null;
+	}
+	
+	
+	
 }

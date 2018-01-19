@@ -30,12 +30,12 @@ public interface ClassesTypeMapper {
 	 * @param map
 	 * @return
 	 */
-	int deleteAppointClassesType(Map map);
+	int removeAppointClassesType(Map map);
 	
 	/**
 	 * 查询当前公司所有班次类型的默认信息
 	 * @param companyId
 	 * @return
 	 */
-	List<Map> selectAllClassesTypeInfo(String companyId);
+	List<ClassesType> selectAllClassesTypeInfo(String companyId);
 }

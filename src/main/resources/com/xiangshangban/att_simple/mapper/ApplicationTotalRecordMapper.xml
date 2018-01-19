@@ -15,10 +15,11 @@
     <result column="reject_reason"  property="rejectReason" />
     <result column="is_transfer"  property="isTransfer" />
     <result column="is_complete"  property="isComplete" />
+    <result column="is_skip_rest_day"  property="isSkipRestDay" />
   </resultMap>
   <sql id="Base_Column_List">
     applcation_no, operater_time, operater_id, application_type, last_approver, is_copy, 
-    application_id, company_id, is_reject, application_status, reject_reason, is_transfer, is_complete
+    application_id, company_id, is_reject, application_status, reject_reason, is_transfer, is_complete, is_skip_rest_day
   </sql>
   <!-- 添加新的申请记录 -->
   <insert id="insertApplicationRecord" parameterType="com.xiangshangban.att_simple.bean.Application">
@@ -37,6 +38,7 @@
       <if test="rejectReason != null">reject_reason,</if>
       <if test="isTransfer != null">is_transfer,</if>
       <if test="isComplete != null">is_complete,</if>
+      <if test="isSkipRestDay != null">is_skip_rest_day,</if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="applicationNo != null">#{applicationNo},</if>
@@ -52,6 +54,7 @@
       <if test="rejectReason != null">#{rejectReason},</if>
       <if test="isTransfer != null">#{isTransfer},</if>
       <if test="isComplete != null">#{isComplete},</if>
+      <if test="isSkipRestDay != null">#{isSkipRestDay},</if>
     </trim>
   
   </insert>

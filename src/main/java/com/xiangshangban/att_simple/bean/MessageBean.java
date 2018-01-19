@@ -70,8 +70,8 @@ public class MessageBean<T> {
     public void setFillCardTime(String fillCardTime) {
     	this.setValue("fillCardTime", fillCardTime);
     }
-    public void setOutgoningLocation(String outgoningLocation) {
-    	this.setValue("outgoningLocation", outgoningLocation);
+    public void setOutgoingLocation(String outgoingLocation) {
+    	this.setValue("outgoingLocation", outgoingLocation);
     }
     public void setCommonContactPeopleId(String commonContactPeopleId){
     	this.setValue("commonContactPeopleId", commonContactPeopleId);
@@ -79,7 +79,9 @@ public class MessageBean<T> {
     public void setCommonContactPeopleName(String commonContactPeopleName){
     	this.setValue("commonContactPeopleName", commonContactPeopleName);
     }
-	
+	public void setIsSkipRestDay(String isSkipRestDay){
+		this.setValue("isSkipRestDay", isSkipRestDay);
+	}
 	
 	private void setValue(String key,String value){
 		Class c = t.getClass();

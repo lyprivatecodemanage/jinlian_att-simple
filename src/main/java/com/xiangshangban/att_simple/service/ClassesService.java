@@ -4,6 +4,9 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
+import com.xiangshangban.att_simple.bean.ClassesEmployee;
+import com.xiangshangban.att_simple.bean.ReturnData;
+
 /**
  * @author 王勇辉
  * TODO 班次管理业务层 
@@ -39,7 +42,7 @@ public interface ClassesService {
 	 * @param companyId
 	 * @return
 	 */
-	List<Map> queryClassesInfo(String requestParam,String companyId);
+	ReturnData queryClassesInfo(String requestParam,String companyId);
 
 	/**
 	 * 一键排班
@@ -50,7 +53,7 @@ public interface ClassesService {
 	boolean oneButtonScheduling(String requestParam,String companyId);
 	
 	/**
-	 * 给指定的人员添加指定日期的排班(班次类型不变，允许微调上下班时间)
+	 * 给指定的人员添加指定日期的排班
 	 * @param requestParam
 	 * @param companyId
 	 * @return
@@ -58,11 +61,28 @@ public interface ClassesService {
 	boolean addEmpDutyTime(String requestParam,String companyId);
 	
 	/**
-	 * 删除指定人员指定日期的排班(数据列表中点击某天的排班，进行删除操作) 	
+	 * 删除指定班次	
+	 * @param requestParam
+	 */
+	boolean deleteEmpDutyTime(String requestParam);
+	
+	/**
+	 * 获取指定人员指定日期的班次信息
 	 * @param requestParam
 	 * @param companyId
+	 * @return
 	 */
-	boolean deleteEmpDutyTime(String requestParam,String companyId);
+	Map queryPointEmpDateClasses(String requestParam,String companyId);
+	
+	/**
+	 * 查询指定人员指定时间区间的班次信息
+	 * @param empId 人员ID
+	 * @param companyId 人员公司ID
+	 * @param startTime 搜索开始时间    如:2018-01-01 
+	 * @param endTime 结束时间    如:2018-01-02
+	 * @return
+	 */
+	List<ClassesEmployee> queryPointTimeClasses(String empId,String companyId,String startTime,String endTime);
 	
 	/**
 	 * 根据条件导出排班信息
@@ -74,16 +94,9 @@ public interface ClassesService {
 	void exportRecordToExcel(String requestParam, String excelName, OutputStream out,String companyId);
 	
 	/**
-	 * 添加无需考勤人员信息
-	 * @param requestParam
-	 * @param companyId
-	 * @return
-	 */
-	boolean addNotClockingInEmpInfo(String requestParam,String 	companyId);
-	
-	/**
 	 * 自动排班
 	 * @return
 	 */
 	boolean autoScheduling();
+	
 }
