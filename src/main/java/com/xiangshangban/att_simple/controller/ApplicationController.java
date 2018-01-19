@@ -22,6 +22,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ApplicationCommonContactPeople;
 import com.xiangshangban.att_simple.bean.ApplicationToCopyPerson;
+import com.xiangshangban.att_simple.bean.ApplicationTotalRecord;
 import com.xiangshangban.att_simple.bean.ApplicationTransferRecord;
 import com.xiangshangban.att_simple.bean.ClassesEmployee;
 import com.xiangshangban.att_simple.bean.ReturnData;
@@ -139,6 +140,7 @@ public class ApplicationController {
 					}
 				}catch(Exception e){
 					logger.info(e);
+					e.printStackTrace();
 					returnData.setMessage("时间格式错误");
 					returnData.setReturnCode("9999");
 					return returnData;
@@ -323,6 +325,7 @@ public class ApplicationController {
 			
 			}catch(Exception e){
 				logger.info(e);
+				e.printStackTrace();
 				returnData.setMessage("服务器错误");
 				returnData.setReturnCode("3001");
 				return returnData;
@@ -336,18 +339,60 @@ public class ApplicationController {
 		 * @return
 		 */
 		@RequestMapping(value = "/applicationList",produces="application/json;charset=utf-8",method=RequestMethod.POST)
-		public Map<String,Object> applicationList(@RequestBody String jsonString ,HttpServletRequest request) {
-			Map<String,Object> result = new HashMap<String,Object>();
+		public ReturnData applicationList(@RequestBody String jsonString ,HttpServletRequest request) {
+			ReturnData returnData = new ReturnData();
+			String employeeId = "";
+			String companyId = "";
+			String page = "";
+			String count = "";
 			try{
-			String employeeId = request.getHeader("accessUserId");//员工id
-			String companyId = request.getHeader("companyId");//公司id
-			
-			return result;
+				employeeId = request.getHeader("accessUserId");//员工id
+				companyId = request.getHeader("companyId");//公司id
+			if(StringUtils.isEmpty(employeeId)||StringUtils.isEmpty(companyId)){
+				returnData.setMessage("请求头参数缺失");
+				returnData.setReturnCode("3013");
+				return returnData;
+			}
+			try{
+				JSONObject jobj = JSON.parseObject(jsonString);
+				page = jobj.getString("page");
+				count = jobj.getString("count");
 			}catch(Exception e){
 				logger.info(e);
-				result.put("message", "服务器错误");
-				result.put("returnCode", "3001");
-				return result;
+				e.printStackTrace();
+				returnData.setMessage("参数错误");
+				returnData.setReturnCode("3006");
+				return returnData;
+			}
+			if(StringUtils.isEmpty(page)||StringUtils.isEmpty(count)){
+				returnData.setMessage("必传参数为空");
+				returnData.setReturnCode("3006");
+				return returnData;
+			}
+			List<ApplicationTotalRecord> applicationList = applicationService.applicationList(employeeId, companyId, page, count);
+			if(applicationList!=null&&applicationList.size()>0){
+				for(ApplicationTotalRecord applicationTotalRecord:applicationList){
+					if("1".equals(applicationTotalRecord.getIsComplete())){
+						if("0".equals(applicationTotalRecord.getIsReject())){
+							applicationTotalRecord.setStatusDescription("已通过");
+						}else{
+							applicationTotalRecord.setStatusDescription("已驳回");
+						}
+					}else{
+						applicationTotalRecord.setStatusDescription("审批中");
+					}
+				}
+			}
+			returnData.setData(applicationList);
+			returnData.setMessage("成功");
+			returnData.setReturnCode("3000");
+			return returnData;
+			}catch(Exception e){
+				logger.info(e);
+				e.printStackTrace();
+				returnData.setMessage("服务器错误");
+				returnData.setReturnCode("3001");
+				return returnData;
 			}
 		}
 		/**
@@ -357,18 +402,43 @@ public class ApplicationController {
 		 * @return
 		 */
 		@RequestMapping(value = "/applicationDetails",produces="application/json;charset=utf-8",method=RequestMethod.POST)
-		public Map<String,Object> applicationDetails(@RequestBody String jsonString ,HttpServletRequest request) {
-			Map<String,Object> result = new HashMap<String,Object>();
+		public ReturnData applicationDetails(@RequestBody String jsonString ,HttpServletRequest request) {
+			ReturnData returnData = new ReturnData();
+			String applicationNo = "";
+			//String statusDescription = "";
 			try{
-			GainData data = new GainData(jsonString, request);
-			String employeeId = data.getData("accessUserId").toString();//员工id
-			String companyId = data.getData("companyId").toString();//公司id
-			return result;
+			String employeeId = request.getHeader("accessUserId");//员工id
+			String companyId = request.getHeader("companyId");//公司id
+			if(StringUtils.isEmpty(employeeId)||StringUtils.isEmpty(companyId)){
+				returnData.setMessage("请求头参数缺失");
+				returnData.setReturnCode("3013");
+				return returnData;
+			}
+			try{
+				JSONObject jobj = JSON.parseObject(jsonString);
+				applicationNo = jobj.getString("applicationNo");
+				//statusDescription = jobj.getString("statusDescription");
 			}catch(Exception e){
 				logger.info(e);
-				result.put("message", "服务器错误");
-				result.put("returnCode", "3001");
-				return result;
+				e.printStackTrace();
+				returnData.setMessage("参数错误");
+				returnData.setReturnCode("3006");
+				return returnData;
+			}
+			if(StringUtils.isEmpty(applicationNo)/*||StringUtils.isEmpty(statusDescription)*/){
+				returnData.setMessage("必传参数为空");
+				returnData.setReturnCode("3006");
+				return returnData;
+			}
+			
+			
+			return returnData;
+			}catch(Exception e){
+				logger.info(e);
+				e.printStackTrace();
+				returnData.setMessage("服务器错误");
+				returnData.setReturnCode("3001");
+				return returnData;
 			}
 		}
 		

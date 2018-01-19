@@ -18,14 +18,14 @@
     <result column="is_skip_rest_day"  property="isSkipRestDay" />
   </resultMap>
   <sql id="Base_Column_List">
-    applcation_no, operater_time, operater_id, application_type, last_approver, is_copy, 
+    application_no, operater_time, operater_id, application_type, last_approver, is_copy, 
     application_id, company_id, is_reject, application_status, reject_reason, is_transfer, is_complete, is_skip_rest_day
   </sql>
   <!-- 添加新的申请记录 -->
   <insert id="insertApplicationRecord" parameterType="com.xiangshangban.att_simple.bean.Application">
   	insert into application_total_record_
   	 <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="applicationNo != null">applcation_no,</if>
+      <if test="applicationNo != null">application_no,</if>
         operater_time,
       <if test="operaterId != null">operater_id,</if>
       <if test="applicationType != null">application_type,</if>
@@ -56,11 +56,13 @@
       <if test="isComplete != null">#{isComplete},</if>
       <if test="isSkipRestDay != null">#{isSkipRestDay},</if>
     </trim>
-  
   </insert>
-  
-  
-  
+	<!-- 申请列表查询 -->  
+  <select id="selectApplicationList" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select application_no,application_type,is_reject,is_transfer,is_complete from att_simple.application_total_record_ atr
+  	where atr.application_id =#{applicationId} and atr.company_id =#{companyId} order by atr.operater_time DESC
+  	limit #{count}::integer offset #{page}::integer
+  </select>
   
   
   
@@ -72,18 +74,19 @@
   
   
   <!-- 系统 -->
+  <!-- 根据单号查询申请状态 -->
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from application_total_record_
-    where applcation_no = #{applicationNo}
+    where application_no = #{applicationNo}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from application_total_record_
-    where applcation_no = #{applicationNo}
+    where application_no = #{applicationNo}
   </delete>
   <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.ApplicationTotalRecord">
-    insert into application_total_record_ (applcation_no, operater_time, operater_id, 
+    insert into application_total_record_ (application_no, operater_time, operater_id, 
       application_type, last_approver, is_copy, 
       application_id, company_id, is_reject, 
       application_status, reject_reason, is_transfer
@@ -98,7 +101,7 @@
     insert into application_total_record_
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="applicationNo != null">
-        applcation_no,
+        application_no,
       </if>
       <if test="operaterTime != null">
         operater_time,
@@ -210,7 +213,7 @@
         is_transfer = #{isTransfer},
       </if>
     </set>
-    where applcation_no = #{applicationNo}
+    where application_no = #{applicationNo}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ApplicationTotalRecord">
     update application_total_record_
@@ -225,6 +228,6 @@
       application_status = #{applicationStatus},
       reject_reason = #{rejectReason},
       is_transfer = #{isTransfer}
-    where applcation_no = #{applicationNo}
+    where application_no = #{applicationNo}
   </update>
 </mapper>
