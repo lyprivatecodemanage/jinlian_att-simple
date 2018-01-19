@@ -55,10 +55,13 @@ v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name,yea
 	on v.employee_id = e.employee_id and v.company_id = e.company_id and v.department_id = e.department_id 
 	left join organization.department_ d 
 	on e.department_id = d.department_id and e.company_id = d.company_id 
+	left JOIN organization.user_company uc 
+	on uc.company_id=d.company_id and uc.user_id = v.employee_id
 	<where>
 		v.company_id = #{companyId} 
 		and year_ = #{year}
-		and 
+		and uc.is_active = '1'
+		and uc.type = '1'
 		<if test="departmentId != null">
 			and v.department_id = #{departmentId}
 		</if>
