@@ -43,7 +43,7 @@ public class ClassesController {
          "morrowFlag":"0/1",(是否是次日的这个时间下班 0:不是 1:是)
          "restStartTime":"12:00",每天的休息时间段:开始时间
          "restEndTime":"13:00",每天的休息时间段:结束时间
-         "restDays":"67",一周的休息日（6、7表示周六和周日休息）
+         "restDays":"67",(传递的是67的时候，表示一周的周六和周日休息、传递的是"5,2"表示做5休2)
          "festivalRestFlag":"0/1",(法定假日是否休息标志位0:不休息 1:休息)
 		 "signInRule":"20",（签到晚20分钟不算迟到）
 		 "signOutRule":"20",(签退早20分钟不算早退)

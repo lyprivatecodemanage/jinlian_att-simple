@@ -28,7 +28,7 @@ import com.xiangshangban.att_simple.utils.FormatUtil;
 import com.xiangshangban.att_simple.utils.TimeUtil;
 
 @Service
-@Transactional
+/*@Transactional*/
 public class ClassesServiceImpl implements ClassesService{
 	
 	@Autowired
@@ -154,29 +154,40 @@ public class ClassesServiceImpl implements ClassesService{
 				//定义添加班次后的结果
 				int addClassesEmp = 0;
 				for(int i = 0;i<empArray.size();i++){
-					
 					//创建Calendar对象
 					Calendar cal = Calendar.getInstance();
-					
 					//设置班次生效时间
 					if(validDate!=null && !validDate.toString().trim().equals("")){
 						try {
 							Date parse = new SimpleDateFormat("yyyy-MM-dd").parse(validDate.toString().trim());
 							cal.setTime(parse);
+							if(!nextDayFlag.equals("1")){
+								cal.add(Calendar.DAY_OF_MONTH,-1);
+							}
 						} catch (ParseException e) {
 							e.printStackTrace();
 						}
-					}else{
-						//默认次日生效
-						cal.add(Calendar.DAY_OF_MONTH,1); 
 					}
-					
 					
 					JSONObject emp = JSONObject.parseObject(empArray.get(i).toString());
 					
+					//TODO 做x休x模式，获取工作天数和休息天数(限制for循环的执行次数)
+					int workDaysCount = 0;
+					int restDaysCount = 0;
+					//初始化工作天数限制变量、休息天数限制变量
+					int workDaysLimit = 0;
+					int restDaysLimit = 0;
+					
+					if(classesType.getRestDays().contains(",")){ //做x休x模式
+						//获取工作天数
+						workDaysCount = Integer.parseInt(classesType.getRestDays().trim().split(",")[0]);
+						//获取休息的天数
+						restDaysCount = Integer.parseInt(classesType.getRestDays().trim().split(",")[1]);
+					}
+					
 					for(int s=0;s<scheduleDays;s++){
 						
-						//次日下班的时候，上班日期是前一次排班下班的日期
+						//默认班次次日生效
 						if(!nextDayFlag.equals("1")){
 							cal.add(Calendar.DAY_OF_MONTH,1); 
 						}
@@ -236,37 +247,31 @@ public class ClassesServiceImpl implements ClassesService{
 						//设置分隔颜色
 						classesEmployee.setDivideColor(String.valueOf(access_count));
 						
-						//TODO 排除休息日
-						if(classesType.getRestDays().contains(classesEmployee.getWeek())){
-							//当天没有安排班次
-							classesEmployee.setClassesId("");
-							classesEmployee.setClassesName("");
-							classesEmployee.setOnDutySchedulingDate("");
-							classesEmployee.setOffDutySchedulingDate("");
-							classesEmployee.setRestStartTime("");
-							classesEmployee.setRestEndTime("");
-							classesEmployee.setSignInRule("");
-							classesEmployee.setSignOutRule("");
-							classesEmployee.setOnPunchCardRule("");
-							classesEmployee.setOffPunchCardRule("");
-							classesEmployee.setDivideColor("");
-						}else{
-							//TODO 排除法定节假日
-							List<Festival> allFestivalInfo = festivalMapper.selectAllFestivalInfo();
-							
-							for (Festival festival : allFestivalInfo) {
+					    if(classesType.getRestDays().contains(",")){ //做x休x模式 
+					    	workDaysLimit++;
+					    	if(workDaysLimit>workDaysCount){
+					    		restDaysLimit++;
+					    		if(restDaysLimit<=restDaysCount){
+					    			//设置休息日的班次
+						    		setRestDaysClasses(classesEmployee);
+					    		}else{
+					    			//本循环周期结束，重新设置循环次数
+					    			//(workDaysLimit设置为0的时候将会，除第一轮外<第一轮是从workDaysLimit++后，也就是=1才开始的>，其它轮都会多一次)
+					    			workDaysLimit = 1;
+					    			restDaysLimit = 0;
+					    		}
+					    	}
+					    }else if(classesType.getRestDays().contains(classesEmployee.getWeek())){ //周循环的模式(排除一周的休息日)
+							//设置休息日的班次
+							setRestDaysClasses(classesEmployee);
+						}
+						//TODO 排除法定节假日
+						List<Festival> allFestivalInfo = festivalMapper.selectAllFestivalInfo();
+						for (Festival festival : allFestivalInfo) {
+							if(!classesEmployee.getOnDutySchedulingDate().equals("")){
 								if(classesEmployee.getOnDutySchedulingDate().split(" ")[0].equals(festival.getFestivalDate())){
-									classesEmployee.setClassesId("");
-									classesEmployee.setClassesName("");
-									classesEmployee.setOnDutySchedulingDate("");
-									classesEmployee.setOffDutySchedulingDate("");
-									classesEmployee.setRestStartTime("");
-									classesEmployee.setRestEndTime("");
-									classesEmployee.setSignInRule("");
-									classesEmployee.setSignOutRule("");
-									classesEmployee.setOnPunchCardRule("");
-									classesEmployee.setOffPunchCardRule("");
-									classesEmployee.setDivideColor("");
+									//设置休息日的班次
+									setRestDaysClasses(classesEmployee);
 								}
 							}
 						}
@@ -781,7 +786,7 @@ public class ClassesServiceImpl implements ClassesService{
 		return result;
 	}
 	
-	//=========================公共方法：计算排班天数===========================
+	//=========================公共方法===========================
 	/**
 	 * 计算排班天数
 	 * @param date 指定的班次生效时间（为null的时候，表示次日生效）
@@ -810,5 +815,23 @@ public class ClassesServiceImpl implements ClassesService{
 			calendar.add(Calendar.MONTH, -1);
 		}
 		return count;
+	}
+	
+	/**
+	 * 设置(休息日/节假日)的班次
+	 */
+	public void setRestDaysClasses(ClassesEmployee classesEmployee){
+		
+		classesEmployee.setClassesId("");
+		classesEmployee.setClassesName("");
+		classesEmployee.setOnDutySchedulingDate("");
+		classesEmployee.setOffDutySchedulingDate("");
+		classesEmployee.setRestStartTime("");
+		classesEmployee.setRestEndTime("");
+		classesEmployee.setSignInRule("");
+		classesEmployee.setSignOutRule("");
+		classesEmployee.setOnPunchCardRule("");
+		classesEmployee.setOffPunchCardRule("");
+		classesEmployee.setDivideColor("");
 	}
 }
