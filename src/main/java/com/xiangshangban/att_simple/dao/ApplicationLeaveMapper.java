@@ -12,6 +12,12 @@ import com.xiangshangban.att_simple.bean.Paging;
 @Mapper
 public interface ApplicationLeaveMapper {
 	/**
+	 * 根据申请单号查询详细内容
+	 * @param applicationNo
+	 * @return
+	 */
+	Application selectDetailsByApplicationNo(String applicationNo);
+	/**
 	 * 添加请假记录
 	 * @param application
 	 * @return

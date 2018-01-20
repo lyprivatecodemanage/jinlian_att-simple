@@ -20,7 +20,6 @@ import com.xiangshangban.att_simple.dao.ClassesEmployeeMapper;
 import com.xiangshangban.att_simple.dao.ReportDailyMapper;
 import com.xiangshangban.att_simple.dao.ReportExceptMapper;
 import com.xiangshangban.att_simple.utils.TimeUtil;
-import com.xiangshangban.organization.bean.Employee;
 
 @Service("AlgorithmService")
 public class AlgorithmServiceImpl implements AlgorithmService {
