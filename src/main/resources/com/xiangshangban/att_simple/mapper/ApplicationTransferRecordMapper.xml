@@ -9,10 +9,11 @@
     <result column="transfer_times"  property="transferTimes" />
     <result column="operater_time"  property="operaterTime" />
     <result column="transfer_explain"  property="transferExplain" />
+    <result column="company_id"  property="companyId" />
   </resultMap>
   <sql id="Base_Column_List">
     id, application_no, transfer_person_id, transfer_persion_access_id, transfer_times, 
-    operater_time, transfer_explain
+    operater_time, transfer_explain, company_id
   </sql>
   <!-- 根据单号查询转移记录 -->
   <select id="selectTransferByApplicationNo" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -36,10 +37,10 @@
   <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.ApplicationTransferRecord">
     insert into application_transfer_record_ (id, application_no, transfer_person_id, 
       transfer_persion_access_id, transfer_times, 
-      operater_time, transfer_explain)
+      operater_time, transfer_explain,company_id)
     values (#{id}, #{applicationNo}, #{transferPersonId}, 
       #{transferPersionAccessId}, #{transferTimes}, 
-      #{operaterTime}, #{transferExplain})
+      #{operaterTime}, #{transferExplain},#{companyId})
   </insert>
   <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationTransferRecord">
     insert into application_transfer_record_
@@ -65,6 +66,9 @@
       <if test="transferExplain != null">
         transfer_explain,
       </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -87,6 +91,9 @@
       </if>
       <if test="transferExplain != null">
         #{transferExplain},
+      </if>
+      <if test="companyId != null">
+        #{companyId},
       </if>
     </trim>
   </insert>
@@ -111,6 +118,9 @@
       <if test="transferExplain != null">
         transfer_explain = #{transferExplain},
       </if>
+      <if test="companyId != null">
+        company_id = #{companyId},
+      </if>
     </set>
     where id = #{id}
   </update>
@@ -121,7 +131,8 @@
       transfer_persion_access_id = #{transferPersionAccessId},
       transfer_times = #{transferTimes},
       operater_time = #{operaterTime},
-      transfer_explain = #{transferExplain}
+      transfer_explain = #{transferExplain},
+      company_id = #{companyId}
     where id = #{id}
   </update>
 </mapper>

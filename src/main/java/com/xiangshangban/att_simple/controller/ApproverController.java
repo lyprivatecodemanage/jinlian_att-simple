@@ -55,10 +55,10 @@ public class ApproverController {
 				JSONObject jobj = JSON.parseObject(jsonString);
 				page = jobj.getString("page");
 				count = jobj.getString("count");
-				applicationType = jobj.getString("applicationType");
-				statusDescription = jobj.getString("statusDescription");
-				applicationTimeDescription = jobj.getString("applicationTimeDescription");
-				applicatrionPersonName = jobj.getString("applicatrionPersonName");
+				applicationType = jobj.getString("applicationType");//申请类型
+				statusDescription = jobj.getString("statusDescription");//申请状态
+				applicationTimeDescription = jobj.getString("applicationTimeDescription");//申请时间
+				applicatrionPersonName = jobj.getString("applicatrionPersonName");//申请人
 			}catch(Exception e){
 				logger.info(e);
 				e.printStackTrace();

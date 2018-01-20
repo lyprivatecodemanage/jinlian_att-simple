@@ -65,13 +65,44 @@
   </select>
   
   <!-- 审批列表 -->
-  <select id="selectApproverList" parameterType="java.lang.String" resultMap="BaseResultMap">
+ <!--  <select id="selectApproverList" parameterType="java.lang.String" resultMap="BaseResultMap">
   	select <include refid="Base_Column_List"/>
   	from att_simple.application_total_record_ atr
-  	where atr.last_approver = #{employeeId} and atr.company_id = #{companyId} and is_complete = '0' order by atr.operater_time DESC
+  	<if test="isCopy!=null and isCopy!=''">
+  	left join att_simple.application_to_copy_person_ cp on cp.copy_person_id = #{employeeId} 
+  	and cp.company_id = #{companyId} and cp.application_no = atr.application_no
+  	</if>
+  	where 
+  	atr.last_approver = #{employeeId} 
+  	and atr.company_id = #{companyId} 
+  	<if test="applicationType!=null and application!=''">
+  	and atr.application_type = #{applicationType}
+  	</if>
+  	<if test="isComplete!=null and isComplete!=''">
+  	and atr.is_complete = #{isComplete}
+  	</if>
+  	<if test="isTranser!=null and isTranser!=''">
+  	and atr.is_transfer = #{isTranser}
+  	</if>
+  	<if test="isReject!=null and isReject!=''">
+  	and atr.is_reject = #{isReject}
+  	</if>
+  	<if test="isCopy=null and isCopy!=''">
+  	and atr.is_copy = #{isCopy}
+  	</if>
+  	order by atr.operater_time DESC
   	limit #{count}::integer offset #{page}::integer
-  </select>
-  
+  </select> -->
+  <!-- 审批列表首页 -->
+  <!-- <select id="">
+  select <include refid="Base_Column_List"/>
+  	from att_simple.application_total_record_ atr
+  	left join att_simple.application_to_copy_person_ cp 
+  	on atr.application_no = cp.application_no and (atr.last_approver = #{employeeId} or cp.copy_person_id =#{employeeId})
+  	cp.company_id = #{companyId} 
+  	where 
+  	atr.company_id = #{companyId}
+  </select> -->
   
   
   

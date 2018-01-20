@@ -23,6 +23,7 @@ public class ApplicationTransferRecord {
     private String operaterTime;
     //移交说明
     private String transferExplain;
+    private String companyId;
 
     public String getId() {
         return id;
@@ -94,6 +95,14 @@ public class ApplicationTransferRecord {
 
 	public void setTransferPersionAccessName(String transferPersionAccessName) {
 		this.transferPersionAccessName = transferPersionAccessName;
+	}
+
+	public String getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(String companyId) {
+		this.companyId = companyId;
 	}
     
 }

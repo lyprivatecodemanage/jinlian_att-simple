@@ -57,12 +57,47 @@ public class ApproverServiceImpl implements ApproverService {
 	 */
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED,rollbackForClassName="Exception")
-	public List<Application> approverIndexPage(String employeeId,String companyId,String page,String count,String applicationType,String statusDescription,String applicationTimeDescription,String applicatrionPersonName) {
+	public List<Application> approverIndexPage(String employeeId,String companyId,String page,String count,
+			String applicationType,String statusDescription,
+			String applicationTimeDescription,String applicatrionPersonName) {
+		String isComplete = "";
+		String isTranser = "";
+		String isReject = "";
+		String isCopy = "";
 		page = String.valueOf((Integer.valueOf(page)-1)*Integer.valueOf(count));
+		//申请类型
 		if(StringUtils.isEmpty(applicationType)||"全部".equals(applicationType)){
-			
-		}else if("未审批".equals(applicationType)){
-			List<ApplicationTotalRecord> approverList = applicationTotalRecordMapper.selectApproverList(employeeId, companyId, page, count);
+			applicationType = null;
+		}else if("请假".equals(applicationType)){
+			applicationType = "1";
+		}else if("加班".equals(applicationType)){
+			applicationType = "2";
+		}else if("出差".equals(applicationType)){
+			applicationType = "3";
+		}else if("外出".equals(applicationType)){
+			applicationType = "4";
+		}else if("补卡".equals(applicationType)){
+			applicationType = "5";
+		}
+		//申请状态
+		if(StringUtils.isEmpty(statusDescription)||"全部".equals(statusDescription)){
+			isCopy="1";
+		}else if("未审批".equals(statusDescription)){
+			isComplete="0";
+		}else if("已转移".equals(statusDescription)){
+			isTranser = "1";
+		}else if("已完成".equals(statusDescription)){
+			isComplete = "1";
+		}else if("已驳回".equals(statusDescription)){
+			isComplete = "1";
+			isReject = "1";
+		}else if("抄送".equals(statusDescription)){
+			isCopy="1";
+		}
+		
+		if("未审批".equals(applicationType)){
+			List<ApplicationTotalRecord> approverList = applicationTotalRecordMapper.selectApproverList(employeeId,
+					companyId, page, count, applicationType, isComplete, isTranser, isReject, isCopy);
 		}
 		return null;
 	}
