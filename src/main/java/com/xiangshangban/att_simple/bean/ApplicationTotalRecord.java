@@ -1,4 +1,7 @@
 package com.xiangshangban.att_simple.bean;
+
+import io.undertow.servlet.core.ApplicationListeners;
+
 /**
  * 申请记录汇总表
  * @author mian
@@ -34,7 +37,6 @@ public class ApplicationTotalRecord {
     
     private String isSkipRestDay;
     
-
     public String getIsComplete() {
 		return isComplete;
 	}

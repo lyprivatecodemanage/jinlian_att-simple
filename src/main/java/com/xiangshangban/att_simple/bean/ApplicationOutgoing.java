@@ -14,7 +14,7 @@ public class ApplicationOutgoing {
     //申请人部门id
     private String companyId;
     //外出地点
-    private String outgoningLocation;
+    private String outgoingLocation;
     //开始时间
     private String startTime;
     //结束时间
@@ -66,12 +66,12 @@ public class ApplicationOutgoing {
         this.companyId = companyId;
     }
 
-    public String getOutgoningLocation() {
-        return outgoningLocation;
+    public String getoutgoingLocation() {
+        return outgoingLocation;
     }
 
-    public void setOutgoningLocation(String outgoningLocation) {
-        this.outgoningLocation = outgoningLocation;
+    public void setoutgoingLocation(String outgoingLocation) {
+        this.outgoingLocation = outgoingLocation;
     }
 
     public String getStartTime() {
