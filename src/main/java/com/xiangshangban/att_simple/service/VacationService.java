@@ -38,4 +38,15 @@ public interface VacationService {
 	 */
 	ReturnData AdjustRestAdjustment(String vacationId,String vacationMold,String adjustRest,String changingReason,String auditorEmployeeId,String year);
     
+	/**
+	 * 年假一键清零
+	 * @return
+	 */
+	ReturnData ResetAnnualLeave(String companyId,String year,String auditorEmployeeId);
+	
+	/**
+	 * 年假一键生成
+	 * @return
+	 */
+	ReturnData AnnualLeaveGenerate(String companyId,String year);
 }

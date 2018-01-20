@@ -31,8 +31,15 @@ v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name,yea
   </sql>
   
   <!-- select -->
+  <select id="selectResetAnnualLeave" resultMap="BaseResultMap">
+  	select * from vacation
+	where company_id = #{companyId}
+	and year_ = #{year}
+	and annual_leave_balance > '0'
+  </select>
+  
   <select id="SelectFuzzyPagel" parameterType="com.xiangshangban.att_simple.bean.Paging" resultMap="BaseResultMap">
-  	select 
+  	select DISTINCT
   	<include refid="Vacation_Employee_Column_List"/>
 	from 
 	(select <include refid="Vacation_Employee_Column_List1"/>,
@@ -107,6 +114,8 @@ v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name,yea
   			and employee_id = #{employeeId}
   		</if>
   	</where>
+  	ORDER BY year_ DESC
+  	limit 1
   </select>
 	  
   <!-- delete -->
@@ -119,10 +128,10 @@ v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name,yea
   <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.Vacation">
     insert into vacation (vacation_id, company_id, department_id, 
       employee_id, annual_leave_total, annual_leave_balance, 
-      adjust_rest_total, adjust_rest_balance)
+      adjust_rest_total, adjust_rest_balance,year_)
     values (#{vacationId,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR}, #{departmentId,jdbcType=VARCHAR}, 
       #{employeeId,jdbcType=VARCHAR}, #{annualLeaveTotal,jdbcType=VARCHAR}, #{annualLeaveBalance,jdbcType=VARCHAR}, 
-      #{adjustRestTotal,jdbcType=VARCHAR}, #{adjustRestBalance,jdbcType=VARCHAR})
+      #{adjustRestTotal,jdbcType=VARCHAR}, #{adjustRestBalance,jdbcType=VARCHAR}, #{year,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.Vacation">
     insert into vacation
@@ -151,6 +160,9 @@ v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name,yea
       <if test="adjustRestBalance != null">
         adjust_rest_balance,
       </if>
+      <if test="year != null">
+      	year_,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="vacationId != null">
@@ -176,6 +188,9 @@ v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name,yea
       </if>
       <if test="adjustRestBalance != null">
         #{adjustRestBalance,jdbcType=VARCHAR},
+      </if>
+      <if test="year != null">
+      	#{year,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>

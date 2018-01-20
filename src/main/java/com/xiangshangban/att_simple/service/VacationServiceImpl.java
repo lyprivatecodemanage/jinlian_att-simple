@@ -1,6 +1,7 @@
 package com.xiangshangban.att_simple.service;
 
 import java.io.ObjectOutputStream.PutField;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.math.util.MathUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,21 +17,29 @@ import com.alibaba.fastjson.JSONObject;
 import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.bean.Vacation;
 import com.xiangshangban.att_simple.bean.VacationDetails;
+import com.xiangshangban.att_simple.bean.Employee;
 import com.xiangshangban.att_simple.bean.Paging;
+import com.xiangshangban.att_simple.dao.EmployeeDao;
 import com.xiangshangban.att_simple.dao.VacationDetailsMapper;
 import com.xiangshangban.att_simple.dao.VacationMapper;
 import com.xiangshangban.att_simple.utils.FormatUtil;
+import com.xiangshangban.att_simple.utils.computeVacation;
 
 @Service("vacationService")
 public class VacationServiceImpl implements VacationService {
 
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
+	computeVacation cv = new computeVacation();
+	
 	@Autowired
 	VacationMapper vacationMapper;
 	
 	@Autowired
 	VacationDetailsMapper vacationDetailsMapper;
+	
+	@Autowired
+	EmployeeDao employeeDao;
 
 	@Override
 	public ReturnData SelectFuzzyPagel(Paging paging) {
@@ -104,10 +114,10 @@ public class VacationServiceImpl implements VacationService {
 			vd.setChangeingDate(sdf.format(new Date()));
 			vd.setYear(year);
 			
-			int num = vacationDetailsMapper.insertSelective(vd);
+			int num = vacationMapper.UpdateAnnualLeave(vacationId, String.valueOf(limitChange), String.valueOf(limitChange),year);
 			
 			if(num > 0){
-				vacationMapper.UpdateAnnualLeave(vacationId, String.valueOf(limitChange), String.valueOf(limitChange),year);
+				vacationDetailsMapper.insertSelective(vd);
 				
 				returndata.setReturnCode("3000");
 				returndata.setMessage("数据请求成功");
@@ -132,10 +142,10 @@ public class VacationServiceImpl implements VacationService {
 			vd.setChangeingDate(sdf.format(new Date()));
 			vd.setYear(year);
 			
-			int num = vacationDetailsMapper.insertSelective(vd);
+			int num = vacationMapper.UpdateAnnualLeave(vacationId,String.valueOf(i),String.valueOf(o),year);
 			
 			if(num > 0){
-				vacationMapper.UpdateAnnualLeave(vacationId,String.valueOf(i),String.valueOf(o),year);
+				vacationDetailsMapper.insertSelective(vd);
 				
 				returndata.setReturnCode("3000");
 				returndata.setMessage("数据请求成功");
@@ -231,6 +241,79 @@ public class VacationServiceImpl implements VacationService {
 		returndata.setReturnCode("3000");
 		returndata.setMessage("服务器错误");
         return returndata;
+	}
+
+	@Override
+	public ReturnData ResetAnnualLeave(String companyId,String year,String auditorEmployeeId) {
+		// TODO Auto-generated method stub
+		ReturnData returndata = new ReturnData();
+		
+		List<Vacation> list = vacationMapper.selectResetAnnualLeave(companyId, year);
+		
+		for (Vacation vacation : list) {
+			AnnualLeaveAdjustment(vacation.getVacationId(),"1", vacation.getAnnualLeaveBalance(),"年假一键清零", auditorEmployeeId, year);
+		}
+		
+		returndata.setReturnCode("3000");
+		returndata.setMessage("数据请求成功");
+        return returndata;
+	}
+
+	@Override
+	public ReturnData AnnualLeaveGenerate(String companyId,String year) {
+		// TODO Auto-generated method stub
+		ReturnData returndata = new ReturnData();
+		List<Employee> list = employeeDao.findAllEmployeeByCompanyId(companyId);
+		
+		for (Employee employee : list) {
+			//判断员工工龄字段不能为空
+			if(StringUtils.isNotEmpty(employee.getSeniority()) && StringUtils.isNotEmpty(employee.getProbationaryExpired())){
+			
+				//年假天数
+				int AVday = 0;
+				
+				try {
+					AVday = cv.ABCAnnualFormula(employee.getSeniority(), 1, employee.getProbationaryExpired(), 0, 0);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				Vacation vacation = vacationMapper.SelectEmployeeVacation(companyId, null, employee.getEmployeeId());
+				
+				if(vacation != null){
+					Vacation v = new Vacation();
+					v.setVacationId(vacation.getVacationId());
+					v.setCompanyId(employee.getCompanyId());
+					v.setDepartmentId(employee.getDepartmentId());
+					v.setEmployeeId(employee.getEmployeeId());
+					v.setAnnualLeaveTotal(String.valueOf(AVday));
+					v.setAnnualLeaveBalance(String.valueOf(AVday));
+					v.setAdjustRestTotal(vacation.getAdjustRestTotal());
+					v.setAdjustRestBalance(vacation.getAdjustRestBalance());
+					v.setYear(year);
+					
+					vacationMapper.insertSelective(v);
+				}else{
+					Vacation v = new Vacation();
+					v.setVacationId(FormatUtil.createUuid());
+					v.setCompanyId(employee.getCompanyId());
+					v.setDepartmentId(employee.getDepartmentId());
+					v.setEmployeeId(employee.getEmployeeId());
+					v.setAnnualLeaveTotal(String.valueOf(AVday));
+					v.setAnnualLeaveBalance(String.valueOf(AVday));
+					v.setAdjustRestTotal("0");
+					v.setAdjustRestBalance("0");
+					v.setYear(year);
+					
+					vacationMapper.insertSelective(v);
+				}
+			}
+		}
+		
+		returndata.setReturnCode("3000");
+		returndata.setMessage("数据请求成功");
+		return returndata;
 	}
 
 }

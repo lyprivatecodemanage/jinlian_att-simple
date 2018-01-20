@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.xiangshangban.att_simple.bean.Vacation;
 import com.xiangshangban.att_simple.bean.VacationDetails;
 
 @Mapper
@@ -50,4 +51,6 @@ public interface VacationDetailsMapper {
      */
     List<VacationDetails> SelectVacationDetails(@Param("vacationId")String vacationId,@Param("vacationType")String vacationType,
     		@Param("changingReason")String changingReason,@Param("changeingDateRank")String changeingDateRank,@Param("pageExcludeNumber")String pageExcludeNumber,@Param("pageNum")String pageNum);
+
+    
 }

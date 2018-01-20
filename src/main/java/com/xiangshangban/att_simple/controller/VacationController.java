@@ -1,6 +1,7 @@
 package com.xiangshangban.att_simple.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,7 +63,7 @@ public class VacationController {
 	 * @param jsonString
 	 * @return
 	 */
-	@RequestMapping(value="AnnualLeaveAdjustment",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+	@RequestMapping(value="/AnnualLeaveAdjustment",produces="application/json;charset=utf-8",method=RequestMethod.POST)
 	public ReturnData AnnualLeaveAdjustment(@RequestBody String jsonStirng,HttpServletRequest request){
 		ReturnData result = new ReturnData();
 		
@@ -86,7 +87,7 @@ public class VacationController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value="AdjustRestAdjustment",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+	@RequestMapping(value="/AdjustRestAdjustment",produces="application/json;charset=utf-8",method=RequestMethod.POST)
 	public ReturnData AdjustRestAdjustment(@RequestBody String jsonStirng,HttpServletRequest request){
 		ReturnData result = new ReturnData();
 		
@@ -104,5 +105,43 @@ public class VacationController {
 		return result;
 	}
 	
+	/**
+	 * 焦振/年假一键清零
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/ResetAnnualLeave",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+	public ReturnData ResetAnnualLeave(HttpServletRequest request){
+		ReturnData result = new ReturnData();
+		String companyId = request.getHeader("companyId");
+		String auditorEmployeeId = request.getHeader("accessUserId");
+		
+		//获取上一年的年份
+		Calendar now = Calendar.getInstance();
+		String year = now.get(Calendar.YEAR)-1+"";
+		
+		result = vacationService.ResetAnnualLeave(companyId, year,auditorEmployeeId);
+		
+		return result;
+	}
+	
+	/**
+	 * 焦振/年假一键生成
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/AnnualLeaveGenerate",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+	public ReturnData AnnualLeaveGenerate(HttpServletRequest request){
+		ReturnData result = new ReturnData();
+		String companyId = request.getHeader("companyId");
+		
+		//获取上一年的年份
+		Calendar now = Calendar.getInstance();
+		String year = now.get(Calendar.YEAR)+"";
+		
+		result = vacationService.AnnualLeaveGenerate(companyId, year);
+		
+		return result;
+	}
 	
 }

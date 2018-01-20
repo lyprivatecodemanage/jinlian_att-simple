@@ -65,4 +65,14 @@ public interface VacationMapper {
      * @return
      */
     int UpdateAdjustRest(@Param("vacationId")String vacationId,@Param("adjustRestTotal")String adjustRestTotal,@Param("adjustRestBalance")String adjustRestBalance);
+    
+    /**
+     * 查询清零年假人员假期记录
+     * @param companyId
+     * @param year
+     * @return
+     */
+    List<Vacation> selectResetAnnualLeave(@Param("companyId")String companyId,@Param("year")String year);
+    
+    
 }
