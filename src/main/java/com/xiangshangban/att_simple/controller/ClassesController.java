@@ -1,5 +1,7 @@
 package com.xiangshangban.att_simple.controller;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
-import com.xiangshangban.att_simple.bean.ClassesEmployee;
 import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.service.ClassesService;
 import com.xiangshangban.att_simple.service.NotClockingInEmpService;
@@ -211,36 +212,84 @@ public class ClassesController {
 	 * 根据条件导出人员班次信息
 	 * @param requestParam
 	 * {
-			“classesType”:”常白班”（班次类型）
-			“empDept”:”研发部”（人员部门）
-			“empName”:”小青”（人员名称）
-			“perviousWeek”:”0/1”（是否查看上周的数据0：没有该搜索条件 1：有该搜索条件）
-			“thisWeek”：“0/1”(是否查看本周班次 0：不查看 1：查看)
-			“nextWeek”:”0/1”(是否查看下一周的班次 0：不查看 1：查看)
-			“currentDate”:”2018-01-09”（隐藏条件<后台自己准备>，根据当前时间划定一周时间）
-		}
+			"classesTypeId":"常白班"（班次编号）
+			"deptId":"研发部”（人员部门编号）
+			"empName":"小青"（人员名称）
+			"perviousWeek":"0/1"（是否查看上周的数据0：没有该搜索条件 1：有该搜索条件）
+			"thisWeek":"0/1"(是否查看本周班次 0：不查看 1：查看)------->默认显示本周的
+			"nextWeek":"0/1"(是否查看下一周的班次 0：不查看 1：查看)
+			"flag":"0"（导出记录标志位：0表示导出人员班次信息）
+	   }
 	 * @param request
 	 * @param response
 	 */
+	@PostMapping("/exportScheduling")
 	public void exportScheduling(@RequestBody String requestParam, HttpServletRequest request, HttpServletResponse response){
-		
+		try {
+            response.setContentType("application/octet-stream ");
+            String agent = request.getHeader("USER-AGENT");
+            String excelName = "unknown.xls";
+            //解析请求的数据
+            JSONObject jsonObject = JSONObject.parseObject(requestParam);
+            //获取请求的标志
+            Object flag = jsonObject.get("flag");
+
+            if (flag != null && !flag.toString().trim().isEmpty()) {
+                String status = flag.toString().trim();
+                if (status.equals("0")) {
+                    excelName = "empClassesRecord.xls";
+                }
+            }
+            if (agent != null && agent.indexOf("MSIE") == -1 && agent.indexOf("rv:11") == -1 &&
+                    agent.indexOf("Edge") == -1 && agent.indexOf("Apache-HttpClient") == -1) {//非IE
+                excelName = new String(excelName.getBytes("UTF-8"), "ISO-8859-1");
+                response.addHeader("Content-Disposition", "attachment;filename=" + excelName);
+            } else {
+                response.addHeader("Content-Disposition", "attachment;filename=" + java.net.URLEncoder.encode(excelName, "UTF-8"));
+            }
+            response.addHeader("excelName", java.net.URLEncoder.encode(excelName, "UTF-8"));
+            //获取输出流
+            OutputStream out = response.getOutputStream();
+            // 获取公司ID
+            String companyId = request.getHeader("companyId");
+            //获取操作人ID
+            String accessUserId = request.getHeader("accessUserId");
+            if ((companyId != null && !companyId.isEmpty())) {
+            	classesService.exportRecordToExcel(requestParam, excelName, out, companyId);
+                out.flush();
+            } else {
+                System.out.println("未知的登录人（公司）ID");
+            }
+        } catch (IOException e) {
+            System.out.println("导出文件输出流出错了！" + e);
+        }
 	}
 	
 	/**
 	 * 一键排班(一次排一个周期)
-	 * @param requestParam
-	 * {
-			“employeeIdList”:”[ (需要进行一键排班的人员)
-				{“empId”,”CSDCSCFSDIFHSDK56”},
-				{“empId”:”ADKJASDBKASDHASD67”}
-			]”
-	   }
 	 * @param request
 	 * @return
 	 */
-	public Map<String,Object> oneKeyScheduling(@RequestBody String requestParam,HttpServletRequest request){
-		
-		return null;
+	@PostMapping("/oneKeyScheduling")
+	public ReturnData oneKeyScheduling(HttpServletRequest request){
+		//获取公司ID
+		String companyId = request.getHeader("companyId");
+		//初始化返回的数据
+		ReturnData returnData = new ReturnData();
+		if(companyId!=null && !companyId.isEmpty()){
+			boolean deleteAppointClassesType = classesService.oneButtonScheduling(companyId.trim());
+			if(deleteAppointClassesType){
+				returnData.setReturnCode("3000");
+				returnData.setMessage("排班成功");
+			}else{
+				returnData.setReturnCode("3001");
+				returnData.setMessage("排班失败");
+			}
+		}else{
+			returnData.setReturnCode("3013");
+			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
+		}
+		return returnData;
 	}
 	
 	/**
@@ -425,6 +474,21 @@ public class ClassesController {
 		}else{
 			returnData.setReturnCode("3013");
 			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
+		}
+		return returnData;
+	}
+	
+	/**
+	 * 测试自动排班
+	 */
+	@PostMapping("/autoScheduling")
+	public ReturnData testAutoScheduling(){
+		boolean autoScheduling = classesService.autoScheduling();
+		ReturnData returnData = new ReturnData();
+		if(autoScheduling){
+			returnData.setMessage("自动排班成功");
+		}else{
+			returnData.setMessage("自动排班失败");
 		}
 		return returnData;
 	}

@@ -112,6 +112,7 @@
 			<artifactId>commons-codec</artifactId>
 			<version>${commons-codec-version}</version><scope>provided</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.apache</groupId>
 			<artifactId>commons-pool2</artifactId>

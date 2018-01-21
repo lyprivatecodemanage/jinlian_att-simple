@@ -225,9 +225,12 @@
   	WHERE emp_id = #{empId} and emp_company_id = #{companyId} and the_date between #{startTime} and #{endTime} ORDER BY on_duty_scheduling_date
   </select>
   
-  <!-- 删除指定班次人员，某个日期之后的班次 -->
+  <!-- 删除指定班次类型,指定人员，某个日期之后的班次 -->
   <delete id="deleteAppointClassesTypeEmp" parameterType="Map">
   	delete from classes_employee_ where (classes_id = #{classesTypeId} or classes_id = '') and emp_company_Id = #{companyId} and the_date >= #{offSetTime} 
+  	<if test='empId !=null and empId!=""'>
+  		and emp_id = #{empId}
+  	</if>
   </delete>
   
   <!-- 删除指定人员指定日期的排班 -->
@@ -370,5 +373,24 @@
 	ORDER BY
 		totalnum DESC OFFSET 0
 	LIMIT 3
+  </select>
+  
+  <!-- 查询当前公司所有已经排过班次的人员ID、班次类型ID(排除临时班次)、最后一次班次的时间-->
+  <select id="selectAllClassesEmp" parameterType="String" resultType="Map">
+ 	SELECT
+		COALESCE (emp_id, '') AS emp_id,
+		COALESCE (emp_company_id, '') AS emp_company_id,
+		COALESCE (classes_id, '') AS classes_id,
+		COALESCE (MAX(the_date), '') AS last_date
+	FROM
+		classes_employee_
+  	<where>
+  		classes_name !='临时班次'
+  		AND classes_name != ''
+  		<if test='companyId!=null and companyId!=""'>
+  			and emp_company_id = #{companyId}
+  		</if>
+  	</where>
+  	GROUP BY emp_id,classes_id,emp_company_id
   </select>
 </mapper>

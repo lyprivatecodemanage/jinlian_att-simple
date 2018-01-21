@@ -1,11 +1,19 @@
 package com.xiangshangban.att_simple.dao;
 
+
 import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.xiangshangban.att_simple.bean.ClassesEmployee;
+
+/**
+ *人员班次dao 
+ * @author 王勇辉
+ *
+ */
 @Mapper
 public interface ClassesEmployeeMapper {
 	
@@ -64,21 +72,13 @@ public interface ClassesEmployeeMapper {
 	 */
 	List<ClassesEmployee> selectPointTimeClasses(Map map);
 	
-	/**
-	 * 查询指定人员排的最后一个班次的时间
-	 * @param empId 人员ID
-	 * @param companyId
-	 * @return
-	 */
-	String selectEmpLastClassesDate(String empId,String companyId);
+	//########################<一键排班/自动排班>############################
 	
 	/**
-	 * 查询指定人员的班次类型信息(班次类型下班时间是次日的，存入的日期要加一天)
-	 * @param empId
-	 * @param companyId
+	 * 查询<当前/所有>公司所有已经排过班次的人员ID、班次类型ID(排除临时班次)、最后一次班次的时间
 	 * @return
 	 */
-	Map selectEmpClassesType(String empId,String companyId);
+	List<Map> selectAllClassesEmp(@Param("companyId") String companyId);
 	
 	/**
 	 * 添加新的人员班次
@@ -92,7 +92,7 @@ public interface ClassesEmployeeMapper {
 	 * @param classesEmpId 班次ID
 	 * @return
 	 */
-	int deleteAppointEmpDateClasses(String classesEmpId);
+	int deleteAppointEmpDateClasses(@Param("classesEmpId")String classesEmpId);
 	
 	/**
 	 * 删除指定班次类型，指定时间之后的人员排班
@@ -114,5 +114,5 @@ public interface ClassesEmployeeMapper {
 	 * @param currentDate 当前日期(计算时间差的时候使用)
 	 * @return
 	 */
-	List<Map> selectAllEmpClassesType(String currentDate);
+	List<Map> selectAllEmpClassesType(@Param("classesEmpId")String currentDate);
 }
