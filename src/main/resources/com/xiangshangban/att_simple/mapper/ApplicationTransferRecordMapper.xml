@@ -10,9 +10,12 @@
     <result column="operater_time"  property="operaterTime" />
     <result column="transfer_explain"  property="transferExplain" />
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
     <result column="company_id"  property="companyId" />
 =======
 >>>>>>> dev-weiyoudi
+>>>>>>> dev-development
   </resultMap>
   <sql id="Base_Column_List">
     id, application_no, transfer_person_id, transfer_persion_access_id, transfer_times, 
@@ -50,7 +53,10 @@
     values (#{id}, #{applicationNo}, #{transferPersonId}, 
       #{transferPersionAccessId}, #{transferTimes}, 
       #{operaterTime}, #{transferExplain})
+<<<<<<< HEAD
+=======
 >>>>>>> dev-weiyoudi
+>>>>>>> dev-development
   </insert>
   <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationTransferRecord">
     insert into application_transfer_record_
@@ -102,11 +108,14 @@
       <if test="transferExplain != null">
         #{transferExplain},
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
       </if>
       <if test="companyId != null">
         #{companyId},
 =======
 >>>>>>> dev-weiyoudi
+>>>>>>> dev-development
       </if>
     </trim>
   </insert>
@@ -131,11 +140,14 @@
       <if test="transferExplain != null">
         transfer_explain = #{transferExplain},
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
       </if>
       <if test="companyId != null">
         company_id = #{companyId},
 =======
 >>>>>>> dev-weiyoudi
+>>>>>>> dev-development
       </if>
     </set>
     where id = #{id}
@@ -148,11 +160,15 @@
       transfer_times = #{transferTimes},
       operater_time = #{operaterTime},
 <<<<<<< HEAD
+      transfer_explain = #{transferExplain}
+=======
+<<<<<<< HEAD
       transfer_explain = #{transferExplain},
       company_id = #{companyId}
 =======
       transfer_explain = #{transferExplain}
 >>>>>>> dev-weiyoudi
+>>>>>>> dev-development
     where id = #{id}
   </update>
 </mapper>

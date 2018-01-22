@@ -359,10 +359,14 @@
   <select id="selectTopThreeClassesType" parameterType="String" resultType="Map">
   	SELECT
 <<<<<<< HEAD
+	COUNT (1) totalnum,
+=======
+<<<<<<< HEAD
 	CAST(COUNT (1) AS VARCHAR) totalnum,
 =======
 	COUNT (1) totalnum,
 >>>>>>> dev-weiyoudi
+>>>>>>> dev-development
 	classes_name
 	FROM
 		classes_employee_
@@ -378,6 +382,8 @@
 		totalnum DESC OFFSET 0
 	LIMIT 3
   </select>
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
   
   <!-- 查询当前公司所有已经排过班次的人员ID、班次类型ID(排除临时班次)、最后一次班次的时间-->
@@ -400,4 +406,5 @@
   </select>
 =======
 >>>>>>> dev-weiyoudi
+>>>>>>> dev-development
 </mapper>

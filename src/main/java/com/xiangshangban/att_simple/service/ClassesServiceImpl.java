@@ -257,6 +257,8 @@ public class ClassesServiceImpl implements ClassesService{
 		      ],
 		      "empName": "测试unknown",
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 		      "postName": "测试人员",
 		      "thisWeekHours": "50.0"
 		    }
@@ -270,6 +272,7 @@ public class ClassesServiceImpl implements ClassesService{
 		    {
 		      "totalnum": "50",
 =======
+>>>>>>> dev-development
 		      "postName": "测试人员"
 		    }
 		  ],
@@ -281,7 +284,10 @@ public class ClassesServiceImpl implements ClassesService{
 		  "classesTopInfo": [
 		    {
 		      "totalnum": 50,
+<<<<<<< HEAD
+=======
 >>>>>>> dev-weiyoudi
+>>>>>>> dev-development
 		      "classes_name": "常白班"
 		    }
 		  ]
