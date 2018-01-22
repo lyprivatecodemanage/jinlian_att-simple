@@ -37,7 +37,14 @@ public interface VacationService {
 	 * @return
 	 */
 	ReturnData AdjustRestAdjustment(String vacationId,String vacationMold,String adjustRest,String changingReason,String auditorEmployeeId,String year);
-    
+
+	/**
+	 * 不完整数据信息人员
+	 * @param companyId
+	 * @return
+	 */
+	ReturnData IncompleteData(String companyId);
+	
 	/**
 	 * 年假一键清零
 	 * @return

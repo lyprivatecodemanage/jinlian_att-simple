@@ -106,6 +106,21 @@ public class VacationController {
 	}
 	
 	/**
+	 * 查询计算年假所需资料不完善人员信息
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/IncompleteData",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+	public ReturnData IncompleteData(HttpServletRequest request){
+		ReturnData result = new ReturnData();
+		String companyId = request.getHeader("companyId");
+		
+		result = vacationService.IncompleteData(companyId);
+		
+		return result;
+	}
+	
+	/**
 	 * 焦振/年假一键清零
 	 * @param request
 	 * @return

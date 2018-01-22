@@ -3,6 +3,7 @@ package com.xiangshangban.att_simple.service;
 import java.io.ObjectOutputStream.PutField;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.apache.commons.math.util.MathUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.bean.Vacation;
@@ -243,6 +245,23 @@ public class VacationServiceImpl implements VacationService {
         return returndata;
 	}
 
+	@Override
+	public ReturnData IncompleteData(String companyId){
+		ReturnData returndata = new ReturnData();
+		List<Employee> list = employeeDao.findAllEmployeeByCompanyId(companyId);
+		List<Employee> result = new ArrayList<>();
+		
+		for (Employee employee : list) {
+			if(StringUtils.isEmpty(employee.getSeniority()) || StringUtils.isEmpty(employee.getProbationaryExpired()) || StringUtils.isEmpty(employee.getEntryTime())){
+				result.add(employee);
+			}
+		}
+		returndata.setData(JSON.toJSON(result));
+		returndata.setReturnCode("3000");
+		returndata.setMessage("数据请求成功");
+        return returndata;
+	}
+	
 	@Override
 	public ReturnData ResetAnnualLeave(String companyId,String year,String auditorEmployeeId) {
 		// TODO Auto-generated method stub
