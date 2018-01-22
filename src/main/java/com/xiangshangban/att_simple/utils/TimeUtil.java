@@ -5,6 +5,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.util.StringUtils;
 
@@ -18,15 +20,21 @@ public class TimeUtil {
 	 * @return
 	 * @throws ParseException 
 	 */
-	public static String getDateBefore(String time){
+	public static String getDateBefore(String time,String d){
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		
 		try {
-			Date date = format.parse(time);
+			Date date = null;
+			try{
+			date = format.parse(time);
+			}catch(Exception e){
+				date = format1.parse(time);
+			}
 			Calendar now = Calendar.getInstance();
 			now.setTime(date);
-			int day = now.get(Calendar.DAY_OF_WEEK) - 2;
-			now.set(Calendar.DATE, now.get(Calendar.DATE) - day);
+			int day = now.get(Calendar.DAY_OF_WEEK) - Integer.valueOf(d);
+			now.set(Calendar.DATE, now.get(Calendar.DATE) - Integer.valueOf(d));
 			return format.format(now.getTime());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -224,6 +232,22 @@ public class TimeUtil {
 			e.printStackTrace();
 		}
 	    calendar.set(Calendar.DATE,calendar.get(Calendar.DATE)-1);
+	    return fomat.format(calendar.getTime());
+	}
+	/**
+	 * 或取某个日期的前一天日期(默认返回当前日期前一天)
+	 * @param date 设定日期字符串
+	 * @return
+	 */
+	public static String getNextDayDate(String date){
+		SimpleDateFormat fomat = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar calendar = Calendar.getInstance();
+		try {
+			calendar.setTime(fomat.parse(date));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	    calendar.set(Calendar.DATE,calendar.get(Calendar.DATE)+1);
 	    return fomat.format(calendar.getTime());
 	}
 	/**
@@ -623,16 +647,16 @@ public class TimeUtil {
 				return 0;
 			}
 			if(b2<=b1 && e2>b1 && e2<e1){//2
-				return e2-b1;
+				return (e2-b1)/1000;
 			}
 			if(b2>b1 && e2<e1){//3
-				return e2-b2;
+				return (e2-b2)/1000;
 			}
 			if(b2>b1 && b2<e1 && e2>=e1){//4
-				return e1-b2;
+				return (e1-b2)/1000;
 			}
 			if(b2<=b1 && e2>=e1){//5
-				return e1-b1;
+				return (e1-b1)/1000;
 			}
 			if(b2>e1){//6
 				return 0;
@@ -662,11 +686,44 @@ public class TimeUtil {
 		return false;
 	}
 	
-	public static void main(String[] args) {
-//		System.out.println(isCrossDay("2017-10-16 10:00:00", "2017-10-17 10:05:00"));
-//		System.out.println(getDateAfter(getCurrentDate(),1));
-		/*System.out.println(getCurrentMaxDate());*/
-		System.out.println(compareTime("2018-01-15 21:00:01","2018-01-15 01:00:01"));
+	/**
+	 * 获取指定日期所在周的周一和周日的日期
+	 * @param date 日期字符串:2018-01-18
+	 * @return
+	 * key:monday   value:2018-01-15    (周一日期)
+	 * key:weekend  value:2018-01-21	(周末日期)
+	 * @throws ParseException 
+	 */
+	public static Map<String,String> getMondayAndWeekendDate(String date){
+		//初始化要返回的数据
+		Map<String,String> returnData = new HashMap<>();
+		Calendar calendar = Calendar.getInstance();
+		try {
+			calendar.setTime(new SimpleDateFormat("yyyy-MM-dd").parse(date.trim()));
+			//获取当前日期对应的星期
+			int currentWeek = calendar.get(Calendar.DAY_OF_WEEK)-1;
+			if(currentWeek==0){
+				currentWeek = 7;
+			}
+			//获取周一日期
+			calendar.add(Calendar.DAY_OF_WEEK,-currentWeek+1);
+			returnData.put("monday",new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime()));
+			//获取周日日期
+			calendar.add(Calendar.DAY_OF_WEEK,6);
+			returnData.put("weekend",new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime()));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return returnData;
 	}
 	
+	public static void main(String[] args) {
+		System.out.println(containTimeLength("2017-10-16 10:00:00", "2017-10-16 10:05:00","2017-10-16 10:00:00", "2017-10-16 10:05:00")/60);
+//		System.out.println(getDateAfter(getCurrentDate(),1));
+//		System.out.println(getCurrentMaxDate());
+//		System.out.println(compareTime("2018-01-15 21:00:01","2018-01-15 01:00:01"));
+		/*Map map = getMondayAndWeekendDate("2018-01-10");
+		System.out.println(map.get("monday"));
+		System.out.println(map.get("weekend"));*/
+	}
 }

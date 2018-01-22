@@ -2,29 +2,52 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xiangshangban.att_simple.dao.ApplicationToCopyPersonMapper">
   <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.ApplicationToCopyPerson">
-    <id column="id" jdbcType="VARCHAR" property="id" />
-    <result column="application_no" jdbcType="VARCHAR" property="applicationNo" />
-    <result column="copy_person_id" jdbcType="VARCHAR" property="copyPersonId" />
-    <result column="operater_time" jdbcType="VARCHAR" property="operaterTime" />
+    <id column="id"  property="id" />
+    <result column="application_no"  property="applicationNo" />
+    <result column="copy_person_id"  property="copyPersonId" />
+    <result column="operater_time"  property="operaterTime" />
+<<<<<<< HEAD
+    <result column="company_id"  property="companyId" />
+=======
+>>>>>>> dev-weiyoudi
   </resultMap>
   <sql id="Base_Column_List">
-    id, application_no, copy_person_id, operater_time
+    id, application_no, copy_person_id, operater_time, company_id
   </sql>
+  
+  <!-- 根据单号查询抄送人集合 -->
+  <select id="selectCopyPersonByApplicationNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List"/>
+  	from att_simple.application_to_copy_person_ atcp
+  	where atcp.application_no = #{applicationNo}
+  </select>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <!-- 系统 -->
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from application_to_copy_person_
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from application_to_copy_person_
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id}
   </delete>
   <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.ApplicationToCopyPerson">
     insert into application_to_copy_person_ (id, application_no, copy_person_id, 
       operater_time)
-    values (#{id,jdbcType=VARCHAR}, #{applicationNo,jdbcType=VARCHAR}, #{copyPersonId,jdbcType=VARCHAR}, 
-      #{operaterTime,jdbcType=VARCHAR})
+    values (#{id}, #{applicationNo}, #{copyPersonId}, 
+      #{operaterTime})
   </insert>
   <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationToCopyPerson">
     insert into application_to_copy_person_
@@ -44,16 +67,16 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
-        #{id,jdbcType=VARCHAR},
+        #{id},
       </if>
       <if test="applicationNo != null">
-        #{applicationNo,jdbcType=VARCHAR},
+        #{applicationNo},
       </if>
       <if test="copyPersonId != null">
-        #{copyPersonId,jdbcType=VARCHAR},
+        #{copyPersonId},
       </if>
       <if test="operaterTime != null">
-        #{operaterTime,jdbcType=VARCHAR},
+        #{operaterTime},
       </if>
     </trim>
   </insert>
@@ -61,22 +84,22 @@
     update application_to_copy_person_
     <set>
       <if test="applicationNo != null">
-        application_no = #{applicationNo,jdbcType=VARCHAR},
+        application_no = #{applicationNo},
       </if>
       <if test="copyPersonId != null">
-        copy_person_id = #{copyPersonId,jdbcType=VARCHAR},
+        copy_person_id = #{copyPersonId},
       </if>
       <if test="operaterTime != null">
-        operater_time = #{operaterTime,jdbcType=VARCHAR},
+        operater_time = #{operaterTime},
       </if>
     </set>
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ApplicationToCopyPerson">
     update application_to_copy_person_
-    set application_no = #{applicationNo,jdbcType=VARCHAR},
-      copy_person_id = #{copyPersonId,jdbcType=VARCHAR},
-      operater_time = #{operaterTime,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=VARCHAR}
+    set application_no = #{applicationNo},
+      copy_person_id = #{copyPersonId},
+      operater_time = #{operaterTime}
+    where id = #{id}
   </update>
 </mapper>

@@ -1,5 +1,7 @@
 package com.xiangshangban.att_simple.controller;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -34,27 +36,27 @@ public class ClassesController {
 	/**
 	 * 新增/修改班次类型
 	 * @param requestParam
-	 * {
-	 * 		 "classesId":"",(通过有无班次ID,来判断用户进行的是新增的操作还是更新的操作)
-	         "classesName":"常白班",（班次名称）
-	         "on_duty_time":"09:00",(上班时间)
-	         "off_duty_time":"18:00",（下班时间）
-	         "morrowFlag":"0/1",(是否是次日的这个时间下班 0:不是 1:是)
-	         "restStartTime":"12:00",每天的休息时间段:开始时间
-	         "restEndTime":"13:00",每天的休息时间段:结束时间
-	         "restDays":"67"，一周的休息日（6、7表示周六和周日休息）
-	         "festivalRestFlag":"0/1"(法定假日是否休息标志位0:不休息 1:休息)
-			 “signInRule”:”20”（签到晚20分钟不算迟到）
-			 “signOutRule”：“20”(签退早20分钟不算早退)
-	 		 “onPunchCardRule”：“20”(上班打卡限制,允许提前20分钟)
-			 “offPunchCardRule”:”20”(下班打卡限制，允许推迟20分钟) 
-			 “employeeIdList”:”[  (排班人员列表)
-				 {“empId”:”XFGCDSDSFSDFSDF13213”},
-				 {“empId”:”XFGCDSDSFSDFSDF46557”}
-			  ]”
-		 	 “autoClassesFlag”：“1/2”(自动排班周期类型 1：月 2：周)
-		 	 "validDate":"2018-01-16"(该班次生效时间)
-		}
+	 {
+  		 "classesId":"",(通过有无班次ID,来判断用户进行的是新增的操作还是更新的操作)
+         "classesName":"常白班",（班次名称）
+         "on_duty_time":"09:00",(上班时间)
+         "off_duty_time":"18:00",（下班时间）
+         "morrowFlag":"0/1",(是否是次日的这个时间下班 0:不是 1:是)
+         "restStartTime":"12:00",每天的休息时间段:开始时间
+         "restEndTime":"13:00",每天的休息时间段:结束时间
+         "restDays":"67",(传递的是67的时候，表示一周的周六和周日休息、传递的是"5,2"表示做5休2)
+         "festivalRestFlag":"0/1",(法定假日是否休息标志位0:不休息 1:休息)
+		 "signInRule":"20",（签到晚20分钟不算迟到）
+		 "signOutRule":"20",(签退早20分钟不算早退)
+ 		 "onPunchCardRule":"20", (上班打卡限制，允许提前20分钟)
+		 "offPunchCardRule":"20", (下班打卡限制，允许推迟20分钟)
+		 "employeeIdList":[  (使用改排班的人员列表)
+			 {"empId":"XFGCDSDSFSDFSDF13213"},
+			 {"empId":"XFGCDSDSFSDFSDF46557"}
+		  ],
+	 	 "autoClassesFlag":"1/2",(自动排班周期 1:月  2:季度)
+	 	 "validDate":"2018-01-16"(当前班次生效的时间，没有的时候不传)
+	 }
 	 * @param request
 	 * @return
 	 */
@@ -93,7 +95,7 @@ public class ClassesController {
 		        "offDutyTime": "07:00",
 		        "morrowDutyTimeFlag": "1",
 		        "restTime": "23:00-1:00",
-		        "restDays": "67",
+		        "restDays": "67",（返回67表明按照周为周期进行排班、返回“6,2”表示按照做6休2的周期进行排班）
 		        "festivalRestFlag": "1",
 		        "signInRule": "20",
 		        "signOutRule": "20",
@@ -175,108 +177,234 @@ public class ClassesController {
 		return returnData;
 	}
 	
-	
-	
 	/**
-	 * 根据条件查询当前公司人员的班次排列，以及人数最多的三个班次（班次类型有几个显	示几个）的人数
+	 * 根据条件查询当前公司人员的班次排列，以及人数最多的三个班次（班次类型有几个显示几个）的人数
 	 * @param requestParam
 	 * 	{
-			“classesType”:”常白班”（班次类型）
-			“empDept”:”研发部”（人员部门）
-			“empName”:”小青”（人员名称）
-			“perviousWeek”:”0/1”（是否查看上周的数据0：没有该搜索条件 1：有该搜索条件）
-			“thisWeek”：“0/1”(是否查看本周班次 0：不查看 1：查看)
-			“nextWeek”:”0/1”(是否查看下一周的班次 0：不查看 1：查看)
-			“page”:”1”(当前页码)
-			“rows”:”5”（每一页要显示的行数）
-			“currentDate”:”2018-01-09”（隐藏条件<后台自己准备>，根据当前时间划定一周时间）
+			"classesTypeId":"常白班"（班次编号）
+			"deptId":"研发部”（人员部门编号）
+			"empName":"小青"（人员名称）
+			"perviousWeek":"0/1"（是否查看上周的数据0：没有该搜索条件 1：有该搜索条件）
+			"thisWeek":"0/1"(是否查看本周班次 0：不查看 1：查看)------->默认显示本周的
+			"nextWeek":"0/1"(是否查看下一周的班次 0：不查看 1：查看)
+			"page":"1"(当前页码)
+			"rows":"5"（每一页要显示的行数）
 		}
 	 * @param request
 	 * @return
 	 */
-	public Map<String,Object> getClassesInfo(@RequestBody String requestParam,HttpServletRequest request){
-		return null;
-	}
-	
-	/**
-	 * 一键排班
-	 * @param requestParam
-	 * {
-			“employeeIdList”:”[ (需要进行一键排班的人员)
-				{“empId”,”CSDCSCFSDIFHSDK56”},
-				{“empId”:”ADKJASDBKASDHASD67”}
-			]”
-	   }
-	 * @param request
-	 * @return
-	 */
-	public Map<String,Object> oneKeyScheduling(@RequestBody String requestParam,HttpServletRequest request){
-		
-		return null;
-	}
-	
-	/**
-	 * 给指定的人员添加指定日期的排班(班次类型不变，允许微调上下班时间)
-	 * 请求参数：
-	 * 	{
-			“empId”:”CASCASCA”--------->人员ID
-			“dateInfo”:”2018-01-10”----->指定的排班日期
-			“on_duty_time”:”08:00”-------->该班次微调后的上班时间
-			“off_dutyy_time”:”18:00”------>该班次微调后的下班时间
+	@PostMapping("/getEmpClassesInfo")
+	public ReturnData getEmpClassesInfo(@RequestBody String requestParam,HttpServletRequest request){
+		//获取公司ID
+		String companyId = request.getHeader("companyId");
+		//初始化返回的数据
+		ReturnData returnData = new ReturnData();
+		if(companyId!=null && !companyId.isEmpty()){
+			returnData = classesService.queryClassesInfo(requestParam,companyId.trim());
+		}else{
+			returnData.setReturnCode("3013");
+			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
 		}
-	 * @param reuestParam
-	 * @param request
-	 * @return
-	 */
-	@PostMapping("/addOneDateClasses")
-	public Map<String,Object> addEmpOneDateClasses(@RequestBody String reuestParam,HttpServletRequest request){
-		
-		return null;
-	}
-	
-	/**
-	 * 删除指定人员指定日期的排班
-	 * @param reuestParam
-	 * {
-			“empId”:”CASCASCA”--------->人员ID
-			“dateInfo”:”2018-01-10”----->指定的排班日期
-	   }
-	 * @param request
-	 * @return
-	 */
-	public Map<String,Object> deleteEmpOneDateClasses(@RequestBody String reuestParam,HttpServletRequest request){
-		
-		return null;
+		return returnData;
 	}
 	
 	/**
 	 * 根据条件导出人员班次信息
 	 * @param requestParam
 	 * {
-			“classesType”:”常白班”（班次类型）
-			“empDept”:”研发部”（人员部门）
-			“empName”:”小青”（人员名称）
-			“perviousWeek”:”0/1”（是否查看上周的数据0：没有该搜索条件 1：有该搜索条件）
-			“thisWeek”：“0/1”(是否查看本周班次 0：不查看 1：查看)
-			“nextWeek”:”0/1”(是否查看下一周的班次 0：不查看 1：查看)
-			“currentDate”:”2018-01-09”（隐藏条件<后台自己准备>，根据当前时间划定一周时间）
-		}
+			"classesTypeId":"常白班"（班次编号）
+			"deptId":"研发部”（人员部门编号）
+			"empName":"小青"（人员名称）
+			"perviousWeek":"0/1"（是否查看上周的数据0：没有该搜索条件 1：有该搜索条件）
+			"thisWeek":"0/1"(是否查看本周班次 0：不查看 1：查看)------->默认显示本周的
+			"nextWeek":"0/1"(是否查看下一周的班次 0：不查看 1：查看)
+			"flag":"0"（导出记录标志位：0表示导出人员班次信息）
+	   }
 	 * @param request
 	 * @param response
 	 */
+	@PostMapping("/exportScheduling")
 	public void exportScheduling(@RequestBody String requestParam, HttpServletRequest request, HttpServletResponse response){
-		
+		try {
+            response.setContentType("application/octet-stream ");
+            String agent = request.getHeader("USER-AGENT");
+            String excelName = "unknown.xls";
+            //解析请求的数据
+            JSONObject jsonObject = JSONObject.parseObject(requestParam);
+            //获取请求的标志
+            Object flag = jsonObject.get("flag");
+
+            if (flag != null && !flag.toString().trim().isEmpty()) {
+                String status = flag.toString().trim();
+                if (status.equals("0")) {
+                    excelName = "empClassesRecord.xls";
+                }
+            }
+            if (agent != null && agent.indexOf("MSIE") == -1 && agent.indexOf("rv:11") == -1 &&
+                    agent.indexOf("Edge") == -1 && agent.indexOf("Apache-HttpClient") == -1) {//非IE
+                excelName = new String(excelName.getBytes("UTF-8"), "ISO-8859-1");
+                response.addHeader("Content-Disposition", "attachment;filename=" + excelName);
+            } else {
+                response.addHeader("Content-Disposition", "attachment;filename=" + java.net.URLEncoder.encode(excelName, "UTF-8"));
+            }
+            response.addHeader("excelName", java.net.URLEncoder.encode(excelName, "UTF-8"));
+            //获取输出流
+            OutputStream out = response.getOutputStream();
+            // 获取公司ID
+            String companyId = request.getHeader("companyId");
+            //获取操作人ID
+            String accessUserId = request.getHeader("accessUserId");
+            if ((companyId != null && !companyId.isEmpty())) {
+            	classesService.exportRecordToExcel(requestParam, excelName, out, companyId);
+                out.flush();
+            } else {
+                System.out.println("未知的登录人（公司）ID");
+            }
+        } catch (IOException e) {
+            System.out.println("导出文件输出流出错了！" + e);
+        }
 	}
 	
 	/**
-	 * 添加无需考勤人员信息
+	 * 一键排班(一次排一个周期)
+	 * @param request
+	 * @return
+	 */
+	@PostMapping("/oneKeyScheduling")
+	public ReturnData oneKeyScheduling(HttpServletRequest request){
+		//获取公司ID
+		String companyId = request.getHeader("companyId");
+		//初始化返回的数据
+		ReturnData returnData = new ReturnData();
+		if(companyId!=null && !companyId.isEmpty()){
+			boolean deleteAppointClassesType = classesService.oneButtonScheduling(companyId.trim());
+			if(deleteAppointClassesType){
+				returnData.setReturnCode("3000");
+				returnData.setMessage("排班成功");
+			}else{
+				returnData.setReturnCode("3001");
+				returnData.setMessage("排班失败");
+			}
+		}else{
+			returnData.setReturnCode("3013");
+			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
+		}
+		return returnData;
+	}
+	
+	/**
+	 * 给指定的人员添加指定日期的排班(临时班次)
+	 * 请求参数：
+	 * 	{
+	  		"empClassesId":""----------->人员班次ID
+	  		（传递的时候表示，该天的班次是因为休息日原因没有安排上下班时间<该条记录是在数据库中存在的>/不传递的时候表示，该天就没有排班次<数据库中没有该条记录>）
+			"empId":"CASCASCA"--------->人员ID
+			"pointDate":"2018-01-10"----->指定的排班日期
+			"pointWeek":"4"------------->指定的星期
+			"onDutyTime":"08:00"-------->上班时间
+			"offDutyTime":"18:00"------>下班时间(添加单天的班次的时候不允许跨日)
+			"restStartTime":"12:00"------->开始休息时间点
+			"restEndTime":"13:00"--------->结束休息时间点
+			"signInRule":"15",----------->签到迟到15分钟不算迟到
+			"signOutRule":"15"----------->签退提前15分钟不算早退
+			"onPunchCardRule":"20",------>上班打卡允许提前20分钟
+			"offPunchCardRule":"20"------>下班允许推迟20分钟打卡
+		}
+	 * @param reuestParam 
+	 * @param request
+	 * @return
+	 */
+	@PostMapping("/addOneDateClasses")
+	public ReturnData addEmpOneDateClasses(@RequestBody String requestParam,HttpServletRequest request){
+		//获取公司ID
+		String companyId = request.getHeader("companyId");
+		//初始化返回的数据
+		ReturnData returnData = new ReturnData();
+		if(companyId!=null && !companyId.isEmpty()){
+			boolean deleteAppointClassesType = classesService.addEmpDutyTime(requestParam,companyId.trim());
+			if(deleteAppointClassesType){
+				returnData.setReturnCode("3000");
+				returnData.setMessage("添加成功");
+			}else{
+				returnData.setReturnCode("3001");
+				returnData.setMessage("添加失败");
+			}
+		}else{
+			returnData.setReturnCode("3013");
+			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
+		}
+		return returnData;
+	}
+	
+	/**
+	 * 删除人员指定日期的班次
+	 * @param reuestParam
+	 * {
+			"empClassesId":"82FC223D03C34A4E8EEF49EC129F1C9C" ------>人员单天班次ID
+	   }
+	 * @param request
+	 * @return
+	 */
+	@PostMapping("/delPointEmpDateClasses")
+	public ReturnData deleteEmpOneDateClasses(@RequestBody String requestParam){
+		//初始化返回的数据
+		ReturnData returnData = new ReturnData();
+		boolean deleteEmpDutyTime = classesService.deleteEmpDutyTime(requestParam);
+		if(deleteEmpDutyTime){
+			returnData.setReturnCode("3000");
+			returnData.setMessage("删除成功");
+		}else{
+			returnData.setReturnCode("3001");
+			returnData.setMessage("删除失败");
+		}
+		return returnData;
+	}
+	
+	/**
+	 * 查询指定人员指定日期的班次信息
 	 * @param requestParam
 	 * {
-	 * 	 "flag":"0/1",(0:新增人员 1:更新人员)
-         "employeeIdList":"[ (不需要考勤的人员列表)
-			{“empId”:”CBAJKSCBJAKSA12111”},
-			{“empId”:”CAHBCJKSHADCBA5646”}
-		 ]",（班次名称）
+			"empClassesId":"82FC223D03C34A4E8EEF49EC129F1C9C" ------>人员单天班次ID
+	   }
+	 * @param request 获取头信息
+	 * @return
+	 * {
+		  "employeeId": null,
+		  "data": {
+		    "restStartTime": "24:00",
+		    "restEndTime": "1:00",
+		    "classesDate": "2018-01-18",
+		    "onDutyTime": "20:00",
+		    "offDutyTime": "07:00",
+		    "classesWeek": "4"
+		  },
+		  "totalPages": null,
+		  "message": "请求数据成功",
+		  "returnCode": "3000",
+		  "pagecountNum": null,
+		  "companyName": null
+	   }
+	 */
+	@PostMapping("/getPointEmpDateClasses")
+	public ReturnData getPointEmpDateClasses(@RequestBody String requestParam){
+		//初始化返回的数据
+		ReturnData returnData = new ReturnData();
+		Map queryPointEmpDateClasses = classesService.queryPointEmpDateClasses(requestParam);
+		returnData.setData(queryPointEmpDateClasses);
+		returnData.setReturnCode("3000");
+		returnData.setMessage("请求数据成功");
+		return returnData;
+	}
+	
+	/**
+	 * (添加/更新)无需考勤人员信息
+	 * @param requestParam
+	 * {
+	  	 "flag":"0/1",(0:新增无需考勤人员 1:更新无需考勤人员)
+         "employeeIdList":[
+			{"empId":"newCBAJKSCBJAKSA12111"},
+			{"empId":"newCAHBCJKSHADCBA5646"}
+		 ]
 	   }
 	 * @param request
 	 * @return
@@ -338,6 +466,21 @@ public class ClassesController {
 		}else{
 			returnData.setReturnCode("3013");
 			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
+		}
+		return returnData;
+	}
+	
+	/**
+	 * 测试自动排班
+	 */
+	@PostMapping("/autoScheduling")
+	public ReturnData testAutoScheduling(){
+		boolean autoScheduling = classesService.autoScheduling();
+		ReturnData returnData = new ReturnData();
+		if(autoScheduling){
+			returnData.setMessage("自动排班成功");
+		}else{
+			returnData.setMessage("自动排班失败");
 		}
 		return returnData;
 	}

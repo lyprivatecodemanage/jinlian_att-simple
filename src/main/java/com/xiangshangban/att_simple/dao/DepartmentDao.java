@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import com.xiangshangban.att_simple.bean.Department;
 
 
+
 @Mapper
 public interface DepartmentDao {
    

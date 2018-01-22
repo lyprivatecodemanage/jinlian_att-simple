@@ -234,7 +234,7 @@
   </select>
   
   <!-- 删除指定的班次类型 -->
-  <delete id="removeAppointClassesType" parameterType="Map">
-  	delete from classes_type where company_id = #{companyId} and id = #{classesTypeId}
-  </delete>
+  <update id="removeAppointClassesType" parameterType="Map">
+  	update classes_type set company_id = '' where company_id = #{companyId} and id = #{classesTypeId}
+  </update>
 </mapper>

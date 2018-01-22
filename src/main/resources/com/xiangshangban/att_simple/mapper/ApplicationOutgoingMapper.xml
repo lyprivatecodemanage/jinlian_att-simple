@@ -6,7 +6,7 @@
     <result column="employee_id"  property="employeeId" />
     <result column="department_id"  property="departmentId" />
     <result column="company_id"  property="companyId" />
-    <result column="outgoning_location"  property="outgoningLocation" />
+    <result column="outgoing_location"  property="outgoingLocation" />
     <result column="start_time"  property="startTime" />
     <result column="end_time"  property="endTime" />
     <result column="reason"  property="reason" />
@@ -18,7 +18,7 @@
     <result column="application_time"  property="applicationTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    application_no, employee_id, department_id, company_id, outgoning_location, start_time, 
+    application_no, employee_id, department_id, company_id, outgoing_location, start_time, 
     end_time, reason, upload_voucher, approver, operater_time, is_transfer, application_hour, 
     application_time
   </sql>
@@ -30,7 +30,7 @@
   		<if test="employeeId!=null and employeeId!='' ">employee_id,</if>
   		<if test="departmentId!=null and departmentId!='' ">department_id,</if>
   		<if test="companyId!=null and companyId!='' ">company_id,</if>
-  		<if test="outgoingLocation!=null and outgoingLocation!='' ">outgoning_location,</if>
+  		<if test="outgoingLocation!=null and outgoingLocation!='' ">outgoing_location,</if>
   		<if test="startTime!=null and startTime!=''">start_time,</if>
   		<if test="endTime!=null and endTime!='' ">end_time,</if>
   		<if test="reason!=null and reason!='' ">reason,</if>
@@ -58,4 +58,24 @@
   		<if test="applicationTime!=null and applicationTime!=''">#{applicationTime}</if>
   	</trim>
   </insert>
+    <resultMap type="com.xiangshangban.att_simple.bean.Application" id="Application_List">
+		<result column="application_no" property="applicationNo"/>
+		<result column="employee_id" property="applicationId"/>
+		<result column="department_id" property="departmentId"/>
+		<result column="company_id" property="companyId"/>
+		<result column="leave_type" property="applicationChildrenType"/>
+		<result column="start_time" property="startTime"/>
+		<result column="end_time" property="endTime"/>
+		<result column="reason" property="reason"/>
+		<result column="upload_voucher" property="uploadVoucher"/>
+		<result column="approver" property="approver"/>
+		<result column="application_hour" property="applicationHour"/>
+		<result column="application_time" property="applicationTime"/>
+	</resultMap>
+      <!-- 根据申请单号查询详细内容 -->
+  <select id="selectDetailsByApplicationNo" parameterType="java.lang.String" resultMap="Application_List"> 
+  	select <include refid="Base_Column_List"/>
+  	from att_simple.application_outgoing_ o
+  	where o.application_no = #{applicationNo}
+  </select>
 </mapper>

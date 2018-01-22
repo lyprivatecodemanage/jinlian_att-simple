@@ -15,6 +15,8 @@ public class AlgorithmParam {
 	private String countDate;//计算日期
 	private boolean noCheckAtt;//是否为不考勤人员，true:不考勤， false：考勤
 	private ClassesEmployee ClassesEmployee = new ClassesEmployee();//当天排班
+	private ClassesEmployee ClassesEmployeeLastDay = new ClassesEmployee();//前一天排班
+	private ClassesEmployee ClassesEmployeeNextDay = new ClassesEmployee();//次日排班
 	private String centerLine;//区分签到签退的中间线
 	private String lateLine;//迟到线
 	private String earlyLine;//早退线
@@ -150,6 +152,18 @@ public class AlgorithmParam {
 	}
 	public void setSignOutLimitLine(String signOutLimitLine) {
 		this.signOutLimitLine = signOutLimitLine;
+	}
+	public ClassesEmployee getClassesEmployeeNextDay() {
+		return ClassesEmployeeNextDay;
+	}
+	public void setClassesEmployeeNextDay(ClassesEmployee classesEmployeeNextDay) {
+		ClassesEmployeeNextDay = classesEmployeeNextDay;
+	}
+	public ClassesEmployee getClassesEmployeeLastDay() {
+		return ClassesEmployeeLastDay;
+	}
+	public void setClassesEmployeeLastDay(ClassesEmployee classesEmployeeLastDay) {
+		ClassesEmployeeLastDay = classesEmployeeLastDay;
 	}
 	
 }

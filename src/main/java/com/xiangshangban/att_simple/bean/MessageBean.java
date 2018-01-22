@@ -70,8 +70,8 @@ public class MessageBean<T> {
     public void setFillCardTime(String fillCardTime) {
     	this.setValue("fillCardTime", fillCardTime);
     }
-    public void setOutgoningLocation(String outgoningLocation) {
-    	this.setValue("outgoningLocation", outgoningLocation);
+    public void setOutgoingLocation(String outgoingLocation) {
+    	this.setValue("outgoingLocation", outgoingLocation);
     }
     public void setCommonContactPeopleId(String commonContactPeopleId){
     	this.setValue("commonContactPeopleId", commonContactPeopleId);

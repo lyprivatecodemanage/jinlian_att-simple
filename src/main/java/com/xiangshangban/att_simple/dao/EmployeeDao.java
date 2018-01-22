@@ -109,4 +109,12 @@ public interface EmployeeDao {
 	 * @return
 	 */
 	List<Employee> selectCommonContactPeoplePage(@Param("employeeId")String employeeId,@Param("companyId")String companyId,@Param("page")String page,@Param("count")String count);
+	/**
+	 * 根据人员id,部门id,公司id查询对应的名称
+	 * @param employeeId
+	 * @param departmentId
+	 * @param companyId
+	 * @return
+	 */
+	Employee selectNameByEmployeeIdAndDepartmentIdAndCompanyId(@Param("employeeId")String employeeId,@Param("departmentId")String departmentId,@Param("companyId")String companyId);
 }

@@ -2,35 +2,55 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xiangshangban.att_simple.dao.ApplicationTransferRecordMapper">
   <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.ApplicationTransferRecord">
-    <id column="id" jdbcType="VARCHAR" property="id" />
-    <result column="application_no" jdbcType="VARCHAR" property="applicationNo" />
-    <result column="transfer_person_id" jdbcType="VARCHAR" property="transferPersonId" />
-    <result column="transfer_persion_access_id" jdbcType="VARCHAR" property="transferPersionAccessId" />
-    <result column="transfer_times" jdbcType="VARCHAR" property="transferTimes" />
-    <result column="operater_time" jdbcType="VARCHAR" property="operaterTime" />
-    <result column="transfer_explain" jdbcType="VARCHAR" property="transferExplain" />
+    <id column="id"  property="id" />
+    <result column="application_no"  property="applicationNo" />
+    <result column="transfer_person_id"  property="transferPersonId" />
+    <result column="transfer_persion_access_id"  property="transferPersionAccessId" />
+    <result column="transfer_times"  property="transferTimes" />
+    <result column="operater_time"  property="operaterTime" />
+    <result column="transfer_explain"  property="transferExplain" />
+<<<<<<< HEAD
+    <result column="company_id"  property="companyId" />
+=======
+>>>>>>> dev-weiyoudi
   </resultMap>
   <sql id="Base_Column_List">
     id, application_no, transfer_person_id, transfer_persion_access_id, transfer_times, 
-    operater_time, transfer_explain
+    operater_time, transfer_explain, company_id
   </sql>
+  <!-- 根据单号查询转移记录 -->
+  <select id="selectTransferByApplicationNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List"/>
+  	from att_simple.application_transfer_record_ atr
+  	where atr.application_no =#{applicationNo} order by transfer_times desc
+  </select>
+  
+  
+  <!-- 系统 -->
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from application_transfer_record_
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from application_transfer_record_
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id}
   </delete>
   <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.ApplicationTransferRecord">
     insert into application_transfer_record_ (id, application_no, transfer_person_id, 
       transfer_persion_access_id, transfer_times, 
+<<<<<<< HEAD
+      operater_time, transfer_explain,company_id)
+    values (#{id}, #{applicationNo}, #{transferPersonId}, 
+      #{transferPersionAccessId}, #{transferTimes}, 
+      #{operaterTime}, #{transferExplain},#{companyId})
+=======
       operater_time, transfer_explain)
-    values (#{id,jdbcType=VARCHAR}, #{applicationNo,jdbcType=VARCHAR}, #{transferPersonId,jdbcType=VARCHAR}, 
-      #{transferPersionAccessId,jdbcType=VARCHAR}, #{transferTimes,jdbcType=VARCHAR}, 
-      #{operaterTime,jdbcType=VARCHAR}, #{transferExplain,jdbcType=VARCHAR})
+    values (#{id}, #{applicationNo}, #{transferPersonId}, 
+      #{transferPersionAccessId}, #{transferTimes}, 
+      #{operaterTime}, #{transferExplain})
+>>>>>>> dev-weiyoudi
   </insert>
   <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationTransferRecord">
     insert into application_transfer_record_
@@ -56,28 +76,37 @@
       <if test="transferExplain != null">
         transfer_explain,
       </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
-        #{id,jdbcType=VARCHAR},
+        #{id},
       </if>
       <if test="applicationNo != null">
-        #{applicationNo,jdbcType=VARCHAR},
+        #{applicationNo},
       </if>
       <if test="transferPersonId != null">
-        #{transferPersonId,jdbcType=VARCHAR},
+        #{transferPersonId},
       </if>
       <if test="transferPersionAccessId != null">
-        #{transferPersionAccessId,jdbcType=VARCHAR},
+        #{transferPersionAccessId},
       </if>
       <if test="transferTimes != null">
-        #{transferTimes,jdbcType=VARCHAR},
+        #{transferTimes},
       </if>
       <if test="operaterTime != null">
-        #{operaterTime,jdbcType=VARCHAR},
+        #{operaterTime},
       </if>
       <if test="transferExplain != null">
-        #{transferExplain,jdbcType=VARCHAR},
+        #{transferExplain},
+<<<<<<< HEAD
+      </if>
+      <if test="companyId != null">
+        #{companyId},
+=======
+>>>>>>> dev-weiyoudi
       </if>
     </trim>
   </insert>
@@ -85,34 +114,45 @@
     update application_transfer_record_
     <set>
       <if test="applicationNo != null">
-        application_no = #{applicationNo,jdbcType=VARCHAR},
+        application_no = #{applicationNo},
       </if>
       <if test="transferPersonId != null">
-        transfer_person_id = #{transferPersonId,jdbcType=VARCHAR},
+        transfer_person_id = #{transferPersonId},
       </if>
       <if test="transferPersionAccessId != null">
-        transfer_persion_access_id = #{transferPersionAccessId,jdbcType=VARCHAR},
+        transfer_persion_access_id = #{transferPersionAccessId},
       </if>
       <if test="transferTimes != null">
-        transfer_times = #{transferTimes,jdbcType=VARCHAR},
+        transfer_times = #{transferTimes},
       </if>
       <if test="operaterTime != null">
-        operater_time = #{operaterTime,jdbcType=VARCHAR},
+        operater_time = #{operaterTime},
       </if>
       <if test="transferExplain != null">
-        transfer_explain = #{transferExplain,jdbcType=VARCHAR},
+        transfer_explain = #{transferExplain},
+<<<<<<< HEAD
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId},
+=======
+>>>>>>> dev-weiyoudi
       </if>
     </set>
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ApplicationTransferRecord">
     update application_transfer_record_
-    set application_no = #{applicationNo,jdbcType=VARCHAR},
-      transfer_person_id = #{transferPersonId,jdbcType=VARCHAR},
-      transfer_persion_access_id = #{transferPersionAccessId,jdbcType=VARCHAR},
-      transfer_times = #{transferTimes,jdbcType=VARCHAR},
-      operater_time = #{operaterTime,jdbcType=VARCHAR},
-      transfer_explain = #{transferExplain,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=VARCHAR}
+    set application_no = #{applicationNo},
+      transfer_person_id = #{transferPersonId},
+      transfer_persion_access_id = #{transferPersionAccessId},
+      transfer_times = #{transferTimes},
+      operater_time = #{operaterTime},
+<<<<<<< HEAD
+      transfer_explain = #{transferExplain},
+      company_id = #{companyId}
+=======
+      transfer_explain = #{transferExplain}
+>>>>>>> dev-weiyoudi
+    where id = #{id}
   </update>
 </mapper>

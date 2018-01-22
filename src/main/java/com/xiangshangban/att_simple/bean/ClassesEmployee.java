@@ -9,6 +9,8 @@ public class ClassesEmployee {
     private String empCompanyId;//人员公司ID
 
     private String classesId;//该人员使用的班次类型
+    
+    private String classesName;//该人员使用的班次名称
 
     private String onDutySchedulingDate;//该班次的上班时间（一个人的班次类型是不能够更改的，但是班次的上下班时间是可以进行微调的）
 
@@ -18,9 +20,19 @@ public class ClassesEmployee {
     
     private String restEndTime;//当天的休息时间段：结束时间
     
+    private String signInRule;//签到晚xx分钟不算迟到
+    
+    private String signOutRule;//签退早xx分钟不算早退
+    
+    private String onPunchCardRule;//上班打卡允许提前xx分钟
+    
+    private String offPunchCardRule;//下班打卡允许推迟xx分钟
+    
     private String theDate;//当前日期
     
     private String week;//上班时间所在日期的星期
+    
+    private String divideColor;//分隔色（每更新一次班次就，切换一种颜色）
     
     private ClassesType classesType;
 
@@ -56,6 +68,14 @@ public class ClassesEmployee {
 		this.classesId = classesId;
 	}
 
+	public String getClassesName() {
+		return classesName;
+	}
+
+	public void setClassesName(String classesName) {
+		this.classesName = classesName;
+	}
+
 	public String getOnDutySchedulingDate() {
 		return onDutySchedulingDate;
 	}
@@ -88,6 +108,38 @@ public class ClassesEmployee {
 		this.restEndTime = restEndTime;
 	}
 
+	public String getSignInRule() {
+		return signInRule;
+	}
+
+	public void setSignInRule(String signInRule) {
+		this.signInRule = signInRule;
+	}
+
+	public String getSignOutRule() {
+		return signOutRule;
+	}
+
+	public void setSignOutRule(String signOutRule) {
+		this.signOutRule = signOutRule;
+	}
+
+	public String getOnPunchCardRule() {
+		return onPunchCardRule;
+	}
+
+	public void setOnPunchCardRule(String onPunchCardRule) {
+		this.onPunchCardRule = onPunchCardRule;
+	}
+
+	public String getOffPunchCardRule() {
+		return offPunchCardRule;
+	}
+
+	public void setOffPunchCardRule(String offPunchCardRule) {
+		this.offPunchCardRule = offPunchCardRule;
+	}
+
 	public String getTheDate() {
 		return theDate;
 	}
@@ -104,6 +156,14 @@ public class ClassesEmployee {
 		this.week = week;
 	}
 
+	public String getDivideColor() {
+		return divideColor;
+	}
+
+	public void setDivideColor(String divideColor) {
+		this.divideColor = divideColor;
+	}
+
 	public ClassesType getClassesType() {
 		return classesType;
 	}
@@ -111,5 +171,4 @@ public class ClassesEmployee {
 	public void setClassesType(ClassesType classesType) {
 		this.classesType = classesType;
 	}
-
 }
