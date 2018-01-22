@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ApplicationCommonContactPeople;
+import com.xiangshangban.att_simple.bean.ApplicationTotalRecord;
 import com.xiangshangban.att_simple.bean.ReturnData;
 
 public interface ApplicationService {
@@ -66,4 +67,19 @@ public interface ApplicationService {
 	 * @return
 	 */
 	List<ApplicationCommonContactPeople> commonContactPeopleList(String employeeId,String companyId,String type,String page,String count);
+	/**
+	 * 申请列表
+	 * @param employeeId
+	 * @param companyId
+	 * @param page
+	 * @param count
+	 * @return
+	 */
+	List<ApplicationTotalRecord> applicationList(String employeeId,String companyId,String page,String count);
+	/**
+	 * 申请详情
+	 * @param applicationNo
+	 * @return
+	 */
+	Application applicationDetails(String applicationNo,String employeeId,String departmentId,String companyId);
 }

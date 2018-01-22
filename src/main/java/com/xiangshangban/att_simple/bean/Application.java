@@ -33,12 +33,13 @@ public class Application {
 	private String operaterId;//last操作人id
 	private String operaterName;//操作人姓名
 	private String operaterTime;//操作时间
-	private String outgoningLocation;//外出地点
+	private String outgoingLocation;//外出地点
 	private String applicationHour;//申请小时数
 	private String isComplete;//0:未完成,1:已完成
 	private String isSetCommonContactPeople;//是否设置常用联系人 0:否;1是
 	private String fillCardTime;//补卡时间
 	private String isSkipRestDay;//（只有外出和出差需要此状态）是否跳过休息日（0：否；1：是）
+	private String statusDescription;//申请时:(审批中,已完成,已驳回);审批时:(全部,未审批,已转移,已完成,已驳回,抄送);
 	public String getApplicationNo() {
 		return applicationNo;
 	}
@@ -189,11 +190,11 @@ public class Application {
 	public void setOperaterTime(String operaterTime) {
 		this.operaterTime = operaterTime;
 	}
-	public String getOutgoningLocation() {
-		return outgoningLocation;
+	public String getOutgoingLocation() {
+		return outgoingLocation;
 	}
-	public void setOutgoningLocation(String outgoningLocation) {
-		this.outgoningLocation = outgoningLocation;
+	public void setOutgoingLocation(String outgoingLocation) {
+		this.outgoingLocation = outgoingLocation;
 	}
 	public String getApplicationHour() {
 		return applicationHour;
@@ -254,6 +255,12 @@ public class Application {
 	}
 	public void setIsSkipRestDay(String isSkipRestDay) {
 		this.isSkipRestDay = isSkipRestDay;
+	}
+	public String getStatusDescription() {
+		return statusDescription;
+	}
+	public void setStatusDescription(String statusDescription) {
+		this.statusDescription = statusDescription;
 	}
 	
 	

@@ -189,8 +189,26 @@ where ((#{startTime} between al.start_time and al.end_time) or (#{endTime} betwe
 	or (abt.start_time between #{startTime} and #{endTime}) or (abt.end_time between #{startTime} and #{endTime})
 	or (aot.start_time between #{startTime} and #{endTime}) or (aot.end_time between #{startTime} and #{endTime}))
   </select>
-  
-  
-  
+	<resultMap type="com.xiangshangban.att_simple.bean.Application" id="Application_List">
+		<result column="application_no" property="applicationNo"/>
+		<result column="employee_id" property="applicationId"/>
+		<result column="department_id" property="departmentId"/>
+		<result column="company_id" property="companyId"/>
+		<result column="leave_type" property="applicationChildrenType"/>
+		<result column="start_time" property="startTime"/>
+		<result column="end_time" property="endTime"/>
+		<result column="reason" property="reason"/>
+		<result column="upload_voucher" property="uploadVoucher"/>
+		<result column="approver" property="approver"/>
+		<result column="application_hour" property="applicationHour"/>
+		<result column="application_time" property="applicationTime"/>
+	</resultMap>
+  <!-- 根据申请单号查询详细内容 -->
+  <select id="selectDetailsByApplicationNo" parameterType="java.lang.String" resultMap="Application_List"> 
+  	select <include refid="Base_Column_List"/>
+  	from att_simple.application_leave_ l
+  	where l.application_no = #{applicationNo}
+  </select>
+	  
   
 </mapper>

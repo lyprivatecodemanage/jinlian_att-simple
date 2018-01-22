@@ -3,7 +3,6 @@ package com.xiangshangban.att_simple.bean;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.xiangshangban.organization.exportexcel.ExcelResources;
 
 public class Employee {
    // ---现在用到的----
@@ -61,7 +60,6 @@ public class Employee {
     
     
     
-    @ExcelResources(title="岗位",order=5)
 	public String getPostName() {
 		return postName;
 	}
@@ -170,28 +168,24 @@ public class Employee {
 	public void setEmployeeId(String employeeId) {
 		this.employeeId = employeeId;
 	}
-	@ExcelResources(title="员工姓名",order=1)
 	public String getEmployeeName() {
 		return employeeName;
 	}
 	public void setEmployeeName(String employeeName) {
 		this.employeeName = employeeName;
 	}
-	@ExcelResources(title="性别",order=2)
 	public String getEmployeeSex() {
 		return employeeSex;
 	}
 	public void setEmployeeSex(String employeeSex) {
 		this.employeeSex = employeeSex;
 	}
-	@ExcelResources(title="登录名",order=3)
 	public String getLoginName() {
 		return loginName;
 	}
 	public void setLoginName(String loginName) {
 		this.loginName = loginName;
 	}
-	@ExcelResources(title="联系方式",order=4)
 	public String getEmployeePhone() {
 		return employeePhone;
 	}
@@ -205,21 +199,18 @@ public class Employee {
 	public void setPostList(List<Post> postList) {
 		this.postList = postList;
 	}*/
-	@ExcelResources(title="部门",order=6)
 	public String getDepartmentName() {
 		return departmentName;
 	}
 	public void setDepartmentName(String departmentName) {
 		this.departmentName = departmentName;
 	}
-	@ExcelResources(title="入职时间",order=7)
 	public String getEntryTime() {
 		return entryTime;
 	}
 	public void setEntryTime(String entryTime) {
 		this.entryTime = entryTime;
 	}
-	@ExcelResources(title="在职状态",order=8)
 	public String getEmployeeStatus() {
 		return employeeStatus;
 	}

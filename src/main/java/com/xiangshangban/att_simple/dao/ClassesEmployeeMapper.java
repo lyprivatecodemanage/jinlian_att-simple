@@ -27,6 +27,13 @@ public interface ClassesEmployeeMapper {
     int selectCountByCondition(Map map);
     
     /**
+     * 查询班次类型使用人数排行榜前三名
+     * @param companyId
+     * @return
+     */
+    List<Map> selectTopThreeClassesType(String companyId);
+    
+    /**
 	 * 获取当前公司人员班次信息
 	 * @param map
 	 * @return

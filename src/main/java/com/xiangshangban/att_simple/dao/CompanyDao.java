@@ -3,9 +3,8 @@ package com.xiangshangban.att_simple.dao;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
-import com.xiangshangban.organization.bean.Company;
+import com.xiangshangban.att_simple.bean.Company;
 
 @Mapper
 public interface CompanyDao {

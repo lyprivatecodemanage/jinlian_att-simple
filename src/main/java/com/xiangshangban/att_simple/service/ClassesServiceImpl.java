@@ -345,13 +345,86 @@ public class ClassesServiceImpl implements ClassesService{
 	 * @param requestParam
 	 * @param companyId
 	 * @return
+	 * {
+		  "employeeId": null,
+		  "data": [
+		    {
+		      "empId": "XFGCDSDSFSDFSDF46557",
+		      "deptName": "测试部",
+		      "classesList": [
+		        {
+		          "classesName": "常白班",
+		          "classesId": "806FBB51326441FEB38EADE1F77737AF",
+		          "week": "1",
+		          "colorFlag": "1",
+		          "theDate": "2018-01-22"
+		        },
+		        {
+		          "classesName": "常白班",
+		          "classesId": "35A65ACBFF8A43F19017F7463283FEA9",
+		          "week": "2",
+		          "colorFlag": "1",
+		          "theDate": "2018-01-23"
+		        },
+		        {
+		          "classesName": "常白班",
+		          "classesId": "0CD0807A73F74A9296C843F4CC9D34D4",
+		          "week": "3",
+		          "colorFlag": "1",
+		          "theDate": "2018-01-24"
+		        },
+		        {
+		          "classesName": "常白班",
+		          "classesId": "7B288683611A40A58B34F9F29AA4C6F0",
+		          "week": "4",
+		          "colorFlag": "1",
+		          "theDate": "2018-01-25"
+		        },
+		        {
+		          "classesName": "常白班",
+		          "classesId": "91635142846A48F080B473F7C4A22DEB",
+		          "week": "5",
+		          "colorFlag": "1",
+		          "theDate": "2018-01-26"
+		        },
+		        {
+		          "classesName": "",
+		          "classesId": "21C93F0C27F54E8CBE6F077214B0FD68",
+		          "week": "6",
+		          "colorFlag": "",
+		          "theDate": "2018-01-27"
+		        },
+		        {
+		          "classesName": "",
+		          "classesId": "71E8DCE9171B44489948B0C8F7852C6B",
+		          "week": "7",
+		          "colorFlag": "",
+		          "theDate": "2018-01-28"
+		        }
+		      ],
+		      "empName": "测试unknown",
+		      "postName": "测试人员"
+		    }
+		  ],
+		  "totalPages": 0,
+		  "message": "请求数据成功",
+		  "returnCode": "3000",
+		  "pagecountNum": 0,
+		  "companyName": null,
+		  "classesTopInfo": [
+		    {
+		      "totalnum": 50,
+		      "classes_name": "常白班"
+		    }
+		  ]
+		}
 	 */
 	@Override
 	public ReturnData queryClassesInfo(String requestParam, String companyId) {
 		//解析请求参数
 		JSONObject parseObject = JSONObject.parseObject(requestParam);
 		
-		Object classesId = parseObject.get("classesId");
+		Object classesTypeId = parseObject.get("classesTypeId");
 		Object deptId = parseObject.get("deptId");
 		Object empName = parseObject.get("empName");
 		Object perviousWeek = parseObject.get("perviousWeek");
@@ -366,7 +439,7 @@ public class ClassesServiceImpl implements ClassesService{
 		Map<String,String> param = new HashMap<>();
 		
 		param.put("companyId",companyId.trim());
-		param.put("classesId",(classesId!=null && !classesId.toString().isEmpty())?classesId.toString().trim():null);
+		param.put("classesTypeId",(classesTypeId!=null && !classesTypeId.toString().isEmpty())?classesTypeId.toString().trim():null);
 		param.put("deptId", (deptId!=null && !deptId.toString().isEmpty())?deptId.toString().trim():null);
 		param.put("empName", (empName!=null && !empName.toString().isEmpty())?"%"+empName.toString().trim()+"%":null);
 		
@@ -400,32 +473,102 @@ public class ClassesServiceImpl implements ClassesService{
 				param.put("endDate", mondayAndWeekendDate.get("weekend"));
 			}
 		}
+
+		List<Map> selectClassesInfo = classesEmployeeMapper.selectClassesInfo(param);
+		//根据人员ID将数据进行分组处理
+		Map<String,List<Map<String,Object>>> listMap = new HashMap<>();
+		for (int i = 0; i < selectClassesInfo.size(); i++) {
+	         if (listMap.containsKey(selectClassesInfo.get(i).get("emp_id"))) {//存在该map
+	             Map<String,Object> map = new HashMap();
+	             map.put("empId", selectClassesInfo.get(i).get("emp_id"));
+	             map.put("empName", selectClassesInfo.get(i).get("employee_name"));
+	             map.put("postName", selectClassesInfo.get(i).get("post_name"));
+	             map.put("deptName", selectClassesInfo.get(i).get("department_name"));
+	             map.put("theDate", selectClassesInfo.get(i).get("the_date"));
+	             map.put("week", selectClassesInfo.get(i).get("week"));
+	             map.put("classesId", selectClassesInfo.get(i).get("id"));
+	             map.put("classesName", selectClassesInfo.get(i).get("classes_name"));
+	             map.put("colorFlag", selectClassesInfo.get(i).get("divide_color"));
+	             //获取到该list，向其中添加map数据
+	             listMap.get(selectClassesInfo.get(i).get("emp_id").toString()).add(map);
+	         } else {
+	             Map<String,Object> map = new HashMap();
+	             map.put("empId", selectClassesInfo.get(i).get("emp_id"));
+	             map.put("empName", selectClassesInfo.get(i).get("employee_name"));
+	             map.put("postName", selectClassesInfo.get(i).get("post_name"));
+	             map.put("deptName", selectClassesInfo.get(i).get("department_name"));
+	             map.put("theDate", selectClassesInfo.get(i).get("the_date"));
+	             map.put("week", selectClassesInfo.get(i).get("week"));
+	             map.put("classesId", selectClassesInfo.get(i).get("id"));
+	             map.put("classesName", selectClassesInfo.get(i).get("classes_name"));
+	             map.put("colorFlag", selectClassesInfo.get(i).get("divide_color"));
+	             List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+	             list.add(map);
+	             listMap.put(selectClassesInfo.get(i).get("emp_id").toString(), list);
+	         }
+         }
+		//精简数据(改变数据结构)
+		List<Map<String,Object>> realData = new ArrayList<>();
+		for (String key:listMap.keySet()) {
+			Map<String,Object> outterMap = new HashMap<>();
+			outterMap.put("empId", listMap.get(key).get(0).get("empId"));
+			outterMap.put("empName", listMap.get(key).get(0).get("empName"));
+			outterMap.put("postName",listMap.get(key).get(0).get("postName"));
+			outterMap.put("deptName",listMap.get(key).get(0).get("deptName"));
+			outterMap.put("postName",listMap.get(key).get(0).get("postName"));
+			
+			List<Map<String,Object>> innerList = new ArrayList<>();
+			for(int s=0;s<listMap.get(key).size();s++){
+				Map<String,Object> innerMap = new HashMap<>();
+				innerMap.put("theDate", listMap.get(key).get(s).get("theDate"));
+				innerMap.put("week", listMap.get(key).get(s).get("week"));
+				innerMap.put("classesId", listMap.get(key).get(s).get("classesId"));
+				innerMap.put("classesName", listMap.get(key).get(s).get("classesName"));
+				innerMap.put("colorFlag", listMap.get(key).get(s).get("colorFlag"));
+				
+				innerList.add(innerMap);
+			}
+			outterMap.put("classesList", innerList);
+			realData.add(outterMap);
+		}
 		
-	    //初始化(数据总行数/数据总页数)
-       /* int totalRows = 0;
+		//查询班次类型使用人数排行榜前三名
+		List<Map> selectTopThreeClassesType = classesEmployeeMapper.selectTopThreeClassesType(companyId.trim());
+		
+		//最终数据
+		List<Map<String,Object>> finallyData = new ArrayList<>();
+		
+		 //初始化(数据总行数/数据总页数)
+       	int totalRows = 0;
         int totalPage = 0;
         
 		if ((rows!=null && !rows.toString().trim().isEmpty()) && (page!=null && !page.toString().trim().isEmpty())){
-            param.put("rows",rows.toString().trim());
-            param.put("offset",String.valueOf((Integer.parseInt(page.toString().trim())-1)*Integer.parseInt(rows.toString().trim())));
-            //获取数据的总行数
-            totalRows = classesEmployeeMapper.selectCountByCondition(param);
-            //设置总页数
-            totalPage = totalRows%Integer.parseInt(rows.toString().trim())==0?totalRows/Integer.parseInt(rows.toString().trim()):totalRows/Integer.parseInt(rows.toString().trim())+1;
+			if(realData!=null && realData.size()>0){
+                int pageIndex = Integer.parseInt(page.toString());
+                int pageSize = Integer.parseInt(rows.toString());
+
+                for (int i = ((pageIndex - 1) * pageSize); i < (pageSize * pageIndex); i++) {
+                    if(i==realData.size()){
+                        break;
+                    }
+                    finallyData.add(realData.get(i));
+                }
+                //获取数据的总行数
+                totalRows = realData.size();
+                //设置总页数
+                totalPage = totalRows%Integer.parseInt(rows.toString().trim())==0?totalRows/Integer.parseInt(rows.toString().trim()):totalRows/Integer.parseInt(rows.toString().trim())+1;
+			}
+			resultInfo.setData(finallyData);
         }else{
-            param.put("rows",null);
-            param.put("offset",null);
-        }*/
+        	resultInfo.setData(realData);
+        }
 		
-		List<Map> selectClassesInfo = classesEmployeeMapper.selectClassesInfo(param);
-		System.out.println(JSONObject.toJSONString(selectClassesInfo));
-		
-		
-		/*resultInfo.setData(selectClassesInfo);
+		//添加排行榜信息
+		resultInfo.setClassesTopInfo(selectTopThreeClassesType);
 		resultInfo.setMessage("请求数据成功");
 		resultInfo.setReturnCode("3000");
 		resultInfo.setPagecountNum(totalPage);
-		resultInfo.setTotalPages(totalRows);*/
+		resultInfo.setTotalPages(totalRows);
 		
 		return resultInfo;
 	}

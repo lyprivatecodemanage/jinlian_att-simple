@@ -11,8 +11,12 @@ public class ApplicationTransferRecord {
     private String applicationNo;
     //申请转移发起人id
     private String transferPersonId;
+    //转移发起人name
+    private String transferPersonName;
     //申请转移接收人id
     private String transferPersionAccessId;
+    //转移接收人name
+    private String transferPersionAccessName;
     //转移次数
     private String transferTimes;
     //操作时间
@@ -75,4 +79,21 @@ public class ApplicationTransferRecord {
     public void setTransferExplain(String transferExplain) {
         this.transferExplain = transferExplain;
     }
+
+	public String getTransferPersonName() {
+		return transferPersonName;
+	}
+
+	public void setTransferPersonName(String transferPersonName) {
+		this.transferPersonName = transferPersonName;
+	}
+
+	public String getTransferPersionAccessName() {
+		return transferPersionAccessName;
+	}
+
+	public void setTransferPersionAccessName(String transferPersionAccessName) {
+		this.transferPersionAccessName = transferPersionAccessName;
+	}
+    
 }

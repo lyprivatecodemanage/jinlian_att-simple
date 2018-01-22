@@ -21,6 +21,8 @@ import com.xiangshangban.att_simple.bean.ApplicationLeave;
 import com.xiangshangban.att_simple.bean.ApplicationOutgoing;
 import com.xiangshangban.att_simple.bean.ApplicationOvertime;
 import com.xiangshangban.att_simple.bean.ApplicationToCopyPerson;
+import com.xiangshangban.att_simple.bean.ApplicationTotalRecord;
+import com.xiangshangban.att_simple.bean.ApplicationTransferRecord;
 import com.xiangshangban.att_simple.bean.ApplicationType;
 import com.xiangshangban.att_simple.bean.Employee;
 import com.xiangshangban.att_simple.bean.MessageBean;
@@ -34,6 +36,7 @@ import com.xiangshangban.att_simple.dao.ApplicationOutgoingMapper;
 import com.xiangshangban.att_simple.dao.ApplicationOvertimeMapper;
 import com.xiangshangban.att_simple.dao.ApplicationToCopyPersonMapper;
 import com.xiangshangban.att_simple.dao.ApplicationTotalRecordMapper;
+import com.xiangshangban.att_simple.dao.ApplicationTransferRecordMapper;
 import com.xiangshangban.att_simple.dao.ApplicationTypeMapper;
 import com.xiangshangban.att_simple.dao.EmployeeDao;
 import com.xiangshangban.att_simple.dao.VacationMapper;
@@ -58,14 +61,16 @@ public class ApplicationServiceImpl implements ApplicationService {
 	@Autowired
 	private ApplicationToCopyPersonMapper  applicationToCopyPersonMapper;//抄送dao
 	@Autowired
-	private ApplicationTotalRecordMapper applicationtotalRecordMapper;//申请汇总记录dao
+	private ApplicationTotalRecordMapper applicationTotalRecordMapper;//申请汇总记录dao
 	@Autowired
 	private VacationMapper vacationMapper;//假期dao
 	@Autowired
 	private EmployeeDao employeeDao;//员工dao
 	@Autowired
 	private ApplicationCommonContactPeopleMapper  applicationCommonContactPeopleMapper;//常用联系人dao
-
+	@Autowired
+	private ApplicationTransferRecordMapper applicationTransferRecordMapper;//转移记录dao
+	
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED,rollbackForClassName="Exception")
 	public Map<String, Object> applicationIndexPage(String employeeId, String companyId) {
@@ -104,7 +109,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 			Employee employee =  employeeDao.selectByEmployee(application.getApplicationId(), application.getCompanyId());
 			application.setDepartmentId(employee.getEmployeeBirthday());
 			//生成申请记录
-			applicationtotalRecordMapper.insertApplicationRecord(application);
+			applicationTotalRecordMapper.insertApplicationRecord(application);
 			//生成请假申请记录
 			Object obj = this.setValue("1", null, application,Class.forName("com.xiangshangban.att_simple.bean.ApplicationLeave"), null);
 			ApplicationLeave applicationLeave = (ApplicationLeave)obj;
@@ -146,7 +151,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 		Employee employee =  employeeDao.selectByEmployee(application.getApplicationId(), application.getCompanyId());
 		application.setDepartmentId(employee.getEmployeeBirthday());//部门id
 		//生成申请记录
-		applicationtotalRecordMapper.insertApplicationRecord(application);
+		applicationTotalRecordMapper.insertApplicationRecord(application);
 		//生成加班申请记录
 		ApplicationOvertime applicationOvertime = (ApplicationOvertime)this.setValue("2", null, application, Class.forName("com.xiangshangban.att_simple.bean.ApplicationOvertime"),null);
 		applicationOvertimeMapper.insertApplicationOvertimeRecord(applicationOvertime);
@@ -178,7 +183,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 			Employee employee =  employeeDao.selectByEmployee(application.getApplicationId(), application.getCompanyId());
 			application.setDepartmentId(employee.getEmployeeBirthday());//部门id
 			//生成申请记录
-			applicationtotalRecordMapper.insertApplicationRecord(application);
+			applicationTotalRecordMapper.insertApplicationRecord(application);
 			//生成出差记录
 			ApplicationBusinessTravel applicationBusinessTravel = (ApplicationBusinessTravel)this.setValue("3", null, application, Class.forName("com.xiangshangban.att_simple.bean.ApplicationBusinessTravel"), null);
 			applicationBusinessTravelMapper.insertApplicationBusinessTravelRecord(applicationBusinessTravel);
@@ -200,7 +205,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 	public ReturnData outgoingApplication(Application application) {
 		ReturnData returnData = new ReturnData();
 		try{
-			if(StringUtils.isEmpty(application)||StringUtils.isEmpty(application.getOutgoningLocation())){
+			if(StringUtils.isEmpty(application)||StringUtils.isEmpty(application.getOutgoingLocation())){
 				returnData.setMessage("必传参数为空");
 				returnData.setReturnCode("3006");
 				return returnData;
@@ -209,7 +214,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 			Employee employee =  employeeDao.selectByEmployee(application.getApplicationId(), application.getCompanyId());
 			application.setDepartmentId(employee.getEmployeeBirthday());//部门id
 			//生成申请记录
-			applicationtotalRecordMapper.insertApplicationRecord(application);
+			applicationTotalRecordMapper.insertApplicationRecord(application);
 			//生成外出记录
 			ApplicationOutgoing applicationOutgoing = (ApplicationOutgoing)this.setValue("4", null, application, Class.forName("com.xiangshangban.att_simple.bean.ApplicationOutgoing"), null);
 			applicationOutgoingMapper.insertApplicationOutgoingRecord(applicationOutgoing);
@@ -240,7 +245,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 			Employee employee =  employeeDao.selectByEmployee(application.getApplicationId(), application.getCompanyId());
 			application.setDepartmentId(employee.getEmployeeBirthday());//部门id
 			//生成申请记录
-			applicationtotalRecordMapper.insertApplicationRecord(application);
+			applicationTotalRecordMapper.insertApplicationRecord(application);
 			//生成外出记录
 			ApplicationFillCard applicationFillCard = (ApplicationFillCard)this.setValue("5", null, application, Class.forName("com.xiangshangban.att_simple.bean.ApplicationFillCard"), null);
 			applicationFillCardMapper.insertApplicationFillCardRecord(applicationFillCard);
@@ -329,6 +334,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 		
 		}catch(Exception e){
 			logger.info(e);
+			e.printStackTrace();
 		}
 		return commonContactPeopleList;
 	}
@@ -336,8 +342,12 @@ public class ApplicationServiceImpl implements ApplicationService {
 	public <T>T setValue(String setValueType,List<Employee> employeeList,Application application,Class<T> c,
 			List<ApplicationCommonContactPeople> applicationCommonContactPeopleList){
 		try {
-		T t = c.newInstance();
-		MessageBean<T> mb = new MessageBean<T>(t);
+			T t = null;
+			MessageBean<T> mb  = null;
+		if(c!=null){
+			t = c.newInstance();
+			mb = new MessageBean<T>(t);
+		}
 		if("1".equals(setValueType)||"2".equals(setValueType)||
 				"3".equals(setValueType)||"4".equals(setValueType)||
 				"5".equals(setValueType)){
@@ -369,7 +379,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 			mb.setBusinessTravelType(application.getApplicationChildrenType());
 			break;
 		case"4"://外出申请实体类设值
-			mb.setOutgoningLocation(application.getOutgoningLocation());
+			mb.setOutgoingLocation(application.getOutgoingLocation());
 			break;
 		case"5"://补卡申请实体类设值
 			mb.setFillCardType(application.getApplicationChildrenType());
@@ -396,4 +406,98 @@ public class ApplicationServiceImpl implements ApplicationService {
 		}
 		return null;
 	}
+	/**
+	 * 申请列表
+	 */
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED,rollbackForClassName="Exception")
+	public List<ApplicationTotalRecord> applicationList(String employeeId, String companyId, String page, String count) {
+		page = String.valueOf((Integer.valueOf(page)-1)*Integer.valueOf(count));
+		List<ApplicationTotalRecord> applicationTotalList = applicationTotalRecordMapper.selectApplicationList(employeeId, companyId, page, count);
+		return applicationTotalList;
+	}
+	/**
+	 * 申请详情
+	 */
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED,rollbackForClassName="Exception")
+	public Application applicationDetails(String applicationNo,String employeeId,String departmentId,String companyId) {
+		Application application = new Application();
+		Application applicationDetails =null;
+		ApplicationTotalRecord applicationRecordStatus = applicationTotalRecordMapper.selectByPrimaryKey(applicationNo);
+		if("1".equals(applicationRecordStatus.getIsCopy())){//抄送
+			List<ApplicationToCopyPerson> copyPersonList = applicationToCopyPersonMapper.selectCopyPersonByApplicationNo(applicationNo);
+			for(int i=0;i<copyPersonList.size();i++){
+				Employee emp=employeeDao.selectNameByEmployeeIdAndDepartmentIdAndCompanyId(copyPersonList.get(i).getCopyPersonId(), null, companyId);
+				copyPersonList.get(i).setCopyPersonName(emp.getEmployeeName());
+			}
+			application.setCopyPersonList(copyPersonList);
+		}
+		String applicationType = applicationRecordStatus.getApplicationType();
+		//if("0".equals(applicationRecordStatus.getIsComplete())){//未完成
+			if("0".equals(applicationRecordStatus.getIsTransfer())){//未转移
+				applicationDetails = this.getApplicationDetails(application, applicationRecordStatus, applicationNo, employeeId, departmentId, companyId);
+			}else{//已转移
+				applicationDetails = this.getApplicationDetails(application, applicationRecordStatus, applicationNo, employeeId, departmentId, companyId);
+				List<ApplicationTransferRecord> transferRecordList = applicationTransferRecordMapper.selectTransferByApplicationNo(applicationNo);
+				for(int i=0;i<transferRecordList.size();i++){
+					Employee emp=employeeDao.selectNameByEmployeeIdAndDepartmentIdAndCompanyId(transferRecordList.get(i).getTransferPersonId(), null, companyId);
+					transferRecordList.get(i).setTransferPersonName(emp.getEmployeeName());
+					Employee emp1=employeeDao.selectNameByEmployeeIdAndDepartmentIdAndCompanyId(transferRecordList.get(i).getTransferPersionAccessId(), null, companyId);
+					transferRecordList.get(i).setTransferPersionAccessName(emp.getEmployeeName());
+				}
+				applicationDetails.setTransferRecordList(transferRecordList);
+			}
+		/*}else{//已完成
+		}*/
+		return applicationDetails;
+	}
+	
+	private Application getApplicationDetails(Application application,ApplicationTotalRecord applicationRecordStatus,String applicationNo,String employeeId,String departmentId,String companyId){
+		Application applicationDetails = null;
+		switch (applicationRecordStatus.getApplicationType()) {
+		case "1":
+			applicationDetails = applicationLeaveMapper.selectDetailsByApplicationNo(applicationNo);
+			applicationDetails.setApplicationType("1");
+			break;
+		case "2":
+			applicationDetails = applicationOvertimeMapper.selectDetailsByApplicationNo(applicationNo);
+			applicationDetails.setApplicationType("2");
+			break;
+		case "3":
+			applicationDetails = applicationBusinessTravelMapper.selectDetailsByApplicationNo(applicationNo);
+			applicationDetails.setApplicationType("3");
+			break;
+		case "4":
+			applicationDetails = applicationOutgoingMapper.selectDetailsByApplicationNo(applicationNo);
+			applicationDetails.setApplicationType("4");
+			break;
+		case "5":
+			applicationDetails = applicationFillCardMapper.selectDetailsByApplicationNo(applicationNo);
+			applicationDetails.setApplicationType("5");
+			break;
+		}
+		Employee emp = employeeDao.selectNameByEmployeeIdAndDepartmentIdAndCompanyId(employeeId, departmentId, companyId);
+		applicationDetails.setApplicatrionPersonName(emp.getEmployeeName());
+		applicationDetails.setDepartmentName(emp.getDepartmentName());
+		applicationDetails.setCompanyName(emp.getCompanyName());
+		if(!StringUtils.isEmpty(application.getCopyPersonList())){
+			applicationDetails.setCopyPersonList(application.getCopyPersonList());
+			applicationDetails.setIsCopy("1");
+		}
+		applicationDetails.setIsReject(applicationRecordStatus.getIsReject());
+		applicationDetails.setIsComplete(applicationRecordStatus.getIsComplete());
+		applicationDetails.setIsTransfer(applicationRecordStatus.getIsTransfer());
+		if("1".equals(applicationRecordStatus.getIsComplete())){
+			if("0".equals(applicationRecordStatus.getIsReject())){
+				applicationDetails.setStatusDescription("已通过");
+			}else{
+				applicationDetails.setStatusDescription("已驳回");
+			}
+		}else{
+			applicationDetails.setStatusDescription("审批中");
+		}
+		return applicationDetails;
+	}
+	
 }

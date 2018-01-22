@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ClassesEmployee;
-import com.xiangshangban.organization.bean.Employee;
+import com.xiangshangban.att_simple.bean.Employee;
 
 @Mapper
 public interface AlgorithmMapper {

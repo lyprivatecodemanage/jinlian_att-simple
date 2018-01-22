@@ -1,4 +1,6 @@
 package com.xiangshangban.att_simple.bean;
+
+
 /**
  * 申请记录汇总表
  * @author mian
@@ -34,7 +36,8 @@ public class ApplicationTotalRecord {
     
     private String isSkipRestDay;
     
-
+    private String statusDescription;//审批中,已完成,已驳回
+    
     public String getIsComplete() {
 		return isComplete;
 	}
@@ -145,6 +148,14 @@ public class ApplicationTotalRecord {
 
 	public void setIsSkipRestDay(String isSkipRestDay) {
 		this.isSkipRestDay = isSkipRestDay;
+	}
+
+	public String getStatusDescription() {
+		return statusDescription;
+	}
+
+	public void setStatusDescription(String statusDescription) {
+		this.statusDescription = statusDescription;
 	}
     
     
