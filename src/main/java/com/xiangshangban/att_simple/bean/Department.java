@@ -19,7 +19,6 @@ public class Department {
     private String CountNumber;//部门总人数
     private List<Department> children = new ArrayList<Department>();//子部门
     //private List<Post> postList = new ArrayList<Post>();//岗位
-
 	public String getDepartmentNumbe() {
 		return departmentNumbe;
 	}
@@ -112,5 +111,4 @@ public class Department {
 	public void setPostList(List<Post> postList) {
 		this.postList = postList;
 	}*/
-    
 }

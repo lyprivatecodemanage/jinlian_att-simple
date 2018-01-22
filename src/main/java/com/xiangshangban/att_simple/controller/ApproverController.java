@@ -102,13 +102,21 @@ public class ApproverController {
 			returnData.setReturnCode("3001");
 			return returnData;
 		}
+
 	}
+	/**
+	 * 审批详情
+	 * @param jsonString
+	 * @param request
+	 * @return
+	 */
 	@RequestMapping(value = "/approverDetails",produces="application/json;charset=utf-8",method=RequestMethod.POST)
 	public ReturnData approverDetails(String jsonString,HttpServletRequest request){
 		ReturnData returnData = new ReturnData();
 		String employeeId = "";
 		String companyId = "";
 		String applicationNo = "";
+		String statusDescription = "";
 		try{
 			employeeId = request.getHeader("accessUserId");//员工id
 			companyId = request.getHeader("companyId");//公司id
@@ -120,6 +128,7 @@ public class ApproverController {
 			try{
 				JSONObject jobj = JSON.parseObject(jsonString);
 				applicationNo = jobj.getString("applicationNo");
+				statusDescription = jobj.getString("statusDescription");
 			}catch(Exception e){
 				logger.info(e);
 				e.printStackTrace();
@@ -138,6 +147,38 @@ public class ApproverController {
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
 			//returnData.setData();
+			return returnData;
+		}catch(Exception e){
+			logger.info(e);
+			e.printStackTrace();
+			returnData.setMessage("服务器错误");
+			returnData.setReturnCode("3001");
+			return returnData;
+		}
+	}
+	/**
+	 * 待审批数目
+	 * @param jsonString
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/willApproverCount",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+	public ReturnData willApproverCount(String jsonString,HttpServletRequest request){
+		ReturnData returnData = new ReturnData();
+		String employeeId = "";
+		String companyId = "";
+		try{
+			employeeId = request.getHeader("accessUserId");//员工id
+			companyId = request.getHeader("companyId");//公司id
+			if(StringUtils.isEmpty(companyId)||StringUtils.isEmpty(employeeId)){
+				returnData.setMessage("请求信息错误");
+				returnData.setReturnCode("3012");
+				return returnData;
+			}
+			int i = approverService.willApproverCount(employeeId, companyId);
+			returnData.setMessage("成功");
+			returnData.setReturnCode("3000");
+			returnData.setData(i);
 			return returnData;
 		}catch(Exception e){
 			logger.info(e);

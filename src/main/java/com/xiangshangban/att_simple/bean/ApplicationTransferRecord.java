@@ -23,6 +23,8 @@ public class ApplicationTransferRecord {
     private String operaterTime;
     //移交说明
     private String transferExplain;
+    //当前审批人是否审批
+    private String isApproverCurrent;
     private String companyId;
 
     public String getId() {
@@ -103,6 +105,14 @@ public class ApplicationTransferRecord {
 
 	public void setCompanyId(String companyId) {
 		this.companyId = companyId;
+	}
+
+	public String getIsApproverCurrent() {
+		return isApproverCurrent;
+	}
+
+	public void setIsApproverCurrent(String isApproverCurrent) {
+		this.isApproverCurrent = isApproverCurrent;
 	}
     
 }

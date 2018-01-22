@@ -358,11 +358,8 @@
   <!-- 查询班次类型使用人数排行榜前三名 -->
   <select id="selectTopThreeClassesType" parameterType="String" resultType="Map">
   	SELECT
-<<<<<<< HEAD
 	CAST(COUNT (1) AS VARCHAR) totalnum,
-=======
 	COUNT (1) totalnum,
->>>>>>> dev-weiyoudi
 	classes_name
 	FROM
 		classes_employee_
@@ -378,7 +375,6 @@
 		totalnum DESC OFFSET 0
 	LIMIT 3
   </select>
-<<<<<<< HEAD
   
   <!-- 查询当前公司所有已经排过班次的人员ID、班次类型ID(排除临时班次)、最后一次班次的时间-->
   <select id="selectAllClassesEmp" parameterType="String" resultType="Map">
@@ -398,6 +394,4 @@
   	</where>
   	GROUP BY emp_id,classes_id,emp_company_id
   </select>
-=======
->>>>>>> dev-weiyoudi
 </mapper>
