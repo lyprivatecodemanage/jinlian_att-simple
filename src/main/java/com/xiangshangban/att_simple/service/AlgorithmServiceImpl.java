@@ -1,5 +1,4 @@
 package com.xiangshangban.att_simple.service;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -11,9 +10,7 @@ import com.xiangshangban.att_simple.bean.AlgorithmReport;
 import com.xiangshangban.att_simple.bean.AlgorithmResult;
 import com.xiangshangban.att_simple.bean.AlgorithmSign;
 import com.xiangshangban.att_simple.bean.Application;
-import com.xiangshangban.att_simple.bean.ApplicationOutgoing;
 import com.xiangshangban.att_simple.bean.ClassesEmployee;
-import com.xiangshangban.att_simple.bean.ReportDaily;
 import com.xiangshangban.att_simple.bean.ReportExcept;
 import com.xiangshangban.att_simple.dao.AlgorithmMapper;
 import com.xiangshangban.att_simple.dao.ClassesEmployeeMapper;
@@ -92,16 +89,79 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 					//前一天是否有排班
 					if(algorithmParam.getClassesEmployeeLastDay()!=null 
 							&& StringUtils.isNotEmpty(algorithmParam.getClassesEmployeeLastDay().getOnDutySchedulingDate())){//有
-						overSignValidBegin = algorithmParam.getClassesEmployeeLastDay().getOnDutySchedulingDate();
-					}else{
-						
+						//影响值：加班打卡有效开始时间=前一天打卡有效开始时间
+						overSignValidBegin = TimeUtil.getLongAfter(
+								algorithmParam.getClassesEmployeeLastDay().getOnDutySchedulingDate(),
+								-1*Integer.parseInt(algorithmParam.getClassesEmployee().getOnPunchCardRule()),
+								Calendar.MINUTE);
 					}
+					//影响值：加班打卡有效结束时间=今日打卡有效结束时间
+					overSignValidEnd = TimeUtil.getLongAfter(
+							algorithmParam.getClassesEmployee().getOffDutySchedulingDate(), 
+							Integer.parseInt(algorithmParam.getClassesEmployee().getOffPunchCardRule()),
+							Calendar.MINUTE);
 				}else{//右外申请
-					
+					//次日是否有排班
+					if(algorithmParam.getClassesEmployeeNextDay()!=null 
+							&& StringUtils.isNotEmpty(algorithmParam.getClassesEmployeeNextDay().getOffDutySchedulingDate())){//有
+						overSignValidEnd = TimeUtil.getLongAfter(
+								algorithmParam.getClassesEmployee().getOnDutySchedulingDate(), 
+								-1*Integer.parseInt(algorithmParam.getClassesEmployee().getOnPunchCardRule()),
+								Calendar.MINUTE);
+					}
+					overSignValidBegin = TimeUtil.getLongAfter(
+							algorithmParam.getClassesEmployeeNextDay().getOffDutySchedulingDate(),
+							Integer.parseInt(algorithmParam.getClassesEmployee().getOffPunchCardRule()),
+							Calendar.MINUTE);
 				}
 			}else{//无排班
-				
+				//检查前一天班次打卡结束时间是否在当天
+				ClassesEmployee classesLast = algorithmParam.getClassesEmployeeLastDay();
+				if(classesLast!=null && StringUtils.isNotEmpty(classesLast.getOffDutySchedulingDate())
+						&& StringUtils.isNotEmpty(classesLast.getOnDutySchedulingDate())){
+					String lastDateCardEnd = TimeUtil.getLongAfter(
+							classesLast.getOffDutySchedulingDate(), 
+							Integer.parseInt(classesLast.getClassesType().getOffPunchCardTime()), 
+							Calendar.MINUTE);//前一天班次打卡结束时间
+					if(TimeUtil.compareTime(lastDateCardEnd, algorithmParam.getCountDate()+" 00:00:00")){//前一天班次打卡结束时间在当天
+						overSignValidBegin = TimeUtil.getLongAfter(
+								algorithmParam.getClassesEmployeeLastDay().getOnDutySchedulingDate(),
+								-1*Integer.parseInt(algorithmParam.getClassesEmployee().getOnPunchCardRule()),
+								Calendar.MINUTE);
+					}
+				}
+				//抓取后一天的排班班次
+				//检查后一天班次打卡结束时间是否在当天
+				ClassesEmployee classesNext = algorithmMapper.getPlanByDate(algorithmParam.getCompanyId(),
+						algorithmParam.getEmployeeId(), TimeUtil.getLongAfter(
+								algorithmParam.getCountDate()+" 00:00:00", 1, Calendar.DATE));
+				//检查次日班次打卡开始时间是否在当天
+				if(classesNext!=null && StringUtils.isNotEmpty(classesNext.getOnDutySchedulingDate())
+						&& StringUtils.isNotEmpty(classesNext.getOffDutySchedulingDate())){
+					String lastDateCardEnd = TimeUtil.getLongAfter(
+							classesNext.getOffDutySchedulingDate(), 
+							-1*Integer.parseInt(classesNext.getClassesType().getOffPunchCardTime()), 
+							Calendar.MINUTE);//次日班次打卡开始时间
+					if(TimeUtil.compareTime(lastDateCardEnd, algorithmParam.getCountDate()+" 00:00:00")){//次日班次打卡开始时间在当天
+						overSignValidEnd = TimeUtil.getLongAfter(
+								algorithmParam.getClassesEmployee().getOnDutySchedulingDate(), 
+								-1*Integer.parseInt(algorithmParam.getClassesEmployee().getOnPunchCardRule()),
+								Calendar.MINUTE);
+					}
+				}
 			}
+			String overSignIn = algorithmMapper.getMinSignIn(algorithmParam.getCompanyId(), 
+					algorithmParam.getEmployeeId(), overSignValidBegin, overSignValidEnd);
+			String overSignOut = algorithmMapper.getMaxSignOut(algorithmParam.getCompanyId(), 
+					algorithmParam.getEmployeeId(), overSignValidBegin, overSignValidEnd);
+			//是否既有“加班签到时间”又有“加班签退时间”
+			//是否加班签到-签退区间与加班申请区间有交集
+			if(StringUtils.isNotEmpty(overSignIn) && StringUtils.isNotEmpty(overSignOut)){
+				AlgorithmReport.setNormalOverWork(
+						TimeUtil.containTimeLength(overSignValidBegin, overSignValidBegin, overSignIn, overSignOut)+"",
+						result.getReportDaily());
+			}
+			
 		}
 	}
 	/**
@@ -169,7 +229,24 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		this.countBusiness(algorithmParam, result);
 		//根据centerLine区分签到签退的中间线， attBeginLine应在岗的最早时间，attEndLine应在岗的最晚时间， 获得签到签退时间
 		this.getHasPlanSign(algorithmParam, result);
+		this.countWorkTime(algorithmParam, result);//应出
 		return result;
+	}
+	/**
+	 * 有排班：计算应出时长、应出天数
+	 * @param algorithmParam
+	 * @param result
+	 */
+	public void countWorkTime(AlgorithmParam algorithmParam, AlgorithmResult result) {
+		ClassesEmployee ClassesEmployee = algorithmParam.getClassesEmployee();
+		long restTime = TimeUtil.getTimeLength(ClassesEmployee.getRestEndTime(),
+				ClassesEmployee.getRestStartTime());
+		long workTime = TimeUtil.getTimeLength(
+				ClassesEmployee.getOffDutySchedulingDate(), 
+				ClassesEmployee.getOnDutySchedulingDate())-restTime;
+		
+		AlgorithmReport.setWorkTime(workTime+"", result.getReportDaily());
+		result.getReportDaily().setWorkDay("1");
 	}
 	/**
 	 * 计算请假
@@ -373,11 +450,11 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		}else{
 			String lateLine = TimeUtil.getLongAfter(
 					algorithmParam.getAttBeginLine(), 
-					Integer.parseInt(algorithmParam.getClassesEmployee().getClassesType().getSignInRule()), 
+					Integer.parseInt(algorithmParam.getClassesEmployee().getSignInRule()), 
 					Calendar.MINUTE);//迟到线
 			String earlyLine = TimeUtil.getLongAfter(
 					algorithmParam.getAttBeginLine(), 
-					-1*Integer.parseInt(algorithmParam.getClassesEmployee().getClassesType().getSignOutRule()), 
+					-1*Integer.parseInt(algorithmParam.getClassesEmployee().getSignOutRule()), 
 					Calendar.MINUTE);//早退线
 			if(StringUtils.isEmpty(signInTime)){//未签到
 				ReportExcept reportExcept = new ReportExcept();
@@ -523,9 +600,9 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 	
 	@Override
 	public boolean preCondition(String companyId, String employeeId, String countDate) {
-		boolean noCheckAtt = true;//***此处有查询
+		int noCheckAtt = algorithmMapper.getIsCheck(companyId, employeeId);
 		//查询是否为不考勤人员
-		if(noCheckAtt){//不考勤
+		if(noCheckAtt==0){//不考勤
 			return false;
 		}
 		return true;
