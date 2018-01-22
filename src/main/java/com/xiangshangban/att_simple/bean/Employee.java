@@ -3,7 +3,6 @@ package com.xiangshangban.att_simple.bean;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Employee {
    // ---现在用到的----
     private String employeeId;//员工ID
@@ -304,11 +303,4 @@ public class Employee {
 	public void setEmployeeBirthday(String employeeBirthday) {
 		this.employeeBirthday = employeeBirthday;
 	}
-	
-	
-    
-    
-	
-    
-   
 }

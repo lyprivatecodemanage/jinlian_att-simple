@@ -32,6 +32,5 @@ public interface ApproverService {
 	    * @return
 	    */
 	   int willApproverCount(String employeeId,String companyId);
-	   
 
 }

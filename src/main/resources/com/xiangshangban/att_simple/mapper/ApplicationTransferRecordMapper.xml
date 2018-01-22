@@ -93,7 +93,7 @@
         #{transferExplain},
       </if>
       <if test="companyId != null">
-        #{companyId},
+        #{companyId}
       </if>
     </trim>
   </insert>

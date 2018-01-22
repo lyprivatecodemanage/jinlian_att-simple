@@ -3,6 +3,11 @@ package com.xiangshangban.att_simple.service;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 无需考勤人员业务层
+ * @author 王勇辉
+ *
+ */
 public interface NotClockingInEmpService {
 	
 	/**

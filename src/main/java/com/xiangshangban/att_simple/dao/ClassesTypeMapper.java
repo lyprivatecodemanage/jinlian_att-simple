@@ -4,15 +4,19 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.xiangshangban.att_simple.bean.ClassesType;
+
+/**
+ * 班次类型dao
+ * @author 王勇辉
+ */
 @Mapper
 public interface ClassesTypeMapper {
     int deleteByPrimaryKey(String id);
 
 	int insert(ClassesType record);
-
-	ClassesType selectByPrimaryKey(String id);
 
 	int updateByPrimaryKeySelective(ClassesType record);
 
@@ -37,5 +41,12 @@ public interface ClassesTypeMapper {
 	 * @param companyId
 	 * @return
 	 */
-	List<ClassesType> selectAllClassesTypeInfo(String companyId);
+	List<ClassesType> selectAllClassesTypeInfo(@Param("companyId") String companyId);
+	
+	/**
+	 * 根据主键查询班次类型信息
+	 * @param id
+	 * @return
+	 */
+	ClassesType selectByPrimaryKey(@Param("id") String id);
 }

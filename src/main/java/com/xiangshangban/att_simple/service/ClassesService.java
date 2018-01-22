@@ -46,11 +46,10 @@ public interface ClassesService {
 
 	/**
 	 * 一键排班
-	 * @param requestParam
-	 * @param companyId
+	 * @param companyId 公司ID
 	 * @return
 	 */
-	boolean oneButtonScheduling(String requestParam,String companyId);
+	boolean oneButtonScheduling(String companyId);
 	
 	/**
 	 * 给指定的人员添加指定日期的排班
@@ -72,7 +71,7 @@ public interface ClassesService {
 	 * @param companyId
 	 * @return
 	 */
-	Map queryPointEmpDateClasses(String requestParam,String companyId);
+	Map queryPointEmpDateClasses(String empClassesId);
 	
 	/**
 	 * 查询指定人员指定时间区间的班次信息

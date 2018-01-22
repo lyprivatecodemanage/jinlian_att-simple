@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ApplicationTotalRecord;
 import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.service.ApproverService;
@@ -101,6 +102,7 @@ public class ApproverController {
 			returnData.setReturnCode("3001");
 			return returnData;
 		}
+
 	}
 	/**
 	 * 审批详情
