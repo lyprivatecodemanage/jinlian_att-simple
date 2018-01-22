@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ApplicationTotalRecord;
 import com.xiangshangban.att_simple.dao.ApplicationBusinessTravelMapper;
 import com.xiangshangban.att_simple.dao.ApplicationCommonContactPeopleMapper;
@@ -99,7 +100,7 @@ public class ApproverServiceImpl implements ApproverService {
 		}
 		//申请状态
 		if(StringUtils.isEmpty(statusDescription)||"全部".equals(statusDescription)){
-			approverList = applicationTotalRecordMapper.selectApproverListTotalselectApproverListTotal(employeeId, 
+			approverList = applicationTotalRecordMapper.selectApproverListTotal(employeeId, 
 					companyId, page, count, applicationType, applicationTimeStart, applicationTimeEnd, applicatrionPersonName);
 		}else{ 
 			if("未审批".equals(statusDescription)){
@@ -119,6 +120,59 @@ public class ApproverServiceImpl implements ApproverService {
 					isCopy, applicationTimeStart, applicationTimeEnd, applicatrionPersonName);
 		}
 		return approverList;
+	}
+	
+	/**
+	 * 审批详情
+	 */
+	@Override
+	public Application approverDetails(String applicationNo,String statusDescription) {
+		String isComplete = "";
+		String isTranser = "";
+		String isReject = "";
+		String isCopy = "";
+		if("未审批".equals(statusDescription)){
+			isComplete="0";
+		}else if("已转移".equals(statusDescription)){
+			isTranser = "1";
+		}else if("已完成".equals(statusDescription)){
+			isComplete = "1";
+		}else if("已驳回".equals(statusDescription)){
+			isComplete = "1";
+			isReject = "1";
+		}else if("抄送".equals(statusDescription)){
+			isCopy="1";
+		}
+		ApplicationTotalRecord applicationTotalRecord = applicationTotalRecordMapper.selectByPrimaryKey(applicationNo);
+		if("0".equals(applicationTotalRecord.getIsComplete())){//未完成
+			
+		}else{//已完成
+			
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		return null;
+	}
+	/**
+	 * 待审批条数
+	 */
+	@Override
+	public int willApproverCount(String employeeId, String companyId) {
+		int i = applicationTotalRecordMapper.selectCountFromWillApprover(employeeId, companyId);
+		return i;
 	}
 	
 
