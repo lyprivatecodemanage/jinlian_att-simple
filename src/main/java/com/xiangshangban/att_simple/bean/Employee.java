@@ -1,4 +1,8 @@
 package com.xiangshangban.att_simple.bean;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Employee {
    // ---现在用到的----
     private String employeeId;//员工ID
@@ -51,9 +55,6 @@ public class Employee {
 //    private String phonePublic;//是否公开手机号  0：公开  1：不公开
 //    private String shiftTime;//可用调休时长（秒）
 //    private String employeeCardNumber;//员工工资卡
-    
-    
-    
     
 	public String getPostName() {
 		return postName;
