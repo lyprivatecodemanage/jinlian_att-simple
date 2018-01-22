@@ -764,26 +764,20 @@ public class ClassesServiceImpl implements ClassesService{
 	
 	/**
 	 * 查询当前公司指定人员指定日期的班次信息
-	 * @param requestParam
-	 * @param companyId
+	 * @param empClassesId 人员单天班次ID
 	 * @return
 	 */
 	@Override
-	public Map queryPointEmpDateClasses(String requestParam, String companyId) {
+	public Map queryPointEmpDateClasses(String requestParam) {
 		//解析请求参数
-		JSONObject parseObject = JSONObject.parseObject(requestParam);
-		Object empId = parseObject.get("empId");
-		Object pointDate = parseObject.get("pointDate");
+		JSONObject parse = JSONObject.parseObject(requestParam);
+		Object empClassesId = parse.get("empClassesId");
 		//定义返回的结果
 		Map<String,String> result = new HashMap<>();
 		
-		if(empId!=null && pointDate!=null){
-			Map<String,String> param = new HashMap<>();
-			param.put("empId",empId.toString().trim());
-			param.put("pointDate",pointDate.toString().trim());
-			param.put("companyId",companyId.toString().trim());
+		if(empClassesId!=null && !empClassesId.toString().trim().isEmpty()){
 			
-			ClassesEmployee selectPointEmpDateClasses = classesEmployeeMapper.selectPointEmpDateClasses(param);
+			ClassesEmployee selectPointEmpDateClasses = classesEmployeeMapper.selectPointEmpDateClasses(empClassesId.toString().trim());
 			
 			if(selectPointEmpDateClasses!=null){
 				result.put("classesDate",(selectPointEmpDateClasses.getOnDutySchedulingDate()!=null && !selectPointEmpDateClasses.getOnDutySchedulingDate().isEmpty())?selectPointEmpDateClasses.getOnDutySchedulingDate().split(" ")[0]:"");

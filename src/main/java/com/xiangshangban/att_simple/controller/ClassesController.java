@@ -364,8 +364,7 @@ public class ClassesController {
 	 * 查询指定人员指定日期的班次信息
 	 * @param requestParam
 	 * {
-			"empId":"CASCASCA"--------->人员ID
-			"pointDate":"2018-01-10"----->指定的排班日期
+			"empClassesId":"82FC223D03C34A4E8EEF49EC129F1C9C" ------>人员单天班次ID
 	   }
 	 * @param request 获取头信息
 	 * @return
@@ -387,20 +386,13 @@ public class ClassesController {
 	   }
 	 */
 	@PostMapping("/getPointEmpDateClasses")
-	public ReturnData getPointEmpDateClasses(@RequestBody String requestParam,HttpServletRequest request){
-		//获取公司ID
-		String companyId = request.getHeader("companyId");
+	public ReturnData getPointEmpDateClasses(@RequestBody String requestParam){
 		//初始化返回的数据
 		ReturnData returnData = new ReturnData();
-		if(companyId!=null && !companyId.isEmpty()){
-			Map queryPointEmpDateClasses = classesService.queryPointEmpDateClasses(requestParam, companyId.trim());
-			returnData.setData(queryPointEmpDateClasses);
-			returnData.setReturnCode("3000");
-			returnData.setMessage("请求数据成功");
-		}else{
-			returnData.setReturnCode("3013");
-			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
-		}
+		Map queryPointEmpDateClasses = classesService.queryPointEmpDateClasses(requestParam);
+		returnData.setData(queryPointEmpDateClasses);
+		returnData.setReturnCode("3000");
+		returnData.setMessage("请求数据成功");
 		return returnData;
 	}
 	

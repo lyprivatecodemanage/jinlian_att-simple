@@ -71,7 +71,7 @@ public interface ClassesService {
 	 * @param companyId
 	 * @return
 	 */
-	Map queryPointEmpDateClasses(String requestParam,String companyId);
+	Map queryPointEmpDateClasses(String empClassesId);
 	
 	/**
 	 * 查询指定人员指定时间区间的班次信息

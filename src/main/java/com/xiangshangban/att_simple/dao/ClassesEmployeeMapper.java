@@ -58,7 +58,7 @@ public interface ClassesEmployeeMapper {
 	 * @param map
 	 * @return
 	 */
-	ClassesEmployee selectPointEmpDateClasses(Map map);
+	ClassesEmployee selectPointEmpDateClasses(@Param("/empClassesId") String empClassesId);
 	
 	/**
 	 * 查询指定人员指定时间区间的班次信息
