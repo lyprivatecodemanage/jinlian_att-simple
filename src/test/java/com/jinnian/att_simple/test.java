@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.xiangshangban.att_simple.bean.MessageBean;
+import com.xiangshangban.att_simple.utils.TimeUtil;
 
 public class test {
 	public static void main(String[] args) {
@@ -42,7 +43,9 @@ public class test {
 		}catch(Exception e){
 			e.printStackTrace();
 		}*/
-		try{
+
+		/*try{
+>>>>>>> dev-development
 			SimpleDateFormat dfs = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
 			
@@ -55,7 +58,10 @@ public class test {
 			System.out.println(dfs.format(sdf1.parse(date)));
 		}catch(Exception e){
 			e.printStackTrace();
-		}
+
+		}*/
+		System.out.println(TimeUtil.getDateBefore(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date(System.currentTimeMillis())),"7"));
+
 	}
 	
 	public void setValue(List<Integer> list){

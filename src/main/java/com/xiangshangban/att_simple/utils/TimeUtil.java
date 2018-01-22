@@ -20,15 +20,21 @@ public class TimeUtil {
 	 * @return
 	 * @throws ParseException 
 	 */
-	public static String getDateBefore(String time){
+	public static String getDateBefore(String time,String d){
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		
 		try {
-			Date date = format.parse(time);
+			Date date = null;
+			try{
+			date = format.parse(time);
+			}catch(Exception e){
+				date = format1.parse(time);
+			}
 			Calendar now = Calendar.getInstance();
 			now.setTime(date);
-			int day = now.get(Calendar.DAY_OF_WEEK) - 2;
-			now.set(Calendar.DATE, now.get(Calendar.DATE) - day);
+			int day = now.get(Calendar.DAY_OF_WEEK) - Integer.valueOf(d);
+			now.set(Calendar.DATE, now.get(Calendar.DATE) - Integer.valueOf(d));
 			return format.format(now.getTime());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block

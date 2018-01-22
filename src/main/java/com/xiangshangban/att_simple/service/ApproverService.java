@@ -2,7 +2,7 @@ package com.xiangshangban.att_simple.service;
 
 import java.util.List;
 
-import com.xiangshangban.att_simple.bean.Application;
+import com.xiangshangban.att_simple.bean.ApplicationTotalRecord;
 
 public interface ApproverService {
 		/**
@@ -17,7 +17,8 @@ public interface ApproverService {
 		 * @param applicatrionPersonName
 		 * @return
 		 */
-	   List<Application> approverIndexPage(String employeeId,String companyId,String page,String count,String applicationType,String statusDescription,String applicationTimeDescription,String applicatrionPersonName);
+	   List<ApplicationTotalRecord> approverIndexPage(String employeeId,String companyId,String page,String count,String applicationType,String statusDescription,String applicationTimeDescription,String applicatrionPersonName);
+
 	   
 
 }

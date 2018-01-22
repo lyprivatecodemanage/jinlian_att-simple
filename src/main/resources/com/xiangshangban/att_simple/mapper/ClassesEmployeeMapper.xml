@@ -211,7 +211,7 @@
   	COALESCE(rest_end_time,'') AS rest_end_time,
   	COALESCE(week,'') AS week
   	FROM classes_employee_
-  	WHERE emp_id = #{empId} and emp_company_id = #{companyId} and the_date = #{pointDate}
+  	WHERE id = #{empClassesId}
   </select>
   
   <!-- 查询指定人员指定时间区间的班次信息 -->
@@ -225,9 +225,12 @@
   	WHERE emp_id = #{empId} and emp_company_id = #{companyId} and the_date between #{startTime} and #{endTime} ORDER BY on_duty_scheduling_date
   </select>
   
-  <!-- 删除指定班次人员，某个日期之后的班次 -->
+  <!-- 删除指定班次类型,指定人员，某个日期之后的班次 -->
   <delete id="deleteAppointClassesTypeEmp" parameterType="Map">
   	delete from classes_employee_ where (classes_id = #{classesTypeId} or classes_id = '') and emp_company_Id = #{companyId} and the_date >= #{offSetTime} 
+  	<if test='empId !=null and empId!=""'>
+  		and emp_id = #{empId}
+  	</if>
   </delete>
   
   <!-- 删除指定人员指定日期的排班 -->
@@ -238,7 +241,7 @@
   	off_duty_scheduling_date = '',
   	rest_start_time = '',
   	rest_end_time = '' 
-  	where id = #{classesEmpId}
+  	where id = #{empClassesId}
   </update>
   
   <!-- 更新指定人员指定日期的班次 -->
@@ -256,11 +259,7 @@
 	  	off_punch_card_rule = #{offPunchCardRule},
 	  	divide_color = #{divideColor}
   	where
-  		emp_id = #{empId}
-  	and
-  		emp_company_id = #{empCompanyId}
-  	and 
-  		the_date = #{theDate}
+  		id = #{id}
   </update>
   
   <!-- 查询当前公司人员的班次信息 -->
@@ -271,6 +270,10 @@
 	COALESCE (emp_company_id, '') AS emp_company_id,
 	COALESCE (classes_id, '') AS classes_id,
 	COALESCE (classes_name, '') AS classes_name,
+	COALESCE (on_duty_scheduling_date, '') AS on_duty_scheduling_date,
+  	COALESCE (off_duty_scheduling_date, '') AS off_duty_scheduling_date,
+	COALESCE (rest_start_time, '') AS rest_start_time,
+	COALESCE (rest_end_time, '') AS rest_end_time,
 	COALESCE (the_date, '') AS the_date,
 	COALESCE (week, '') AS week,
 	COALESCE (divide_color, '') AS divide_color,
@@ -293,14 +296,17 @@
 						emp_company_id,
 						classes_id,
 						classes_name,
+						on_duty_scheduling_date,
+						off_duty_scheduling_date,
+						rest_start_time,
+						rest_end_time,
 						the_date,
 						week,
 						divide_color
 					FROM
 						classes_employee_
 					WHERE
-						the_date BETWEEN #{startDate}
-					AND #{endDate}
+						the_date BETWEEN #{startDate} AND #{endDate}
 					AND emp_company_id = #{companyId}
 				) H
 			LEFT JOIN (
@@ -352,7 +358,15 @@
   <!-- 查询班次类型使用人数排行榜前三名 -->
   <select id="selectTopThreeClassesType" parameterType="String" resultType="Map">
   	SELECT
+<<<<<<< HEAD
 	COUNT (1) totalnum,
+=======
+<<<<<<< HEAD
+	CAST(COUNT (1) AS VARCHAR) totalnum,
+=======
+	COUNT (1) totalnum,
+>>>>>>> dev-weiyoudi
+>>>>>>> dev-development
 	classes_name
 	FROM
 		classes_employee_
@@ -368,4 +382,29 @@
 		totalnum DESC OFFSET 0
 	LIMIT 3
   </select>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+  
+  <!-- 查询当前公司所有已经排过班次的人员ID、班次类型ID(排除临时班次)、最后一次班次的时间-->
+  <select id="selectAllClassesEmp" parameterType="String" resultType="Map">
+ 	SELECT
+		COALESCE (emp_id, '') AS emp_id,
+		COALESCE (emp_company_id, '') AS emp_company_id,
+		COALESCE (classes_id, '') AS classes_id,
+		COALESCE (MAX(the_date), '') AS last_date
+	FROM
+		classes_employee_
+  	<where>
+  		classes_name !='临时班次'
+  		AND classes_name != ''
+  		<if test='companyId!=null and companyId!=""'>
+  			and emp_company_id = #{companyId}
+  		</if>
+  	</where>
+  	GROUP BY emp_id,classes_id,emp_company_id
+  </select>
+=======
+>>>>>>> dev-weiyoudi
+>>>>>>> dev-development
 </mapper>

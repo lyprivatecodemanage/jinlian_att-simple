@@ -21,6 +21,7 @@ public class ApplicationTotalRecord {
     private String isCopy;
     //申请人id
     private String applicationId;
+    private String applicationName;
     //公司id
     private String companyId;
     //是否驳回(0:否;1:是)
@@ -156,6 +157,14 @@ public class ApplicationTotalRecord {
 
 	public void setStatusDescription(String statusDescription) {
 		this.statusDescription = statusDescription;
+	}
+
+	public String getApplicationName() {
+		return applicationName;
+	}
+
+	public void setApplicationName(String applicationName) {
+		this.applicationName = applicationName;
 	}
     
     

@@ -2,10 +2,16 @@ package com.xiangshangban.att_simple.dao;
 
 import java.util.List;
 import java.util.Map;
-
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.xiangshangban.att_simple.bean.NotClockingInEmp;
+
+/**
+ * 无需考勤人员dao
+ * @author 王勇辉
+ *
+ */
 @Mapper
 public interface NotClockingInEmpMapper {
 	
@@ -21,12 +27,12 @@ public interface NotClockingInEmpMapper {
 	 * @param companyId
 	 * @return
 	 */
-	List<Map> selectNotClockingInEmp(String companyId);
+	List<Map> selectNotClockingInEmp(@Param("companyId") String companyId);
 	
 	/**
 	 * 删除指定公司无需考勤人员
 	 * @param empList
 	 * @return
 	 */
-	int removeNotClockingInEmp(String companyId);
+	int removeNotClockingInEmp(@Param("companyId") String companyId);
 }

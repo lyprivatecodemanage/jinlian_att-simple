@@ -9,6 +9,7 @@
     <result column="last_approver"  property="lastApprover" />
     <result column="is_copy"  property="isCopy" />
     <result column="application_id"  property="applicationId" />
+    <result column="employee_name"  property="applicationName" />
     <result column="company_id"  property="companyId" />
     <result column="is_reject"  property="isReject" />
     <result column="application_status"  property="applicationStatus" />
@@ -63,6 +64,86 @@
   	where atr.application_id =#{applicationId} and atr.company_id =#{companyId} order by atr.operater_time DESC
   	limit #{count}::integer offset #{page}::integer
   </select>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+  <!-- 审批列表申请状态:非全部 -->
+  <select id="selectApproverListCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <if test="employeeName!=null and employeeName!=''">
+    select <include refid="Base_Column_List"/> , e.employee_name
+    from (
+    </if>
+  	select <include refid="Base_Column_List"/>
+  	from att_simple.application_total_record_ atr
+  	<if test="isTranser=='1'">
+  		left join att_simple.application_transfer_record_ tr on
+  		atr.application_no = tr.application_no 
+  		and tr.company_id = #{companyId}
+  		and tr.transfer_person_id = #{employeeId}
+  	</if>
+  	where 
+  	atr.company_id = #{companyId} 
+  	<if test="isTranser!='1'">
+  	and atr.last_approver = #{employeeId} 
+  	</if>
+  	<if test="isTranser=='1'">
+  	and tr.transfer_person_id = #{employeeId}
+  	</if>
+  	<if test="applicationType!=null and application!=''">
+  	and atr.application_type = #{applicationType}
+  	</if>
+  	<if test="isComplete!=null and isComplete!=''">
+  	and atr.is_complete = #{isComplete}
+  	</if>
+  	<if test="isTranser!=null and isTranser!=''">
+  	and atr.is_transfer = #{isTranser}
+  	</if>
+  	<if test="isReject!=null and isReject!=''">
+  	and atr.is_reject = #{isReject}
+  	</if>
+  	<if test="isCopy=null and isCopy!=''">
+  	and atr.is_copy = #{isCopy}
+  	</if>
+  	<if test="applicationTimeStart!=null and applicationTimeEnd!=null">
+  	and applicationTime between #{applicationTimeStart} and #{applicationTimeEnd} 
+  	</if> 
+  	<if test="employeeName!=null and employeeName!=''">
+  	) as t left join organization.employee_ e on e.company_id = #{companyId} 
+  	and e.employee_id = t.application_id and e.employee_name like #{employeeName} 
+  </if>
+  	order by atr.operater_time DESC
+  	limit #{count}::integer offset #{page}::integer
+  </select>
+  <!-- 审批列表申请状态:全部 -->
+  <select id="selectApproverListTotal" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <if test="employeeName!=null and employeeName!=''">
+  select <include refid="Base_Column_List"/> , e.employee_name
+  from (
+  </if>
+  select <include refid="Base_Column_List"/>
+  	from att_simple.application_total_record_ atr
+  	left join att_simple.application_to_copy_person_ cp 
+  	on atr.application_no = cp.application_no 
+  	and cp.company_id = #{companyId}
+  	where 
+  	atr.company_id = #{companyId} and 
+	CASE atr.is_copy when '0' then atr.last_approver = #{employeeId} 
+	when '1' then cp.copy_person_id =#{employeeId} end
+	<if test="applicationType!=null and application!=''">
+  	and atr.application_type = #{applicationType}
+  	</if>
+  	<if test="applicationTimeStart!=null and applicationTimeEnd!=null">
+  	and applicationTime between #{applicationTimeStart} and #{applicationTimeEnd} 
+  	</if>
+  <if test="employeeName!=null and employeeName!=''">
+  	) as t left join organization.employee_ e on e.company_id = #{companyId} 
+  	and e.employee_id = t.application_id and e.employee_name like #{employeeName} 
+  </if>
+  order by atr.operater_time DESC
+  	limit #{count}::integer offset #{page}::integer
+  </select>
+=======
+>>>>>>> dev-development
   
   <!-- 审批列表 -->
   <select id="selectApproverList" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -72,6 +153,10 @@
   	limit #{count}::integer offset #{page}::integer
   </select>
   
+<<<<<<< HEAD
+=======
+>>>>>>> dev-weiyoudi
+>>>>>>> dev-development
   
   
   

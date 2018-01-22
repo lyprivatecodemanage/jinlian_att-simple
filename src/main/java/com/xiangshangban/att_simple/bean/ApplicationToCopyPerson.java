@@ -15,6 +15,7 @@ public class ApplicationToCopyPerson {
     private String copyPersonName;
     //操作时间
     private String operaterTime;
+    private String companyId;
 
     public String getId() {
         return id;
@@ -55,4 +56,13 @@ public class ApplicationToCopyPerson {
     public void setOperaterTime(String operaterTime) {
         this.operaterTime = operaterTime;
     }
+
+	public String getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(String companyId) {
+		this.companyId = companyId;
+	}
+    
 }

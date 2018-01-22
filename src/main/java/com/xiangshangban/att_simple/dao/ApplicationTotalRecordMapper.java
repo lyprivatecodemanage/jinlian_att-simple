@@ -33,10 +33,29 @@ public interface ApplicationTotalRecordMapper {
 	 * @param count
 	 * @return
 	 */
-	List<ApplicationTotalRecord> selectApproverList(@Param("employeeId")String employeeId,
-			@Param("companyId")String companyId,@Param("page")String page,@Param("count")String count);
+	List<ApplicationTotalRecord> selectApproverListCondition(
+			@Param("employeeId")String employeeId,
+			@Param("companyId")String companyId,
+			@Param("page")String page,
+			@Param("count")String count,
+			@Param("applicationType")String applicationType,
+			@Param("isComplete")String isComplete,
+			@Param("isTranser")String isTranser,
+			@Param("isReject")String isReject,
+			@Param("isCopy")String isCopy,
+			@Param("applicationTimeStart")String applicationTimeStart,
+			@Param("applicationTimeEnd")String applicationTimeEnd,
+			@Param("employeeName")String employeeName);
 	
-	
+	List<ApplicationTotalRecord> selectApproverListTotalselectApproverListTotal(
+			@Param("employeeId")String employeeId,
+			@Param("companyId")String companyId,
+			@Param("page")String page,
+			@Param("count")String count,
+			@Param("applicationType")String applicationType,
+			@Param("applicationTimeStart")String applicationTimeStart,
+			@Param("applicationTimeEnd")String applicationTimeEnd,
+			@Param("employeeName")String employeeName);
 	
 	
 	
