@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.xiangshangban.att_simple.bean.Vacation;
 import com.xiangshangban.att_simple.bean.VacationDetails;
 
 @Mapper
@@ -29,7 +30,7 @@ public interface VacationDetailsMapper {
      * @param vacationId
      * @return
      */
-    VacationDetails SelectVacationIdByEndResult(@Param("vacationId")String vacationId,@Param("vacationType")String vacationType);
+    VacationDetails SelectVacationIdByEndResult(@Param("vacationId")String vacationId,@Param("vacationType")String vacationType,@Param("year")String year);
     
     /**
      * 查询假期详情表 某位员工的记录条数
@@ -50,4 +51,6 @@ public interface VacationDetailsMapper {
      */
     List<VacationDetails> SelectVacationDetails(@Param("vacationId")String vacationId,@Param("vacationType")String vacationType,
     		@Param("changingReason")String changingReason,@Param("changeingDateRank")String changeingDateRank,@Param("pageExcludeNumber")String pageExcludeNumber,@Param("pageNum")String pageNum);
+
+    
 }

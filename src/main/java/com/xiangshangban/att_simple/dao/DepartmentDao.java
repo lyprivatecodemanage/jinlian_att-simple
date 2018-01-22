@@ -41,5 +41,4 @@ public interface DepartmentDao {
 	 * @return
 	 */
 	List<Department> selectDepartmentAndPostByCompanyId(String companyId);
-
 }

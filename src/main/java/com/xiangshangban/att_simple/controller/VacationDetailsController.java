@@ -35,8 +35,8 @@ public class VacationDetailsController {
 		String vacationType = obj.getString("vacationType"); 
 		String changingReason = obj.getString("changingReason");
 		String changeingDateRank = obj.getString("changeingDateRank");
-		String varPageNo = obj.getString("varPageNo");
-		String pageNum = obj.getString("pageNum");
+		String varPageNo = obj.getString("pageNum");
+		String pageNum = obj.getString("pageRecordNum");
 		
 		String pageExcludeNumber = String.valueOf((Integer.parseInt(varPageNo)-1)*Integer.parseInt(pageNum));
 		
