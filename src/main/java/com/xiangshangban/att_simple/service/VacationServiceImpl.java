@@ -279,34 +279,38 @@ public class VacationServiceImpl implements VacationService {
 					e.printStackTrace();
 				}
 				
-				Vacation vacation = vacationMapper.SelectEmployeeVacation(companyId, null, employee.getEmployeeId());
-				
-				if(vacation != null){
-					Vacation v = new Vacation();
-					v.setVacationId(vacation.getVacationId());
-					v.setCompanyId(employee.getCompanyId());
-					v.setDepartmentId(employee.getDepartmentId());
-					v.setEmployeeId(employee.getEmployeeId());
-					v.setAnnualLeaveTotal(String.valueOf(AVday));
-					v.setAnnualLeaveBalance(String.valueOf(AVday));
-					v.setAdjustRestTotal(vacation.getAdjustRestTotal());
-					v.setAdjustRestBalance(vacation.getAdjustRestBalance());
-					v.setYear(year);
+				if(AVday>-1){
+					Vacation vacation = vacationMapper.SelectEmployeeVacation(companyId, null, employee.getEmployeeId());
 					
-					vacationMapper.insertSelective(v);
-				}else{
-					Vacation v = new Vacation();
-					v.setVacationId(FormatUtil.createUuid());
-					v.setCompanyId(employee.getCompanyId());
-					v.setDepartmentId(employee.getDepartmentId());
-					v.setEmployeeId(employee.getEmployeeId());
-					v.setAnnualLeaveTotal(String.valueOf(AVday));
-					v.setAnnualLeaveBalance(String.valueOf(AVday));
-					v.setAdjustRestTotal("0");
-					v.setAdjustRestBalance("0");
-					v.setYear(year);
-					
-					vacationMapper.insertSelective(v);
+					if(vacation != null ){
+						if(!vacation.getYear().equals(year)){
+							Vacation v = new Vacation();
+							v.setVacationId(vacation.getVacationId());
+							v.setCompanyId(employee.getCompanyId());
+							v.setDepartmentId(employee.getDepartmentId());
+							v.setEmployeeId(employee.getEmployeeId());
+							v.setAnnualLeaveTotal(String.valueOf(AVday));
+							v.setAnnualLeaveBalance(String.valueOf(AVday));
+							v.setAdjustRestTotal(vacation.getAdjustRestTotal());
+							v.setAdjustRestBalance(vacation.getAdjustRestBalance());
+							v.setYear(year);
+							
+							vacationMapper.insertSelective(v);
+						}
+					}else{
+						Vacation v = new Vacation();
+						v.setVacationId(FormatUtil.createUuid());
+						v.setCompanyId(employee.getCompanyId());
+						v.setDepartmentId(employee.getDepartmentId());
+						v.setEmployeeId(employee.getEmployeeId());
+						v.setAnnualLeaveTotal(String.valueOf(AVday));
+						v.setAnnualLeaveBalance(String.valueOf(AVday));
+						v.setAdjustRestTotal("0");
+						v.setAdjustRestBalance("0");
+						v.setYear(year);
+						
+						vacationMapper.insertSelective(v);
+					}
 				}
 			}
 		}

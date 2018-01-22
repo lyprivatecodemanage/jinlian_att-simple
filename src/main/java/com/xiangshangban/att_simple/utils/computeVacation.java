@@ -73,7 +73,9 @@ public class computeVacation {
 	public int AnnualLeave(int year){
 		int AVday = 0;
 		
-		if(year<1){
+		if(year<0){
+			AVday = -1;
+		}else if(year<1){
 			AVday = 0;
 		}else if(year<10){
 			AVday = 5;
@@ -103,6 +105,11 @@ public class computeVacation {
 		
 		//传入试用结束日期得到享有年假数
 		int companyAnnualVacationDay = computeAnnualVacation(sdf.parse(workTime));
+		
+		//试用未结束 返回0天年假
+		if(companyAnnualVacationDay < 0){
+			return -1;
+		}
 		
 		double b = socialAnnualVacationDay*socialServicePercent+companyAnnualVacationDay*companyServicePercent+cardinalNumber;
 		
