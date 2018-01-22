@@ -2,7 +2,6 @@ package com.xiangshangban.att_simple.service;
 
 import com.xiangshangban.att_simple.bean.AlgorithmParam;
 import com.xiangshangban.att_simple.bean.AlgorithmResult;
-import com.xiangshangban.organization.bean.Employee;
 
 public interface AlgorithmService {
 	/**
@@ -11,7 +10,7 @@ public interface AlgorithmService {
 	 * @param employeeId 员工ID
 	 * @param countDate 计算日期
 	 */
-	public void calculate(String companyId,Employee employee, String countDate);
+	public void calculate(String companyId,String employeeId, String countDate);
 	
 	/**
 	 * 预计算：计算某一个用户在某一天是否可以计算
@@ -28,7 +27,7 @@ public interface AlgorithmService {
 	 * @param countDate 计算日期
      * @return 计算参数
      */
-    public AlgorithmParam generateAlgorithmParam(String companyId, Employee employee, String countDate);
+    public AlgorithmParam generateAlgorithmParam(String companyId, String employeeId, String countDate);
     /**
      * 计算完成后，处理报表、异常结果数据（保存、推送等）
      * @param algorithmResult

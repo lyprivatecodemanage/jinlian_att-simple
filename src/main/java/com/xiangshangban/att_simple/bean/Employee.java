@@ -313,11 +313,4 @@ public class Employee {
 	public void setEmployeeBirthday(String employeeBirthday) {
 		this.employeeBirthday = employeeBirthday;
 	}
-	
-	
-    
-    
-	
-    
-   
 }

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.xiangshangban.att_simple.bean.MessageBean;
+import com.xiangshangban.att_simple.utils.TimeUtil;
 
 public class test {
 	public static void main(String[] args) {
@@ -42,8 +43,21 @@ public class test {
 		}catch(Exception e){
 			e.printStackTrace();
 		}*/
-		System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(getTimesnight())));
-		
+		/*try{
+			SimpleDateFormat dfs = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+			
+			String date = "2018-1-18";
+			
+			
+			int time= (int)Math.ceil((double)((dfs.parse("2018-1-18"+" 24:00:00").getTime()-dfs.parse("2018-1-18 06:10:00").getTime())/1000/60/30)/2);
+			System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(getTimesnight())));
+			System.out.println(time);
+			System.out.println(dfs.format(sdf1.parse(date)));
+		}catch(Exception e){
+			e.printStackTrace();
+		}*/
+		System.out.println(TimeUtil.getDateBefore(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date(System.currentTimeMillis())),"7"));
 	}
 	
 	public void setValue(List<Integer> list){

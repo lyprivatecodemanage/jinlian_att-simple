@@ -13,6 +13,7 @@ import com.xiangshangban.att_simple.bean.AlgorithmSign;
 import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ApplicationOutgoing;
 import com.xiangshangban.att_simple.bean.ClassesEmployee;
+import com.xiangshangban.att_simple.bean.Employee;
 import com.xiangshangban.att_simple.bean.ReportDaily;
 import com.xiangshangban.att_simple.bean.ReportExcept;
 import com.xiangshangban.att_simple.dao.AlgorithmMapper;
@@ -20,7 +21,6 @@ import com.xiangshangban.att_simple.dao.ClassesEmployeeMapper;
 import com.xiangshangban.att_simple.dao.ReportDailyMapper;
 import com.xiangshangban.att_simple.dao.ReportExceptMapper;
 import com.xiangshangban.att_simple.utils.TimeUtil;
-import com.xiangshangban.organization.bean.Employee;
 
 @Service("AlgorithmService")
 public class AlgorithmServiceImpl implements AlgorithmService {
@@ -36,9 +36,9 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 	 * 核心计算开始
 	 */
 	@Override
-	public void calculate(String companyId, Employee employee, String countDate) {
-		if(this.preCondition(companyId, employee.getEmployeeId(), countDate)){
-			AlgorithmParam algorithmParam = this.generateAlgorithmParam(companyId, employee, countDate);//各种查询
+	public void calculate(String companyId,String employeeId, String countDate) {
+		if(this.preCondition(companyId, employeeId, countDate)){
+			AlgorithmParam algorithmParam = this.generateAlgorithmParam(companyId, employeeId, countDate);//各种查询
 			AlgorithmResult result = new AlgorithmResult();
 			result.getReportDaily().setAttDate(countDate);
 			this.calculateStandard(algorithmParam, result);//计算
@@ -532,10 +532,11 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 	}
 
 	@Override
-	public AlgorithmParam generateAlgorithmParam(String companyId, Employee employee, String countDate) {
+	public AlgorithmParam generateAlgorithmParam(String companyId, String employeeId, String countDate) {
 		AlgorithmParam algorithmParam = new AlgorithmParam();
-		algorithmParam.setEmployeeId(employee.getEmployeeId());
-		algorithmParam.setEmployee(employee);
+		algorithmParam.setEmployeeId(employeeId);
+		Employee employee = algorithmMapper.getEmployeeInfoById(companyId, employeeId);
+		algorithmParam.setEmployee(employee );
 		algorithmParam.setCompanyId(companyId);
 		algorithmParam.setCountDate(countDate);
 		//查询当天的排班

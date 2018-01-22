@@ -28,7 +28,7 @@ public class Scheduler {
 	 */
 	@Scheduled(cron=SCHEDULED_TIME)
 	public void autoScheduling(){
-		classesService.autoScheduling();
+		/*classesService.autoScheduling();*/
 		logger.info("----自动排班----");
 	}
 }
