@@ -269,24 +269,25 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>com.xiangshangban</groupId>
-				<artifactId>organization</artifactId>
-				<configuration>
-					<webResources>
-						<resource>
-							<directory>${project.basedir}/lib</directory>
-							<targetPath>WEB-INF/lib</targetPath>
-							<filtering>false</filtering>
-							<includes>
-								<include>**/*.jar</include>
-							</includes>
-						</resource>
-					</webResources>
-				</configuration>
-				<version>2.0</version>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<!-- <plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>com.xiangshangban.att_simple.AttSimple</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>
+							jar-with-dependencies
+						</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+			</plugin> -->
 		</plugins>
 	</build>
-
 
 </project>

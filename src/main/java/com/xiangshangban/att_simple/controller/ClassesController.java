@@ -2,6 +2,8 @@ package com.xiangshangban.att_simple.controller;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
+import com.arjuna.ats.internal.jdbc.drivers.modifiers.list;
 import com.xiangshangban.att_simple.bean.ClassesType;
 import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.service.ClassesService;
@@ -95,7 +98,22 @@ public class ClassesController {
 		ReturnData returnData = new ReturnData();
 		if(companyId!=null && !companyId.isEmpty()){
 			List<ClassesType> allClassesIdAndName = classesService.queryAllClassesIdAndName(companyId.trim());
-			returnData.setData(allClassesIdAndName);
+			
+			//精简返回的数据
+			List<Map> listMap = new ArrayList<>();
+			
+			if(allClassesIdAndName!=null && allClassesIdAndName.size()>0){
+				for (ClassesType classesType : allClassesIdAndName) {
+					Map innerMap = new HashMap();
+					innerMap.put("id",classesType.getId());
+					innerMap.put("classes_name", classesType.getClassesName());
+					
+					listMap.add(innerMap);
+				}
+				returnData.setData(listMap);
+			}else{
+				returnData.setData(allClassesIdAndName);
+			}
 			returnData.setReturnCode("3000");
 			returnData.setMessage("请求数据成功");
 		}else{
@@ -161,7 +179,7 @@ public class ClassesController {
 		ReturnData returnData = new ReturnData();
 		if(companyId!=null && !companyId.toString().trim().isEmpty()){
 			Map allClassesTypeInfo = classesService.queryPointClassesTypeInfo(requestParam,companyId.trim());
-			
+			returnData.setData(allClassesTypeInfo);
 			returnData.setReturnCode("3000");
 			returnData.setMessage("请求数据成功");
 		}else{
