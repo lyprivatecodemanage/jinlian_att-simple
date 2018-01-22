@@ -1,5 +1,6 @@
 package com.xiangshangban.att_simple.service;
 
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -25,6 +26,7 @@ import com.xiangshangban.att_simple.dao.ApplicationTypeMapper;
 import com.xiangshangban.att_simple.dao.EmployeeDao;
 import com.xiangshangban.att_simple.dao.VacationMapper;
 import com.xiangshangban.att_simple.utils.TimeUtil;
+
 @Service("approverService")
 public class ApproverServiceImpl implements ApproverService {
 	private static final Logger logger = Logger.getLogger(ApproverServiceImpl.class);
@@ -119,6 +121,7 @@ public class ApproverServiceImpl implements ApproverService {
 					isCopy, applicationTimeStart, applicationTimeEnd, applicatrionPersonName);
 		}
 		return approverList;
+
 	}
 	
 

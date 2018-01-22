@@ -18,5 +18,4 @@ public interface CompanyDao {
     Company  findBycompanyNo(String companyNo);
     //查询一个人加入了哪些公司
     List<Company>selectByUserCompany(String Account);
-    
-}
+}    

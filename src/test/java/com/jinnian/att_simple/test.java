@@ -56,8 +56,10 @@ public class test {
 			System.out.println(dfs.format(sdf1.parse(date)));
 		}catch(Exception e){
 			e.printStackTrace();
+
 		}*/
 		System.out.println(TimeUtil.getDateBefore(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date(System.currentTimeMillis())),"7"));
+
 	}
 	
 	public void setValue(List<Integer> list){

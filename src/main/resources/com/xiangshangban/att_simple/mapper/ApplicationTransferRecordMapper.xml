@@ -9,7 +9,10 @@
     <result column="transfer_times"  property="transferTimes" />
     <result column="operater_time"  property="operaterTime" />
     <result column="transfer_explain"  property="transferExplain" />
+<<<<<<< HEAD
     <result column="company_id"  property="companyId" />
+=======
+>>>>>>> dev-weiyoudi
   </resultMap>
   <sql id="Base_Column_List">
     id, application_no, transfer_person_id, transfer_persion_access_id, transfer_times, 
@@ -37,10 +40,17 @@
   <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.ApplicationTransferRecord">
     insert into application_transfer_record_ (id, application_no, transfer_person_id, 
       transfer_persion_access_id, transfer_times, 
+<<<<<<< HEAD
       operater_time, transfer_explain,company_id)
     values (#{id}, #{applicationNo}, #{transferPersonId}, 
       #{transferPersionAccessId}, #{transferTimes}, 
       #{operaterTime}, #{transferExplain},#{companyId})
+=======
+      operater_time, transfer_explain)
+    values (#{id}, #{applicationNo}, #{transferPersonId}, 
+      #{transferPersionAccessId}, #{transferTimes}, 
+      #{operaterTime}, #{transferExplain})
+>>>>>>> dev-weiyoudi
   </insert>
   <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationTransferRecord">
     insert into application_transfer_record_
@@ -91,9 +101,12 @@
       </if>
       <if test="transferExplain != null">
         #{transferExplain},
+<<<<<<< HEAD
       </if>
       <if test="companyId != null">
         #{companyId},
+=======
+>>>>>>> dev-weiyoudi
       </if>
     </trim>
   </insert>
@@ -117,9 +130,12 @@
       </if>
       <if test="transferExplain != null">
         transfer_explain = #{transferExplain},
+<<<<<<< HEAD
       </if>
       <if test="companyId != null">
         company_id = #{companyId},
+=======
+>>>>>>> dev-weiyoudi
       </if>
     </set>
     where id = #{id}
@@ -131,8 +147,12 @@
       transfer_persion_access_id = #{transferPersionAccessId},
       transfer_times = #{transferTimes},
       operater_time = #{operaterTime},
+<<<<<<< HEAD
       transfer_explain = #{transferExplain},
       company_id = #{companyId}
+=======
+      transfer_explain = #{transferExplain}
+>>>>>>> dev-weiyoudi
     where id = #{id}
   </update>
 </mapper>

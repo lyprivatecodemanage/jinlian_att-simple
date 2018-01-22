@@ -10,7 +10,10 @@
     <result column="rest_start_time" property="restStartTime"/>
     <result column="rest_end_time" property="restEndTime"/>
     <result column="week" jdbcType="VARCHAR" property="week" />
-    <association property="classesType" resultMap="ClassesMap"></association>
+    <result column="sign_in_rule" jdbcType="VARCHAR" property="signInRule" />
+    <result column="sign_out_rule" jdbcType="VARCHAR" property="signOutRule" />
+    <result column="on_punch_card_time" jdbcType="VARCHAR" property="onPunchCardTime" />
+    <result column="off_punch_card_time" jdbcType="VARCHAR" property="offPunchCardTime" />
   </resultMap>
   <resultMap id="ClassesMap" type="com.xiangshangban.att_simple.bean.ClassesType">
     <id column="id" jdbcType="VARCHAR" property="id" />
@@ -40,11 +43,8 @@
   <select id="getPlanByDate" resultMap="ClassesEmployee">
   	select a.emp_id, a.emp_company_id, a.classes_id, a.on_duty_scheduling_date,
   		 a.off_duty_scheduling_date,a.rest_start_time, a.rest_end_time, a.week,
-	    b.classes_name, b.on_duty_time, b.off_duty_time, b.morrow_duty_time_flag, b.rest_time, 
-	    b.rest_days, b.festival_rest_flag, b.sign_in_rule, b.sign_out_rule, b.on_punch_card_time, b.off_punch_card_time, 
-	    b.auto_classes_flag
+  		 a.sign_in_rule, a.sign_out_rule, a.on_punch_card_time, a.off_punch_card_time
 	FROM classes_employee_ AS a
-	LEFT JOIN classes_type AS b ON a.classes_id=b."id"
 	WHERE a.company_id=#{companyId} AND a.emp_id=#{employeeId} AND a.on_duty_scheduling_date::DATE=#{countDate}::DATE
   </select>
   <select id="getMinSignIn" resultType="String">
@@ -75,7 +75,9 @@
 	  UNION
 		SELECT a.fill_card_time AS record_date
 		FROM application_fill_card_ b
-		WHERE b.employee_id=#{employeeId} AND b.company_id=#{companyId}
+		LEFT JOIN application_total_record_ AS c ON b.application_id=c.application_no
+		WHERE b.employee_id=#{employeeId} AND b.company_id=#{companyId} 
+		AND  c.is_complete='1' AND c.is_reject='0'
 	   AND (b.fill_card_time BETWEEN #{beginTime} AND #{endTime})
 	) AS c 
   </select>
@@ -84,7 +86,9 @@
   			a.department_id,a.company_id, '1' AS application_type,
   			leave_type AS applicaiton_children_type
 	FROM application_leave_ a
-	WHERE a.employee_id=#{employeeId} AND a.company_id=#{companyId}
+	LEFT JOIN application_total_record_ AS b ON a.application_id=b.application_no
+	WHERE a.employee_id=#{employeeId} AND a.company_id=#{companyId} 
+	AND  b.is_complete='1' AND b.is_reject='0'
 	AND ((#{endTime} BETWEEN a.start_time AND a.end_time)
 			OR (a.end_time BETWEEN #{beginTime} AND #{endTime}))
 	ORDER BY a.start_time
@@ -93,7 +97,9 @@
   	SELECT DISTINCT a.start_time,a.end_time,a.employee_id,
   		a.department_id,a.company_id, '4' AS application_type
 	FROM application_outgoing_ a
-	WHERE a.employee_id=#{employeeId} AND a.company_id=#{companyId}
+	LEFT JOIN application_total_record_ AS b ON a.application_id=b.application_no
+	WHERE a.employee_id=#{employeeId} AND a.company_id=#{companyId} 
+	AND  b.is_complete='1' AND b.is_reject='0'
 	AND ((#{endTime} BETWEEN a.start_time AND a.end_time)
 			OR (a.end_time BETWEEN #{beginTime} AND #{endTime}))
 	ORDER BY a.start_time
@@ -102,7 +108,9 @@
   	SELECT DISTINCT a.start_time,a.end_time,a.employee_id,
   		a.department_id,a.company_id, '3' AS application_type
 	FROM application_business_travel_ a
-	WHERE a.employee_id=#{employeeId} AND a.company_id=#{companyId}
+	LEFT JOIN application_total_record_ AS b ON a.application_id=b.application_no
+	WHERE a.employee_id=#{employeeId} AND a.company_id=#{companyId} 
+	AND  b.is_complete='1' AND b.is_reject='0'
 	AND ((#{endTime} BETWEEN a.start_time AND a.end_time)
 			OR (a.end_time BETWEEN #{beginTime} AND #{endTime}))
 	ORDER BY a.start_time
@@ -114,5 +122,10 @@
 	WHERE a.employee_id=#{employeeId} AND a.company_id=#{companyId}
 	AND a.start_time::date=#{beginTime}::date
 	ORDER BY a.start_time
+  </select>
+  <select id="getIsCheck" resultType="int">
+  	SELECT count(id) 
+	FROM att_simple.not_clocking_in_emp
+	WHERE emp_id=#{employeeId} AND emp_company_id= #{companyId}
   </select>
 </mapper>
