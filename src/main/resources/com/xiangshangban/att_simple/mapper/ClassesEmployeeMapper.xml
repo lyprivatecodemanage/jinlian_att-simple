@@ -359,6 +359,7 @@
   <select id="selectTopThreeClassesType" parameterType="String" resultType="Map">
   	SELECT
 	CAST(COUNT (1) AS VARCHAR) totalnum,
+	COUNT (1) totalnum,
 	classes_name
 	FROM
 		classes_employee_

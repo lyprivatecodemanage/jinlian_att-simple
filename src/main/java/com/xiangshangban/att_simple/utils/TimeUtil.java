@@ -340,7 +340,7 @@ public class TimeUtil {
 		return (int) hour;
 	}
 	/**
-	 * 两个日期相差的分钟数
+	 * 两个日期相差的小时数
 	 * @param date1 较大日期
 	 * @param date2 较小日期
 	 * @return
@@ -647,16 +647,16 @@ public class TimeUtil {
 				return 0;
 			}
 			if(b2<=b1 && e2>b1 && e2<e1){//2
-				return e2-b1;
+				return (e2-b1)/1000;
 			}
 			if(b2>b1 && e2<e1){//3
-				return e2-b2;
+				return (e2-b2)/1000;
 			}
 			if(b2>b1 && b2<e1 && e2>=e1){//4
-				return e1-b2;
+				return (e1-b2)/1000;
 			}
 			if(b2<=b1 && e2>=e1){//5
-				return e1-b1;
+				return (e1-b1)/1000;
 			}
 			if(b2>e1){//6
 				return 0;
@@ -718,22 +718,12 @@ public class TimeUtil {
 	}
 	
 	public static void main(String[] args) {
-//		System.out.println(isCrossDay("2017-10-16 10:00:00", "2017-10-17 10:05:00"));
+		System.out.println(containTimeLength("2017-10-16 10:00:00", "2017-10-16 10:05:00","2017-10-16 10:00:00", "2017-10-16 10:05:00")/60);
 //		System.out.println(getDateAfter(getCurrentDate(),1));
 //		System.out.println(getCurrentMaxDate());
 //		System.out.println(compareTime("2018-01-15 21:00:01","2018-01-15 01:00:01"));
-//		Map map = getMondayAndWeekendDate("2018-01-10");
-//		System.out.println(map.get("monday"));
-//		System.out.println(map.get("weekend"));
-		
-		System.out.println(hourOfTime("2018-01-18 19:30:00","2018-01-18 09:00:00"));
-		
-		System.out.println(minuteOfTime("2018-01-19 07:30:00","2018-01-18 21:00:00"));
-		
-		
-		Float valueOf = Float.valueOf(String.valueOf(630));
-		
-		System.out.println(valueOf/60);
-		
+		/*Map map = getMondayAndWeekendDate("2018-01-10");
+		System.out.println(map.get("monday"));
+		System.out.println(map.get("weekend"));*/
 	}
 }

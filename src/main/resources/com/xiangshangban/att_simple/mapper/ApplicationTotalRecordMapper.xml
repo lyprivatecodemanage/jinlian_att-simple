@@ -132,6 +132,7 @@
   	<if test="applicationTimeStart!=null and applicationTimeEnd!=null">
   	and applicationTime between #{applicationTimeStart} and #{applicationTimeEnd} 
   	</if>
+  	
   <if test="employeeName!=null and employeeName!=''">
   	) as t left join organization.employee_ e on e.company_id = #{companyId} 
   	and e.employee_id = t.application_id and e.employee_name like #{employeeName} 
@@ -140,8 +141,25 @@
   	limit #{count}::integer offset #{page}::integer
   </select>
   
+ <!-- 审批详情 -->
+<!--   <select id="selectApproverDetailsByApplicationNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List"/> from att_simple.application_total_record_ atr
+  	where atr.
+  	
+  </select> -->
   
   
+  
+  
+  
+  
+  
+  
+  <!-- 待审批条数 -->
+  <select id="selectCountFromWillApprover" parameterType="java.lang.String" resultType="java.lang.Integer">
+  	select count(atr.applicationNo) from att_simple.application_total_record_ atr 
+  	where atr.last_approver = #{employeeId} and atr.company_id = #{companyId} atr.is_complete='0'
+  </select>
   
   
   

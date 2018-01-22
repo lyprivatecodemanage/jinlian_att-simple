@@ -211,28 +211,81 @@ public class ClassesServiceImpl implements ClassesService {
 	 * 
 	 * @param requestParam
 	 * @param companyId
-	 * @return { "employeeId": null, "data": [ { "empId":
-	 *         "XFGCDSDSFSDFSDF46557", "deptName": "测试部", "classesList": [ {
-	 *         "classesName": "常白班", "classesId":
-	 *         "806FBB51326441FEB38EADE1F77737AF", "week": "1", "colorFlag":
-	 *         "1", "theDate": "2018-01-22" }, { "classesName": "常白班",
-	 *         "classesId": "35A65ACBFF8A43F19017F7463283FEA9", "week": "2",
-	 *         "colorFlag": "1", "theDate": "2018-01-23" }, { "classesName":
-	 *         "常白班", "classesId": "0CD0807A73F74A9296C843F4CC9D34D4", "week":
-	 *         "3", "colorFlag": "1", "theDate": "2018-01-24" }, {
-	 *         "classesName": "常白班", "classesId":
-	 *         "7B288683611A40A58B34F9F29AA4C6F0", "week": "4", "colorFlag":
-	 *         "1", "theDate": "2018-01-25" }, { "classesName": "常白班",
-	 *         "classesId": "91635142846A48F080B473F7C4A22DEB", "week": "5",
-	 *         "colorFlag": "1", "theDate": "2018-01-26" }, { "classesName": "",
-	 *         "classesId": "21C93F0C27F54E8CBE6F077214B0FD68", "week": "6",
-	 *         "colorFlag": "", "theDate": "2018-01-27" }, { "classesName": "",
-	 *         "classesId": "71E8DCE9171B44489948B0C8F7852C6B", "week": "7",
-	 *         "colorFlag": "", "theDate": "2018-01-28" } ], "empName":
-	 *         "测试unknown", "postName": "测试人员", "thisWeekHours": "50.0" } ],
-	 *         "totalPages": "0", "message": "请求数据成功", "returnCode": "3000",
-	 *         "pagecountNum": "0", "companyName": null, "classesTopInfo": [ {
-	 *         "totalnum": "50", "classes_name": "常白班" } ] }
+	 * @return
+	 * {
+		  "employeeId": null,
+		  "data": [
+		    {
+		      "empId": "XFGCDSDSFSDFSDF46557",
+		      "deptName": "测试部",
+		      "classesList": [
+		        {
+		          "classesName": "常白班",
+		          "classesId": "806FBB51326441FEB38EADE1F77737AF",
+		          "week": "1",
+		          "colorFlag": "1",
+		          "theDate": "2018-01-22"
+		        },
+		        {
+		          "classesName": "常白班",
+		          "classesId": "35A65ACBFF8A43F19017F7463283FEA9",
+		          "week": "2",
+		          "colorFlag": "1",
+		          "theDate": "2018-01-23"
+		        },
+		        {
+		          "classesName": "常白班",
+		          "classesId": "0CD0807A73F74A9296C843F4CC9D34D4",
+		          "week": "3",
+		          "colorFlag": "1",
+		          "theDate": "2018-01-24"
+		        },
+		        {
+		          "classesName": "常白班",
+		          "classesId": "7B288683611A40A58B34F9F29AA4C6F0",
+		          "week": "4",
+		          "colorFlag": "1",
+		          "theDate": "2018-01-25"
+		        },
+		        {
+		          "classesName": "常白班",
+		          "classesId": "91635142846A48F080B473F7C4A22DEB",
+		          "week": "5",
+		          "colorFlag": "1",
+		          "theDate": "2018-01-26"
+		        },
+		        {
+		          "classesName": "",
+		          "classesId": "21C93F0C27F54E8CBE6F077214B0FD68",
+		          "week": "6",
+		          "colorFlag": "",
+		          "theDate": "2018-01-27"
+		        },
+		        {
+		          "classesName": "",
+		          "classesId": "71E8DCE9171B44489948B0C8F7852C6B",
+		          "week": "7",
+		          "colorFlag": "",
+		          "theDate": "2018-01-28"
+		        }
+		      ],
+		      "empName": "测试unknown",
+
+		      "postName": "测试人员"
+		    }
+		  ],
+		  "totalPages": 0,
+		  "message": "请求数据成功",
+		  "returnCode": "3000",
+		  "pagecountNum": 0,
+		  "companyName": null,
+		  "classesTopInfo": [
+		    {
+		      "totalnum": 50,
+		      "classes_name": "常白班"
+		    }
+		  ]
+		}
 	 */
 	@Override
 	public ReturnData queryClassesInfo(String requestParam, String companyId) {

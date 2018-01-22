@@ -6,7 +6,8 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.xiangshangban.organization.bean.Department;
+import com.xiangshangban.att_simple.bean.Department;
+
 
 
 @Mapper
@@ -40,4 +41,5 @@ public interface DepartmentDao {
 	 * @return
 	 */
 	List<Department> selectDepartmentAndPostByCompanyId(String companyId);
+
 }

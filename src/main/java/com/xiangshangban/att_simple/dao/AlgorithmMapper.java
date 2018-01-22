@@ -92,4 +92,12 @@ public interface AlgorithmMapper {
 	 */
 	Employee getEmployeeInfoById(@Param("companyId")String companyId, 
 			@Param("employeeId")String employeeId);
+	/**
+	 * 查询人员是否需要考勤
+	 * @param companyId
+	 * @param employeeId
+	 * @return
+	 */
+	int getIsCheck(@Param("companyId")String companyId, 
+			@Param("employeeId")String employeeId);
 }

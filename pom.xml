@@ -8,7 +8,6 @@
 	<packaging>jar</packaging>
 
 	<name>att-simple</name>
-	<url>http://maven.apache.org</url>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -260,11 +259,11 @@
 	
 	<build>
 		<plugins>
-			<!-- <plugin>
+			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin> -->
-			<plugin>
+			</plugin>
+			<!-- <plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
 					<archive>
@@ -278,7 +277,7 @@
 						</descriptorRef>
 					</descriptorRefs>
 				</configuration>
-			</plugin>
+			</plugin> -->
 		</plugins>
 	</build>
 
