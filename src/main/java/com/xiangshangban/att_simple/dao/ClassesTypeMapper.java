@@ -37,11 +37,16 @@ public interface ClassesTypeMapper {
 	int removeAppointClassesType(Map map);
 	
 	/**
-	 * 查询当前公司所有班次类型的默认信息
-	 * @param companyId
+	 * 查询当前公司所有的班次类型ID和名称
+	 */
+	List<ClassesType> selectAllClassesIdAndName(@Param("companyId") String companyId);
+	
+	/**
+	 * 查询指定班次类型的默认信息
+	 * @param classesTypeId
 	 * @return
 	 */
-	List<ClassesType> selectAllClassesTypeInfo(@Param("companyId") String companyId);
+	ClassesType selectPointClassesTypeInfo(@Param("classesTypeId") String classesTypeId);
 	
 	/**
 	 * 根据主键查询班次类型信息

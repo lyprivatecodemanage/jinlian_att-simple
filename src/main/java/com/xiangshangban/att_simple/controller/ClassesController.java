@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
+import com.xiangshangban.att_simple.bean.ClassesType;
 import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.service.ClassesService;
 import com.xiangshangban.att_simple.service.NotClockingInEmpService;
@@ -82,11 +83,37 @@ public class ClassesController {
 	}
 	
 	/**
-	 * 查询当前公司所有班次类型详细信息（设置班次的时候默认显示数据）
+	 * 查询当前公司所有班次类型ID和名称
+	 * @param request
+	 * @return
+	 */
+	@PostMapping("/getAllClassesIdAndName")
+	public ReturnData getAllClassesIdAndName(HttpServletRequest request){
+		//获取公司ID
+		String companyId = request.getHeader("companyId");
+		//初始化返回的数据
+		ReturnData returnData = new ReturnData();
+		if(companyId!=null && !companyId.isEmpty()){
+			List<ClassesType> allClassesIdAndName = classesService.queryAllClassesIdAndName(companyId.trim());
+			returnData.setData(allClassesIdAndName);
+			returnData.setReturnCode("3000");
+			returnData.setMessage("请求数据成功");
+		}else{
+			returnData.setReturnCode("3013");
+			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
+		}
+		return returnData;
+	}
+	
+	/**
+	 * 查询指定班次类型详细信息（设置班次的时候默认显示数据）
+	 * {
+	 * 	 "classesTypeId":"XASJBXAKSJXBNNN" ------------>班次类型ID
+	 * }
 	 * 返回数据结构：
 	 * {
 		  "employeeId": null,
-		  "data": [
+		  "data": 
 		    {
 		      "classesType": {
 		        "id": "AB7130D9D6A94A0F82E159C234A7AA0C",
@@ -115,8 +142,7 @@ public class ClassesController {
 		          "emp_id": "XFGCDSDSFSDFSDF46557"
 		        }
 		      ]
-		    }
-		  ],
+		    },
 		  "totalPages": null,
 		  "message": "请求数据成功",
 		  "returnCode": "3000",
@@ -127,16 +153,15 @@ public class ClassesController {
 	 * @param request
 	 * @return
 	 */
-	@PostMapping("/getAllClassesType")
-	public ReturnData getAllClassesTypeInfo(HttpServletRequest request){
+	@PostMapping("/getPointClassesType")
+	public ReturnData getPointClassesTypeInfo(@RequestBody String requestParam,HttpServletRequest request){
 		//获取公司ID
 		String companyId = request.getHeader("companyId");
 		//初始化返回的数据
 		ReturnData returnData = new ReturnData();
-		if(companyId!=null && !companyId.isEmpty()){
-			List<Map> allClassesTypeInfo = classesService.queryAllClassesTypeInfo(companyId.trim());
+		if(companyId!=null && !companyId.toString().trim().isEmpty()){
+			Map allClassesTypeInfo = classesService.queryPointClassesTypeInfo(requestParam,companyId.trim());
 			
-			returnData.setData(allClassesTypeInfo);
 			returnData.setReturnCode("3000");
 			returnData.setMessage("请求数据成功");
 		}else{

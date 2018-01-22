@@ -211,7 +211,18 @@
     where id = #{id,jdbcType=VARCHAR}
   </update>
   
-  <!-- 查询当前公司所有的班次类型信息（默认显示） -->
+  <!-- 查询当前公司所有的班次类型ID和Name -->
+  <select id="selectAllClassesIdAndName" parameterType="String" resultType="BaseResultMap">
+  	SELECT
+	COALESCE(ID,'') AS ID,
+	COALESCE(classes_name,'') AS classes_name
+	FROM
+		classes_type
+	WHERE
+		company_id = #{companyId} 
+  </select>
+  
+  <!-- 查询指定的班次类型信息（默认显示） -->
   <select id="selectAllClassesTypeInfo" parameterType="String" resultMap="BaseResultMap">
   	SELECT
 	COALESCE(ID,'') AS ID,
@@ -230,7 +241,7 @@
 	FROM
 		classes_type
 	WHERE
-		company_id = #{companyId} 
+		id = #{classesTypeId}	
   </select>
   
   <!-- 删除指定的班次类型 -->
