@@ -64,9 +64,6 @@
   	where atr.application_id =#{applicationId} and atr.company_id =#{companyId} order by atr.operater_time DESC
   	limit #{count}::integer offset #{page}::integer
   </select>
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
   <!-- 审批列表申请状态:非全部 -->
   <select id="selectApproverListCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
     <if test="employeeName!=null and employeeName!=''">
@@ -142,8 +139,6 @@
   order by atr.operater_time DESC
   	limit #{count}::integer offset #{page}::integer
   </select>
-=======
->>>>>>> dev-development
   
   <!-- 审批列表 -->
   <select id="selectApproverList" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -152,11 +147,6 @@
   	where atr.last_approver = #{employeeId} and atr.company_id = #{companyId} and is_complete = '0' order by atr.operater_time DESC
   	limit #{count}::integer offset #{page}::integer
   </select>
-  
-<<<<<<< HEAD
-=======
->>>>>>> dev-weiyoudi
->>>>>>> dev-development
   
   
   
