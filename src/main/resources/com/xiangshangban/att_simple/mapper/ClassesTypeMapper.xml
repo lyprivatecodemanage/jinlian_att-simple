@@ -212,7 +212,7 @@
   </update>
   
   <!-- 查询当前公司所有的班次类型ID和Name -->
-  <select id="selectAllClassesIdAndName" parameterType="String" resultType="BaseResultMap">
+  <select id="selectAllClassesIdAndName" parameterType="String" resultMap="BaseResultMap">
   	SELECT
 	COALESCE(ID,'') AS ID,
 	COALESCE(classes_name,'') AS classes_name
