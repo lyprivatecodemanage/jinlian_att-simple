@@ -47,7 +47,7 @@ public interface ClassesEmployeeMapper {
      * @param companyId
      * @return
      */
-    List<Map<String,String>> selectTopThreeClassesType(String companyId);
+    List<Map<String,String>> selectTopThreeClassesType(@Param("companyId") String companyId);
     
     /**
 	 * 获取当前公司人员班次信息

@@ -38,7 +38,7 @@
   		and type = #{commonContactPeople.type}
   </select>
   <!-- 删除常用联系人,条件:employeeId,companyId,type -->
-	<delete id="deleteByEmployeeIdAndCompanyIdAndType" parameterType="com.xiangshangban.att_simple.bean.Application">
+	<delete id="deleteByEmployeeIdAndCompanyIdAndType" parameterType="java.lang.String">
 		delete from application_common_contact_people_ where employee_id = #{employeeId} and company_id = #{companyId} and type = #{type}
 	</delete>  
   

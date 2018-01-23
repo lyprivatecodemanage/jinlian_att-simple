@@ -37,6 +37,7 @@
     <result column="company_id" jdbcType="VARCHAR" property="companyId" />
     <result column="start_time" jdbcType="VARCHAR" property="startTime" />
     <result column="end_time" jdbcType="VARCHAR" property="endTime" />
+    <result column="is_skip_rest_day" jdbcType="VARCHAR" property="isSkipRestDay" />
     <result column="applicaiton_type" jdbcType="VARCHAR" property="applicaitonType"/>
     <result column="applicaiton_children_type" property="applicaitonChildrenType"/>
   </resultMap>
@@ -95,7 +96,7 @@
   </select>
   <select id="getOutByTime" resultMap="ApplicationMap">
   	SELECT DISTINCT a.start_time,a.end_time,a.employee_id,
-  		a.department_id,a.company_id, '4' AS application_type
+  		a.department_id,a.company_id, b.is_skip_rest_day, '4' AS application_type
 	FROM application_outgoing_ a
 	LEFT JOIN application_total_record_ AS b ON a.application_id=b.application_no
 	WHERE a.employee_id=#{employeeId} AND a.company_id=#{companyId} 
@@ -106,7 +107,7 @@
   </select>
     <select id="getBusinessByTime" resultMap="ApplicationMap">
   	SELECT DISTINCT a.start_time,a.end_time,a.employee_id,
-  		a.department_id,a.company_id, '3' AS application_type
+  		a.department_id,a.company_id, b.is_skip_rest_day, '3' AS application_type
 	FROM application_business_travel_ a
 	LEFT JOIN application_total_record_ AS b ON a.application_id=b.application_no
 	WHERE a.employee_id=#{employeeId} AND a.company_id=#{companyId} 
@@ -125,7 +126,13 @@
   </select>
   <select id="getIsCheck" resultType="int">
   	SELECT count(id) 
-	FROM att_simple.not_clocking_in_emp
+	FROM not_clocking_in_emp
 	WHERE emp_id=#{employeeId} AND emp_company_id= #{companyId}
+  </select>
+  <select id="getVacationId" resultType="String">
+  	SELECT vacation_id 
+	FROM vacation
+	WHERE employee_id=#{employeeId} 
+		AND company_id=#{companyId} AND year_=to_char(#{attDate}::TIMESTAMP, 'yyyy') 
   </select>
 </mapper>

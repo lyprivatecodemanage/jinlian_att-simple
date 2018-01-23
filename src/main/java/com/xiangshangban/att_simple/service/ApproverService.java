@@ -2,8 +2,8 @@ package com.xiangshangban.att_simple.service;
 
 import java.util.List;
 
-import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ApplicationTotalRecord;
+import com.xiangshangban.att_simple.bean.ReturnData;
 
 public interface ApproverService {
 		/**
@@ -24,7 +24,7 @@ public interface ApproverService {
 	    * @param applicationNo
 	    * @return
 	    */
-	   ApplicationTotalRecord approverDetails(String applicationNo,String statusDescription);
+	   ApplicationTotalRecord approverDetails(String applicationNo,String companyId);
 	   /**
 	    * 待审批数目
 	    * @param employeeId
@@ -32,5 +32,18 @@ public interface ApproverService {
 	    * @return
 	    */
 	   int willApproverCount(String employeeId,String companyId);
-
+	   /**
+	    * 审批申请
+	    * @param employeeId
+	    * @param companyId
+	    * @param applicationNo
+	    * @param approverDescription
+	    * @param postscriptason
+	    * @param transferPersonId
+	    * @param transferPersionAccessId
+	    * @return
+	    */
+	   ReturnData approverApplication(String employeeId,String companyId,
+			   String applicationNo,String approverDescription,String postscriptason,
+			   String transferPersonId, String transferPersionAccessId);
 }

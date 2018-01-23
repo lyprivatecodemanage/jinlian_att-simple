@@ -61,61 +61,13 @@
       <if test="isSkipRestDay != null">#{isSkipRestDay},</if>
     </trim>
   </insert>
-	<!-- 申请列表查询 -->  
- <!--  <select id="selectApplicationList" parameterType="java.lang.String" resultMap="BaseResultMap">
+	<!-- 申请列表 -->  
+	<select id="selectApplicationList" parameterType="java.lang.String" resultMap="BaseResultMap">
   	select application_no,application_type,is_reject,is_transfer,is_complete from att_simple.application_total_record_ atr
   	where atr.application_id =#{applicationId} and atr.company_id =#{companyId} order by atr.operater_time DESC
   	limit #{count}::integer offset #{page}::integer
   </select>
-  审批列表申请状态:非全部
-  <select id="selectApproverListCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
-    <if test="employeeName!=null and employeeName!=''">
-    select <include refid="Base_Column_List"/> , e.employee_name
-    from (
-    </if>
-  	select <include refid="Base_Column_List"/>
-  	from att_simple.application_total_record_ atr
-  	<if test="isTranser=='1'">
-  		left join att_simple.application_transfer_record_ tr on
-  		atr.application_no = tr.application_no 
-  		and tr.company_id = #{companyId}
-  		and tr.transfer_person_id = #{employeeId}
-  	</if>
-  	where 
-  	atr.company_id = #{companyId} 
-  	<if test="isTranser!='1'">
-  	and atr.last_approver = #{employeeId} 
-  	</if>
-  	<if test="isTranser=='1'">
-  	and tr.transfer_person_id = #{employeeId}
-  	</if>
-  	<if test="applicationType!=null and application!=''">
-  	and atr.application_type = #{applicationType}
-  	</if>
-  	<if test="isComplete!=null and isComplete!=''">
-  	and atr.is_complete = #{isComplete}
-  	</if>
-  	<if test="isTranser!=null and isTranser!=''">
-  	and atr.is_transfer = #{isTranser}
-  	</if>
-  	<if test="isReject!=null and isReject!=''">
-  	and atr.is_reject = #{isReject}
-  	</if>
-  	<if test="isCopy=null and isCopy!=''">
-  	and atr.is_copy = #{isCopy}
-  	</if>
-  	<if test="applicationTimeStart!=null and applicationTimeEnd!=null">
-  	and applicationTime between #{applicationTimeStart} and #{applicationTimeEnd} 
-  	</if> 
-  	<if test="employeeName!=null and employeeName!=''">
-  	) as t left join organization.employee_ e on e.company_id = #{companyId} 
-  	and e.employee_id = t.application_id and e.employee_name like #{employeeName} 
-  </if>
-  	order by atr.operater_time DESC
-  	limit #{count}::integer offset #{page}::integer
-  </select> -->
-  <!-- 审批列表申请状态:全部 -->
-  <!-- 申请列表 -->
+  <!-- 审批列表 -->
   <select id="selectApproverListTotal" parameterType="java.lang.String" resultMap="BaseResultMap">
  	select <include refid="Base_Column_List"/> ,e.employee_name,t.copy_person_id,t.transfer_person_id from 
 	(select atr.*,cp.copy_person_id,tr.transfer_person_id from application_total_record_ atr 
@@ -153,7 +105,7 @@
   	</if>
   	<choose>
   		<when test="statusDescription=='未审批'">
-  		and t.is_complete='0' and t.last_approver = #{employeeId} 
+  		and t.is_complete='0' and t.last_approver = #{employeeId} and application_status = '1'
   		</when>
   		<when test="statusDescription=='已转移'">
   		and t.last_approver!=#{employeeId} and t.transfer_person_id =#{employeeId}
@@ -165,7 +117,7 @@
   		and t.is_complete='1' and t.is_reject='1'
   		</when>
   		<when test="statusDescription=='抄送'">
-  		and t.is_copy='1' and t.copy_person_id = #{employeeId}
+  		and t.is_copy='1' and t.copy_person_id = #{employeeId} and application_status = '1'
   		</when>
   	</choose>
   	<if test="applicationTimeStart!=null and applicationTimeEnd!=null">
@@ -178,32 +130,11 @@
   	limit #{count}::integer offset #{page}::integer
   </select>
   
- <!-- 审批详情 -->
-<!--<select id="selectApproverDetailsByApplicationNo" parameterType="java.lang.String" resultMap="BaseResultMap">
-  	select <include refid="Base_Column_List"/> from att_simple.application_total_record_ atr
-  	where atr.
-  	
-  </select> -->
-  <!-- 未审批详情 -->
-  <select id="selectWillApproverDetails" parameterType="java.lang.String" resultMap="BaseResultMap">
-  	select <include refid="Base_Column_List"/>
-  	from att_simple.application_total_record_ atr 
-  </select>
-  
-  
-  
-  
-  
-  
-  
-  
-  
   <!-- 待审批条数 -->
   <select id="selectCountFromWillApprover" parameterType="java.lang.String" resultType="java.lang.Integer">
   	select count(atr.applicationNo) from att_simple.application_total_record_ atr 
   	where atr.last_approver = #{employeeId} and atr.company_id = #{companyId} atr.is_complete='0'
   </select>
-  
   
   <resultMap id="ApproverDetailsResultMap" type="com.xiangshangban.att_simple.bean.ApplicationTotalRecord">
     <id column="application_no"  property="applicationNo" />
@@ -228,24 +159,59 @@
     	<result column="tr_id" property="id"/>
     	<result column="tr_application_no" property="applicationNo"/>
     	<result column="tr_transfer_person_id" property="transferPersonId"/>
+    	<result column="tr_employee_name" property="transferPersonName"/>
     	<result column="tr_transfer_persion_access_id" property="transferPersionAccessId"/>
     	<result column="tr_transfer_times" property="transferTimes"/>
     	<result column="tr_operater_time" property="operaterTime"/>
     	<result column="tr_transfer_explain" property="transferExplain"/>
     	<result column="tr_company_id" property="companyId"/>
     </collection>
+    <collection property="applicationToCopyPersonList"
+    ofType="com.xiangshangban.att_simple.bean.ApplicationToCopyPerson">
+    	<result column="cp_id" property="id"/>
+    	<result column="cp_application_no" property="applicationNo"/>
+    	<result column="cp_copy_person_id" property="copyPersonId"/>
+    	<result column="cp_employee_name" property="copyPersonName"/>
+    	<result column="cp_operater_time" property="operaterTime"/>
+    	<result column="cp_company_id" property="companyId"/>
+    </collection>
   </resultMap>
     <sql id="TR_Base_Column_List">
     tr.id tr_id, tr.application_no tr_application_no, tr.transfer_person_id tr_transfer_person_id, 
-    tr.transfer_persion_access_id tr_transfer_persion_access_id, tr.transfer_times tr_transfer_times, 
+    tr.employee_name tr_employee_name,tr.transfer_persion_access_id tr_transfer_persion_access_id,
+    tr.transfer_times tr_transfer_times, 
     tr.operater_time tr_operater_time, tr.transfer_explain tr_transfer_explain, tr.company_id tr_company_id
+  </sql>
+  <sql id="tr_Base_Column_List">
+    trf.id, trf.application_no, trf.transfer_person_id, trf.transfer_persion_access_id, trf.transfer_times, 
+    trf.operater_time, trf.transfer_explain, trf.company_id
+  </sql>
+   <sql id="CP_Base_Column_List">
+    cp.id cp_id, cp.application_no cp_application_no, cp.copy_person_id cp_copy_person_id,
+    cp.employee_name cp_employee_name,cp.operater_time cp_operater_time, cp.company_id cp_company_id
+  </sql>
+   <sql id="cp_Base_Column_List">
+    acp.id, acp.application_no, acp.copy_person_id, acp.operater_time, acp.company_id
   </sql>
   <!-- 审批详情 -->
   <select id="selectApproverDetails" parameterType="java.lang.String" resultMap="ApproverDetailsResultMap">
   	select <include refid="Base_Column_List"/>,<include refid="TR_Base_Column_List"/>
+  	,<include refid="CP_Base_Column_List"/>
   	from att_simple.application_total_record_ atr 
-  	left join att_simple.application_transfer_record_ tr on atr.application_no = tr.application_no
-  	<!-- left join att_simple. -->
+  	left join 
+  	(
+  	select <include refid="tr_Base_Column_List"/>,e.employee_name
+  	from att_simple.application_transfer_record_ trf
+  	left join organization.employee_ e on e.employee_id = trf.transfer_person_id and e.company_id = #{companyId}
+  	where trf.application_no =#{applicationNo}
+  	) tr on atr.application_no = tr.application_no
+  	left join 
+  	(
+  	select <include refid="cp_Base_Column_List"/> ,e.employee_name
+  	from att_simple.application_to_copy_person_ acp
+  	left join organization.employee_ e on e.employee_id = acp.copy_person_id and e.company_id = #{companyId}
+  	where acp.application_no =#{applicationNo}
+  	) cp on atr.application_no = cp.application_no
   	where atr.application_no = #{applicationNo}
   </select>
   

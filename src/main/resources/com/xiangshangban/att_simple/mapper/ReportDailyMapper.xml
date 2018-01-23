@@ -69,6 +69,14 @@
       and company_id = #{companyId,jdbcType=VARCHAR}
       and att_date = #{attDate,jdbcType=VARCHAR}
   </select>
+  <select id="selectByDate" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from report_daily_
+    where employee_id = #{employeeId,jdbcType=VARCHAR}
+      and company_id = #{companyId,jdbcType=VARCHAR}
+      and att_date = #{attDate,jdbcType=VARCHAR}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ReportDailyKey">
     delete from report_daily_
     where employee_id = #{employeeId,jdbcType=VARCHAR}
@@ -91,7 +99,7 @@
       evection_time_holiday, evection_time_week, 
       evection_time_work, dept_name, begin_time1, 
       end_time1, leave_other, leave_amblosis, 
-      leave_pregnancy, work_day,sign_in_time,sign_out_time)
+      leave_pregnancy, work_day,sign_in_time,sign_out_time,create_time)
     values (#{employeeId,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR}, #{attDate,jdbcType=VARCHAR}, 
       #{reportId,jdbcType=VARCHAR}, #{deptId,jdbcType=VARCHAR}, #{paibanRemark,jdbcType=VARCHAR}, 
       #{checkInfo,jdbcType=VARCHAR}, #{workTime,jdbcType=VARCHAR}, #{realWorkTime,jdbcType=VARCHAR}, 
@@ -107,7 +115,8 @@
       #{evectionTimeHoliday,jdbcType=VARCHAR}, #{evectionTimeWeek,jdbcType=VARCHAR}, 
       #{evectionTimeWork,jdbcType=VARCHAR}, #{deptName,jdbcType=VARCHAR}, #{beginTime1,jdbcType=VARCHAR}, 
       #{endTime1,jdbcType=VARCHAR}, #{leaveOther,jdbcType=VARCHAR}, #{leaveAmblosis,jdbcType=VARCHAR}, 
-      #{leavePregnancy,jdbcType=VARCHAR}, #{workDay,jdbcType=VARCHAR},#{signInTime},#{signOutTime})
+      #{leavePregnancy,jdbcType=VARCHAR}, #{workDay,jdbcType=VARCHAR},#{signInTime},#{signOutTime},
+      to_char(now(),'yyyy-MM-dd hh24:mi:ss'))
   </insert>
   <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ReportDaily">
     insert into report_daily_
@@ -256,6 +265,7 @@
       <if test="signOutTime!=null">
       	sign_out_time=#{signOutTime},
       </if>
+      create_time
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="employeeId != null">
@@ -402,6 +412,7 @@
       <if test="signOutTime!=null">
       	sign_out_time=#{signOutTime},
       </if>
+      to_char(now(),'yyyy-MM-dd hh24:mi:ss')
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.ReportDaily">
@@ -542,6 +553,7 @@
       <if test="signOutTime!=null">
       	sign_out_time=#{signOutTime},
       </if>
+      create_time=to_char(now(),'yyyy-MM-dd hh24:mi:ss')
     </set>
     where employee_id = #{employeeId,jdbcType=VARCHAR}
       and company_id = #{companyId,jdbcType=VARCHAR}
@@ -593,9 +605,17 @@
       leave_pregnancy = #{leavePregnancy,jdbcType=VARCHAR},
       work_day = #{workDay,jdbcType=VARCHAR},
       sign_in_time=#{signInTime},
-      sign_out_time=#{signOutTime}
+      sign_out_time=#{signOutTime},
+      create_time=to_char(now(),'yyyy-MM-dd hh24:mi:ss')
     where employee_id = #{employeeId,jdbcType=VARCHAR}
       and company_id = #{companyId,jdbcType=VARCHAR}
       and att_date = #{attDate,jdbcType=VARCHAR}
   </update>
+  <delete id="deleteByDate">
+  	delete 
+  	from report_daily_
+    where  employee_id = #{employeeId,jdbcType=VARCHAR}
+      and company_id = #{companyId,jdbcType=VARCHAR}
+      and att_date = #{attDate,jdbcType=VARCHAR}
+  </delete>
 </mapper>

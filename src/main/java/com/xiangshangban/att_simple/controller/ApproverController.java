@@ -120,7 +120,7 @@ public class ApproverController {
 		String employeeId = "";
 		String companyId = "";
 		String applicationNo = "";
-		String statusDescription = "";
+		//String statusDescription = "";
 		try{
 			employeeId = request.getHeader("accessUserId");//员工id
 			companyId = request.getHeader("companyId");//公司id
@@ -132,7 +132,7 @@ public class ApproverController {
 			try{
 				JSONObject jobj = JSON.parseObject(jsonString);
 				applicationNo = jobj.getString("applicationNo");
-				statusDescription = jobj.getString("statusDescription");
+				//statusDescription = jobj.getString("statusDescription");
 			}catch(Exception e){
 				logger.info(e);
 				e.printStackTrace();
@@ -145,10 +145,7 @@ public class ApproverController {
 				returnData.setReturnCode("3006");
 				return returnData;
 			}
-			//查询审批申请单详情
-			//.......待继续
-			ApplicationTotalRecord approverDetails = approverService.approverDetails(applicationNo, statusDescription);
-			
+			ApplicationTotalRecord approverDetails = approverService.approverDetails(applicationNo,companyId);
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
 			returnData.setData(approverDetails);
@@ -193,4 +190,73 @@ public class ApproverController {
 			return returnData;
 		}
 	}
+	/**
+	 * 审批申请
+	 * @param jsonString
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/approverApplication",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+	public ReturnData approverApplication(@RequestBody String jsonString,HttpServletRequest request){
+		ReturnData returnData = new ReturnData();
+		String employeeId = "";
+		String companyId = "";
+		String applicationNo = "";//单号
+		String approverDescription = "";//审批操作说明
+		String postscriptason = "";//附言
+		String transferPersonId ="";//移交人id
+		String transferPersionAccessId="";//移交目标人id
+		JSONObject jobj = null;
+		try{
+			employeeId = request.getHeader("accessUserId");//员工id
+			companyId = request.getHeader("companyId");//公司id
+			if(StringUtils.isEmpty(companyId)||StringUtils.isEmpty(employeeId)){
+				returnData.setMessage("请求信息错误");
+				returnData.setReturnCode("3012");
+				return returnData;
+			}
+			try{
+				jobj = JSON.parseObject(jsonString);
+				applicationNo = jobj.getString("applicationNo");
+				approverDescription = jobj.getString("approverDescription");
+				postscriptason = jobj.getString("postscriptason");
+			}catch(Exception e){
+				logger.info(e);
+				e.printStackTrace();
+				returnData.setMessage("参数错误");
+				returnData.setReturnCode("3006");
+				return returnData;
+			}
+			if(StringUtils.isEmpty(applicationNo)||StringUtils.isEmpty(approverDescription)){
+				returnData.setMessage("必传参数为空");
+				returnData.setReturnCode("3006");
+				return returnData;
+			}
+			if("转移".equals(approverDescription)){
+				transferPersonId = jobj.getString("transferPersonId");
+				transferPersionAccessId = jobj.getString("transferPersionAccessId");
+				if(StringUtils.isEmpty(transferPersonId)||StringUtils.isEmpty(transferPersionAccessId)){
+					returnData.setMessage("必传参数为空");
+					returnData.setReturnCode("3006");
+					return returnData;
+				}
+			}
+			
+			
+			
+			returnData.setMessage("成功");
+			returnData.setReturnCode("3000");
+			returnData.setData("");
+			return returnData;
+		}catch(Exception e){
+			logger.info(e);
+			e.printStackTrace();
+			returnData.setMessage("服务器错误");
+			returnData.setReturnCode("3001");
+			return returnData;
+		}
+	}
+	
+	
+	
 }
