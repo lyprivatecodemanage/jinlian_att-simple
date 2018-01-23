@@ -12,7 +12,7 @@ public class ApplicationType {
     //申请类型描述
     private String description;
     //子类型描述
-    private String children_description;
+    private String childrenDescription;
 
 	public String getApplicationType() {
 		return applicationType;
@@ -38,12 +38,12 @@ public class ApplicationType {
 		this.description = description;
 	}
 
-	public String getChildren_description() {
-		return children_description;
+	public String getChildrenDescription() {
+		return childrenDescription;
 	}
 
-	public void setChildren_description(String children_description) {
-		this.children_description = children_description;
+	public void setChildrenDescription(String childrenDescription) {
+		this.childrenDescription = childrenDescription;
 	}
     
     

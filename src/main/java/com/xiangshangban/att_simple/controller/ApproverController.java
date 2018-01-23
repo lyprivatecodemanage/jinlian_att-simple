@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -114,7 +115,7 @@ public class ApproverController {
 	 * @return
 	 */
 	@RequestMapping(value = "/approverDetails",produces="application/json;charset=utf-8",method=RequestMethod.POST)
-	public ReturnData approverDetails(String jsonString,HttpServletRequest request){
+	public ReturnData approverDetails(@RequestBody String jsonString,HttpServletRequest request){
 		ReturnData returnData = new ReturnData();
 		String employeeId = "";
 		String companyId = "";
@@ -146,10 +147,11 @@ public class ApproverController {
 			}
 			//查询审批申请单详情
 			//.......待继续
+			ApplicationTotalRecord approverDetails = approverService.approverDetails(applicationNo, statusDescription);
 			
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
-			//returnData.setData();
+			returnData.setData(approverDetails);
 			return returnData;
 		}catch(Exception e){
 			logger.info(e);

@@ -131,12 +131,18 @@ public class ApproverServiceImpl implements ApproverService {
 	 * 审批详情
 	 */
 	@Override
-	public Application approverDetails(String applicationNo,String statusDescription) {
-		String isComplete = "";
+	public ApplicationTotalRecord approverDetails(String applicationNo,String statusDescription) {
+		/*String isComplete = "";
 		String isTranser = "";
 		String isReject = "";
-		String isCopy = "";
-		ApplicationTotalRecord applicationTotalRecord = applicationTotalRecordMapper.selectByPrimaryKey(applicationNo);
+		String isCopy = "";*/
+		ApplicationTotalRecord selectApproverDetails = null;
+		if("抄送".equals(statusDescription)){
+			
+		}else{
+			selectApproverDetails = applicationTotalRecordMapper.selectApproverDetails(applicationNo);
+		}
+		/*ApplicationTotalRecord applicationTotalRecord = applicationTotalRecordMapper.selectByPrimaryKey(applicationNo);
 		if("未审批".equals(statusDescription)){
 			if("1".equals(applicationTotalRecord.getIsTransfer())){
 				
@@ -151,9 +157,8 @@ public class ApproverServiceImpl implements ApproverService {
 			
 		}else if("抄送".equals(statusDescription)){
 			
-		}
-		
-		return null;
+		}*/
+		return selectApproverDetails;
 	}
 	/**
 	 * 待审批条数
