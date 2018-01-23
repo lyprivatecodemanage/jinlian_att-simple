@@ -8,7 +8,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+
 
 public class TimeUtil {
 
@@ -716,14 +717,69 @@ public class TimeUtil {
 		}
 		return returnData;
 	}
-	
+	/**
+	 * 秒化为分
+	 * @param seconds
+	 * @return
+	 */
+	public static String parseSecondToMinute(String seconds) {
+		if(StringUtils.isEmpty(seconds)){
+			return "0";
+		}
+		return Integer.parseInt(seconds)/60+"";
+	}
+	/**
+	 * 秒化为分，半小时为单位向上取整
+	 * @param seconds
+	 * @return
+	 */
+	public static String parseSecondToMinuteHalfHourUnit(String seconds) {
+		if(StringUtils.isEmpty(seconds)){
+			return "0";
+		}else{
+			double resultDouble = Math.ceil(Double.parseDouble(seconds)/60.0/30.0)*30.0;
+			String result = (int)resultDouble+"";
+			return result;
+		}
+	}
+	/**
+	 * 秒化为分，半小时为单位向下取整
+	 * @param seconds
+	 * @return
+	 */
+	public static String parseSecondToMinuteHalfHourFloorUnit(String seconds) {
+		if(StringUtils.isEmpty(seconds)){
+			return "0";
+		}else{
+			double resultDouble = Math.floor(Double.parseDouble(seconds)/60.0/30.0)*30.0;
+			String result = (int)resultDouble+"";
+			return result;
+		}
+	}
+	/**
+	 * 秒化为分，半天(4小时)为单位向上取整
+	 * @param seconds
+	 * @return
+	 */
+	public static String parseSecondToMinuteHalfDayUnit(String seconds) {
+		if(StringUtils.isEmpty(seconds)){
+			return "0";
+		}else{
+			double halfDayHour = 4.0*60.0;//分
+			double resultDouble = Math.ceil(Double.parseDouble(seconds)/60.0/halfDayHour)*halfDayHour;
+			String result = (int)resultDouble+"";
+			return result;
+		}
+	}
 	public static void main(String[] args) {
-		System.out.println(containTimeLength("2017-10-16 10:00:00", "2017-10-16 10:05:00","2017-10-16 10:00:00", "2017-10-16 10:05:00")/60);
-//		System.out.println(getDateAfter(getCurrentDate(),1));
+//		System.out.println(containTimeLength("2017-10-16 10:00:00", "2017-10-16 10:05:00","2017-10-16 10:00:00", "2017-10-16 10:05:00")/60);
+		System.out.println(parseSecondToMinuteHalfDayUnit("14450"));
 //		System.out.println(getCurrentMaxDate());
 //		System.out.println(compareTime("2018-01-15 21:00:01","2018-01-15 01:00:01"));
 		/*Map map = getMondayAndWeekendDate("2018-01-10");
 		System.out.println(map.get("monday"));
 		System.out.println(map.get("weekend"));*/
 	}
+
+	
 }

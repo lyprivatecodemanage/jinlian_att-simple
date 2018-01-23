@@ -12,13 +12,19 @@ import com.xiangshangban.att_simple.bean.AlgorithmSign;
 import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ClassesEmployee;
 import com.xiangshangban.att_simple.bean.Employee;
+import com.xiangshangban.att_simple.bean.ReportDaily;
 import com.xiangshangban.att_simple.bean.ReportExcept;
 import com.xiangshangban.att_simple.dao.AlgorithmMapper;
 import com.xiangshangban.att_simple.dao.ClassesEmployeeMapper;
 import com.xiangshangban.att_simple.dao.ReportDailyMapper;
 import com.xiangshangban.att_simple.dao.ReportExceptMapper;
+import com.xiangshangban.att_simple.utils.FormatUtil;
 import com.xiangshangban.att_simple.utils.TimeUtil;
-
+/**
+ * 考勤日报计算
+ * @author 韦友弟
+ *
+ */
 @Service("AlgorithmService")
 public class AlgorithmServiceImpl implements AlgorithmService {
 	@Autowired
@@ -29,6 +35,8 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 	ReportExceptMapper reportExceptMapper;
 	@Autowired
 	AlgorithmMapper algorithmMapper;
+	@Autowired
+	VacationService vacationService;
 	/**
 	 * 核心计算开始
 	 */
@@ -39,7 +47,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 			AlgorithmResult result = new AlgorithmResult();
 			result.getReportDaily().setAttDate(countDate);
 			this.calculateStandard(algorithmParam, result);//计算
-			this.postProcess(result);//处理计算结果数据
+			this.postProcess(algorithmParam, result);//处理计算结果数据
 		}
 	}
 	/**
@@ -214,9 +222,12 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		}else{//次日无排班
 			algorithmParam.setSignOutLimitLine(algorithmParam.getCountDate()+" 00:00:00");
 		}
-		this.getNoPlanSign(algorithmParam, result);
+		this.getNoPlanSign(algorithmParam, result);//签到签退、实出
+		this.countOutNoPlan(algorithmParam, result);//外出
+		this.countBusinessNoPlan(algorithmParam, result);//出差
 		return result;
 	}
+	
 	/**
 	 * 有排班的计算方式，区分有请假和无请假方式
 	 * @param algorithmParam
@@ -399,7 +410,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 				AlgorithmReport.setLeaveAnnual(currentApply+"", result.getReportDaily());//事假
 				break;
 			case "3"://调休假
-				AlgorithmReport.setChangeTime(currentApply+"", result.getReportDaily());
+				AlgorithmReport.setLeaveDaysOff(currentApply+"", result.getReportDaily());
 				break;
 			case "4"://婚假
 				AlgorithmReport.setLeaveMarriage(currentApply+"", result.getReportDaily());
@@ -411,7 +422,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 				AlgorithmReport.setLeaveFuneral(currentApply+"", result.getReportDaily());
 				break;
 			case "7"://病假
-				AlgorithmReport.setLeaveFuneral(currentApply+"", result.getReportDaily());
+				AlgorithmReport.setLeaveSick(currentApply+"", result.getReportDaily());
 				break;
 			default:
 				break;
@@ -425,6 +436,45 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 			break;
 		default:
 			break;
+		}
+	}
+	/**
+	 * 无排班时：出差和外出的计算
+	 * @param algorithmParam
+	 * @param result
+	 */
+	public void countOutNoPlan(AlgorithmParam algorithmParam, AlgorithmResult result) {
+		//查询与今日有交集的外出、出差
+		List<Application> applicationOutList = algorithmMapper.getOutByTime(algorithmParam.getCompanyId(),
+				algorithmParam.getEmployeeId(), algorithmParam.getSignInLimitLine(),
+				algorithmParam.getSignOutLimitLine());
+		this.countApplyNoPlan(result, applicationOutList);
+	}
+	/**
+	 * 无排班时：出差的计算
+	 * @param algorithmParam
+	 * @param result
+	 */
+	public void countBusinessNoPlan(AlgorithmParam algorithmParam, AlgorithmResult result) {
+		//查询与今日有交集的外出、出差
+		List<Application> applicationBusinessList = algorithmMapper.getBusinessByTime(algorithmParam.getCompanyId(),
+				algorithmParam.getEmployeeId(), algorithmParam.getSignInLimitLine(),
+				algorithmParam.getSignOutLimitLine());
+		this.countApplyNoPlan(result, applicationBusinessList);
+		
+	}
+	/**
+	 * 无排班时：外出、出差的申请计算
+	 * @param result
+	 * @param applicationBusinessList
+	 */
+	public void countApplyNoPlan(AlgorithmResult result, List<Application> applicationList) {
+		for(Application application : applicationList){
+			if("0".equals(application.getIsSkipRestDay())){//不跳过休息日，则计算;（只有外出和出差需要此状态）是否跳过休息日（0：否；1：是）
+				long currentApply = TimeUtil.getTimeLength(
+						application.getEndTime(), application.getEndTime());
+				AlgorithmReport.setOutTimeWork(currentApply+"", result.getReportDaily());
+			}
 		}
 	}
 	/**
@@ -470,6 +520,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 				reportExcept.setExceptDate(countDate);
 				reportExcept.setExceptType("1");
 				result.getReportExcept().add(reportExcept);
+				result.getReportDaily().setLate("1");//迟到次数
 			}
 			if(StringUtils.isEmpty(signInTime)){//未签到
 				ReportExcept reportExcept = new ReportExcept();
@@ -485,6 +536,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 				reportExcept.setExceptDate(countDate);
 				reportExcept.setExceptType("2");
 				result.getReportExcept().add(reportExcept);
+				result.getReportDaily().setEarly("1");//早退次数
 			}
 		}
 	}
@@ -632,26 +684,84 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 
 
 	@Override
-	public void postProcess(AlgorithmResult algorithmResult) {
-		//报表处理（单位处理：由分转为半小时）
-		reportDailyMapper.insertSelective(algorithmResult.getReportDaily());
+	public void postProcess(AlgorithmParam algorithmParam, AlgorithmResult algorithmResult) {
+		this.proReport(algorithmResult);
+		//删除已生成的异常
+		reportExceptMapper.deleteExceptByDate(algorithmParam.getCompanyId(), 
+				algorithmParam.getEmployeeId(), algorithmResult.getReportDaily().getAttDate());
+		
 		//异常处理
 		for(ReportExcept reportExcept:algorithmResult.getReportExcept()){
+			reportExcept.setExceptId(FormatUtil.createUuid());
 			reportExceptMapper.insertSelective(reportExcept);
 		}
 		//加班转调休生成处理，将对应日期生成的调休时长改动
+		String vacationId = algorithmMapper.getVacationId(algorithmParam.getCompanyId(), 
+				algorithmParam.getEmployeeId(), algorithmResult.getReportDaily().getAttDate());
+		//查询日报数据是否存在
+		ReportDaily oldReportDaily = reportDailyMapper.selectByDate(algorithmParam.getCompanyId(), 
+				algorithmParam.getEmployeeId(), algorithmResult.getReportDaily().getAttDate());
+		if(oldReportDaily!=null && StringUtils.isNotEmpty(oldReportDaily.getChangeTime()) 
+				&& 0!=Double.parseDouble(oldReportDaily.getChangeTime())){//存在，则扣除调休时长
+			//调整状态(0:收入,1:支出)
+			vacationService.AdjustRestAdjustment(
+					vacationId, "1", 
+					Double.parseDouble(algorithmResult.getReportDaily().getNormalOverWork())/60.0+"", 
+					"日报重新生成调休", "0");//先扣除
+		}
+		//报表处理（单位处理：由分转为半小时）
+		reportDailyMapper.insertSelective(algorithmResult.getReportDaily());
 		
+		//调整状态(0:收入,1:支出)
+		vacationService.AdjustRestAdjustment(
+				vacationId, "0", 
+				Double.parseDouble(algorithmResult.getReportDaily().getNormalOverWork())/60.0+"", 
+				"日报计算生成调休", "0");
 	}
 	/**
-     * 判断某一天是什么日子
-     * @return 0：节假日，1：休息日   2：工作日
-     */
-    /*public AttendenceSettingCalendar whatDay(AlgorithmParam algorithmParam){
-    	AttendenceSettingCalendar calendar = attendenceSettingCalendarMapper.getCalendarBySettingIdAndDate(
-    			algorithmParam.getAttendenceSetting().getAttentenceSettingId(),
-    			algorithmParam.getCountDate());
-    	algorithmParam.setCalendar(calendar);
-		return calendar;
-	}*/
+	 * 处理前文计算的日报数据：秒-》分钟
+	 * @param algorithmResult
+	 */
+	public void proReport(AlgorithmResult algorithmResult) {
+		//应出时长
+		algorithmResult.getReportDaily().setWorkTime(
+				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getWorkTime()));
+		//实出时长
+		algorithmResult.getReportDaily().setRealWorkTime(
+				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getRealWorkTime()));
+		//事假
+		algorithmResult.getReportDaily().setRealWorkTime(
+				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getRealWorkTime()));
+		//年假
+		algorithmResult.getReportDaily().setLeaveAnnual(
+				TimeUtil.parseSecondToMinuteHalfDayUnit(algorithmResult.getReportDaily().getLeaveAnnual()));
+		//调休假
+		algorithmResult.getReportDaily().setLeaveDaysOff(
+				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getLeaveDaysOff()));
+		//婚假
+		algorithmResult.getReportDaily().setLeaveMarriage(
+				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getLeaveMarriage()));
+		//产假
+		algorithmResult.getReportDaily().setLeaveMaternity(
+				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getLeaveMaternity()));
+		//丧假
+		algorithmResult.getReportDaily().setLeaveFuneral(
+				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getLeaveFuneral()));
+		//病假
+		algorithmResult.getReportDaily().setLeaveSick(
+				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getLeaveSick()));
+		//出差
+		algorithmResult.getReportDaily().setEvectionTimeWork(
+				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getEvectionTimeWork()));
+		//外出
+		algorithmResult.getReportDaily().setOutTimeWork(
+				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getOutTimeWork()));
+		//加班
+		algorithmResult.getReportDaily().setNormalOverWork(
+				TimeUtil.parseSecondToMinuteHalfHourFloorUnit(algorithmResult.getReportDaily().getNormalOverWork()));
+		//新增调休
+		algorithmResult.getReportDaily().setChangeTime(algorithmResult.getReportDaily().getNormalOverWork());
+	}
+	
 	
 }

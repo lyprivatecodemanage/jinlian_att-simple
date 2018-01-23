@@ -32,7 +32,7 @@ public interface AlgorithmService {
      * 计算完成后，处理报表、异常结果数据（保存、推送等）
      * @param algorithmResult
      */
-    public void postProcess(AlgorithmResult algorithmResult);
+    public void postProcess(AlgorithmParam algorithmParam, AlgorithmResult algorithmResult);
     /**
      * 判断某一天是什么日子
      * @return 0：节假日，1：休息日   2：工作日

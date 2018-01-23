@@ -185,4 +185,10 @@
       company_id = #{companyId,jdbcType=VARCHAR}
     where except_id = #{exceptId,jdbcType=VARCHAR}
   </update>
+  <delete id="deleteExceptByDate" >
+  	delete 
+  	from report_except_ 
+  	where company_id = #{companyId,jdbcType=VARCHAR} 
+  		and employee_id=#{employeeId} and except_date=#{attDate}
+  </delete>
 </mapper>
