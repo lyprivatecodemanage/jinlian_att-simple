@@ -173,7 +173,8 @@ public class VacationServiceImpl implements VacationService {
 			String adjustingInstruction, String auditorEmployeeId,String year) {
 		// TODO Auto-generated method stub
 		ReturnData returndata = new ReturnData();
-		int limitChange = 0;
+		Double limitChange = 0.0;
+		String changingReason;
 		
 		if (StringUtils.isEmpty(vacationId) || StringUtils.isEmpty(vacationMold) || StringUtils.isEmpty(adjustRest)){
 			returndata.setReturnCode("3006");
@@ -183,12 +184,12 @@ public class VacationServiceImpl implements VacationService {
 		
 		//判断调整增减
 		if(vacationMold.equals("0")){
-			limitChange = Integer.parseInt(adjustRest);
+			limitChange = Double.parseDouble(adjustRest);
 		}
 		if(vacationMold.equals("1")){
-			limitChange = Integer.parseInt("-"+adjustRest);
+			limitChange = Double.parseDouble("-"+adjustRest);
 		}
-		
+				
 		//查询调休假期详情最后一次修改的值
 		VacationDetails vacationDetails = vacationDetailsMapper.SelectVacationIdByEndResult(vacationId,"1",year);
 		
@@ -204,7 +205,14 @@ public class VacationServiceImpl implements VacationService {
 			vd.setVacationTotal(String.valueOf(limitChange));
 			vd.setVacationBalance(String.valueOf(limitChange));
 			vd.setAdjustingInstruction(adjustingInstruction);
-			vd.setChangingReason(vd.manualAdjustment);
+			
+			if("0".equals(auditorEmployeeId)){
+				changingReason = vd.Tweaks;
+			}else{
+				changingReason = vd.manualAdjustment;
+			}
+			
+			vd.setChangingReason(changingReason);
 			vd.setAuditorEmployeeId(auditorEmployeeId);
 			vd.setChangeingDate(sdf.format(new Date()));
 			vd.setYear(year);
@@ -220,8 +228,8 @@ public class VacationServiceImpl implements VacationService {
 			}
 		}else{
 			//使用查询出来最后一条结果的总额和余额  加上调整的值
-			int i = Integer.parseInt(vacationDetails.getVacationTotal())+limitChange;
-			int o = Integer.parseInt(vacationDetails.getVacationBalance())+limitChange;
+			double i = Double.parseDouble(vacationDetails.getVacationTotal())+limitChange;
+			double o = Double.parseDouble(vacationDetails.getVacationBalance())+limitChange;
 			
 			VacationDetails vd = new VacationDetails();
 			vd.setVacationDetailsId(FormatUtil.createUuid());
