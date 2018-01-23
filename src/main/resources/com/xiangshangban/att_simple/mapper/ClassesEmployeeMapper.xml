@@ -265,14 +265,14 @@
   
   <!-- 查询当前公司人员的班次信息 -->
   <select id="selectClassesInfo" parameterType="Map" resultType="Map">
-  	SELECT
+	SELECT
 	COALESCE (W. ID, '') AS ID,
 	COALESCE (emp_id, '') AS emp_id,
 	COALESCE (emp_company_id, '') AS emp_company_id,
 	COALESCE (classes_id, '') AS classes_id,
 	COALESCE (classes_name, '') AS classes_name,
 	COALESCE (on_duty_scheduling_date, '') AS on_duty_scheduling_date,
-  	COALESCE (off_duty_scheduling_date, '') AS off_duty_scheduling_date,
+	COALESCE (off_duty_scheduling_date,'') AS off_duty_scheduling_date,
 	COALESCE (rest_start_time, '') AS rest_start_time,
 	COALESCE (rest_end_time, '') AS rest_end_time,
 	COALESCE (the_date, '') AS the_date,
@@ -314,32 +314,36 @@
 				SELECT
 					E.employee_id,
 					E.department_id,
-					E.company_id,
 					E.employee_name,
 					E.department_name,
 					F.post_name
 				FROM
 					(
 						SELECT
-							C .*, D.department_name
+							C .*, D.post_id
 						FROM
 							(
 								SELECT
-									A .employee_id,
-									A .post_id,
-									A .department_id,
-									A .company_id,
-									B.employee_name
+									A .*, B.department_name
 								FROM
-									organization.connect_emp_post_ A
-								LEFT JOIN organization.employee_ B ON A .employee_id = B.employee_id
-								AND A .company_id = B.company_id
+									(
+										SELECT
+											employee_id,
+											employee_name,
+											department_id
+										FROM
+											organization.employee_
+										WHERE
+											company_id = #{companyId}
+									) A
+								LEFT JOIN organization.department_ B ON A .department_id = B.department_id
 							) C
-						LEFT JOIN organization.department_ D ON C .department_id = D.department_id
+						LEFT JOIN organization.connect_emp_post_ D ON C .department_id = D.department_id
+						AND C .employee_id = D.employee_id
+						AND D.post_grades = '1'
 					) E
 				LEFT JOIN organization.post_ F ON E.post_id = F.post_id
 			) J ON H.emp_id = J.employee_id
-			AND H.emp_company_id = J.company_id
 			ORDER BY
 				H.the_date
 		) W
@@ -373,7 +377,7 @@
 			WHERE
 				classes_name != ''
 			AND
-				emp_company_id = 'AEF9D610EF90484689438A2FBEF37ACB'
+				emp_company_id = #{companyId}
 		) A
 	GROUP BY
 		classes_id,
