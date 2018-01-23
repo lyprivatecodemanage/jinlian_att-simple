@@ -15,6 +15,14 @@ import com.xiangshangban.att_simple.bean.ReturnData;
 public interface ClassesService {
 	
 	/**
+	 *  根据人员ID和公司ID查询人员的名称
+	 * @param empId 
+	 * @param companyId
+	 * @return
+	 */
+	String queryEmpNameById(String empId,String companyId);
+	
+	/**
 	 * 添加新的班次类型
 	 * @param requestParam （参数内容同Controller层对应接口）
 	 * @param companyId

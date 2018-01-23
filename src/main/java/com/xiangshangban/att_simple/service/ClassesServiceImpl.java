@@ -42,6 +42,14 @@ public class ClassesServiceImpl implements ClassesService {
 
 	// 定义访问次数标志
 	private static int access_count = 0;
+	
+	/**
+	 * 根据人员ID和公司ID获取人员名称
+	 */
+	@Override
+	public String queryEmpNameById(String empId, String companyId) {
+		return classesEmployeeMapper.selectEmpNameById(empId, companyId);
+	}
 
 	/**
 	 * 添加新的班次类型
