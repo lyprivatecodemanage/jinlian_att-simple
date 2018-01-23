@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -15,12 +16,14 @@ import com.xiangshangban.att_simple.bean.Vacation;
 import com.xiangshangban.att_simple.bean.VacationDetails;
 import com.xiangshangban.att_simple.bean.AnnualLeaveJob;
 import com.xiangshangban.att_simple.bean.Employee;
+import com.xiangshangban.att_simple.bean.OperateLog;
 import com.xiangshangban.att_simple.bean.Paging;
 import com.xiangshangban.att_simple.dao.AnnualLeaveJobMapper;
 import com.xiangshangban.att_simple.dao.EmployeeDao;
 import com.xiangshangban.att_simple.dao.VacationDetailsMapper;
 import com.xiangshangban.att_simple.dao.VacationMapper;
 import com.xiangshangban.att_simple.utils.FormatUtil;
+import com.xiangshangban.att_simple.utils.HttpRequestFactory;
 import com.xiangshangban.att_simple.utils.computeVacation;
 
 @Service("vacationService")
@@ -29,6 +32,9 @@ public class VacationServiceImpl implements VacationService {
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	computeVacation cv = new computeVacation();
+
+	@Value("${sendUrl}")
+	String sendUrl;
 	
 	@Autowired
 	AnnualLeaveJobMapper annualLeaveJobMapper;
@@ -82,7 +88,7 @@ public class VacationServiceImpl implements VacationService {
 	 */
 	@Override
 	public ReturnData AnnualLeaveAdjustment(String vacationId, String vacationMold, String annualLeave,
-			String adjustingInstruction,String auditorEmployeeId,String year) {
+			String adjustingInstruction,String auditorEmployeeId,String year,String companyId) {
 		// TODO Auto-generated method stub
 		ReturnData returndata = new ReturnData();
 		int limitChange = 0;
@@ -123,8 +129,22 @@ public class VacationServiceImpl implements VacationService {
 			
 			int num = vacationMapper.UpdateAnnualLeave(vacationId, String.valueOf(limitChange), String.valueOf(limitChange),year);
 			
+			OperateLog operateLog = new OperateLog();
+			operateLog.setOperateEmpId(auditorEmployeeId.trim());
+			operateLog.setOperateEmpCompanyId(companyId.trim());
+			operateLog.setOperateType("3");
+			operateLog.setOperateContent("假期统计-->年假微调-->假期总额度表修改");
+			String sendRequet = HttpRequestFactory.sendRequet(sendUrl, operateLog);
+			
 			if(num > 0){
 				vacationDetailsMapper.insertSelective(vd);
+				
+				OperateLog operateLogs = new OperateLog();
+				operateLogs.setOperateEmpId(auditorEmployeeId.trim());
+				operateLogs.setOperateEmpCompanyId(companyId.trim());
+				operateLogs.setOperateType("3");
+				operateLogs.setOperateContent("假期统计-->年假微调-->假期详情表新增");
+				String sendRequets = HttpRequestFactory.sendRequet(sendUrl, operateLog);
 				
 				returndata.setReturnCode("3000");
 				returndata.setMessage("数据请求成功");

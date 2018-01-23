@@ -78,6 +78,7 @@ public class VacationController {
 		ReturnData result = new ReturnData();
 		
 		String auditorEmployeeId = request.getHeader("accessUserId");
+		String companyId = request.getHeader("companyId");
 		
 		JSONObject obj = JSON.parseObject(jsonStirng);
 		String vacationId = obj.getString("vacationId");
@@ -86,7 +87,7 @@ public class VacationController {
 		String adjustingInstruction = obj.getString("adjustingInstruction");
 		String year = obj.getString("year");
 		
-		result = vacationService.AnnualLeaveAdjustment(vacationId, vacationMold, annualLeave, adjustingInstruction, auditorEmployeeId,year);
+		result = vacationService.AnnualLeaveAdjustment(vacationId,vacationMold, annualLeave, adjustingInstruction, auditorEmployeeId,year,companyId);
 		
 		return result;
 	}
