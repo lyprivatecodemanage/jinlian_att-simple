@@ -55,5 +55,5 @@ public interface VacationService {
 	 * 年假一键生成
 	 * @return
 	 */
-	ReturnData AnnualLeaveGenerate(String companyId,String year);
+	ReturnData AnnualLeaveGenerate(String companyId,String year,String auditorEmployeeId);
 }

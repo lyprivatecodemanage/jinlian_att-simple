@@ -1,10 +1,9 @@
 package com.xiangshangban.att_simple.controller;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,8 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.xiangshangban.att_simple.bean.ReturnData;
+import com.xiangshangban.att_simple.bean.AnnualLeaveJob;
 import com.xiangshangban.att_simple.bean.Paging;
+import com.xiangshangban.att_simple.service.AnnualLeaveJobService;
 import com.xiangshangban.att_simple.service.VacationService;
+import com.xiangshangban.att_simple.utils.FormatUtil;
 
 @RestController
 @RequestMapping("/VacationController")
@@ -26,8 +28,13 @@ public class VacationController {
 	
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
 	
+	SimpleDateFormat time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	
 	@Autowired
 	VacationService vacationService;
+	
+	@Autowired
+	AnnualLeaveJobService annualLeaveJobService;
 	
 	/**
 	 * 焦振/假期列表模糊分页查询
@@ -126,17 +133,52 @@ public class VacationController {
 	 * @return
 	 */
 	@RequestMapping(value="/ResetAnnualLeave",produces="application/json;charset=utf-8",method=RequestMethod.POST)
-	public ReturnData ResetAnnualLeave(HttpServletRequest request){
+	public ReturnData ResetAnnualLeave(@RequestBody String objectString,HttpServletRequest request){
 		ReturnData result = new ReturnData();
 		String companyId = request.getHeader("companyId");
 		String auditorEmployeeId = request.getHeader("accessUserId");
 		
-		//获取上一年的年份
-		Calendar now = Calendar.getInstance();
-		String year = now.get(Calendar.YEAR)-1+"";
+		JSONObject obj = JSON.parseObject(objectString);
+		//定时与否
+		String timingJob = obj.getString("timingJob");
+		//定时时间
+		String timingJobDate = obj.getString("timingJobDate");
 		
-		result = vacationService.ResetAnnualLeave(companyId, year,auditorEmployeeId);
+		if("0".equals(timingJob)){
+			//获取上一年的年份
+			Calendar now = Calendar.getInstance();
+			String year = now.get(Calendar.YEAR)-1+"";
+					
+			result = vacationService.ResetAnnualLeave(companyId,year,auditorEmployeeId);
+					
+			return result;
+		}else if("1".equals(timingJob)){
+			try {
+				Date date = time.parse(timingJobDate);
+				Calendar c = Calendar.getInstance();
+				c.setTime(date);
+				String year = c.get(Calendar.YEAR)-1+"";
+				
+				String createJobDate = time.format(new Date());
+				
+				AnnualLeaveJob alj = new AnnualLeaveJob(FormatUtil.createUuid(), companyId, auditorEmployeeId, year, timingJobDate, createJobDate, "1", "2");
+				
+				annualLeaveJobService.insertSelective(alj);
+				
+				result.setReturnCode("3000");
+				result.setMessage("数据请求成功");
+				return result;
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				result.setReturnCode("3001");
+				result.setMessage("服务器错误");
+				return result;
+			}
+		}
 		
+		result.setReturnCode("3001");
+		result.setMessage("服务器错误");
 		return result;
 	}
 	
@@ -146,16 +188,52 @@ public class VacationController {
 	 * @return
 	 */
 	@RequestMapping(value="/AnnualLeaveGenerate",produces="application/json;charset=utf-8",method=RequestMethod.POST)
-	public ReturnData AnnualLeaveGenerate(HttpServletRequest request){
+	public ReturnData AnnualLeaveGenerate(@RequestBody String objectString,HttpServletRequest request){
 		ReturnData result = new ReturnData();
 		String companyId = request.getHeader("companyId");
+		String auditorEmployeeId = request.getHeader("accessUserId");
 		
-		//获取上一年的年份
-		Calendar now = Calendar.getInstance();
-		String year = now.get(Calendar.YEAR)+"";
+		JSONObject obj = JSON.parseObject(objectString);
+		//定时与否
+		String timingJob = obj.getString("timingJob");
+		//定时时间
+		String timingJobDate = obj.getString("timingJobDate");
 		
-		result = vacationService.AnnualLeaveGenerate(companyId, year);
-		
+		//定时与否  0：未定时   1：已定时
+		if("0".equals(timingJob)){
+			//获取上一年的年份
+			Calendar now = Calendar.getInstance();
+			String year = now.get(Calendar.YEAR)+"";
+			
+			result = vacationService.AnnualLeaveGenerate(companyId, year,auditorEmployeeId);
+			
+			return result;
+		}else if("1".equals(timingJob)){
+			try {
+				Date date = time.parse(timingJobDate);
+				Calendar c = Calendar.getInstance();
+				c.setTime(date);
+				String year = c.get(Calendar.YEAR)+"";
+				
+				String createJobDate = time.format(new Date());
+				
+				AnnualLeaveJob alj = new AnnualLeaveJob(FormatUtil.createUuid(), companyId, auditorEmployeeId, year, timingJobDate, createJobDate, "2", "2");
+				
+				annualLeaveJobService.insertSelective(alj);
+				
+				result.setReturnCode("3000");
+				result.setMessage("数据请求成功");
+				return result;
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				result.setReturnCode("3001");
+				result.setMessage("服务器错误");
+				return result;
+			}
+		}
+		result.setReturnCode("3001");
+		result.setMessage("服务器错误");
 		return result;
 	}
 	

@@ -1,26 +1,22 @@
 package com.xiangshangban.att_simple.service;
 
-import java.io.ObjectOutputStream.PutField;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.math.util.MathUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.bean.Vacation;
 import com.xiangshangban.att_simple.bean.VacationDetails;
+import com.xiangshangban.att_simple.bean.AnnualLeaveJob;
 import com.xiangshangban.att_simple.bean.Employee;
 import com.xiangshangban.att_simple.bean.Paging;
+import com.xiangshangban.att_simple.dao.AnnualLeaveJobMapper;
 import com.xiangshangban.att_simple.dao.EmployeeDao;
 import com.xiangshangban.att_simple.dao.VacationDetailsMapper;
 import com.xiangshangban.att_simple.dao.VacationMapper;
@@ -35,6 +31,9 @@ public class VacationServiceImpl implements VacationService {
 	computeVacation cv = new computeVacation();
 	
 	@Autowired
+	AnnualLeaveJobMapper annualLeaveJobMapper;
+	
+	@Autowired
 	VacationMapper vacationMapper;
 	
 	@Autowired
@@ -43,6 +42,9 @@ public class VacationServiceImpl implements VacationService {
 	@Autowired
 	EmployeeDao employeeDao;
 
+	/**
+	 * 假期模糊分页查询
+	 */
 	@Override
 	public ReturnData SelectFuzzyPagel(Paging paging) {
 		// TODO Auto-generated method stub
@@ -75,6 +77,9 @@ public class VacationServiceImpl implements VacationService {
         return returndata;
 	}
 
+	/**
+	 * 年假微调
+	 */
 	@Override
 	public ReturnData AnnualLeaveAdjustment(String vacationId, String vacationMold, String annualLeave,
 			String adjustingInstruction,String auditorEmployeeId,String year) {
@@ -160,6 +165,9 @@ public class VacationServiceImpl implements VacationService {
         return returndata;
 	}
 
+	/**
+	 * 调休微调
+	 */
 	@Override
 	public ReturnData AdjustRestAdjustment(String vacationId, String vacationMold, String adjustRest,
 			String adjustingInstruction, String auditorEmployeeId,String year) {
@@ -245,6 +253,9 @@ public class VacationServiceImpl implements VacationService {
         return returndata;
 	}
 
+	/**
+	 * 查询年假必填资料不完善人员信息
+	 */
 	@Override
 	public ReturnData IncompleteData(String companyId){
 		ReturnData returndata = new ReturnData();
@@ -262,80 +273,104 @@ public class VacationServiceImpl implements VacationService {
         return returndata;
 	}
 	
+	/**
+	 * 年假一键清零
+	 */
 	@Override
 	public ReturnData ResetAnnualLeave(String companyId,String year,String auditorEmployeeId) {
 		// TODO Auto-generated method stub
 		ReturnData returndata = new ReturnData();
 		
 		List<Vacation> list = vacationMapper.selectResetAnnualLeave(companyId, year);
-		
+			
 		for (Vacation vacation : list) {
 			AnnualLeaveAdjustment(vacation.getVacationId(),"1", vacation.getAnnualLeaveBalance(),"年假一键清零", auditorEmployeeId, year);
 		}
-		
+			
 		returndata.setReturnCode("3000");
 		returndata.setMessage("数据请求成功");
-        return returndata;
+	    return returndata;
 	}
 
+	/**
+	 * 年假一键生成
+	 */
 	@Override
-	public ReturnData AnnualLeaveGenerate(String companyId,String year) {
+	public ReturnData AnnualLeaveGenerate(String companyId,String year,String auditorEmployeeId) {
 		// TODO Auto-generated method stub
 		ReturnData returndata = new ReturnData();
-		List<Employee> list = employeeDao.findAllEmployeeByCompanyId(companyId);
 		
-		for (Employee employee : list) {
-			//判断员工工龄字段不能为空
-			if(StringUtils.isNotEmpty(employee.getSeniority()) && StringUtils.isNotEmpty(employee.getProbationaryExpired())){
+			//查询该公司所有人员
+			List<Employee> list = employeeDao.findAllEmployeeByCompanyId(companyId);
 			
-				//年假天数
-				int AVday = 0;
+			for (Employee employee : list) {
+				//判断员工工龄字段不能为空
+				if(StringUtils.isNotEmpty(employee.getSeniority()) && StringUtils.isNotEmpty(employee.getProbationaryExpired())){
 				
-				try {
-					AVday = cv.ABCAnnualFormula(employee.getSeniority(), 1, employee.getProbationaryExpired(), 0, 0);
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				if(AVday>-1){
-					Vacation vacation = vacationMapper.SelectEmployeeVacation(companyId, null, employee.getEmployeeId());
+					//年假天数
+					int AVday = 0;
 					
-					if(vacation != null ){
-						if(!vacation.getYear().equals(year)){
+					try {
+						AVday = cv.ABCAnnualFormula(employee.getSeniority(), 1, employee.getProbationaryExpired(), 0, 0);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					if(AVday>-1){
+						Vacation vacation = vacationMapper.SelectEmployeeVacation(companyId, null, employee.getEmployeeId());
+						
+						if(vacation != null ){
+							if(!vacation.getYear().equals(year)){
+								Vacation v = new Vacation();
+								v.setVacationId(vacation.getVacationId());
+								v.setCompanyId(employee.getCompanyId());
+								v.setDepartmentId(employee.getDepartmentId());
+								v.setEmployeeId(employee.getEmployeeId());
+								v.setAnnualLeaveTotal(String.valueOf(AVday));
+								v.setAnnualLeaveBalance(String.valueOf(AVday));
+								v.setAdjustRestTotal(vacation.getAdjustRestTotal());
+								v.setAdjustRestBalance(vacation.getAdjustRestBalance());
+								v.setYear(year);
+								
+								int num = vacationMapper.insertSelective(v);
+								
+								if(num>0){
+									AnnualLeaveAdjustment(vacation.getVacationId(),"0",String.valueOf(AVday),"年假一键生成", auditorEmployeeId, year);
+									
+									returndata.setReturnCode("3000");
+									returndata.setMessage("数据请求成功");
+									return returndata;
+								}
+							}
+						}else{
 							Vacation v = new Vacation();
-							v.setVacationId(vacation.getVacationId());
+							v.setVacationId(FormatUtil.createUuid());
 							v.setCompanyId(employee.getCompanyId());
 							v.setDepartmentId(employee.getDepartmentId());
 							v.setEmployeeId(employee.getEmployeeId());
 							v.setAnnualLeaveTotal(String.valueOf(AVday));
 							v.setAnnualLeaveBalance(String.valueOf(AVday));
-							v.setAdjustRestTotal(vacation.getAdjustRestTotal());
-							v.setAdjustRestBalance(vacation.getAdjustRestBalance());
+							v.setAdjustRestTotal("0");
+							v.setAdjustRestBalance("0");
 							v.setYear(year);
 							
-							vacationMapper.insertSelective(v);
+							int num = vacationMapper.insertSelective(v);
+							
+							if(num>0){
+								AnnualLeaveAdjustment(v.getVacationId(),"0",String.valueOf(AVday),"年假一键生成", auditorEmployeeId, year);
+								
+								returndata.setReturnCode("3000");
+								returndata.setMessage("数据请求成功");
+								return returndata;
+							}
 						}
-					}else{
-						Vacation v = new Vacation();
-						v.setVacationId(FormatUtil.createUuid());
-						v.setCompanyId(employee.getCompanyId());
-						v.setDepartmentId(employee.getDepartmentId());
-						v.setEmployeeId(employee.getEmployeeId());
-						v.setAnnualLeaveTotal(String.valueOf(AVday));
-						v.setAnnualLeaveBalance(String.valueOf(AVday));
-						v.setAdjustRestTotal("0");
-						v.setAdjustRestBalance("0");
-						v.setYear(year);
-						
-						vacationMapper.insertSelective(v);
 					}
 				}
 			}
-		}
 		
-		returndata.setReturnCode("3000");
-		returndata.setMessage("数据请求成功");
+		returndata.setReturnCode("3001");
+		returndata.setMessage("服务器错误");
 		return returndata;
 	}
 

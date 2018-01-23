@@ -8,7 +8,7 @@ package com.xiangshangban.att_simple.bean;
 public class ApplicationTotalRecord {
 
 	//申请单号(uuid)
-    private String applcationNo;
+    private String applicationNo;
     //操作时间
     private String operaterTime;
     //操作人id
@@ -47,15 +47,15 @@ public class ApplicationTotalRecord {
 		this.isComplete = isComplete;
 	}
 
-	public String getApplcationNo() {
-        return applcationNo;
-    }
+    public String getApplicationNo() {
+		return applicationNo;
+	}
 
-    public void setApplcationNo(String applcationNo) {
-        this.applcationNo = applcationNo;
-    }
+	public void setApplicationNo(String applicationNo) {
+		this.applicationNo = applicationNo;
+	}
 
-    public String getOperaterTime() {
+	public String getOperaterTime() {
         return operaterTime;
     }
 
