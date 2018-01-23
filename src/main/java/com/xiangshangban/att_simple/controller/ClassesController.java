@@ -10,7 +10,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,10 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 import com.arjuna.ats.internal.jdbc.drivers.modifiers.list;
+import com.xiangshangban.att_simple.AttSimple;
 import com.xiangshangban.att_simple.bean.ClassesType;
+import com.xiangshangban.att_simple.bean.OperateLog;
 import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.service.ClassesService;
 import com.xiangshangban.att_simple.service.NotClockingInEmpService;
+import com.xiangshangban.att_simple.utils.HttpRequestFactory;
 
 /**
  * @author 王勇辉
@@ -36,6 +41,12 @@ public class ClassesController {
 	
 	@Autowired
 	private NotClockingInEmpService notClockingInEmpService;
+	
+	public static Logger logger = Logger.getLogger(ClassesController.class);
+	
+	// 操作日志访问路径
+	@Value("${sendUrl}")
+	private String sendUrl;
 	
 	/**
 	 * 新增/修改班次类型
@@ -69,11 +80,21 @@ public class ClassesController {
 		//初始化返回内容
 		ReturnData returnData = new ReturnData();
 		String companyId = request.getHeader("companyId");
-		if(companyId!=null && !companyId.isEmpty()){
+		String accessUserId = request.getHeader("accessUserId");
+		if((companyId!=null && !companyId.isEmpty()) && (accessUserId!=null && !accessUserId.isEmpty())){
 			boolean addNewClassesType = classesService.addNewClassesType(requestParam, companyId.trim());
 			if(addNewClassesType){
 				returnData.setReturnCode("3000");
 				returnData.setMessage("添加成功");
+				
+				//增加操作日志:记录web端的操作
+				OperateLog operateLog = new OperateLog();
+				operateLog.setOperateEmpId(accessUserId.trim());
+				operateLog.setOperateEmpCompanyId(companyId.trim());
+				operateLog.setOperateType("3");
+				operateLog.setOperateContent("在班次设置界面(新增/修改)班次设置");
+				String sendRequet = HttpRequestFactory.sendRequet(sendUrl, operateLog);
+				logger.info("(新增/修改)班次设置------操作日志"+sendRequet);
 			}else{
 				returnData.setReturnCode("3001");
 				returnData.setMessage("添加失败");
@@ -482,7 +503,8 @@ public class ClassesController {
 		  "data": [
 		    {
 		      "department_id": "wooUnknown",
-		      "emp_id": "XFGCDSDSFSDFSDF13213"
+		      "emp_id": "XFGCDSDSFSDFSDF13213",
+		      "employee_name":"小兰"
 		    }
 		  ],
 		  "totalPages": null,

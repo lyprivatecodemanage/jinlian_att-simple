@@ -38,7 +38,8 @@
   <select id="selectNotClockingInEmp" parameterType="String" resultType="Map">
   	SELECT
 	COALESCE(A.emp_id,'') AS emp_id,
-	COALESCE(B.department_id,'') AS department_id
+	COALESCE(B.department_id,'') AS department_id,
+	COALESCE(B.employee_name,'') AS employee_name
 	FROM
 		(
 			SELECT 
