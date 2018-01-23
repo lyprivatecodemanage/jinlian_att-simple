@@ -87,7 +87,7 @@ public class VacationController {
 		String adjustingInstruction = obj.getString("adjustingInstruction");
 		String year = obj.getString("year");
 		
-		result = vacationService.AnnualLeaveAdjustment(vacationId,vacationMold, annualLeave, adjustingInstruction, auditorEmployeeId,year,companyId);
+		result = vacationService.AnnualLeaveAdjustment(vacationId,vacationMold, annualLeave, adjustingInstruction, auditorEmployeeId,year);
 		
 		return result;
 	}

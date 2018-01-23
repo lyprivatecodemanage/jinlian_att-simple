@@ -25,7 +25,7 @@ public interface VacationService {
 	 * @param auditorEmployeeId
 	 * @return
 	 */
-	ReturnData AnnualLeaveAdjustment(String vacationId,String vacationMold,String annualLeave,String adjustingInstruction,String auditorEmployeeId,String year,String companyId);
+	ReturnData AnnualLeaveAdjustment(String vacationId,String vacationMold,String annualLeave,String adjustingInstruction,String auditorEmployeeId,String year);
 	
 	/**
 	 * 调休调整

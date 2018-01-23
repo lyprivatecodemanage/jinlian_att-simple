@@ -88,7 +88,7 @@ public class VacationServiceImpl implements VacationService {
 	 */
 	@Override
 	public ReturnData AnnualLeaveAdjustment(String vacationId, String vacationMold, String annualLeave,
-			String adjustingInstruction,String auditorEmployeeId,String year,String companyId) {
+			String adjustingInstruction,String auditorEmployeeId,String year) {
 		// TODO Auto-generated method stub
 		ReturnData returndata = new ReturnData();
 		int limitChange = 0;
@@ -129,22 +129,8 @@ public class VacationServiceImpl implements VacationService {
 			
 			int num = vacationMapper.UpdateAnnualLeave(vacationId, String.valueOf(limitChange), String.valueOf(limitChange),year);
 			
-			OperateLog operateLog = new OperateLog();
-			operateLog.setOperateEmpId(auditorEmployeeId.trim());
-			operateLog.setOperateEmpCompanyId(companyId.trim());
-			operateLog.setOperateType("3");
-			operateLog.setOperateContent("假期统计-->年假微调-->假期总额度表修改");
-			String sendRequet = HttpRequestFactory.sendRequet(sendUrl, operateLog);
-			
 			if(num > 0){
 				vacationDetailsMapper.insertSelective(vd);
-				
-				OperateLog operateLogs = new OperateLog();
-				operateLogs.setOperateEmpId(auditorEmployeeId.trim());
-				operateLogs.setOperateEmpCompanyId(companyId.trim());
-				operateLogs.setOperateType("3");
-				operateLogs.setOperateContent("假期统计-->年假微调-->假期详情表新增");
-				String sendRequets = HttpRequestFactory.sendRequet(sendUrl, operateLog);
 				
 				returndata.setReturnCode("3000");
 				returndata.setMessage("数据请求成功");
