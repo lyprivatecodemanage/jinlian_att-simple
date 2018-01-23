@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -15,12 +16,14 @@ import com.xiangshangban.att_simple.bean.Vacation;
 import com.xiangshangban.att_simple.bean.VacationDetails;
 import com.xiangshangban.att_simple.bean.AnnualLeaveJob;
 import com.xiangshangban.att_simple.bean.Employee;
+import com.xiangshangban.att_simple.bean.OperateLog;
 import com.xiangshangban.att_simple.bean.Paging;
 import com.xiangshangban.att_simple.dao.AnnualLeaveJobMapper;
 import com.xiangshangban.att_simple.dao.EmployeeDao;
 import com.xiangshangban.att_simple.dao.VacationDetailsMapper;
 import com.xiangshangban.att_simple.dao.VacationMapper;
 import com.xiangshangban.att_simple.utils.FormatUtil;
+import com.xiangshangban.att_simple.utils.HttpRequestFactory;
 import com.xiangshangban.att_simple.utils.computeVacation;
 
 @Service("vacationService")
@@ -29,6 +32,9 @@ public class VacationServiceImpl implements VacationService {
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	computeVacation cv = new computeVacation();
+
+	@Value("${sendUrl}")
+	String sendUrl;
 	
 	@Autowired
 	AnnualLeaveJobMapper annualLeaveJobMapper;
@@ -173,7 +179,8 @@ public class VacationServiceImpl implements VacationService {
 			String adjustingInstruction, String auditorEmployeeId,String year) {
 		// TODO Auto-generated method stub
 		ReturnData returndata = new ReturnData();
-		int limitChange = 0;
+		Double limitChange = 0.0;
+		String changingReason;
 		
 		if (StringUtils.isEmpty(vacationId) || StringUtils.isEmpty(vacationMold) || StringUtils.isEmpty(adjustRest)){
 			returndata.setReturnCode("3006");
@@ -183,12 +190,12 @@ public class VacationServiceImpl implements VacationService {
 		
 		//判断调整增减
 		if(vacationMold.equals("0")){
-			limitChange = Integer.parseInt(adjustRest);
+			limitChange = Double.parseDouble(adjustRest);
 		}
 		if(vacationMold.equals("1")){
-			limitChange = Integer.parseInt("-"+adjustRest);
+			limitChange = Double.parseDouble("-"+adjustRest);
 		}
-		
+				
 		//查询调休假期详情最后一次修改的值
 		VacationDetails vacationDetails = vacationDetailsMapper.SelectVacationIdByEndResult(vacationId,"1",year);
 		
@@ -204,7 +211,14 @@ public class VacationServiceImpl implements VacationService {
 			vd.setVacationTotal(String.valueOf(limitChange));
 			vd.setVacationBalance(String.valueOf(limitChange));
 			vd.setAdjustingInstruction(adjustingInstruction);
-			vd.setChangingReason(vd.manualAdjustment);
+			
+			if("0".equals(auditorEmployeeId)){
+				changingReason = vd.Tweaks;
+			}else{
+				changingReason = vd.manualAdjustment;
+			}
+			
+			vd.setChangingReason(changingReason);
 			vd.setAuditorEmployeeId(auditorEmployeeId);
 			vd.setChangeingDate(sdf.format(new Date()));
 			vd.setYear(year);
@@ -220,8 +234,8 @@ public class VacationServiceImpl implements VacationService {
 			}
 		}else{
 			//使用查询出来最后一条结果的总额和余额  加上调整的值
-			int i = Integer.parseInt(vacationDetails.getVacationTotal())+limitChange;
-			int o = Integer.parseInt(vacationDetails.getVacationBalance())+limitChange;
+			double i = Double.parseDouble(vacationDetails.getVacationTotal())+limitChange;
+			double o = Double.parseDouble(vacationDetails.getVacationBalance())+limitChange;
 			
 			VacationDetails vd = new VacationDetails();
 			vd.setVacationDetailsId(FormatUtil.createUuid());
