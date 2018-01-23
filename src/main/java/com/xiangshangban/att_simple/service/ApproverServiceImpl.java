@@ -138,16 +138,15 @@ public class ApproverServiceImpl implements ApproverService {
 		String isReject = "";
 		String isCopy = "";
 		if("未审批".equals(statusDescription)){
-			isComplete="0";
+			
 		}else if("已转移".equals(statusDescription)){
-			isTranser = "1";
+			
 		}else if("已完成".equals(statusDescription)){
-			isComplete = "1";
+			
 		}else if("已驳回".equals(statusDescription)){
-			isComplete = "1";
-			isReject = "1";
+			
 		}else if("抄送".equals(statusDescription)){
-			isCopy="1";
+			
 		}
 		ApplicationTotalRecord applicationTotalRecord = applicationTotalRecordMapper.selectByPrimaryKey(applicationNo);
 		if("0".equals(applicationTotalRecord.getIsComplete())){//未完成

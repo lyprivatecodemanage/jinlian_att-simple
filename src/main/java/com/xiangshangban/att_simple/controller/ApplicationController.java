@@ -24,6 +24,7 @@ import com.xiangshangban.att_simple.bean.ApplicationCommonContactPeople;
 import com.xiangshangban.att_simple.bean.ApplicationToCopyPerson;
 import com.xiangshangban.att_simple.bean.ApplicationTotalRecord;
 import com.xiangshangban.att_simple.bean.ApplicationTransferRecord;
+import com.xiangshangban.att_simple.bean.ApplicationType;
 import com.xiangshangban.att_simple.bean.ClassesEmployee;
 import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.service.ApplicationService;
@@ -65,6 +66,53 @@ public class ApplicationController {
 			result = applicationService.applicationIndexPage(employeeId, companyId);
 			return result;
 		}
+		/**
+		 * 申请子类型列表
+		 * @param jsonString
+		 * @param request
+		 * @return
+		 */
+		@RequestMapping(value = "/applicationChildrenTypeList",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+		public ReturnData applicationChildrenTypeList(@RequestBody String jsonString ,HttpServletRequest request){
+			ReturnData returnData = new ReturnData();
+			try{
+			String employeeId = request.getHeader("accessUserId");//员工id
+			String companyId = request.getHeader("companyId");//公司id
+			String applicationType = "";
+			if(StringUtils.isEmpty(companyId)||StringUtils.isEmpty(employeeId)){
+				returnData.setMessage("请求信息错误");
+				returnData.setReturnCode("3012");
+				return returnData;
+			}
+			try{
+				JSONObject jobj = JSON.parseObject(jsonString);
+				applicationType = jobj.getString("applicationType");
+				if(StringUtils.isEmpty(applicationType)){
+					returnData.setMessage("必传参数为空");
+					returnData.setReturnCode("3006");
+					return returnData;
+				}
+			}catch(Exception e){
+				logger.info(e);
+				e.printStackTrace();
+				returnData.setMessage("请检查参数格式");
+				returnData.setReturnCode("9999");
+				return returnData;
+			}
+			List<ApplicationType> applicationChildrenTypeList = applicationService.getApplicationChildrenTypeList(applicationType);
+			returnData.setMessage("成功");
+			returnData.setReturnCode("3000");
+			returnData.setData(applicationChildrenTypeList);
+			return returnData;
+			}catch(Exception e){
+				logger.info(e);
+				e.printStackTrace();
+				returnData.setMessage("服务器错误");
+				returnData.setReturnCode("3001");
+				return returnData;
+			}
+		}
+		
 		/**
 		 * 请假,加班,出差,外出,补卡申请
 		 * @param jsonString
