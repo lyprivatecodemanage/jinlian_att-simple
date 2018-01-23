@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.xiangshangban.att_simple.bean.AlgorithmSign;
+import com.xiangshangban.att_simple.service.AlgorithmService;
 import com.xiangshangban.att_simple.service.ClassesService;
+import com.xiangshangban.att_simple.utils.TimeUtil;
 
 /**
  * 定时器类
@@ -18,11 +21,14 @@ public class Scheduler {
 	
 	//每天凌晨2点执行
 	private static final String SCHEDULED_TIME = "0 0 2 * * ?";
-	
+	//每天凌晨0点执行
+	private static final String REPORT_TIME = "10 12 20 * * ?";//日报计算时间
 	private final Logger logger = Logger.getLogger(Scheduler.class);
 	
 	@Autowired
 	private ClassesService classesService;
+	@Autowired
+	private AlgorithmService algorithmService;
 	/**
 	 * 自动排班
 	 */
@@ -30,5 +36,16 @@ public class Scheduler {
 	public void autoScheduling(){
 		/*classesService.autoScheduling();*/
 		logger.info("----自动排班----");
+	}
+	/**
+	 * 日报计算
+	 */
+	@Scheduled(cron=REPORT_TIME)
+	public void countReportDaily(){
+		logger.info("日报计算开始时间"+TimeUtil.getCurrentTime()); 
+		String countDate = TimeUtil.getLastDayDate(TimeUtil.getCurrentDate());
+		algorithmService.calculate(countDate);
+		logger.info(countDate+"日报计算完成");
+		logger.info("日报计算完成时间"+TimeUtil.getCurrentTime()); 
 	}
 }
