@@ -245,7 +245,7 @@
   	select <include refid="Base_Column_List"/>,<include refid="TR_Base_Column_List"/>
   	from att_simple.application_total_record_ atr 
   	left join att_simple.application_transfer_record_ tr on atr.application_no = tr.application_no
-  	left join att_simple.
+  	<!-- left join att_simple. -->
   	where atr.application_no = #{applicationNo}
   </select>
   
