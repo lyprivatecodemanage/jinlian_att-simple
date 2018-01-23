@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiangshangban.att_simple.dao.AnnualLeaveJobMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.AnnualLeaveJob">
+    <id column="job_id" jdbcType="VARCHAR" property="jobId" />
+    <result column="company_id" jdbcType="VARCHAR" property="companyId" />
+    <result column="auditor_employee_id" jdbcType="VARCHAR" property="auditorEmployeeId" />
+    <result column="year_" jdbcType="VARCHAR" property="year" />
+    <result column="execute_date" jdbcType="VARCHAR" property="executeDate" />
+    <result column="create_job_date" jdbcType="VARCHAR" property="createJobDate" />
+    <result column="job_type" jdbcType="VARCHAR" property="jobType" />
+    <result column="job_status" jdbcType="VARCHAR" property="jobStatus" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    job_id, company_id, auditor_employee_id, year_, execute_date, create_job_date, job_type, 
+    job_status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from annual_leave_job
+    where job_id = #{jobId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from annual_leave_job
+    where job_id = #{jobId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.AnnualLeaveJob">
+    insert into annual_leave_job (job_id, company_id, auditor_employee_id, 
+      year_, execute_date, create_job_date, 
+      job_type, job_status)
+    values (#{jobId,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR}, #{auditorEmployeeId,jdbcType=VARCHAR}, 
+      #{year,jdbcType=VARCHAR}, #{executeDate,jdbcType=VARCHAR}, #{createJobDate,jdbcType=VARCHAR}, 
+      #{jobType,jdbcType=VARCHAR}, #{jobStatus,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.AnnualLeaveJob">
+    insert into annual_leave_job
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="jobId != null">
+        job_id,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="auditorEmployeeId != null">
+        auditor_employee_id,
+      </if>
+      <if test="year != null">
+        year_,
+      </if>
+      <if test="executeDate != null">
+        execute_date,
+      </if>
+      <if test="createJobDate != null">
+        create_job_date,
+      </if>
+      <if test="jobType != null">
+        job_type,
+      </if>
+      <if test="jobStatus != null">
+        job_status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="jobId != null">
+        #{jobId,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorEmployeeId != null">
+        #{auditorEmployeeId,jdbcType=VARCHAR},
+      </if>
+      <if test="year != null">
+        #{year,jdbcType=VARCHAR},
+      </if>
+      <if test="executeDate != null">
+        #{executeDate,jdbcType=VARCHAR},
+      </if>
+      <if test="createJobDate != null">
+        #{createJobDate,jdbcType=VARCHAR},
+      </if>
+      <if test="jobType != null">
+        #{jobType,jdbcType=VARCHAR},
+      </if>
+      <if test="jobStatus != null">
+        #{jobStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.AnnualLeaveJob">
+    update annual_leave_job
+    <set>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorEmployeeId != null">
+        auditor_employee_id = #{auditorEmployeeId,jdbcType=VARCHAR},
+      </if>
+      <if test="year != null">
+        year_ = #{year,jdbcType=VARCHAR},
+      </if>
+      <if test="executeDate != null">
+        execute_date = #{executeDate,jdbcType=VARCHAR},
+      </if>
+      <if test="createJobDate != null">
+        create_job_date = #{createJobDate,jdbcType=VARCHAR},
+      </if>
+      <if test="jobType != null">
+        job_type = #{jobType,jdbcType=VARCHAR},
+      </if>
+      <if test="jobStatus != null">
+        job_status = #{jobStatus,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where job_id = #{jobId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.AnnualLeaveJob">
+    update annual_leave_job
+    set company_id = #{companyId,jdbcType=VARCHAR},
+      auditor_employee_id = #{auditorEmployeeId,jdbcType=VARCHAR},
+      year_ = #{year,jdbcType=VARCHAR},
+      execute_date = #{executeDate,jdbcType=VARCHAR},
+      create_job_date = #{createJobDate,jdbcType=VARCHAR},
+      job_type = #{jobType,jdbcType=VARCHAR},
+      job_status = #{jobStatus,jdbcType=VARCHAR}
+    where job_id = #{jobId,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -33,7 +33,7 @@
     application_no, employee_id, department_id, company_id, leave_type, start_time, 
     end_time, reason, upload_voucher, approver, copy_to_person, operater_time, is_transfer, 
     application_hour, application_time,employee_name,department_name,leave_type_name,approver_name
-  </sql>  
+  </sql>
    
    <select id="selectLeaveKeyData" parameterType="java.lang.String" resultMap="BaseResultMap">
    	select leave_type,CASE
@@ -54,13 +54,13 @@
    
    <!-- 请假记录记录模糊查询总条数 -->
    <select id="selectTotalNum" parameterType="com.xiangshangban.att_simple.bean.Paging" resultType="java.lang.Integer">
-   	select count(*) from (select application_no,to_char(to_date(l.application_time,'YYYY'),'YYYY') AS year_,to_char(to_date(l.application_time,'YYYY-mm'),'mm') AS month_ FROM application_leave_ l
+   	select count(*) from (select l.application_no,to_char(to_date(l.application_time,'YYYY'),'YYYY') AS year_,to_char(to_date(l.application_time,'YYYY-mm'),'mm') AS month_ FROM application_leave_ l
 	LEFT JOIN organization.department_ d
 	on l.department_id = d.department_id and l.company_id = d.company_id
 	LEFT JOIN organization.employee_ e
 	on d.company_id = e.company_id and d.department_id = e.department_id
 	LEFT JOIN application_total_record_ r 
-	ON l.application_no = r.applcation_no and e.company_id = r.company_id and e.employee_id = r.application_id
+	ON l.application_no = r.application_no and e.company_id = r.company_id and e.employee_id = r.application_id
 	where r.is_complete = '1'
 	and r.company_id = #{companyId}
 		<if test="departmentId != null">
@@ -87,7 +87,7 @@
   <select id="selectCompleteLeave" parameterType="com.xiangshangban.att_simple.bean.Paging" resultMap="BaseResultMap">
   	select 
 	<include refid="Leave_List"/> 
-	from (select application_no, l.employee_id,e.employee_name, l.department_id,d.department_name,l.company_id, leave_type,
+	from (select l.application_no, l.employee_id,e.employee_name, l.department_id,d.department_name,l.company_id, leave_type,
 	CASE
 	WHEN (leave_type = '1'::VARCHAR) THEN '事假'::TEXT 
 	WHEN (leave_type = '2'::VARCHAR) THEN '年假'::TEXT 
@@ -96,9 +96,10 @@
 	WHEN (leave_type = '5'::VARCHAR) THEN '产假'::TEXT 
 	WHEN (leave_type = '6'::VARCHAR) THEN '丧假'::TEXT 
 	END as leave_type_name
-	, start_time, end_time, reason, upload_voucher, approver,(select employee_name from organization.employee_ where employee_id = approver) as approver_name, 
+	, start_time, end_time, reason, upload_voucher, approver,
+	(select employee_name from organization.employee_ where employee_id = approver and company_id = l.company_id) as approver_name, 
 	l.copy_to_person, l.operater_time,l.is_transfer, 
-	application_hour, l.application_time,to_char(to_date(application_time,'YYYY'),'YYYY') AS year_,to_char(to_date(application_time,'YYYY-mm'),'mm') AS month_,
+	application_hour, l.application_time,to_char(to_date(l.application_time,'YYYY'),'YYYY') AS year_,to_char(to_date(l.application_time,'YYYY-mm'),'mm') AS month_,
 	<trim prefix="row_number() over(order by " suffix=") rn">
 		<if test="applicationHourRank != null">
 			application_hour ${applicationHourRank}
@@ -107,13 +108,13 @@
 			application_time ${applicationTimeRank}
 		</if>
 	</trim>
-	FROM application_leave_ l
+	FROM att_simple.application_leave_ l
 	LEFT JOIN organization.department_ d
 	on l.department_id = d.department_id and l.company_id = d.company_id
 	LEFT JOIN organization.employee_ e
 	on d.company_id = e.company_id and d.department_id = e.department_id 
 	LEFT JOIN application_total_record_ r 
-	ON l.application_no = r.applcation_no and e.company_id = r.company_id and e.employee_id = r.application_id
+	ON l.application_no = r.application_no and e.company_id = r.company_id and e.employee_id = r.application_id
 	where r.is_complete = '1'
 	and l.company_id = #{companyId}
 		<if test="departmentId != null">
