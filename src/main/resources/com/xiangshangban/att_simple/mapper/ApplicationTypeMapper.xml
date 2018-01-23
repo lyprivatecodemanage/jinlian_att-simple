@@ -14,6 +14,12 @@
   <select id="getApplicationTypeList" parameterType="java.lang.String" resultMap="BaseResultMap">
   	select a.application_type,a.description from application_type_ a group by a.application_type,a.description order by a.application_type ASC
   </select>
+  
+  <select id="getApplicationChildrenTypeList" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List"/> from att_simple.application_type_ at
+  	where at.application_type=#{applicationType}
+  </select>
+  
   <!-- 默认 -->
   <select id="selectByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ApplicationType" resultMap="BaseResultMap">
     select 
