@@ -499,5 +499,10 @@ public class ApplicationServiceImpl implements ApplicationService {
 		}
 		return applicationDetails;
 	}
+	@Override
+	public List<ApplicationType> getApplicationChildrenTypeList(String applicationType) {
+		List<ApplicationType> applicationChildrenTypeList = applicationTypeMapper.getApplicationChildrenTypeList(applicationType);
+		return applicationChildrenTypeList;
+	}
 	
 }

@@ -101,7 +101,10 @@ public class ApproverServiceImpl implements ApproverService {
 			applicatrionPersonName = "%"+applicatrionPersonName+"%";
 		}
 		//申请状态
-		if(StringUtils.isEmpty(statusDescription)||"全部".equals(statusDescription)){
+		approverList = applicationTotalRecordMapper.selectApproverListTotal(employeeId,
+				companyId, page, count, applicationType, statusDescription, 
+				applicationTimeStart, applicationTimeEnd, applicatrionPersonName);
+		/*if(StringUtils.isEmpty(statusDescription)||"全部".equals(statusDescription)){
 			approverList = applicationTotalRecordMapper.selectApproverListTotal(employeeId, 
 					companyId, page, count, applicationType, applicationTimeStart, applicationTimeEnd, applicatrionPersonName);
 		}else{ 
@@ -120,54 +123,42 @@ public class ApproverServiceImpl implements ApproverService {
 			approverList = applicationTotalRecordMapper.selectApproverListCondition(employeeId, 
 					companyId, page, count, applicationType, isComplete, isTranser, isReject, 
 					isCopy, applicationTimeStart, applicationTimeEnd, applicatrionPersonName);
-		}
+		}*/
 		return approverList;
 
 	}
-	
 	/**
 	 * 审批详情
 	 */
 	@Override
-	public Application approverDetails(String applicationNo,String statusDescription) {
-		String isComplete = "";
+	public ApplicationTotalRecord approverDetails(String applicationNo,String statusDescription) {
+		/*String isComplete = "";
 		String isTranser = "";
 		String isReject = "";
-		String isCopy = "";
+		String isCopy = "";*/
+		ApplicationTotalRecord selectApproverDetails = null;
+		if("抄送".equals(statusDescription)){
+			
+		}else{
+			selectApproverDetails = applicationTotalRecordMapper.selectApproverDetails(applicationNo);
+		}
+		/*ApplicationTotalRecord applicationTotalRecord = applicationTotalRecordMapper.selectByPrimaryKey(applicationNo);
 		if("未审批".equals(statusDescription)){
-			isComplete="0";
+			if("1".equals(applicationTotalRecord.getIsTransfer())){
+				
+			}else{
+				
+			}
 		}else if("已转移".equals(statusDescription)){
-			isTranser = "1";
-		}else if("已完成".equals(statusDescription)){
-			isComplete = "1";
+			
+		}else if("已通过".equals(statusDescription)){
+			
 		}else if("已驳回".equals(statusDescription)){
-			isComplete = "1";
-			isReject = "1";
+			
 		}else if("抄送".equals(statusDescription)){
-			isCopy="1";
-		}
-		ApplicationTotalRecord applicationTotalRecord = applicationTotalRecordMapper.selectByPrimaryKey(applicationNo);
-		if("0".equals(applicationTotalRecord.getIsComplete())){//未完成
 			
-		}else{//已完成
-			
-		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		return null;
+		}*/
+		return selectApproverDetails;
 	}
 	/**
 	 * 待审批条数

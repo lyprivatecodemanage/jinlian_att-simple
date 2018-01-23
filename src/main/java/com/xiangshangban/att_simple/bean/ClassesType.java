@@ -30,6 +30,8 @@ public class ClassesType {
     private String createTime;//该班次类型生成的时间
 
     private String companyId;//公司ID
+    
+    private String validDate;//班次类型生效的时间
 
     public String getId() {
         return id;
@@ -150,4 +152,14 @@ public class ClassesType {
     public void setCompanyId(String companyId) {
         this.companyId = companyId;
     }
+
+	public String getValidDate() {
+		return validDate;
+	}
+
+	public void setValidDate(String validDate) {
+		this.validDate = validDate;
+	}
+    
+    
 }

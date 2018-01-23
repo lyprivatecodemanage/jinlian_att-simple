@@ -72,10 +72,19 @@ public interface ApplicationTotalRecordMapper {
 			@Param("page")String page,
 			@Param("count")String count,
 			@Param("applicationType")String applicationType,
+			@Param("statusDescription")String statusDescription,
 			@Param("applicationTimeStart")String applicationTimeStart,
 			@Param("applicationTimeEnd")String applicationTimeEnd,
 			@Param("employeeName")String employeeName);
 	
+	
+	
+	/**
+	 * 审批详情
+	 * @param applicationNo
+	 * @return
+	 */
+	ApplicationTotalRecord selectApproverDetails(@Param("applicationNo")String applicationNo);
 	/**
 	 * 待审批条数
 	 * @param employeeId

@@ -3,9 +3,12 @@ package com.xiangshangban.att_simple.service;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ApplicationCommonContactPeople;
 import com.xiangshangban.att_simple.bean.ApplicationTotalRecord;
+import com.xiangshangban.att_simple.bean.ApplicationType;
 import com.xiangshangban.att_simple.bean.ReturnData;
 
 public interface ApplicationService {
@@ -16,6 +19,12 @@ public interface ApplicationService {
 	 * @return
 	 */
 	Map<String,Object> applicationIndexPage(String employeeId,String companyId);
+	/**
+	 * 申请子类型
+	 * @param applicationType
+	 * @return
+	 */
+	 List<ApplicationType> getApplicationChildrenTypeList(String applicationType);
 	/**
 	 * 请假申请
 	 * @param params

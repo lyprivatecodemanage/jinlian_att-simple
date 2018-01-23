@@ -24,7 +24,7 @@ public interface ApproverService {
 	    * @param applicationNo
 	    * @return
 	    */
-	   Application approverDetails(String applicationNo,String statusDescription);
+	   ApplicationTotalRecord approverDetails(String applicationNo,String statusDescription);
 	   /**
 	    * 待审批数目
 	    * @param employeeId
