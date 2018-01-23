@@ -707,7 +707,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 			vacationService.AdjustRestAdjustment(
 					vacationId, "1", 
 					Double.parseDouble(algorithmResult.getReportDaily().getNormalOverWork())/60.0+"", 
-					"日报重新生成调休", "0");//先扣除
+					"日报重新生成调休", "0", algorithmResult.getReportDaily().getAttDate().split("-")[0]);//先扣除
 		}
 		//报表处理（单位处理：由分转为半小时）
 		reportDailyMapper.insertSelective(algorithmResult.getReportDaily());
@@ -716,7 +716,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		vacationService.AdjustRestAdjustment(
 				vacationId, "0", 
 				Double.parseDouble(algorithmResult.getReportDaily().getNormalOverWork())/60.0+"", 
-				"日报计算生成调休", "0");
+				"日报计算生成调休", "0", algorithmResult.getReportDaily().getAttDate().split("-")[0]);
 	}
 	/**
 	 * 处理前文计算的日报数据：秒-》分钟
