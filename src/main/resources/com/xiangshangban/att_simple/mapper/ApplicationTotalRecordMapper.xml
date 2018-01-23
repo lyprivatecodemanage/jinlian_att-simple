@@ -228,6 +228,7 @@
     	<result column="tr_id" property="id"/>
     	<result column="tr_application_no" property="applicationNo"/>
     	<result column="tr_transfer_person_id" property="transferPersonId"/>
+    	<result column="tr_employee_name" property="transferPersonName"/>
     	<result column="tr_transfer_persion_access_id" property="transferPersionAccessId"/>
     	<result column="tr_transfer_times" property="transferTimes"/>
     	<result column="tr_operater_time" property="operaterTime"/>
@@ -246,14 +247,19 @@
   </resultMap>
     <sql id="TR_Base_Column_List">
     tr.id tr_id, tr.application_no tr_application_no, tr.transfer_person_id tr_transfer_person_id, 
-    tr.transfer_persion_access_id tr_transfer_persion_access_id, tr.transfer_times tr_transfer_times, 
+    tr.employee_name tr_employee_name,tr.transfer_persion_access_id tr_transfer_persion_access_id,
+    tr.transfer_times tr_transfer_times, 
     tr.operater_time tr_operater_time, tr.transfer_explain tr_transfer_explain, tr.company_id tr_company_id
+  </sql>
+  <sql id="tr_Base_Column_List">
+    trf.id, trf.application_no, trf.transfer_person_id, trf.transfer_persion_access_id, trf.transfer_times, 
+    trf.operater_time, trf.transfer_explain, trf.company_id
   </sql>
    <sql id="CP_Base_Column_List">
     cp.id cp_id, cp.application_no cp_application_no, cp.copy_person_id cp_copy_person_id,
     cp.employee_name cp_employee_name,cp.operater_time cp_operater_time, cp.company_id cp_company_id
   </sql>
-    <sql id="cp_Base_Column_List">
+   <sql id="cp_Base_Column_List">
     acp.id, acp.application_no, acp.copy_person_id, acp.operater_time, acp.company_id
   </sql>
   <!-- 审批详情 -->
@@ -261,12 +267,18 @@
   	select <include refid="Base_Column_List"/>,<include refid="TR_Base_Column_List"/>
   	,<include refid="CP_Base_Column_List"/>
   	from att_simple.application_total_record_ atr 
-  	left join att_simple.application_transfer_record_ tr on atr.application_no = tr.application_no
+  	left join 
+  	(
+  	select <include refid="tr_Base_Column_List"/>,e.employee_name
+  	from att_simple.application_transfer_record_ trf
+  	left join organization.employee_ e on e.employee_id = trf.transfer_person_id and e.company_id = #{companyId}
+  	where trf.application_no =#{applicationNo}
+  	) tr on atr.application_no = tr.application_no
   	left join 
   	(
   	select <include refid="cp_Base_Column_List"/> ,e.employee_name
   	from att_simple.application_to_copy_person_ acp
-  	left join organization.employee_ e on e.employee_id = acp.copy_person_id
+  	left join organization.employee_ e on e.employee_id = acp.copy_person_id and e.company_id = #{companyId}
   	where acp.application_no =#{applicationNo}
   	) cp on atr.application_no = cp.application_no
   	where atr.application_no = #{applicationNo}

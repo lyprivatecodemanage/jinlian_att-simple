@@ -131,8 +131,8 @@ public class ApproverServiceImpl implements ApproverService {
 	 * 审批详情
 	 */
 	@Override
-	public ApplicationTotalRecord approverDetails(String applicationNo) {
-		ApplicationTotalRecord selectApproverDetails = applicationTotalRecordMapper.selectApproverDetails(applicationNo);
+	public ApplicationTotalRecord approverDetails(String applicationNo,String companyId) {
+		ApplicationTotalRecord selectApproverDetails = applicationTotalRecordMapper.selectApproverDetails(applicationNo,companyId);
 		return selectApproverDetails;
 	}
 	/**
