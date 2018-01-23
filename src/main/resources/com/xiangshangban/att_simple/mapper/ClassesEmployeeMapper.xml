@@ -358,22 +358,30 @@
   
   <!-- 查询班次类型使用人数排行榜前三名 -->
   <select id="selectTopThreeClassesType" parameterType="String" resultType="Map">
-  	SELECT
-	CAST(COUNT (1) AS VARCHAR) totalnum,
-	classes_name
+	SELECT
+	CAST (COUNT(A.emp_id) AS VARCHAR) totalnum,
+	COALESCE(classes_name,'') AS classes_name
 	FROM
-		classes_employee_
+		(
+			SELECT DISTINCT
+				emp_company_id,
+				emp_id,
+				classes_id,
+				classes_name
+			FROM
+				classes_employee_
+			WHERE
+				classes_name != ''
+			AND
+				emp_company_id = 'AEF9D610EF90484689438A2FBEF37ACB'
+		) A
 	GROUP BY
 		classes_id,
 		classes_name,
 		emp_company_id
-	HAVING
-		classes_name != ''
-	AND
-		emp_company_id = #{companyId}
 	ORDER BY
-		totalnum DESC OFFSET 0
-	LIMIT 3
+		totalnum DESC
+	OFFSET 0 LIMIT 3
   </select>
   
   <!-- 查询当前公司所有已经排过班次的人员ID、班次类型ID(排除临时班次)、最后一次班次的时间-->
@@ -399,5 +407,4 @@
   <select id="selectEmpNameById" parameterType="String" resultType="String">
   	select employee_name from organization.employee_ where employee_id = #{empId} and company_id = #{companyId}
   </select>
-  
 </mapper>

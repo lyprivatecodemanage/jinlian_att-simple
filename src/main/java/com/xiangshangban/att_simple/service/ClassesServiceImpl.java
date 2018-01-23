@@ -28,7 +28,7 @@ import com.xiangshangban.att_simple.utils.FormatUtil;
 import com.xiangshangban.att_simple.utils.TimeUtil;
 
 @Service
-@Transactional
+/*@Transactional*/
 public class ClassesServiceImpl implements ClassesService {
 
 	@Autowired
