@@ -131,33 +131,8 @@ public class ApproverServiceImpl implements ApproverService {
 	 * 审批详情
 	 */
 	@Override
-	public ApplicationTotalRecord approverDetails(String applicationNo,String statusDescription) {
-		/*String isComplete = "";
-		String isTranser = "";
-		String isReject = "";
-		String isCopy = "";*/
-		ApplicationTotalRecord selectApproverDetails = null;
-		if("抄送".equals(statusDescription)){
-			
-		}else{
-			selectApproverDetails = applicationTotalRecordMapper.selectApproverDetails(applicationNo);
-		}
-		/*ApplicationTotalRecord applicationTotalRecord = applicationTotalRecordMapper.selectByPrimaryKey(applicationNo);
-		if("未审批".equals(statusDescription)){
-			if("1".equals(applicationTotalRecord.getIsTransfer())){
-				
-			}else{
-				
-			}
-		}else if("已转移".equals(statusDescription)){
-			
-		}else if("已通过".equals(statusDescription)){
-			
-		}else if("已驳回".equals(statusDescription)){
-			
-		}else if("抄送".equals(statusDescription)){
-			
-		}*/
+	public ApplicationTotalRecord approverDetails(String applicationNo) {
+		ApplicationTotalRecord selectApproverDetails = applicationTotalRecordMapper.selectApproverDetails(applicationNo);
 		return selectApproverDetails;
 	}
 	/**

@@ -120,7 +120,7 @@ public class ApproverController {
 		String employeeId = "";
 		String companyId = "";
 		String applicationNo = "";
-		String statusDescription = "";
+		//String statusDescription = "";
 		try{
 			employeeId = request.getHeader("accessUserId");//员工id
 			companyId = request.getHeader("companyId");//公司id
@@ -132,7 +132,7 @@ public class ApproverController {
 			try{
 				JSONObject jobj = JSON.parseObject(jsonString);
 				applicationNo = jobj.getString("applicationNo");
-				statusDescription = jobj.getString("statusDescription");
+				//statusDescription = jobj.getString("statusDescription");
 			}catch(Exception e){
 				logger.info(e);
 				e.printStackTrace();
@@ -145,10 +145,7 @@ public class ApproverController {
 				returnData.setReturnCode("3006");
 				return returnData;
 			}
-			//查询审批申请单详情
-			//.......待继续
-			ApplicationTotalRecord approverDetails = approverService.approverDetails(applicationNo, statusDescription);
-			
+			ApplicationTotalRecord approverDetails = approverService.approverDetails(applicationNo);
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
 			returnData.setData(approverDetails);
