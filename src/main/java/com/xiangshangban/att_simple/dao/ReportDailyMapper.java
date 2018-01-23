@@ -1,6 +1,7 @@
 package com.xiangshangban.att_simple.dao;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.xiangshangban.att_simple.bean.ReportDaily;
 import com.xiangshangban.att_simple.bean.ReportDailyKey;
@@ -17,4 +18,10 @@ public interface ReportDailyMapper {
     int updateByPrimaryKeySelective(ReportDaily record);
 
     int updateByPrimaryKey(ReportDaily record);
+    
+	int deleteByDate(@Param("companyId")String companyId, 
+			@Param("employeeId")String employeeId, @Param("attDate")String attDate);
+
+	ReportDaily selectByDate(@Param("companyId")String companyId, 
+			@Param("employeeId")String employeeId, @Param("attDate")String attDate);
 }

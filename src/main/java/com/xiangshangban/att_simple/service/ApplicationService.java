@@ -25,6 +25,14 @@ public interface ApplicationService {
 	 * @return
 	 */
 	 List<ApplicationType> getApplicationChildrenTypeList(String applicationType);
+	 /**
+	  * 申请撤回
+	  * @param applicationNo
+	  * @param companyId
+	  * @param employeeId
+	  * @return
+	  */
+	 ReturnData applicationRevoke(String applicationNo,String companyId,String employeeId);
 	/**
 	 * 请假申请
 	 * @param params

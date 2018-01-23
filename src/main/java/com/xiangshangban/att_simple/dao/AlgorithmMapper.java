@@ -100,4 +100,7 @@ public interface AlgorithmMapper {
 	 */
 	int getIsCheck(@Param("companyId")String companyId, 
 			@Param("employeeId")String employeeId);
+	
+	String getVacationId(@Param("companyId")String companyId, 
+			@Param("employeeId")String employeeId, @Param("attDate")String attDate);
 }
