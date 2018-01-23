@@ -1,5 +1,6 @@
 package com.xiangshangban.att_simple.bean;
 
+import java.util.List;
 
 /**
  * 申请记录汇总表
@@ -42,6 +43,10 @@ public class ApplicationTotalRecord {
     private String copyPersonId;
     
     private String transferPersonId;
+    
+    private List<ApplicationTransferRecord> applicationTransferRecordList;
+    
+    private List<ApplicationToCopyPerson> applicationToCopyPersonList;
     
     public String getIsComplete() {
 		return isComplete;
@@ -185,6 +190,22 @@ public class ApplicationTotalRecord {
 
 	public void setTransferPersonId(String transferPersonId) {
 		this.transferPersonId = transferPersonId;
+	}
+
+	public List<ApplicationTransferRecord> getApplicationTransferRecordList() {
+		return applicationTransferRecordList;
+	}
+
+	public void setApplicationTransferRecordList(List<ApplicationTransferRecord> applicationTransferRecordList) {
+		this.applicationTransferRecordList = applicationTransferRecordList;
+	}
+
+	public List<ApplicationToCopyPerson> getApplicationToCopyPersonList() {
+		return applicationToCopyPersonList;
+	}
+
+	public void setApplicationToCopyPersonList(List<ApplicationToCopyPerson> applicationToCopyPersonList) {
+		this.applicationToCopyPersonList = applicationToCopyPersonList;
 	}
     
     

@@ -178,11 +178,17 @@
   </select>
   
  <!-- 审批详情 -->
-<!--   <select id="selectApproverDetailsByApplicationNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+<!--<select id="selectApproverDetailsByApplicationNo" parameterType="java.lang.String" resultMap="BaseResultMap">
   	select <include refid="Base_Column_List"/> from att_simple.application_total_record_ atr
   	where atr.
   	
   </select> -->
+  <!-- 未审批详情 -->
+  <select id="selectWillApproverDetails" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List"/>
+  	from att_simple.application_total_record_ atr 
+  </select>
+  
   
   
   
