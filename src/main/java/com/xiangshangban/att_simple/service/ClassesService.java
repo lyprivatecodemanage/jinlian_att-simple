@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.xiangshangban.att_simple.bean.ClassesEmployee;
+import com.xiangshangban.att_simple.bean.ClassesType;
 import com.xiangshangban.att_simple.bean.ReturnData;
 
 /**
@@ -12,6 +13,14 @@ import com.xiangshangban.att_simple.bean.ReturnData;
  * TODO 班次管理业务层 
  */
 public interface ClassesService {
+	
+	/**
+	 *  根据人员ID和公司ID查询人员的名称
+	 * @param empId 
+	 * @param companyId
+	 * @return
+	 */
+	String queryEmpNameById(String empId,String companyId);
 	
 	/**
 	 * 添加新的班次类型
@@ -22,11 +31,18 @@ public interface ClassesService {
 	boolean addNewClassesType(String requestParam,String companyId);
 	
 	/**
-	 * 查询当前公司所有班次类型信息（默认显示）
+	 * 查询当前公司所有班次类型ID和名称
 	 * @param companyId 公司ID
 	 * @return
 	 */
-	List<Map> queryAllClassesTypeInfo(String companyId);
+	List<ClassesType> queryAllClassesIdAndName(String companyId);
+	
+	/**
+	 * 查询指定的班次类型信息（默认显示）
+	 * @param companyId 公司ID
+	 * @return
+	 */
+	Map queryPointClassesTypeInfo(String requestParam,String companyId);
 	
 	/**
 	 * 删除指定的班次类型

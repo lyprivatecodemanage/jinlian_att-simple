@@ -1,5 +1,6 @@
 package com.xiangshangban.att_simple.bean;
 
+import java.util.List;
 
 /**
  * 申请记录汇总表
@@ -8,7 +9,7 @@ package com.xiangshangban.att_simple.bean;
 public class ApplicationTotalRecord {
 
 	//申请单号(uuid)
-    private String applcationNo;
+    private String applicationNo;
     //操作时间
     private String operaterTime;
     //操作人id
@@ -39,6 +40,14 @@ public class ApplicationTotalRecord {
     
     private String statusDescription;//审批中,已完成,已驳回
     
+    private String copyPersonId;
+    
+    private String transferPersonId;
+    
+    private List<ApplicationTransferRecord> applicationTransferRecordList;
+    
+    private List<ApplicationToCopyPerson> applicationToCopyPersonList;
+    
     public String getIsComplete() {
 		return isComplete;
 	}
@@ -47,15 +56,15 @@ public class ApplicationTotalRecord {
 		this.isComplete = isComplete;
 	}
 
-	public String getApplcationNo() {
-        return applcationNo;
+	public String getapplicationNo() {
+        return applicationNo;
     }
 
-    public void setApplcationNo(String applcationNo) {
-        this.applcationNo = applcationNo;
+    public void setapplicationNo(String applicationNo) {
+        this.applicationNo = applicationNo;
     }
 
-    public String getOperaterTime() {
+	public String getOperaterTime() {
         return operaterTime;
     }
 
@@ -165,6 +174,38 @@ public class ApplicationTotalRecord {
 
 	public void setApplicationName(String applicationName) {
 		this.applicationName = applicationName;
+	}
+
+	public String getCopyPersonId() {
+		return copyPersonId;
+	}
+
+	public void setCopyPersonId(String copyPersonId) {
+		this.copyPersonId = copyPersonId;
+	}
+
+	public String getTransferPersonId() {
+		return transferPersonId;
+	}
+
+	public void setTransferPersonId(String transferPersonId) {
+		this.transferPersonId = transferPersonId;
+	}
+
+	public List<ApplicationTransferRecord> getApplicationTransferRecordList() {
+		return applicationTransferRecordList;
+	}
+
+	public void setApplicationTransferRecordList(List<ApplicationTransferRecord> applicationTransferRecordList) {
+		this.applicationTransferRecordList = applicationTransferRecordList;
+	}
+
+	public List<ApplicationToCopyPerson> getApplicationToCopyPersonList() {
+		return applicationToCopyPersonList;
+	}
+
+	public void setApplicationToCopyPersonList(List<ApplicationToCopyPerson> applicationToCopyPersonList) {
+		this.applicationToCopyPersonList = applicationToCopyPersonList;
 	}
     
     

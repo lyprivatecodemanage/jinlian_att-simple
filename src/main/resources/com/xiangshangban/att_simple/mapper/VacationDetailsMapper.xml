@@ -13,6 +13,7 @@
     <result column="auditor_employee_id" jdbcType="VARCHAR" property="auditorEmployeeId" />
     <result column="changeing_date" jdbcType="VARCHAR" property="changeingDate" />
     <result column="adjusting_instruction" jdbcType="VARCHAR" property="adjustingInstruction"/>
+    <result column="year_" jdbcType="VARCHAR" property="year"/>
   </resultMap>
   
   <resultMap id="DetailsEmployeeMap" type="com.xiangshangban.att_simple.bean.VacationDetails">
@@ -29,6 +30,7 @@
     <result column="adjusting_instruction" jdbcType="VARCHAR" property="adjustingInstruction"/>
     <result column="vacation_type_name" jdbcType="VARCHAR" property="vacationTypeName"/>
     <result column="employee_name" jdbcType="VARCHAR" property="employeeName"/>
+    <result column="year_" jdbcType="VARCHAR" property="year"/>
   </resultMap>
   
   <sql id="Base_Column_List">
@@ -92,6 +94,7 @@
     from vacation_details
     where vacation_id = #{vacationId,jdbcType=VARCHAR}
     and vacation_type = #{vacationType,jdbcType=VARCHAR}
+    and year_ = #{year}
     order by changeing_date DESC
 	LIMIT 1
   </select>
@@ -154,6 +157,9 @@
       <if test="adjustingInstruction != null">
       	adjusting_instruction,
       </if>
+      <if test="year != null">
+      	year_,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="vacationDetailsId != null">
@@ -188,6 +194,9 @@
       </if>
       <if test="adjustingInstruction != null">
       	#{adjustingInstruction,jdbcType=VARCHAR},
+      </if>
+      <if test="year != null">
+      	#{year,jdbcType=VARCHAR}
       </if>
     </trim>
   </insert>

@@ -14,6 +14,7 @@ public class GainData {
 	private HttpServletRequest request;
 	private Map<String,Object> result;
 	private int type = 0;
+	@SuppressWarnings("unchecked")
 	public GainData(String jsonString,HttpServletRequest request){
 		String type = request.getHeader("type");
 		String token = request.getHeader("token");

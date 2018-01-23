@@ -24,13 +24,13 @@ import com.xiangshangban.att_simple.bean.ApplicationCommonContactPeople;
 import com.xiangshangban.att_simple.bean.ApplicationToCopyPerson;
 import com.xiangshangban.att_simple.bean.ApplicationTotalRecord;
 import com.xiangshangban.att_simple.bean.ApplicationTransferRecord;
+import com.xiangshangban.att_simple.bean.ApplicationType;
 import com.xiangshangban.att_simple.bean.ClassesEmployee;
 import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.service.ApplicationService;
 import com.xiangshangban.att_simple.service.ClassesService;
 import com.xiangshangban.att_simple.utils.DateCompareUtil;
 import com.xiangshangban.att_simple.utils.FormatUtil;
-import com.xiangshangban.att_simple.utils.GainData;
 import com.xiangshangban.att_simple.utils.TimeUtil;
 
 /**
@@ -67,6 +67,96 @@ public class ApplicationController {
 			return result;
 		}
 		/**
+		 * 申请子类型列表
+		 * @param jsonString
+		 * @param request
+		 * @return
+		 */
+		@RequestMapping(value = "/applicationChildrenTypeList",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+		public ReturnData applicationChildrenTypeList(@RequestBody String jsonString ,HttpServletRequest request){
+			ReturnData returnData = new ReturnData();
+			try{
+			String employeeId = request.getHeader("accessUserId");//员工id
+			String companyId = request.getHeader("companyId");//公司id
+			String applicationType = "";
+			if(StringUtils.isEmpty(companyId)||StringUtils.isEmpty(employeeId)){
+				returnData.setMessage("请求信息错误");
+				returnData.setReturnCode("3012");
+				return returnData;
+			}
+			try{
+				JSONObject jobj = JSON.parseObject(jsonString);
+				applicationType = jobj.getString("applicationType");
+				if(StringUtils.isEmpty(applicationType)){
+					returnData.setMessage("必传参数为空");
+					returnData.setReturnCode("3006");
+					return returnData;
+				}
+			}catch(Exception e){
+				logger.info(e);
+				e.printStackTrace();
+				returnData.setMessage("请检查参数格式");
+				returnData.setReturnCode("9999");
+				return returnData;
+			}
+			List<ApplicationType> applicationChildrenTypeList = applicationService.getApplicationChildrenTypeList(applicationType);
+			returnData.setMessage("成功");
+			returnData.setReturnCode("3000");
+			returnData.setData(applicationChildrenTypeList);
+			return returnData;
+			}catch(Exception e){
+				logger.info(e);
+				e.printStackTrace();
+				returnData.setMessage("服务器错误");
+				returnData.setReturnCode("3001");
+				return returnData;
+			}
+		}
+		/**
+		 * 申请撤回
+		 * @param jsonString
+		 * @param request
+		 * @return
+		 */
+		@RequestMapping(value = "/applicationRevoke",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+		public ReturnData applicationRevoke(@RequestBody String jsonString ,HttpServletRequest request){
+			ReturnData returnData = new ReturnData();
+			try{
+				String employeeId = request.getHeader("accessUserId");//员工id
+				String companyId = request.getHeader("companyId");//公司id
+				String applicationNo = "";
+				if(StringUtils.isEmpty(companyId)||StringUtils.isEmpty(employeeId)){
+					returnData.setMessage("请求信息错误");
+					returnData.setReturnCode("3012");
+					return returnData;
+				}
+				try{
+					JSONObject jobj = JSON.parseObject(jsonString);
+					applicationNo = jobj.getString("applicationNo");
+					if(StringUtils.isEmpty(applicationNo)){
+						returnData.setMessage("必传参数为空");
+						returnData.setReturnCode("3006");
+						return returnData;
+					}
+				}catch(Exception e){
+					logger.info(e);
+					e.printStackTrace();
+					returnData.setMessage("请检查参数格式");
+					returnData.setReturnCode("9999");
+					return returnData;
+				}
+				returnData = applicationService.applicationRevoke(applicationNo, companyId, employeeId);
+				return returnData;
+			}catch(Exception e){
+				logger.info(e);
+				e.printStackTrace();
+				returnData.setMessage("服务器错误");
+				returnData.setReturnCode("3001");
+				return returnData;
+			}
+		}
+		
+		/**
 		 * 请假,加班,出差,外出,补卡申请
 		 * @param jsonString
 		 * @param request
@@ -83,10 +173,7 @@ public class ApplicationController {
 				returnData.setReturnCode("3013");
 				return returnData;
 			}
-			/*Application application = new Application();
-			this.setApplication(jsonString, application);*/
 			Application application = JSON.parseObject(jsonString, Application.class);
-			
 			if(application==null||StringUtils.isEmpty(application.getApplicationType())||StringUtils.isEmpty(application.getIsSetCommonContactPeople())
 					||StringUtils.isEmpty(application.getIsCopy())){
 				returnData.setMessage("必传参数为空");
@@ -157,32 +244,6 @@ public class ApplicationController {
 			int applicationHour = 0;//计算得出的申请小时数
 			switch(application.getApplicationType()){
 			   case "1"://请假
-				   /*List<ClassesEmployee> classesEmployeeList = classesService.queryPointTimeClasses(employeeId, companyId, new SimpleDateFormat("yyyy-MM-dd").format(startTime), new SimpleDateFormat("yyyy-MM-dd").format(endTime));
-				   try{
-					   for(ClassesEmployee classesEmployee:classesEmployeeList){
-						   String start = "";
-						   String end = "";
-						   if(!StringUtils.isEmpty(classesEmployee.getClassesId())&&!StringUtils.isEmpty(classesEmployee.getOnDutySchedulingDate())&&!StringUtils.isEmpty(classesEmployee.getOffDutySchedulingDate())){
-							   if(startTime.getTime()>sdf.parse(classesEmployee.getOnDutySchedulingDate()).getTime()){
-							         start = sdf.format(startTime);
-							   }else{
-								   start = classesEmployee.getOnDutySchedulingDate();
-							   }
-							   if(endTime.getTime()>sdf.parse(classesEmployee.getOffDutySchedulingDate()).getTime()){
-								   end = classesEmployee.getOffDutySchedulingDate();
-							   }else{
-								   end = sdf.format(endTime);
-							   }
-							   long between=(dfs.parse(end).getTime()-dfs.parse(start).getTime())/1000;//除以1000是为了转换成秒
-							   applicationHour=applicationHour+((int)Math.ceil(between/60/30))/2;
-						   }
-					   }
-				   }catch(Exception e){
-					   logger.info(e);
-					   returnData.setMessage("服务器错误");
-					   returnData.setReturnCode("3001");
-					   return returnData;
-				   }*/
 				   applicationHour = this.calculateApplicationHour("1", application.getIsSkipRestDay(), employeeId, companyId, startTime, endTime, applicationHour);
 				   if(applicationHour==0){
 					   returnData.setMessage("请检查申请是时间是否填写正确");
@@ -307,12 +368,6 @@ public class ApplicationController {
 				return returnData;
 			}
 			Application application = null;
-			GainData data = new GainData(jsonString, request);
-			if(data.getType()==0){
-				application = JSON.parseObject(JSONObject.toJSONString(data.getResult()), Application.class);
-			}else if(data.getType()==1){
-				
-			}
 			if(application==null || StringUtils.isEmpty(application.getCommonContactPeopleList()) || application.getCommonContactPeopleList().size()<1){
 				for(ApplicationCommonContactPeople contactPeople :application.getCommonContactPeopleList()){
 					if(StringUtils.isEmpty(contactPeople.getCommonContactPeopleId())||StringUtils.isEmpty(contactPeople.getCommonContactPeopleName())||StringUtils.isEmpty(contactPeople.getType())){
@@ -372,14 +427,18 @@ public class ApplicationController {
 			List<ApplicationTotalRecord> applicationList = applicationService.applicationList(employeeId, companyId, page, count);
 			if(applicationList!=null&&applicationList.size()>0){
 				for(ApplicationTotalRecord applicationTotalRecord:applicationList){
-					if("1".equals(applicationTotalRecord.getIsComplete())){
-						if("0".equals(applicationTotalRecord.getIsReject())){
-							applicationTotalRecord.setStatusDescription("已通过");
+					if("2".equals(applicationTotalRecord.getApplicationStatus())){
+						applicationTotalRecord.setStatusDescription("已撤回");
+					}else if("1".equals(applicationTotalRecord.getApplicationStatus())){//正常
+						if("1".equals(applicationTotalRecord.getIsComplete())){
+							if("0".equals(applicationTotalRecord.getIsReject())){
+								applicationTotalRecord.setStatusDescription("已通过");
+							}else{
+								applicationTotalRecord.setStatusDescription("已驳回");
+							}
 						}else{
-							applicationTotalRecord.setStatusDescription("已驳回");
+							applicationTotalRecord.setStatusDescription("审批中");
 						}
-					}else{
-						applicationTotalRecord.setStatusDescription("审批中");
 					}
 				}
 			}

@@ -7,13 +7,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ApplicationTotalRecord;
 import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.service.ApproverService;
@@ -78,16 +78,21 @@ public class ApproverController {
 				for(ApplicationTotalRecord approver:approverIndexPage){
 					if("1".equals(approver.getIsComplete())){
 						if("0".equals(approver.getIsReject())){
-							approver.setStatusDescription("已完成");
+							approver.setStatusDescription("已通过");
 						}else{
 							approver.setStatusDescription("已驳回");
 						}
 					}else{
-						if("0".equals(approver.getIsTransfer())){
+						if(employeeId.equals(approver.getLastApprover())){
 							approver.setStatusDescription("未审批");
-						}else{
+						}else if(!employeeId.equals(approver.getLastApprover())&&"1".equals(approver.getIsTransfer())
+								&&employeeId.equals(approver.getTransferPersonId())){
 							approver.setStatusDescription("已转移");
 						}
+					}
+					if("1".equals(approver.getIsCopy())&&!StringUtils.isEmpty(approver.getCopyPersonId())
+							&&employeeId.equals(approver.getCopyPersonId())){
+						approver.setStatusDescription("抄送");
 					}
 				}
 			}
@@ -102,14 +107,20 @@ public class ApproverController {
 			returnData.setReturnCode("3001");
 			return returnData;
 		}
-
 	}
+	/**
+	 * 审批详情
+	 * @param jsonString
+	 * @param request
+	 * @return
+	 */
 	@RequestMapping(value = "/approverDetails",produces="application/json;charset=utf-8",method=RequestMethod.POST)
-	public ReturnData approverDetails(String jsonString,HttpServletRequest request){
+	public ReturnData approverDetails(@RequestBody String jsonString,HttpServletRequest request){
 		ReturnData returnData = new ReturnData();
 		String employeeId = "";
 		String companyId = "";
 		String applicationNo = "";
+		//String statusDescription = "";
 		try{
 			employeeId = request.getHeader("accessUserId");//员工id
 			companyId = request.getHeader("companyId");//公司id
@@ -121,6 +132,7 @@ public class ApproverController {
 			try{
 				JSONObject jobj = JSON.parseObject(jsonString);
 				applicationNo = jobj.getString("applicationNo");
+				//statusDescription = jobj.getString("statusDescription");
 			}catch(Exception e){
 				logger.info(e);
 				e.printStackTrace();
@@ -133,12 +145,42 @@ public class ApproverController {
 				returnData.setReturnCode("3006");
 				return returnData;
 			}
-			//查询审批申请单详情
-			//.......待继续
-			
+			ApplicationTotalRecord approverDetails = approverService.approverDetails(applicationNo,companyId);
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
-			//returnData.setData();
+			returnData.setData(approverDetails);
+			return returnData;
+		}catch(Exception e){
+			logger.info(e);
+			e.printStackTrace();
+			returnData.setMessage("服务器错误");
+			returnData.setReturnCode("3001");
+			return returnData;
+		}
+	}
+	/**
+	 * 待审批数目
+	 * @param jsonString
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/willApproverCount",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+	public ReturnData willApproverCount(String jsonString,HttpServletRequest request){
+		ReturnData returnData = new ReturnData();
+		String employeeId = "";
+		String companyId = "";
+		try{
+			employeeId = request.getHeader("accessUserId");//员工id
+			companyId = request.getHeader("companyId");//公司id
+			if(StringUtils.isEmpty(companyId)||StringUtils.isEmpty(employeeId)){
+				returnData.setMessage("请求信息错误");
+				returnData.setReturnCode("3012");
+				return returnData;
+			}
+			int i = approverService.willApproverCount(employeeId, companyId);
+			returnData.setMessage("成功");
+			returnData.setReturnCode("3000");
+			returnData.setData(i);
 			return returnData;
 		}catch(Exception e){
 			logger.info(e);

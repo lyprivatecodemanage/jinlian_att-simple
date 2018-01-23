@@ -26,11 +26,19 @@ public interface ApplicationTotalRecordMapper {
 	List<ApplicationTotalRecord> selectApplicationList(@Param("employeeId")String employeeId,
 			@Param("companyId")String companyId,@Param("page")String page,@Param("count")String count);
 	/**
-	 * 审批列表分页查询
+	 * 审批列表申请状态:非全部
 	 * @param employeeId
 	 * @param companyId
 	 * @param page
 	 * @param count
+	 * @param applicationType
+	 * @param isComplete
+	 * @param isTranser
+	 * @param isReject
+	 * @param isCopy
+	 * @param applicationTimeStart
+	 * @param applicationTimeEnd
+	 * @param employeeName
 	 * @return
 	 */
 	List<ApplicationTotalRecord> selectApproverListCondition(
@@ -46,19 +54,45 @@ public interface ApplicationTotalRecordMapper {
 			@Param("applicationTimeStart")String applicationTimeStart,
 			@Param("applicationTimeEnd")String applicationTimeEnd,
 			@Param("employeeName")String employeeName);
-	
-	List<ApplicationTotalRecord> selectApproverListTotalselectApproverListTotal(
+	/**
+	 * 审批列表申请状态:全部
+	 * @param employeeId
+	 * @param companyId
+	 * @param page
+	 * @param count
+	 * @param applicationType
+	 * @param applicationTimeStart
+	 * @param applicationTimeEnd
+	 * @param employeeName
+	 * @return
+	 */
+	List<ApplicationTotalRecord> selectApproverListTotal(
 			@Param("employeeId")String employeeId,
 			@Param("companyId")String companyId,
 			@Param("page")String page,
 			@Param("count")String count,
 			@Param("applicationType")String applicationType,
+			@Param("statusDescription")String statusDescription,
 			@Param("applicationTimeStart")String applicationTimeStart,
 			@Param("applicationTimeEnd")String applicationTimeEnd,
 			@Param("employeeName")String employeeName);
 	
 	
 	
+	/**
+	 * 审批详情
+	 * @param applicationNo
+	 * @return
+	 */
+	ApplicationTotalRecord selectApproverDetails(@Param("applicationNo")String applicationNo,@Param("companyId")String companyId);
+	/**
+	 * 待审批条数
+	 * @param employeeId
+	 * @param companyId
+	 * @return
+	 */
+	Integer selectCountFromWillApprover(@Param("employeeId")String employeeId,
+			@Param("companyId")String companyId);
 	
 	
 	

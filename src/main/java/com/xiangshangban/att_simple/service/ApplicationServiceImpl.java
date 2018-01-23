@@ -1,7 +1,8 @@
 package com.xiangshangban.att_simple.service;
 
-import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -392,6 +393,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 				mbc.setEmployeeId(employeeList.get(i).getEmployeeId());
 				mbc.setCommonContactPeopleId(employeeList.get(i).getEmployeeId());
 				mbc.setCommonContactPeopleName(employeeList.get(i).getEmployeeName());
+				mbc.setType("0");
 				applicationCommonContactPeopleList.add(applicationCommonContactPeople);
 			}
 			break;
@@ -498,6 +500,61 @@ public class ApplicationServiceImpl implements ApplicationService {
 			applicationDetails.setStatusDescription("审批中");
 		}
 		return applicationDetails;
+	}
+	/**
+	 * 获取申请子类型
+	 */
+	@Override
+	public List<ApplicationType> getApplicationChildrenTypeList(String applicationType) {
+		List<ApplicationType> applicationChildrenTypeList = applicationTypeMapper.getApplicationChildrenTypeList(applicationType);
+		return applicationChildrenTypeList;
+	}
+	/**
+	 * 申请撤回
+	 */
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED,rollbackForClassName="Exception")
+	public ReturnData applicationRevoke(String applicationNo, String companyId, String employeeId) {
+		ReturnData returnData = new ReturnData();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date now = new Date(System.currentTimeMillis());
+		try{
+		now = sdf.parse(sdf.format(now));
+		ApplicationTotalRecord selectByPrimaryKey = applicationTotalRecordMapper.selectByPrimaryKey(applicationNo);
+		if("0".equals(selectByPrimaryKey.getIsComplete())&&"0".equals(selectByPrimaryKey.getIsTransfer())){
+			Date operaterTime = sdf.parse(sdf.format(selectByPrimaryKey.getOperaterTime()));
+			int minutes = (int)((now.getTime()-operaterTime.getTime())/1000/60);
+			if(minutes>=10){
+				returnData.setMessage("您的申请已超过十分钟,无法撤回");
+				returnData.setReturnCode("9999");
+				return returnData;
+			}else{//撤回操作
+				ApplicationTotalRecord record = new ApplicationTotalRecord();
+				record.setapplicationNo(applicationNo);
+				record.setApplicationStatus("2");
+				int i = applicationTotalRecordMapper.updateByPrimaryKeySelective(record);
+				if(i>0){
+					returnData.setMessage("成功");
+					returnData.setReturnCode("3000");
+					return returnData;
+				}else{
+					returnData.setMessage("撤回失败");
+					returnData.setReturnCode("9999");
+					return returnData;
+				}
+			}
+		}else{
+			returnData.setMessage("您的申请已被处理,无法撤回");
+			returnData.setReturnCode("9999");
+			return returnData;
+		}
+		}catch(Exception e){
+			logger.info(e);
+			e.printStackTrace();
+			returnData.setMessage("服务器错误");
+			returnData.setReturnCode("3001");
+			return returnData;
+		}
 	}
 	
 }

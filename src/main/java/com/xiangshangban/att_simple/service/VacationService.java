@@ -1,7 +1,5 @@
 package com.xiangshangban.att_simple.service;
 
-import java.util.Map;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +25,7 @@ public interface VacationService {
 	 * @param auditorEmployeeId
 	 * @return
 	 */
-	ReturnData AnnualLeaveAdjustment(String vacationId,String vacationMold,String annualLeave,String adjustingInstruction,String auditorEmployeeId);
+	ReturnData AnnualLeaveAdjustment(String vacationId,String vacationMold,String annualLeave,String adjustingInstruction,String auditorEmployeeId,String year);
 	
 	/**
 	 * 调休调整
@@ -38,6 +36,24 @@ public interface VacationService {
 	 * @param auditorEmployeeId
 	 * @return
 	 */
-	ReturnData AdjustRestAdjustment(String vacationId,String vacationMold,String adjustRest,String changingReason,String auditorEmployeeId);
-    
+	ReturnData AdjustRestAdjustment(String vacationId,String vacationMold,String adjustRest,String changingReason,String auditorEmployeeId,String year);
+
+	/**
+	 * 不完整数据信息人员
+	 * @param companyId
+	 * @return
+	 */
+	ReturnData IncompleteData(String companyId);
+	
+	/**
+	 * 年假一键清零
+	 * @return
+	 */
+	ReturnData ResetAnnualLeave(String companyId,String year,String auditorEmployeeId);
+	
+	/**
+	 * 年假一键生成
+	 * @return
+	 */
+	ReturnData AnnualLeaveGenerate(String companyId,String year,String auditorEmployeeId);
 }

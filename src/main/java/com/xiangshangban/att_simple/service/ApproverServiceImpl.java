@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ApplicationTotalRecord;
 import com.xiangshangban.att_simple.dao.ApplicationBusinessTravelMapper;
 import com.xiangshangban.att_simple.dao.ApplicationCommonContactPeopleMapper;
@@ -100,8 +101,11 @@ public class ApproverServiceImpl implements ApproverService {
 			applicatrionPersonName = "%"+applicatrionPersonName+"%";
 		}
 		//申请状态
-		if(StringUtils.isEmpty(statusDescription)||"全部".equals(statusDescription)){
-			approverList = applicationTotalRecordMapper.selectApproverListTotalselectApproverListTotal(employeeId, 
+		approverList = applicationTotalRecordMapper.selectApproverListTotal(employeeId,
+				companyId, page, count, applicationType, statusDescription, 
+				applicationTimeStart, applicationTimeEnd, applicatrionPersonName);
+		/*if(StringUtils.isEmpty(statusDescription)||"全部".equals(statusDescription)){
+			approverList = applicationTotalRecordMapper.selectApproverListTotal(employeeId, 
 					companyId, page, count, applicationType, applicationTimeStart, applicationTimeEnd, applicatrionPersonName);
 		}else{ 
 			if("未审批".equals(statusDescription)){
@@ -119,9 +123,25 @@ public class ApproverServiceImpl implements ApproverService {
 			approverList = applicationTotalRecordMapper.selectApproverListCondition(employeeId, 
 					companyId, page, count, applicationType, isComplete, isTranser, isReject, 
 					isCopy, applicationTimeStart, applicationTimeEnd, applicatrionPersonName);
-		}
+		}*/
 		return approverList;
 
+	}
+	/**
+	 * 审批详情
+	 */
+	@Override
+	public ApplicationTotalRecord approverDetails(String applicationNo,String companyId) {
+		ApplicationTotalRecord selectApproverDetails = applicationTotalRecordMapper.selectApproverDetails(applicationNo,companyId);
+		return selectApproverDetails;
+	}
+	/**
+	 * 待审批条数
+	 */
+	@Override
+	public int willApproverCount(String employeeId, String companyId) {
+		int i = applicationTotalRecordMapper.selectCountFromWillApprover(employeeId, companyId);
+		return i;
 	}
 	
 

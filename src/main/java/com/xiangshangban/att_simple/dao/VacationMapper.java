@@ -38,7 +38,7 @@ public interface VacationMapper {
      * 查询Vacation表中记录总条数
      * @return
      */
-    int SelectTotalNumber(@Param("companyId")String companyId,@Param("departmentId")String departmentId,@Param("employeeName")String employeeName);
+    int SelectTotalNumber(@Param("companyId")String companyId,@Param("departmentId")String departmentId,@Param("employeeName")String employeeName,@Param("year")String year);
     
     /**
      * 按照   {部门、姓名、年假总额排序、调休总额排序、年假剩余排序、调休剩余排序}  进行模糊分页查询
@@ -55,7 +55,7 @@ public interface VacationMapper {
      * @param annualLeaveBalance
      * @return
      */
-    int UpdateAnnualLeave(@Param("vacationId")String vacationId,@Param("annualLeaveTotal")String annualLeaveTotal,@Param("annualLeaveBalance")String annualLeaveBalance);
+    int UpdateAnnualLeave(@Param("vacationId")String vacationId,@Param("annualLeaveTotal")String annualLeaveTotal,@Param("annualLeaveBalance")String annualLeaveBalance,@Param("year")String year);
     
     /**
      * 根据vacationId 对单个员工进行调休调整 修改调休总数、剩余
@@ -65,4 +65,14 @@ public interface VacationMapper {
      * @return
      */
     int UpdateAdjustRest(@Param("vacationId")String vacationId,@Param("adjustRestTotal")String adjustRestTotal,@Param("adjustRestBalance")String adjustRestBalance);
+    
+    /**
+     * 查询清零年假人员假期记录
+     * @param companyId
+     * @param year
+     * @return
+     */
+    List<Vacation> selectResetAnnualLeave(@Param("companyId")String companyId,@Param("year")String year);
+    
+    
 }

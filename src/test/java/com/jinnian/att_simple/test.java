@@ -45,7 +45,6 @@ public class test {
 		}*/
 
 		/*try{
->>>>>>> dev-development
 			SimpleDateFormat dfs = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
 			

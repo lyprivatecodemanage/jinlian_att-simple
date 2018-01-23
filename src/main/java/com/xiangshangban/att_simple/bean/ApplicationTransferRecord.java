@@ -104,5 +104,6 @@ public class ApplicationTransferRecord {
 	public void setCompanyId(String companyId) {
 		this.companyId = companyId;
 	}
+
     
 }
