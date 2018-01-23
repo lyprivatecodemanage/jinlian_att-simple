@@ -12,26 +12,34 @@
     <result column="adjust_rest_balance" jdbcType="VARCHAR" property="adjustRestBalance" />
     <result column="department_name" jdbcType="VARCHAR" property="departmentName" />
     <result column="employee_name" jdbcType="VARCHAR" property="employeeName" />
+    <result column="year_" jdbcType="VARCHAR" property="year" />
   </resultMap>
   
   <sql id="Base_Column_List">
     vacation_id, company_id, department_id, employee_id, annual_leave_total, annual_leave_balance, 
-    adjust_rest_total, adjust_rest_balance
+    adjust_rest_total, adjust_rest_balance,year_
   </sql>
   
   <sql id="Vacation_Employee_Column_List">
     vacation_id, company_id, department_id,employee_id,annual_leave_total,annual_leave_balance,
-adjust_rest_total,adjust_rest_balance,department_name,employee_name
+adjust_rest_total,adjust_rest_balance,department_name,employee_name,year_
   </sql>
   
   <sql id="Vacation_Employee_Column_List1">
     v.vacation_id, v.company_id, v.department_id, v.employee_id, v.annual_leave_total, v.annual_leave_balance,
-v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name
+v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name,year_
   </sql>
   
   <!-- select -->
+  <select id="selectResetAnnualLeave" resultMap="BaseResultMap">
+  	select * from vacation
+	where company_id = #{companyId}
+	and year_ = #{year}
+	and annual_leave_balance > '0'
+  </select>
+  
   <select id="SelectFuzzyPagel" parameterType="com.xiangshangban.att_simple.bean.Paging" resultMap="BaseResultMap">
-  	select 
+  	select DISTINCT
   	<include refid="Vacation_Employee_Column_List"/>
 	from 
 	(select <include refid="Vacation_Employee_Column_List1"/>,
@@ -54,8 +62,13 @@ v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name
 	on v.employee_id = e.employee_id and v.company_id = e.company_id and v.department_id = e.department_id 
 	left join organization.department_ d 
 	on e.department_id = d.department_id and e.company_id = d.company_id 
+	left JOIN organization.user_company uc 
+	on uc.company_id=d.company_id and uc.user_id = v.employee_id
 	<where>
 		v.company_id = #{companyId} 
+		and year_ = #{year}
+		and uc.is_active = '1'
+		and uc.type = '1'
 		<if test="departmentId != null">
 			and v.department_id = #{departmentId}
 		</if>
@@ -72,6 +85,7 @@ v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name
 	LEFT JOIN organization.employee_ e
 	on v.employee_id = e.employee_id and v.company_id = e.company_id and v.department_id = e.department_id
 	where v.company_id = #{companyId}
+	and year_ = #{year}
 	<if test="departmentId != null">
 		and v.department_id = #{departmentId}
 	</if>
@@ -100,6 +114,8 @@ v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name
   			and employee_id = #{employeeId}
   		</if>
   	</where>
+  	ORDER BY year_ DESC
+  	limit 1
   </select>
 	  
   <!-- delete -->
@@ -112,10 +128,10 @@ v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name
   <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.Vacation">
     insert into vacation (vacation_id, company_id, department_id, 
       employee_id, annual_leave_total, annual_leave_balance, 
-      adjust_rest_total, adjust_rest_balance)
+      adjust_rest_total, adjust_rest_balance,year_)
     values (#{vacationId,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR}, #{departmentId,jdbcType=VARCHAR}, 
       #{employeeId,jdbcType=VARCHAR}, #{annualLeaveTotal,jdbcType=VARCHAR}, #{annualLeaveBalance,jdbcType=VARCHAR}, 
-      #{adjustRestTotal,jdbcType=VARCHAR}, #{adjustRestBalance,jdbcType=VARCHAR})
+      #{adjustRestTotal,jdbcType=VARCHAR}, #{adjustRestBalance,jdbcType=VARCHAR}, #{year,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.Vacation">
     insert into vacation
@@ -144,6 +160,9 @@ v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name
       <if test="adjustRestBalance != null">
         adjust_rest_balance,
       </if>
+      <if test="year != null">
+      	year_,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="vacationId != null">
@@ -170,6 +189,9 @@ v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name
       <if test="adjustRestBalance != null">
         #{adjustRestBalance,jdbcType=VARCHAR},
       </if>
+      <if test="year != null">
+      	#{year,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   
@@ -183,7 +205,8 @@ v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name
   	update vacation
   	set annual_leave_total = #{annualLeaveTotal,jdbcType=VARCHAR},annual_leave_balance = #{annualLeaveBalance,jdbcType=VARCHAR}
   	where vacation_id = #{vacationId,jdbcType=VARCHAR}
-  </update>
+  	and year_ = #{year,jdbcType=VARCHAR}
+  </update> 
   <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.Vacation">
     update vacation
     <set>

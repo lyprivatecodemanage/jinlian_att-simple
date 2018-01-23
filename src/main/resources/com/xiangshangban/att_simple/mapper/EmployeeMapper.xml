@@ -460,8 +460,9 @@
 		resultMap="Employee">
 		select
 		<include refid="EmployeeColumn" />
-		from organization.employee_ e
+		from organization.employee_ 
 		where company_id = #{companyId}
+		and employee_status = '0'
 	</select>
 	<select id="findExport" resultMap="EmployeeExport">
 		select

@@ -56,9 +56,6 @@ public class Employee {
 //    private String shiftTime;//可用调休时长（秒）
 //    private String employeeCardNumber;//员工工资卡
     
-    
-    
-    
 	public String getPostName() {
 		return postName;
 	}

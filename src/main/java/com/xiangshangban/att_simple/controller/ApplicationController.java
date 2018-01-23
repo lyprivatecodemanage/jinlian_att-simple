@@ -30,7 +30,6 @@ import com.xiangshangban.att_simple.service.ApplicationService;
 import com.xiangshangban.att_simple.service.ClassesService;
 import com.xiangshangban.att_simple.utils.DateCompareUtil;
 import com.xiangshangban.att_simple.utils.FormatUtil;
-import com.xiangshangban.att_simple.utils.GainData;
 import com.xiangshangban.att_simple.utils.TimeUtil;
 
 /**
@@ -307,12 +306,6 @@ public class ApplicationController {
 				return returnData;
 			}
 			Application application = null;
-			GainData data = new GainData(jsonString, request);
-			if(data.getType()==0){
-				application = JSON.parseObject(JSONObject.toJSONString(data.getResult()), Application.class);
-			}else if(data.getType()==1){
-				
-			}
 			if(application==null || StringUtils.isEmpty(application.getCommonContactPeopleList()) || application.getCommonContactPeopleList().size()<1){
 				for(ApplicationCommonContactPeople contactPeople :application.getCommonContactPeopleList()){
 					if(StringUtils.isEmpty(contactPeople.getCommonContactPeopleId())||StringUtils.isEmpty(contactPeople.getCommonContactPeopleName())||StringUtils.isEmpty(contactPeople.getType())){
