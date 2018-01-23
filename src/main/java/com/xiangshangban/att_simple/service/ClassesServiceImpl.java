@@ -508,9 +508,7 @@ public class ClassesServiceImpl implements ClassesService {
 					// 获取数据的总行数
 					totalRows = realData.size();
 					// 设置总页数
-					totalPage = totalRows % Integer.parseInt(rows.toString().trim()) == 0
-							? totalRows / Integer.parseInt(rows.toString().trim())
-							: totalRows / Integer.parseInt(rows.toString().trim()) + 1;
+					totalPage = totalRows % Integer.parseInt(rows.toString().trim()) == 0? totalRows / Integer.parseInt(rows.toString().trim()): totalRows / Integer.parseInt(rows.toString().trim()) + 1;
 				}
 				resultInfo.setData(finallyData);
 			} else {
@@ -520,8 +518,7 @@ public class ClassesServiceImpl implements ClassesService {
 			resultInfo.setData(selectClassesInfo);
 		}
 		// 查询班次类型使用人数排行榜前三名
-		List<Map<String, String>> selectTopThreeClassesType = classesEmployeeMapper
-				.selectTopThreeClassesType(companyId.trim());
+		List<Map<String, String>> selectTopThreeClassesType = classesEmployeeMapper.selectTopThreeClassesType(companyId.trim());
 		resultInfo.setClassesTopInfo(selectTopThreeClassesType);
 		resultInfo.setMessage("请求数据成功");
 		resultInfo.setReturnCode("3000");

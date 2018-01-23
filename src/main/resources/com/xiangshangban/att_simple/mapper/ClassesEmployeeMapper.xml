@@ -334,6 +334,7 @@
 									organization.connect_emp_post_ A
 								LEFT JOIN organization.employee_ B ON A .employee_id = B.employee_id
 								AND A .company_id = B.company_id
+								AND A .post_grades = '1'
 							) C
 						LEFT JOIN organization.department_ D ON C .department_id = D.department_id
 					) E
@@ -373,7 +374,7 @@
 			WHERE
 				classes_name != ''
 			AND
-				emp_company_id = 'AEF9D610EF90484689438A2FBEF37ACB'
+				emp_company_id = #{companyId}
 		) A
 	GROUP BY
 		classes_id,
