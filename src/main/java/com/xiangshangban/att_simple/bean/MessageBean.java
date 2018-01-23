@@ -82,6 +82,9 @@ public class MessageBean<T> {
 	public void setIsSkipRestDay(String isSkipRestDay){
 		this.setValue("isSkipRestDay", isSkipRestDay);
 	}
+	public void setType(String type){
+		this.setValue("type", type);
+	}
 	
 	private void setValue(String key,String value){
 		Class c = t.getClass();
