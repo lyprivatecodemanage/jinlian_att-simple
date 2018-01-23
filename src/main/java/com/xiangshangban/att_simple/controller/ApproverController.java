@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -114,12 +115,12 @@ public class ApproverController {
 	 * @return
 	 */
 	@RequestMapping(value = "/approverDetails",produces="application/json;charset=utf-8",method=RequestMethod.POST)
-	public ReturnData approverDetails(String jsonString,HttpServletRequest request){
+	public ReturnData approverDetails(@RequestBody String jsonString,HttpServletRequest request){
 		ReturnData returnData = new ReturnData();
 		String employeeId = "";
 		String companyId = "";
 		String applicationNo = "";
-		String statusDescription = "";
+		//String statusDescription = "";
 		try{
 			employeeId = request.getHeader("accessUserId");//员工id
 			companyId = request.getHeader("companyId");//公司id
@@ -131,7 +132,7 @@ public class ApproverController {
 			try{
 				JSONObject jobj = JSON.parseObject(jsonString);
 				applicationNo = jobj.getString("applicationNo");
-				statusDescription = jobj.getString("statusDescription");
+				//statusDescription = jobj.getString("statusDescription");
 			}catch(Exception e){
 				logger.info(e);
 				e.printStackTrace();
@@ -144,12 +145,10 @@ public class ApproverController {
 				returnData.setReturnCode("3006");
 				return returnData;
 			}
-			//查询审批申请单详情
-			//.......待继续
-			
+			ApplicationTotalRecord approverDetails = approverService.approverDetails(applicationNo);
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
-			//returnData.setData();
+			returnData.setData(approverDetails);
 			return returnData;
 		}catch(Exception e){
 			logger.info(e);

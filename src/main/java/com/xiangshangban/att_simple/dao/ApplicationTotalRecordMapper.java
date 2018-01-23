@@ -77,6 +77,14 @@ public interface ApplicationTotalRecordMapper {
 			@Param("applicationTimeEnd")String applicationTimeEnd,
 			@Param("employeeName")String employeeName);
 	
+	
+	
+	/**
+	 * 审批详情
+	 * @param applicationNo
+	 * @return
+	 */
+	ApplicationTotalRecord selectApproverDetails(@Param("applicationNo")String applicationNo);
 	/**
 	 * 待审批条数
 	 * @param employeeId

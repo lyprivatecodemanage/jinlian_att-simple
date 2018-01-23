@@ -21,8 +21,9 @@
     <result column="transfer_person_id"  property="transferPersonId" />
   </resultMap>
   <sql id="Base_Column_List">
-    application_no, operater_time, operater_id, application_type, last_approver, is_copy, 
-    application_id, company_id, is_reject, application_status, reject_reason, is_transfer, is_complete, is_skip_rest_day
+    atr.application_no, atr.operater_time, atr.operater_id, atr.application_type, atr.last_approver, atr.is_copy, 
+    atr.application_id, atr.company_id, atr.is_reject, atr.application_status, atr.reject_reason, 
+    atr.is_transfer, atr.is_complete, atr.is_skip_rest_day
   </sql>
   <!-- 添加新的申请记录 -->
   <insert id="insertApplicationRecord" parameterType="com.xiangshangban.att_simple.bean.Application">
@@ -178,11 +179,17 @@
   </select>
   
  <!-- 审批详情 -->
-<!--   <select id="selectApproverDetailsByApplicationNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+<!--<select id="selectApproverDetailsByApplicationNo" parameterType="java.lang.String" resultMap="BaseResultMap">
   	select <include refid="Base_Column_List"/> from att_simple.application_total_record_ atr
   	where atr.
   	
   </select> -->
+  <!-- 未审批详情 -->
+<!--   <select id="selectWillApproverDetails" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List"/>
+  	from att_simple.application_total_record_ atr 
+  </select> -->
+  
   
   
   
@@ -198,6 +205,73 @@
   </select>
   
   
+  <resultMap id="ApproverDetailsResultMap" type="com.xiangshangban.att_simple.bean.ApplicationTotalRecord">
+    <id column="application_no"  property="applicationNo" />
+    <result column="operater_time"  property="operaterTime" />
+    <result column="operater_id"  property="operaterId" />
+    <result column="application_type"  property="applicationType" />
+    <result column="last_approver"  property="lastApprover" />
+    <result column="is_copy"  property="isCopy" />
+    <result column="application_id"  property="applicationId" />
+    <result column="employee_name"  property="applicationName" />
+    <result column="company_id"  property="companyId" />
+    <result column="is_reject"  property="isReject" />
+    <result column="application_status"  property="applicationStatus" />
+    <result column="reject_reason"  property="rejectReason" />
+    <result column="is_transfer"  property="isTransfer" />
+    <result column="is_complete"  property="isComplete" />
+    <result column="is_skip_rest_day"  property="isSkipRestDay" />
+    <result column="copy_person_id"  property="copyPersonId" />
+    <result column="transfer_person_id"  property="transferPersonId" />
+    <collection property="applicationTransferRecordList" 
+    ofType="com.xiangshangban.att_simple.bean.ApplicationTransferRecord" >
+    	<result column="tr_id" property="id"/>
+    	<result column="tr_application_no" property="applicationNo"/>
+    	<result column="tr_transfer_person_id" property="transferPersonId"/>
+    	<result column="tr_transfer_persion_access_id" property="transferPersionAccessId"/>
+    	<result column="tr_transfer_times" property="transferTimes"/>
+    	<result column="tr_operater_time" property="operaterTime"/>
+    	<result column="tr_transfer_explain" property="transferExplain"/>
+    	<result column="tr_company_id" property="companyId"/>
+    </collection>
+    <collection property="applicationToCopyPersonList"
+    ofType="com.xiangshangban.att_simple.bean.ApplicationToCopyPerson">
+    	<result column="cp_id" property="id"/>
+    	<result column="cp_application_no" property="applicationNo"/>
+    	<result column="cp_copy_person_id" property="copyPersonId"/>
+    	<result column="cp_employee_name" property="copyPersonName"/>
+    	<result column="cp_operater_time" property="operaterTime"/>
+    	<result column="cp_company_id" property="companyId"/>
+    </collection>
+  </resultMap>
+    <sql id="TR_Base_Column_List">
+    tr.id tr_id, tr.application_no tr_application_no, tr.transfer_person_id tr_transfer_person_id, 
+    tr.transfer_persion_access_id tr_transfer_persion_access_id, tr.transfer_times tr_transfer_times, 
+    tr.operater_time tr_operater_time, tr.transfer_explain tr_transfer_explain, tr.company_id tr_company_id
+  </sql>
+   <sql id="CP_Base_Column_List">
+    cp.id cp_id, cp.application_no cp_application_no, cp.copy_person_id cp_copy_person_id,
+    cp.employee_name cp_employee_name,cp.operater_time cp_operater_time, cp.company_id cp_company_id
+  </sql>
+    <sql id="cp_Base_Column_List">
+    acp.id, acp.application_no, acp.copy_person_id, acp.operater_time, acp.company_id
+  </sql>
+  <!-- 审批详情 -->
+  <select id="selectApproverDetails" parameterType="java.lang.String" resultMap="ApproverDetailsResultMap">
+  	select <include refid="Base_Column_List"/>,<include refid="TR_Base_Column_List"/>
+  	,<include refid="CP_Base_Column_List"/>
+  	from att_simple.application_total_record_ atr 
+  	left join att_simple.application_transfer_record_ tr on atr.application_no = tr.application_no
+  	left join 
+  	(
+  	select <include refid="cp_Base_Column_List"/> ,e.employee_name
+  	from att_simple.application_to_copy_person_ acp
+  	left join organization.employee_ e on e.employee_id = acp.copy_person_id
+  	where acp.application_no =#{applicationNo}
+  	) cp on atr.application_no = cp.application_no
+  	where atr.application_no = #{applicationNo}
+  </select>
+  
   
   
   <!-- 系统 -->
@@ -205,11 +279,11 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from application_total_record_
-    where application_no = #{applicationNo}
+    from application_total_record_ atr
+    where atr.application_no = #{applicationNo}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from application_total_record_
+    delete from application_total_record_ 
     where application_no = #{applicationNo}
   </delete>
   <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.ApplicationTotalRecord">
