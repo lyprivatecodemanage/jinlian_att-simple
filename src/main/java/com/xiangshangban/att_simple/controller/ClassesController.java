@@ -558,13 +558,13 @@ public class ClassesController {
 			boolean result = notClockingInEmpService.addNotClockingInEmp(requestParam, companyId.trim());
 			if(result){
 				returnData.setReturnCode("3000");
-				returnData.setMessage("添加成功");
+				returnData.setMessage("操作成功");
 				//增加操作日志:记录web端的操作
     			String addOperateLog = addOperateLog(accessUserId,companyId,"在班次设置界面(添加/更新)无需考勤人员");
     			logger.info("【(添加/更新)无需考勤人员】------>操作日志"+addOperateLog);
 			}else{
 				returnData.setReturnCode("3001");
-				returnData.setMessage("添加失败");
+				returnData.setMessage("操作失败");
 			}
 		}else{
 			returnData.setReturnCode("3013");

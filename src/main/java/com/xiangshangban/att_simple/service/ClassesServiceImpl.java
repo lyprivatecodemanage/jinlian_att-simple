@@ -326,11 +326,9 @@ public class ClassesServiceImpl implements ClassesService {
 		Map<String, String> param = new HashMap<>();
 
 		param.put("companyId", companyId.trim());
-		param.put("classesTypeId", (classesTypeId != null && !classesTypeId.toString().isEmpty())
-				? classesTypeId.toString().trim() : null);
+		param.put("classesTypeId", (classesTypeId != null && !classesTypeId.toString().isEmpty())?classesTypeId.toString().trim() : null);
 		param.put("deptId", (deptId != null && !deptId.toString().isEmpty()) ? deptId.toString().trim() : null);
-		param.put("empName",
-				(empName != null && !empName.toString().isEmpty()) ? "%" + empName.toString().trim() + "%" : null);
+		param.put("empName",(empName != null && !empName.toString().isEmpty()) ? "%" + empName.toString().trim() + "%" : null);
 
 		// 获取当前时间
 		Calendar calendar = Calendar.getInstance();
@@ -515,15 +513,61 @@ public class ClassesServiceImpl implements ClassesService {
 				resultInfo.setData(realData);
 			}
 		} else {
-			resultInfo.setData(selectClassesInfo);
+			//没有查询到数据，但是要返回日期
+			Map<String,Object> returnMap = new HashMap<>();
+			returnMap.put("empId","");
+			returnMap.put("deptName","");
+			returnMap.put("empName","");
+			returnMap.put("postName","");
+			returnMap.put("thisWeekHours","");
+			//获取周一的日期
+			String monday = param.get("startDate").toString();
+			Calendar operateCal = Calendar.getInstance();
+			try {
+				operateCal.setTime(new SimpleDateFormat("yyyy-MM-dd").parse(monday));
+				//时间减一天
+				operateCal.add(Calendar.DAY_OF_MONTH, -1);
+				List<Map<String,Object>> myListMap = new ArrayList<>();
+				for(int x=0;x<7;x++){
+					//日期增加一天
+					operateCal.add(Calendar.DAY_OF_MONTH, +1);
+					//获取星期
+					String Myweek = "";
+					// 获取星期数
+					if (operateCal.get(Calendar.DAY_OF_WEEK) - 1 == 0) {
+						Myweek = "7";
+					} else {
+						Myweek = String.valueOf(operateCal.get(Calendar.DAY_OF_WEEK) - 1);
+					}
+					//获取日期
+					String myDate = new SimpleDateFormat("yyyy-MM-dd").format(operateCal.getTime());
+					Map<String,Object> myInnerMap = new HashMap<>();
+					myInnerMap.put("classesName", "");
+					myInnerMap.put("classesId", "");
+					myInnerMap.put("week",Myweek);
+					myInnerMap.put("colorFlag", "");
+					myInnerMap.put("theDate",myDate);
+					myListMap.add(myInnerMap);
+				}
+				returnMap.put("classesList",myListMap);
+				selectClassesInfo.add(returnMap);
+				resultInfo.setData(selectClassesInfo);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 		}
 		// 查询班次类型使用人数排行榜前三名
 		List<Map<String, String>> selectTopThreeClassesType = classesEmployeeMapper.selectTopThreeClassesType(companyId.trim());
+		//测试班次使用人数排行榜信息
+		for (Map<String, String> map : selectTopThreeClassesType) {
+			System.out.println("=========="+map.get("classes_name")+"####"+map.get("totalnum").toString()+"==========");
+		}
 		resultInfo.setClassesTopInfo(selectTopThreeClassesType);
 		resultInfo.setMessage("请求数据成功");
 		resultInfo.setReturnCode("3000");
 		resultInfo.setPagecountNum(String.valueOf(totalPage));
 		resultInfo.setTotalPages(String.valueOf(totalRows));
+		
 		return resultInfo;
 	}
 
