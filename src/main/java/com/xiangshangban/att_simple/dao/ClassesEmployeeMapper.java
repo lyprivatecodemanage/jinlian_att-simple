@@ -27,6 +27,14 @@ public interface ClassesEmployeeMapper {
 
     int updateByPrimaryKey(ClassesEmployee record);
     
+   /**
+    * 通过人员ID和公司ID查询人员的姓名
+    * @param empId 人员ID
+    * @param companyId 公司ID
+    * @return
+    */
+    String selectEmpNameById(@Param("empId") String empId,@Param("companyId") String companyId);
+    
     /**
      * 根据条件查询数据的总行数（进行分页操作的时候需要返回给前端，除了总行数外还要计算分的总页数）
      * @param map

@@ -44,7 +44,9 @@ public class ClassesController {
 	
 	public static Logger logger = Logger.getLogger(ClassesController.class);
 	
-	// 操作日志访问路径
+	/**
+	 * 操作日志访问路径
+	 */
 	@Value("${sendUrl}")
 	private String sendUrl;
 	
@@ -86,15 +88,9 @@ public class ClassesController {
 			if(addNewClassesType){
 				returnData.setReturnCode("3000");
 				returnData.setMessage("添加成功");
-				
 				//增加操作日志:记录web端的操作
-				OperateLog operateLog = new OperateLog();
-				operateLog.setOperateEmpId(accessUserId.trim());
-				operateLog.setOperateEmpCompanyId(companyId.trim());
-				operateLog.setOperateType("3");
-				operateLog.setOperateContent("在班次设置界面(新增/修改)班次设置");
-				String sendRequet = HttpRequestFactory.sendRequet(sendUrl, operateLog);
-				logger.info("(新增/修改)班次设置------操作日志"+sendRequet);
+				String addOperateLog = addOperateLog(accessUserId,companyId,"在班次设置界面(新增/更新)班次设置");
+				logger.info("【(新增/修改)班次设置】------>操作日志"+addOperateLog);
 			}else{
 				returnData.setReturnCode("3001");
 				returnData.setMessage("添加失败");
@@ -115,20 +111,19 @@ public class ClassesController {
 	public ReturnData getAllClassesIdAndName(HttpServletRequest request){
 		//获取公司ID
 		String companyId = request.getHeader("companyId");
+		//获取访问人员ID
+		String accessUserId = request.getHeader("accessUserId");
 		//初始化返回的数据
 		ReturnData returnData = new ReturnData();
-		if(companyId!=null && !companyId.isEmpty()){
+		if((companyId!=null && !companyId.isEmpty()) && (accessUserId!=null && !accessUserId.isEmpty())){
 			List<ClassesType> allClassesIdAndName = classesService.queryAllClassesIdAndName(companyId.trim());
-			
 			//精简返回的数据
 			List<Map> listMap = new ArrayList<>();
-			
 			if(allClassesIdAndName!=null && allClassesIdAndName.size()>0){
 				for (ClassesType classesType : allClassesIdAndName) {
 					Map innerMap = new HashMap();
 					innerMap.put("id",classesType.getId());
 					innerMap.put("classes_name", classesType.getClassesName());
-					
 					listMap.add(innerMap);
 				}
 				returnData.setData(listMap);
@@ -137,6 +132,9 @@ public class ClassesController {
 			}
 			returnData.setReturnCode("3000");
 			returnData.setMessage("请求数据成功");
+			//增加操作日志:记录web端的操作
+			String addOperateLog = addOperateLog(accessUserId,companyId,"在班次设置界面查看当前公司所有的班次类别名称");
+			logger.info("【查询当前公司所有班次类别】------>操作日志"+addOperateLog);
 		}else{
 			returnData.setReturnCode("3013");
 			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
@@ -196,13 +194,18 @@ public class ClassesController {
 	public ReturnData getPointClassesTypeInfo(@RequestBody String requestParam,HttpServletRequest request){
 		//获取公司ID
 		String companyId = request.getHeader("companyId");
+		//获取访问人员ID
+		String accessUserId = request.getHeader("accessUserId");
 		//初始化返回的数据
 		ReturnData returnData = new ReturnData();
-		if(companyId!=null && !companyId.toString().trim().isEmpty()){
+		if((companyId!=null && !companyId.isEmpty()) && (accessUserId!=null && !accessUserId.isEmpty())){
 			Map allClassesTypeInfo = classesService.queryPointClassesTypeInfo(requestParam,companyId.trim());
 			returnData.setData(allClassesTypeInfo);
 			returnData.setReturnCode("3000");
 			returnData.setMessage("请求数据成功");
+			//增加操作日志:记录web端的操作
+			String addOperateLog = addOperateLog(accessUserId,companyId,"在班次设置界面查看指定班次类别详细信息");
+			logger.info("【查询指定班次类别详细信息】------>操作日志"+addOperateLog);
 		}else{
 			returnData.setReturnCode("3013");
 			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
@@ -223,13 +226,18 @@ public class ClassesController {
 	public ReturnData deleteClassesType(@RequestBody String requestParam,HttpServletRequest request){
 		//获取公司ID
 		String companyId = request.getHeader("companyId");
+		//获取访问人员ID
+		String accessUserId = request.getHeader("accessUserId");
 		//初始化返回的数据
 		ReturnData returnData = new ReturnData();
-		if(companyId!=null && !companyId.isEmpty()){
+		if((companyId!=null && !companyId.isEmpty()) && (accessUserId!=null && !accessUserId.isEmpty())){
 			boolean deleteAppointClassesType = classesService.deleteAppointClassesType(requestParam,companyId.trim());
 			if(deleteAppointClassesType){
 				returnData.setReturnCode("3000");
 				returnData.setMessage("删除成功");
+				//增加操作日志:记录web端的操作
+				String addOperateLog = addOperateLog(accessUserId,companyId,"在班次设置界面删除指定班次类别");
+				logger.info("【删除指定班次类别】------>操作日志"+addOperateLog);
 			}else{
 				returnData.setReturnCode("3001");
 				returnData.setMessage("删除失败");
@@ -261,10 +269,15 @@ public class ClassesController {
 	public ReturnData getEmpClassesInfo(@RequestBody String requestParam,HttpServletRequest request){
 		//获取公司ID
 		String companyId = request.getHeader("companyId");
+		//获取访问人员ID
+		String accessUserId = request.getHeader("accessUserId");
 		//初始化返回的数据
 		ReturnData returnData = new ReturnData();
-		if(companyId!=null && !companyId.isEmpty()){
+		if((companyId!=null && !companyId.isEmpty()) && (accessUserId!=null && !accessUserId.isEmpty())){
 			returnData = classesService.queryClassesInfo(requestParam,companyId.trim());
+			//增加操作日志:记录web端的操作
+			String addOperateLog = addOperateLog(accessUserId,companyId,"在班次管理界面查看公司所有人班次信息");
+			logger.info("【查询所有人员班次信息】------>操作日志"+addOperateLog);
 		}else{
 			returnData.setReturnCode("3013");
 			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
@@ -318,9 +331,12 @@ public class ClassesController {
             String companyId = request.getHeader("companyId");
             //获取操作人ID
             String accessUserId = request.getHeader("accessUserId");
-            if ((companyId != null && !companyId.isEmpty())) {
+            if ((companyId!=null && !companyId.isEmpty()) && (accessUserId!=null && !accessUserId.isEmpty())) {
             	classesService.exportRecordToExcel(requestParam, excelName, out, companyId);
                 out.flush();
+                //增加操作日志:记录web端的操作
+    			String addOperateLog = addOperateLog(accessUserId,companyId,"在班次管理界面导出公司人员班次信息");
+    			logger.info("【导出公司人员班次信息】------>操作日志"+addOperateLog);
             } else {
                 System.out.println("未知的登录人（公司）ID");
             }
@@ -338,13 +354,18 @@ public class ClassesController {
 	public ReturnData oneKeyScheduling(HttpServletRequest request){
 		//获取公司ID
 		String companyId = request.getHeader("companyId");
+		//获取操作人ID
+        String accessUserId = request.getHeader("accessUserId");
 		//初始化返回的数据
 		ReturnData returnData = new ReturnData();
-		if(companyId!=null && !companyId.isEmpty()){
+		if((companyId!=null && !companyId.isEmpty()) && (accessUserId!=null && !accessUserId.isEmpty())){
 			boolean deleteAppointClassesType = classesService.oneButtonScheduling(companyId.trim());
 			if(deleteAppointClassesType){
 				returnData.setReturnCode("3000");
 				returnData.setMessage("排班成功");
+				 //增加操作日志:记录web端的操作
+    			String addOperateLog = addOperateLog(accessUserId,companyId,"在班次管理界面为公司所有已排班人员执行一键排班操作");
+    			logger.info("【一键排班】------>操作日志"+addOperateLog);
 			}else{
 				returnData.setReturnCode("3001");
 				returnData.setMessage("排班失败");
@@ -382,13 +403,24 @@ public class ClassesController {
 	public ReturnData addEmpOneDateClasses(@RequestBody String requestParam,HttpServletRequest request){
 		//获取公司ID
 		String companyId = request.getHeader("companyId");
+		//获取操作人ID
+        String accessUserId = request.getHeader("accessUserId");
 		//初始化返回的数据
 		ReturnData returnData = new ReturnData();
-		if(companyId!=null && !companyId.isEmpty()){
+		if((companyId!=null && !companyId.isEmpty()) && (accessUserId!=null && !accessUserId.isEmpty())){
 			boolean deleteAppointClassesType = classesService.addEmpDutyTime(requestParam,companyId.trim());
 			if(deleteAppointClassesType){
 				returnData.setReturnCode("3000");
 				returnData.setMessage("添加成功");
+				//获取人员ID和指定日期
+				JSONObject parseObject = JSONObject.parseObject(requestParam);
+				Object pointDate = parseObject.get("pointDate");
+				Object empId = parseObject.get("empId");
+				//根据人员ID获取人员名称
+				String empName = classesService.queryEmpNameById(empId.toString(), companyId);
+				//增加操作日志:记录web端的操作
+    			String addOperateLog = addOperateLog(accessUserId,companyId,"在班次管理界面为【"+empName+"】添加"+pointDate.toString()+"日的排班");
+    			logger.info("【给指定人员添加指定日期的排班】------>操作日志"+addOperateLog);
 			}else{
 				returnData.setReturnCode("3001");
 				returnData.setMessage("添加失败");
@@ -404,22 +436,42 @@ public class ClassesController {
 	 * 删除人员指定日期的班次
 	 * @param reuestParam
 	 * {
+	 * 		"empId":"CAJSKCASCJASK",
+	 * 		"pointDate":"2018-01-10"
 			"empClassesId":"82FC223D03C34A4E8EEF49EC129F1C9C" ------>人员单天班次ID
 	   }
 	 * @param request
 	 * @return
 	 */
 	@PostMapping("/delPointEmpDateClasses")
-	public ReturnData deleteEmpOneDateClasses(@RequestBody String requestParam){
+	public ReturnData deleteEmpOneDateClasses(@RequestBody String requestParam,HttpServletRequest request){
+		//获取公司ID
+		String companyId = request.getHeader("companyId");
+		//获取操作人ID
+        String accessUserId = request.getHeader("accessUserId");
 		//初始化返回的数据
 		ReturnData returnData = new ReturnData();
-		boolean deleteEmpDutyTime = classesService.deleteEmpDutyTime(requestParam);
-		if(deleteEmpDutyTime){
-			returnData.setReturnCode("3000");
-			returnData.setMessage("删除成功");
+		if((companyId!=null && !companyId.isEmpty()) && (accessUserId!=null && !accessUserId.isEmpty())){
+			boolean deleteEmpDutyTime = classesService.deleteEmpDutyTime(requestParam);
+			if(deleteEmpDutyTime){
+				returnData.setReturnCode("3000");
+				returnData.setMessage("删除成功");
+				//获取人员ID和指定日期
+				JSONObject parseObject = JSONObject.parseObject(requestParam);
+				Object empId = parseObject.get("empId");
+				Object pointDate = parseObject.get("pointDate");
+				//根据人员ID获取人员名称
+				String empName = classesService.queryEmpNameById(empId.toString(), companyId);
+				//增加操作日志:记录web端的操作
+    			String addOperateLog = addOperateLog(accessUserId,companyId,"在班次管理界面删除【"+empName+"】"+pointDate.toString()+"日的排班");
+    			logger.info("【删除指定人员指定日期的排班】------>操作日志"+addOperateLog);
+			}else{
+				returnData.setReturnCode("3001");
+				returnData.setMessage("删除失败");
+			}
 		}else{
-			returnData.setReturnCode("3001");
-			returnData.setMessage("删除失败");
+			returnData.setReturnCode("3013");
+			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
 		}
 		return returnData;
 	}
@@ -428,6 +480,8 @@ public class ClassesController {
 	 * 查询指定人员指定日期的班次信息
 	 * @param requestParam
 	 * {
+	 * 		"empId":"AXSXASXASXASXASA",
+	 * 		"pointDate":"2018-01-21",
 			"empClassesId":"82FC223D03C34A4E8EEF49EC129F1C9C" ------>人员单天班次ID
 	   }
 	 * @param request 获取头信息
@@ -450,13 +504,32 @@ public class ClassesController {
 	   }
 	 */
 	@PostMapping("/getPointEmpDateClasses")
-	public ReturnData getPointEmpDateClasses(@RequestBody String requestParam){
+	public ReturnData getPointEmpDateClasses(@RequestBody String requestParam,HttpServletRequest request){
+		//获取公司ID
+		String companyId = request.getHeader("companyId");
+		//获取操作人ID
+        String accessUserId = request.getHeader("accessUserId");
 		//初始化返回的数据
 		ReturnData returnData = new ReturnData();
-		Map queryPointEmpDateClasses = classesService.queryPointEmpDateClasses(requestParam);
-		returnData.setData(queryPointEmpDateClasses);
-		returnData.setReturnCode("3000");
-		returnData.setMessage("请求数据成功");
+		
+		if((companyId!=null && !companyId.isEmpty()) && (accessUserId!=null && !accessUserId.isEmpty())){
+			Map queryPointEmpDateClasses = classesService.queryPointEmpDateClasses(requestParam);
+			returnData.setData(queryPointEmpDateClasses);
+			returnData.setReturnCode("3000");
+			returnData.setMessage("请求数据成功");
+			//获取人员ID和指定日期
+			JSONObject parseObject = JSONObject.parseObject(requestParam);
+			Object empId = parseObject.get("empId");
+			Object pointDate = parseObject.get("pointDate");
+			//根据人员ID获取人员名称
+			String empName = classesService.queryEmpNameById(empId.toString(), companyId);
+			//增加操作日志:记录web端的操作
+			String addOperateLog = addOperateLog(accessUserId,companyId,"在班次管理界面查看【"+empName+"】"+pointDate.toString()+"日的排班");
+			logger.info("【查看指定人员指定日期的排班】------>操作日志"+addOperateLog);
+		}else{
+			returnData.setReturnCode("3013");
+			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
+		}
 		return returnData;
 	}
 	
@@ -477,13 +550,18 @@ public class ClassesController {
 	public ReturnData addNotClockingInEmp(@RequestBody String requestParam,HttpServletRequest request){
 		//获取公司ID
 		String companyId = request.getHeader("companyId");
+		//获取操作人ID
+        String accessUserId = request.getHeader("accessUserId");
 		//初始化返回的数据
 		ReturnData returnData = new ReturnData();
-		if(companyId!=null && !companyId.isEmpty()){
+		if((companyId!=null && !companyId.isEmpty()) && (accessUserId!=null && !accessUserId.isEmpty())){
 			boolean result = notClockingInEmpService.addNotClockingInEmp(requestParam, companyId.trim());
 			if(result){
 				returnData.setReturnCode("3000");
 				returnData.setMessage("添加成功");
+				//增加操作日志:记录web端的操作
+    			String addOperateLog = addOperateLog(accessUserId,companyId,"在班次设置界面(添加/更新)无需考勤人员");
+    			logger.info("【(添加/更新)无需考勤人员】------>操作日志"+addOperateLog);
 			}else{
 				returnData.setReturnCode("3001");
 				returnData.setMessage("添加失败");
@@ -520,14 +598,19 @@ public class ClassesController {
 	public ReturnData getNotClockingInEmp(HttpServletRequest request){
 		//获取公司ID
 		String companyId = request.getHeader("companyId");
+		//获取操作人ID
+        String accessUserId = request.getHeader("accessUserId");
 		//初始化返回的数据
 		ReturnData returnData = new ReturnData();
-		if(companyId!=null && !companyId.isEmpty()){
+		if((companyId!=null && !companyId.isEmpty()) && (accessUserId!=null && !accessUserId.isEmpty())){
 			List<Map> queryNotClockingInEmp = notClockingInEmpService.queryNotClockingInEmp(companyId.trim());
 			
 			returnData.setData(queryNotClockingInEmp);
 			returnData.setReturnCode("3000");
 			returnData.setMessage("请求数据成功");
+			//增加操作日志:记录web端的操作
+			String addOperateLog = addOperateLog(accessUserId,companyId,"在班次设置界面查看无需考勤人员");
+			logger.info("【查看无需考勤人员】------>操作日志"+addOperateLog);
 		}else{
 			returnData.setReturnCode("3013");
 			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
@@ -548,5 +631,27 @@ public class ClassesController {
 			returnData.setMessage("自动排班失败");
 		}
 		return returnData;
+	}
+	
+	
+	/****************************************************************
+	 * 公共方法区 
+	 ****************************************************************/
+	
+	
+	/**
+	 * 添加操作日志公共方法
+	 * @param accessUserId 访问用户ID
+	 * @param companyId 访问用户公司ID
+	 * @return
+	 */
+	public String addOperateLog(String accessUserId,String companyId,String content){
+		OperateLog operateLog = new OperateLog();
+		operateLog.setOperateEmpId(accessUserId.trim());
+		operateLog.setOperateEmpCompanyId(companyId.trim());
+		operateLog.setOperateType("3");
+		operateLog.setOperateContent(content);
+		String sendRequet = HttpRequestFactory.sendRequet(sendUrl, operateLog);
+		return sendRequet;
 	}
 }

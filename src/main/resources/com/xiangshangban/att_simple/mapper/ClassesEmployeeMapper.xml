@@ -395,4 +395,10 @@
   	</where>
   	GROUP BY emp_id,classes_id,emp_company_id
   </select>
+  
+  <!-- 通过人员ID和公司ID查询人员名称 -->
+  <select id="selectEmpNameById" parameterType="String" resultType="String">
+  	select employee_name from organization.employee_ where employee_id = #{empId} and company_id = #{companyId}
+  </select>
+  
 </mapper>
