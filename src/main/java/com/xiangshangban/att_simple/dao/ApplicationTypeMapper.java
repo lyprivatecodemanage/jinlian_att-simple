@@ -3,6 +3,7 @@ package com.xiangshangban.att_simple.dao;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.xiangshangban.att_simple.bean.ApplicationType;
 
@@ -21,7 +22,9 @@ public interface ApplicationTypeMapper {
 
     int updateByPrimaryKey(ApplicationType record);
     
+    
+    
     List<ApplicationType> getApplicationTypeList();
     
-    
+    List<ApplicationType> getApplicationChildrenTypeList(@Param("applicationType")String applicationType);
 }

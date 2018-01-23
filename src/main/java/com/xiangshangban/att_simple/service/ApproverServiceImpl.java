@@ -101,7 +101,10 @@ public class ApproverServiceImpl implements ApproverService {
 			applicatrionPersonName = "%"+applicatrionPersonName+"%";
 		}
 		//申请状态
-		if(StringUtils.isEmpty(statusDescription)||"全部".equals(statusDescription)){
+		approverList = applicationTotalRecordMapper.selectApproverListTotal(employeeId,
+				companyId, page, count, applicationType, statusDescription, 
+				applicationTimeStart, applicationTimeEnd, applicatrionPersonName);
+		/*if(StringUtils.isEmpty(statusDescription)||"全部".equals(statusDescription)){
 			approverList = applicationTotalRecordMapper.selectApproverListTotal(employeeId, 
 					companyId, page, count, applicationType, applicationTimeStart, applicationTimeEnd, applicatrionPersonName);
 		}else{ 
@@ -120,7 +123,7 @@ public class ApproverServiceImpl implements ApproverService {
 			approverList = applicationTotalRecordMapper.selectApproverListCondition(employeeId, 
 					companyId, page, count, applicationType, isComplete, isTranser, isReject, 
 					isCopy, applicationTimeStart, applicationTimeEnd, applicatrionPersonName);
-		}
+		}*/
 		return approverList;
 
 	}

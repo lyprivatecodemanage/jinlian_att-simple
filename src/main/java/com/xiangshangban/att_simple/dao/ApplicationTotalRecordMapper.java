@@ -72,6 +72,7 @@ public interface ApplicationTotalRecordMapper {
 			@Param("page")String page,
 			@Param("count")String count,
 			@Param("applicationType")String applicationType,
+			@Param("statusDescription")String statusDescription,
 			@Param("applicationTimeStart")String applicationTimeStart,
 			@Param("applicationTimeEnd")String applicationTimeEnd,
 			@Param("employeeName")String employeeName);

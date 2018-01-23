@@ -39,6 +39,10 @@ public class ApplicationTotalRecord {
     
     private String statusDescription;//审批中,已完成,已驳回
     
+    private String copyPersonId;
+    
+    private String transferPersonId;
+    
     public String getIsComplete() {
 		return isComplete;
 	}
@@ -165,6 +169,22 @@ public class ApplicationTotalRecord {
 
 	public void setApplicationName(String applicationName) {
 		this.applicationName = applicationName;
+	}
+
+	public String getCopyPersonId() {
+		return copyPersonId;
+	}
+
+	public void setCopyPersonId(String copyPersonId) {
+		this.copyPersonId = copyPersonId;
+	}
+
+	public String getTransferPersonId() {
+		return transferPersonId;
+	}
+
+	public void setTransferPersonId(String transferPersonId) {
+		this.transferPersonId = transferPersonId;
 	}
     
     
