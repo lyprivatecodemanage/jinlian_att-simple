@@ -12,6 +12,8 @@ public class ApplicationTotalRecord {
     private String applicationNo;
     //操作时间
     private String operaterTime;
+    
+    private String previousOperaterTime;
     //操作人id
     private String operaterId;
     //申请类型(1:请假;2:加班;3:出差;4:外出;5:补卡;6:年假微调;7:调休微调)
@@ -22,6 +24,7 @@ public class ApplicationTotalRecord {
     private String isCopy;
     //申请人id
     private String applicationId;
+    
     private String applicationName;
     //公司id
     private String companyId;
@@ -56,11 +59,11 @@ public class ApplicationTotalRecord {
 		this.isComplete = isComplete;
 	}
 
-	public String getapplicationNo() {
+	public String getApplicationNo() {
         return applicationNo;
     }
 
-    public void setapplicationNo(String applicationNo) {
+    public void setApplicationNo(String applicationNo) {
         this.applicationNo = applicationNo;
     }
 
@@ -206,6 +209,14 @@ public class ApplicationTotalRecord {
 
 	public void setApplicationToCopyPersonList(List<ApplicationToCopyPerson> applicationToCopyPersonList) {
 		this.applicationToCopyPersonList = applicationToCopyPersonList;
+	}
+
+	public String getPreviousOperaterTime() {
+		return previousOperaterTime;
+	}
+
+	public void setPreviousOperaterTime(String previousOperaterTime) {
+		this.previousOperaterTime = previousOperaterTime;
 	}
     
     

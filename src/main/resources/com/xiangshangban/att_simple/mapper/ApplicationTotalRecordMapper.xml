@@ -357,7 +357,7 @@
         is_transfer = #{isTransfer},
       </if>
     </set>
-    where application_no = #{applicationNo}
+    where application_no = #{applicationNo} and operater_time = #{previousOperaterTime}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ApplicationTotalRecord">
     update application_total_record_

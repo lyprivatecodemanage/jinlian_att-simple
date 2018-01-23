@@ -233,9 +233,10 @@ public class ApproverController {
 				return returnData;
 			}
 			if("转移".equals(approverDescription)){
-				transferPersonId = jobj.getString("transferPersonId");
+				transferPersonId = employeeId;
+				//transferPersonId = jobj.getString("transferPersonId");
 				transferPersionAccessId = jobj.getString("transferPersionAccessId");
-				if(StringUtils.isEmpty(transferPersonId)||StringUtils.isEmpty(transferPersionAccessId)){
+				if(/*StringUtils.isEmpty(transferPersonId)||*/StringUtils.isEmpty(transferPersionAccessId)){
 					returnData.setMessage("必传参数为空");
 					returnData.setReturnCode("3006");
 					return returnData;
