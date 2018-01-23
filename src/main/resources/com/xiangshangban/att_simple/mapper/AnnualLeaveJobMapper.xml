@@ -15,6 +15,29 @@
     job_id, company_id, auditor_employee_id, year_, execute_date, create_job_date, job_type, 
     job_status
   </sql>
+  
+  <!-- 查询公司是否设置过同一种并未执行的定时任务信息  -->
+  <select id="selectExamineJob" resultMap="BaseResultMap">
+  	select
+  	<include refid="Base_Column_List"/>
+  	from annual_leave_job
+  	where company_id = #{companyId}
+	and job_type = #{jobType}
+	and job_status = '2'
+  </select>
+  
+  <!-- 按年月日查询该日任务信息 -->
+  <select id="SelectTodayJob" resultMap="BaseResultMap">
+  	select * from (select *,to_char(to_date(execute_date,'YYYY'),'YYYY') AS eyear_,
+				 to_char(to_date(execute_date,'YYYY-mm'),'mm') AS emonth_,
+				 to_char(to_date(execute_date,'YYYY-mm-dd'),'dd') AS eday_ from annual_leave_job
+	ORDER BY execute_date DESC) t
+	where eyear_ = #{year}
+	and emonth_ = #{month}
+	and eday_ = #{day}
+	and job_status = '2'
+  </select>
+  
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />

@@ -7,6 +7,7 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +31,8 @@ public class VacationController {
 	
 	SimpleDateFormat time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
+	SimpleDateFormat times = new SimpleDateFormat("yyyy-MM-dd");
+	
 	@Autowired
 	VacationService vacationService;
 	
@@ -49,15 +52,15 @@ public class VacationController {
 		String companyId = request.getHeader("companyId");
 		
 		v.setCompanyId(companyId);
-		v.setDepartmentId(json.getString("departmentId"));
-		v.setEmployeeName(json.getString("employeeName"));
+		v.setDepartmentId(StringUtils.isEmpty(json.getString("departmentId"))?null:json.getString("departmentId"));
+		v.setEmployeeName(StringUtils.isEmpty(json.getString("employeeName"))?null:json.getString("employeeName"));
 		v.setAnnualLeaveTotalRank(json.getString("annualLeaveTotalRank"));
 		v.setAnnualLeaveBalanceRank(json.getString("annualLeaveBalanceRank"));
 		v.setAdjustRestTotalRank(json.getString("adjustRestTotalRank"));
 		v.setAdjustRestBalanceRank(json.getString("adjustRestBalanceRank"));
-		v.setVarPageNo(json.getString("pageNum"));
-		v.setPageNum(json.getString("pageRecordNum"));
-		v.setYear(json.getString("year"));
+		v.setVarPageNo(StringUtils.isEmpty(json.getString("pageNum"))?null:json.getString("pageNum"));
+		v.setPageNum(StringUtils.isEmpty(json.getString("pageRecordNum"))?null:json.getString("pageRecordNum"));
+		v.setYear(StringUtils.isEmpty(json.getString("year"))?null:json.getString("year"));
 		v.setPageExcludeNumber(String.valueOf((Integer.parseInt(json.getString("pageNum"))-1)*Integer.parseInt(json.getString("pageRecordNum"))));
 		
 		result = vacationService.SelectFuzzyPagel(v);
@@ -75,6 +78,7 @@ public class VacationController {
 		ReturnData result = new ReturnData();
 		
 		String auditorEmployeeId = request.getHeader("accessUserId");
+		String companyId = request.getHeader("companyId");
 		
 		JSONObject obj = JSON.parseObject(jsonStirng);
 		String vacationId = obj.getString("vacationId");
@@ -83,7 +87,7 @@ public class VacationController {
 		String adjustingInstruction = obj.getString("adjustingInstruction");
 		String year = obj.getString("year");
 		
-		result = vacationService.AnnualLeaveAdjustment(vacationId, vacationMold, annualLeave, adjustingInstruction, auditorEmployeeId,year);
+		result = vacationService.AnnualLeaveAdjustment(vacationId,vacationMold, annualLeave, adjustingInstruction, auditorEmployeeId,year);
 		
 		return result;
 	}
@@ -154,12 +158,12 @@ public class VacationController {
 			return result;
 		}else if("1".equals(timingJob)){
 			try {
-				Date date = time.parse(timingJobDate);
+				Date date = times.parse(timingJobDate);
 				Calendar c = Calendar.getInstance();
 				c.setTime(date);
 				String year = c.get(Calendar.YEAR)-1+"";
 				
-				String createJobDate = time.format(new Date());
+				String createJobDate = time.format(new Date(System.currentTimeMillis()));
 				
 				AnnualLeaveJob alj = new AnnualLeaveJob(FormatUtil.createUuid(), companyId, auditorEmployeeId, year, timingJobDate, createJobDate, "1", "2");
 				
@@ -210,12 +214,12 @@ public class VacationController {
 			return result;
 		}else if("1".equals(timingJob)){
 			try {
-				Date date = time.parse(timingJobDate);
+				Date date = times.parse(timingJobDate);
 				Calendar c = Calendar.getInstance();
 				c.setTime(date);
 				String year = c.get(Calendar.YEAR)+"";
 				
-				String createJobDate = time.format(new Date());
+				String createJobDate = time.format(new Date(System.currentTimeMillis()));
 				
 				AnnualLeaveJob alj = new AnnualLeaveJob(FormatUtil.createUuid(), companyId, auditorEmployeeId, year, timingJobDate, createJobDate, "2", "2");
 				

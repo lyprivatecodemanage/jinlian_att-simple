@@ -44,7 +44,7 @@ public interface ApplicationCommonContactPeopleMapper {
 	 * @param application
 	 * @return
 	 */
-	int deleteByEmployeeIdAndCompanyIdAndType(Application application);
+	int deleteByEmployeeIdAndCompanyIdAndType(@Param("employeeId")String employeeId,@Param("companyId")String companyId,@Param("type")String type);
 	
 	/** 系统  **/
     int deleteByPrimaryKey(String id);

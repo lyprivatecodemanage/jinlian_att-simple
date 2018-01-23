@@ -297,26 +297,7 @@ public class ApplicationController {
 				   returnData.setReturnCode("3006");
 				   return returnData;
 			}
-			//设置常用联系人
-			if("1".equals(application.getIsSetCommonContactPeople())){
-				if(application==null || StringUtils.isEmpty(application.getCommonContactPeopleList()) || application.getCommonContactPeopleList().size()<1){
-					for(ApplicationCommonContactPeople contactPeople :application.getCommonContactPeopleList()){
-						if(StringUtils.isEmpty(contactPeople.getCommonContactPeopleId())||StringUtils.isEmpty(contactPeople.getCommonContactPeopleName())||StringUtils.isEmpty(contactPeople.getType())){
-							returnData.setMessage("必传参数为空");
-							returnData.setReturnCode("3006");
-							return returnData;
-						}
-					}
-				}
-				
-				boolean flag = applicationService.commonContactPeople(application);
-				if(!flag){
-					returnData.setMessage("服务器错误");
-					returnData.setReturnCode("3001");
-					return returnData;
-				}
-				
-			}
+			
 			return returnData;
 		}
 		/**
@@ -351,7 +332,7 @@ public class ApplicationController {
 			return returnData;
 		}
 		/**
-		 * 常用联系人设置(不使用这个接口,设置在申请接口内部)
+		 * 常用联系人设置
 		 * @param jsonString
 		 * @param request
 		 * @return
@@ -367,15 +348,27 @@ public class ApplicationController {
 				returnData.setReturnCode("3013");
 				return returnData;
 			}
-			Application application = null;
-			if(application==null || StringUtils.isEmpty(application.getCommonContactPeopleList()) || application.getCommonContactPeopleList().size()<1){
-				for(ApplicationCommonContactPeople contactPeople :application.getCommonContactPeopleList()){
-					if(StringUtils.isEmpty(contactPeople.getCommonContactPeopleId())||StringUtils.isEmpty(contactPeople.getCommonContactPeopleName())||StringUtils.isEmpty(contactPeople.getType())){
-						returnData.setMessage("必传参数为空");
-						returnData.setReturnCode("3006");
-						return returnData;
+			Application application = JSON.parseObject(jsonString, Application.class);
+			application.setCompanyId(companyId);
+			application.setApplicationId(employeeId);
+			//设置常用联系人
+			if("1".equals(application.getIsSetCommonContactPeople())){
+				if(application==null || StringUtils.isEmpty(application.getCommonContactPeopleList()) || application.getCommonContactPeopleList().size()<1){
+					for(ApplicationCommonContactPeople contactPeople :application.getCommonContactPeopleList()){
+						if(StringUtils.isEmpty(contactPeople.getCommonContactPeopleId())||StringUtils.isEmpty(contactPeople.getCommonContactPeopleName())||StringUtils.isEmpty(contactPeople.getType())){
+							returnData.setMessage("必传参数为空");
+							returnData.setReturnCode("3006");
+							return returnData;
+						}
 					}
 				}
+				boolean flag = applicationService.commonContactPeople(application);
+				if(!flag){
+					returnData.setMessage("服务器错误");
+					returnData.setReturnCode("3001");
+					return returnData;
+				}
+				
 			}
 			
 			}catch(Exception e){

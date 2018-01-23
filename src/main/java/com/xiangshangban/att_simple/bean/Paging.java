@@ -1,5 +1,7 @@
 package com.xiangshangban.att_simple.bean;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * 分页
  * @author mian
@@ -41,7 +43,7 @@ public class Paging {
 	}
 
 	public void setLeaveType(String leaveType) {
-		this.leaveType = leaveType;
+		this.leaveType = StringUtils.isEmpty(leaveType)?null:leaveType;
 	}
 
 	public String getYear() {
@@ -49,7 +51,7 @@ public class Paging {
 	}
 
 	public void setYear(String year) {
-		this.year = year;
+		this.year = StringUtils.isEmpty(year)?null:year;
 	}
 
 	public String getMonth() {
@@ -57,7 +59,7 @@ public class Paging {
 	}
 
 	public void setMonth(String month) {
-		this.month = month;
+		this.month = StringUtils.isEmpty(month)?null:month;
 	}
 
 	public String getApplicationHourRank() {
@@ -65,7 +67,7 @@ public class Paging {
 	}
 
 	public void setApplicationHourRank(String applicationHourRank) {
-		this.applicationHourRank = applicationHourRank;
+		this.applicationHourRank = StringUtils.isEmpty(applicationHourRank)?null:applicationHourRank;
 	}
 
 	public String getApplicationTimeRank() {
@@ -73,7 +75,7 @@ public class Paging {
 	}
 
 	public void setApplicationTimeRank(String applicationTimeRank) {
-		this.applicationTimeRank = applicationTimeRank;
+		this.applicationTimeRank = StringUtils.isEmpty(applicationTimeRank)?null:applicationTimeRank;
 	}
 
 	public String getCompanyId() {
@@ -81,7 +83,7 @@ public class Paging {
 	}
 
 	public void setCompanyId(String companyId) {
-		this.companyId = companyId;
+		this.companyId = StringUtils.isEmpty(companyId)?null:companyId;
 	}
 	
 	public String getPageExcludeNumber() {
@@ -89,7 +91,7 @@ public class Paging {
 	}
 
 	public void setPageExcludeNumber(String pageExcludeNumber) {
-		this.pageExcludeNumber = pageExcludeNumber;
+		this.pageExcludeNumber = StringUtils.isEmpty(pageExcludeNumber)?null:pageExcludeNumber;
 	}
 
 	public String getPageNum() {
@@ -97,7 +99,7 @@ public class Paging {
 	}
 
 	public void setPageNum(String pageNum) {
-		this.pageNum = pageNum;
+		this.pageNum = StringUtils.isEmpty(pageNum)?null:pageNum;
 	}
 
 	public String getVarPageNo() {
@@ -105,7 +107,7 @@ public class Paging {
 	}
 
 	public void setVarPageNo(String varPageNo) {
-		this.varPageNo = varPageNo;
+		this.varPageNo = StringUtils.isEmpty(varPageNo)?null:varPageNo;
 	}
 	
 	public String getAnnualLeaveTotalRank() {
@@ -113,7 +115,7 @@ public class Paging {
 	}
 
 	public void setAnnualLeaveTotalRank(String annualLeaveTotalRank) {
-		this.annualLeaveTotalRank = annualLeaveTotalRank;
+		this.annualLeaveTotalRank = StringUtils.isEmpty(annualLeaveTotalRank)?null:annualLeaveTotalRank;
 	}
 
 	public String getAnnualLeaveBalanceRank() {
@@ -121,7 +123,7 @@ public class Paging {
 	}
 
 	public void setAnnualLeaveBalanceRank(String annualLeaveBalanceRank) {
-		this.annualLeaveBalanceRank = annualLeaveBalanceRank;
+		this.annualLeaveBalanceRank = StringUtils.isEmpty(annualLeaveBalanceRank)?null:annualLeaveBalanceRank;
 	}
 
 	public String getAdjustRestTotalRank() {
@@ -129,7 +131,7 @@ public class Paging {
 	}
 
 	public void setAdjustRestTotalRank(String adjustRestTotalRank) {
-		this.adjustRestTotalRank = adjustRestTotalRank;
+		this.adjustRestTotalRank = StringUtils.isEmpty(adjustRestTotalRank)?null:adjustRestTotalRank;
 	}
 
 	public String getAdjustRestBalanceRank() {
@@ -137,7 +139,7 @@ public class Paging {
 	}
 
 	public void setAdjustRestBalanceRank(String adjustRestBalanceRank) {
-		this.adjustRestBalanceRank = adjustRestBalanceRank;
+		this.adjustRestBalanceRank = StringUtils.isEmpty(adjustRestBalanceRank)?null:adjustRestBalanceRank;
 	}
 
 	public String getDepartmentId() {
@@ -145,7 +147,7 @@ public class Paging {
 	}
 
 	public void setDepartmentId(String departmentId) {
-		this.departmentId = departmentId;
+		this.departmentId = StringUtils.isEmpty(departmentId)?null:departmentId;
 	}
 
 	public String getEmployeeName() {
@@ -153,7 +155,7 @@ public class Paging {
 	}
 
 	public void setEmployeeName(String employeeName) {
-		this.employeeName = employeeName;
+		this.employeeName = StringUtils.isEmpty(employeeName)?null:employeeName;
 	}
 
 }

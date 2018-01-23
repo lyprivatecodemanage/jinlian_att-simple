@@ -253,8 +253,8 @@ public class ClassesController {
 	 * 根据条件查询当前公司人员的班次排列，以及人数最多的三个班次（班次类型有几个显示几个）的人数
 	 * @param requestParam
 	 * 	{
-			"classesTypeId":"常白班"（班次编号）
-			"deptId":"研发部”（人员部门编号）
+			"classesTypeId":"XASXLASKMX"（班次编号）
+			"deptId":"dasdasdas”（人员部门编号）
 			"empName":"小青"（人员名称）
 			"perviousWeek":"0/1"（是否查看上周的数据0：没有该搜索条件 1：有该搜索条件）
 			"thisWeek":"0/1"(是否查看本周班次 0：不查看 1：查看)------->默认显示本周的
@@ -558,13 +558,13 @@ public class ClassesController {
 			boolean result = notClockingInEmpService.addNotClockingInEmp(requestParam, companyId.trim());
 			if(result){
 				returnData.setReturnCode("3000");
-				returnData.setMessage("添加成功");
+				returnData.setMessage("操作成功");
 				//增加操作日志:记录web端的操作
     			String addOperateLog = addOperateLog(accessUserId,companyId,"在班次设置界面(添加/更新)无需考勤人员");
     			logger.info("【(添加/更新)无需考勤人员】------>操作日志"+addOperateLog);
 			}else{
 				returnData.setReturnCode("3001");
-				returnData.setMessage("添加失败");
+				returnData.setMessage("操作失败");
 			}
 		}else{
 			returnData.setReturnCode("3013");

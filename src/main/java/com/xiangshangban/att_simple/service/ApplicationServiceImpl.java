@@ -282,9 +282,12 @@ public class ApplicationServiceImpl implements ApplicationService {
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED,rollbackForClassName="Exception")
 	public boolean commonContactPeople(Application application) {
+		String companyId = application.getCompanyId();
+		String employeeId = application.getApplicationId();
+		String type = application.getCommonContactPeopleList().get(0).getType();
 		try{
 			//先将之前的常用联系人删除之后,在重新添加常用联系人
-			applicationCommonContactPeopleMapper.deleteByEmployeeIdAndCompanyIdAndType(application);
+			applicationCommonContactPeopleMapper.deleteByEmployeeIdAndCompanyIdAndType(employeeId, companyId, type);
 			List<ApplicationCommonContactPeople> commonContactPeopleList = application.getCommonContactPeopleList();
 			for(ApplicationCommonContactPeople contactPeople:commonContactPeopleList){
 				Integer i = applicationCommonContactPeopleMapper.selectByAll(contactPeople);
@@ -530,7 +533,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 				return returnData;
 			}else{//撤回操作
 				ApplicationTotalRecord record = new ApplicationTotalRecord();
-				record.setapplicationNo(applicationNo);
+				record.setApplicationNo(applicationNo);
 				record.setApplicationStatus("2");
 				int i = applicationTotalRecordMapper.updateByPrimaryKeySelective(record);
 				if(i>0){
