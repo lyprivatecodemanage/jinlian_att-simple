@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ApplicationTotalRecord;
+import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.dao.ApplicationBusinessTravelMapper;
 import com.xiangshangban.att_simple.dao.ApplicationCommonContactPeopleMapper;
 import com.xiangshangban.att_simple.dao.ApplicationFillCardMapper;
@@ -142,6 +143,16 @@ public class ApproverServiceImpl implements ApproverService {
 	public int willApproverCount(String employeeId, String companyId) {
 		int i = applicationTotalRecordMapper.selectCountFromWillApprover(employeeId, companyId);
 		return i;
+	}
+	/**
+	 * 审批申请
+	 */
+	@Override
+	public ReturnData approverApplication(String employeeId, String companyId, String applicationNo,
+			String approverDescription, String postscriptason, String transferPersonId,
+			String transferPersionAccessId) {
+		
+		return null;
 	}
 	
 

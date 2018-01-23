@@ -332,7 +332,7 @@ public class ApplicationController {
 			return returnData;
 		}
 		/**
-		 * 常用联系人设置(不使用这个接口,设置在申请接口内部)
+		 * 常用联系人设置
 		 * @param jsonString
 		 * @param request
 		 * @return
@@ -349,6 +349,8 @@ public class ApplicationController {
 				return returnData;
 			}
 			Application application = JSON.parseObject(jsonString, Application.class);
+			application.setCompanyId(companyId);
+			application.setApplicationId(employeeId);
 			//设置常用联系人
 			if("1".equals(application.getIsSetCommonContactPeople())){
 				if(application==null || StringUtils.isEmpty(application.getCommonContactPeopleList()) || application.getCommonContactPeopleList().size()<1){
