@@ -2,22 +2,31 @@ package com.xiangshangban.att_simple.controller;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
+import com.arjuna.ats.internal.jdbc.drivers.modifiers.list;
+import com.xiangshangban.att_simple.AttSimple;
+import com.xiangshangban.att_simple.bean.ClassesType;
+import com.xiangshangban.att_simple.bean.OperateLog;
 import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.service.ClassesService;
 import com.xiangshangban.att_simple.service.NotClockingInEmpService;
+import com.xiangshangban.att_simple.utils.HttpRequestFactory;
 
 /**
  * @author 王勇辉
@@ -32,6 +41,12 @@ public class ClassesController {
 	
 	@Autowired
 	private NotClockingInEmpService notClockingInEmpService;
+	
+	public static Logger logger = Logger.getLogger(ClassesController.class);
+	
+	// 操作日志访问路径
+	@Value("${sendUrl}")
+	private String sendUrl;
 	
 	/**
 	 * 新增/修改班次类型
@@ -65,11 +80,21 @@ public class ClassesController {
 		//初始化返回内容
 		ReturnData returnData = new ReturnData();
 		String companyId = request.getHeader("companyId");
-		if(companyId!=null && !companyId.isEmpty()){
+		String accessUserId = request.getHeader("accessUserId");
+		if((companyId!=null && !companyId.isEmpty()) && (accessUserId!=null && !accessUserId.isEmpty())){
 			boolean addNewClassesType = classesService.addNewClassesType(requestParam, companyId.trim());
 			if(addNewClassesType){
 				returnData.setReturnCode("3000");
 				returnData.setMessage("添加成功");
+				
+				//增加操作日志:记录web端的操作
+				OperateLog operateLog = new OperateLog();
+				operateLog.setOperateEmpId(accessUserId.trim());
+				operateLog.setOperateEmpCompanyId(companyId.trim());
+				operateLog.setOperateType("3");
+				operateLog.setOperateContent("在班次设置界面(新增/修改)班次设置");
+				String sendRequet = HttpRequestFactory.sendRequet(sendUrl, operateLog);
+				logger.info("(新增/修改)班次设置------操作日志"+sendRequet);
 			}else{
 				returnData.setReturnCode("3001");
 				returnData.setMessage("添加失败");
@@ -82,11 +107,52 @@ public class ClassesController {
 	}
 	
 	/**
-	 * 查询当前公司所有班次类型详细信息（设置班次的时候默认显示数据）
+	 * 查询当前公司所有班次类型ID和名称
+	 * @param request
+	 * @return
+	 */
+	@PostMapping("/getAllClassesIdAndName")
+	public ReturnData getAllClassesIdAndName(HttpServletRequest request){
+		//获取公司ID
+		String companyId = request.getHeader("companyId");
+		//初始化返回的数据
+		ReturnData returnData = new ReturnData();
+		if(companyId!=null && !companyId.isEmpty()){
+			List<ClassesType> allClassesIdAndName = classesService.queryAllClassesIdAndName(companyId.trim());
+			
+			//精简返回的数据
+			List<Map> listMap = new ArrayList<>();
+			
+			if(allClassesIdAndName!=null && allClassesIdAndName.size()>0){
+				for (ClassesType classesType : allClassesIdAndName) {
+					Map innerMap = new HashMap();
+					innerMap.put("id",classesType.getId());
+					innerMap.put("classes_name", classesType.getClassesName());
+					
+					listMap.add(innerMap);
+				}
+				returnData.setData(listMap);
+			}else{
+				returnData.setData(allClassesIdAndName);
+			}
+			returnData.setReturnCode("3000");
+			returnData.setMessage("请求数据成功");
+		}else{
+			returnData.setReturnCode("3013");
+			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
+		}
+		return returnData;
+	}
+	
+	/**
+	 * 查询指定班次类型详细信息（设置班次的时候默认显示数据）
+	 * {
+	 * 	 "classesTypeId":"XASJBXAKSJXBNNN" ------------>班次类型ID
+	 * }
 	 * 返回数据结构：
 	 * {
 		  "employeeId": null,
-		  "data": [
+		  "data": 
 		    {
 		      "classesType": {
 		        "id": "AB7130D9D6A94A0F82E159C234A7AA0C",
@@ -115,8 +181,7 @@ public class ClassesController {
 		          "emp_id": "XFGCDSDSFSDFSDF46557"
 		        }
 		      ]
-		    }
-		  ],
+		    },
 		  "totalPages": null,
 		  "message": "请求数据成功",
 		  "returnCode": "3000",
@@ -127,15 +192,14 @@ public class ClassesController {
 	 * @param request
 	 * @return
 	 */
-	@PostMapping("/getAllClassesType")
-	public ReturnData getAllClassesTypeInfo(HttpServletRequest request){
+	@PostMapping("/getPointClassesType")
+	public ReturnData getPointClassesTypeInfo(@RequestBody String requestParam,HttpServletRequest request){
 		//获取公司ID
 		String companyId = request.getHeader("companyId");
 		//初始化返回的数据
 		ReturnData returnData = new ReturnData();
-		if(companyId!=null && !companyId.isEmpty()){
-			List<Map> allClassesTypeInfo = classesService.queryAllClassesTypeInfo(companyId.trim());
-			
+		if(companyId!=null && !companyId.toString().trim().isEmpty()){
+			Map allClassesTypeInfo = classesService.queryPointClassesTypeInfo(requestParam,companyId.trim());
 			returnData.setData(allClassesTypeInfo);
 			returnData.setReturnCode("3000");
 			returnData.setMessage("请求数据成功");
@@ -439,7 +503,8 @@ public class ClassesController {
 		  "data": [
 		    {
 		      "department_id": "wooUnknown",
-		      "emp_id": "XFGCDSDSFSDFSDF13213"
+		      "emp_id": "XFGCDSDSFSDFSDF13213",
+		      "employee_name":"小兰"
 		    }
 		  ],
 		  "totalPages": null,

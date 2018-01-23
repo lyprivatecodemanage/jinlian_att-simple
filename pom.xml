@@ -8,6 +8,7 @@
 	<packaging>jar</packaging>
 
 	<name>att-simple</name>
+	<url>http://maven.apache.org</url>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -60,6 +61,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+			<version>1.1.1</version>
+		</dependency>
 		<!-- <dependency>
 	        <groupId>org.springframework.boot</groupId>
 	        <artifactId>spring-boot-starter-tomcat</artifactId>
@@ -106,7 +112,6 @@
 			<artifactId>commons-codec</artifactId>
 			<version>${commons-codec-version}</version><scope>provided</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.apache</groupId>
 			<artifactId>commons-pool2</artifactId>
@@ -250,13 +255,17 @@
 			<groupId>net.sourceforge.htmlunit</groupId>
 			<artifactId>htmlunit</artifactId>
 		</dependency>
-        <dependency>
-        	<groupId>org.apache.hadoop</groupId>
-        	<artifactId>hadoop-core</artifactId>
-        	<version>1.0.0</version>
-        </dependency>
+		<!-- organization2.0.jar -->
+		<dependency>
+			<groupId>com.xiangshangban</groupId>
+			<artifactId>organization</artifactId>
+			<version>2.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/organization-2.0.jar</systemPath>
+		</dependency>
 	</dependencies>
-	
+
+
 	<build>
 		<plugins>
 			<plugin>
