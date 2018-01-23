@@ -145,7 +145,7 @@ public class ApproverController {
 				returnData.setReturnCode("3006");
 				return returnData;
 			}
-			ApplicationTotalRecord approverDetails = approverService.approverDetails(applicationNo);
+			ApplicationTotalRecord approverDetails = approverService.approverDetails(applicationNo,companyId);
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
 			returnData.setData(approverDetails);

@@ -84,7 +84,7 @@ public interface ApplicationTotalRecordMapper {
 	 * @param applicationNo
 	 * @return
 	 */
-	ApplicationTotalRecord selectApproverDetails(@Param("applicationNo")String applicationNo);
+	ApplicationTotalRecord selectApproverDetails(@Param("applicationNo")String applicationNo,@Param("companyId")String companyId);
 	/**
 	 * 待审批条数
 	 * @param employeeId
