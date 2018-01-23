@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
 <generatorConfiguration>
-    <classPathEntry 
-    	 location="D:/SOFTS/apache-maven/repository/org/postgresql/postgresql/9.4-1206/postgresql-9.4-1206-jdbc41.jar"/>
+    <classPathEntry location="C:/java/postgresql-9.1-901.jdbc4.jar"/>
     <context id="testTables">
             <!--去除注释 -->
         <commentGenerator>
@@ -25,7 +24,7 @@
             targetProject="att-simple"
             type="XMLMAPPER" />
         <!-- 要生成哪些表-->  
-        <table tableName="application_fill_card_" domainObjectName="ApplicationFillCard" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
+        <table tableName="annual_leave_job" domainObjectName="AnnualLeaveJob" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
         
         <!-- <table tableName="total_application_record_" domainObjectName="TotalApplicationRecord" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table> -->
       <!--   <table tableName="application_type_" domainObjectName="ApplicationType" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>

@@ -64,7 +64,7 @@ public class ApplicationTotalRecord {
         this.applicationNo = applicationNo;
     }
 
-    public String getOperaterTime() {
+	public String getOperaterTime() {
         return operaterTime;
     }
 
