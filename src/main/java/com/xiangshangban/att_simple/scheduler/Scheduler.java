@@ -22,7 +22,7 @@ public class Scheduler {
 	//每天凌晨2点执行
 	private static final String SCHEDULED_TIME = "0 0 2 * * ?";
 	//每天凌晨0点执行
-	private static final String REPORT_TIME = "10 12 20 * * ?";//日报计算时间
+	private static final String REPORT_TIME = "0 5 11 * * ?";//日报计算时间
 	private final Logger logger = Logger.getLogger(Scheduler.class);
 	
 	@Autowired
@@ -34,7 +34,7 @@ public class Scheduler {
 	 */
 	@Scheduled(cron=SCHEDULED_TIME)
 	public void autoScheduling(){
-		/*classesService.autoScheduling();*/
+		classesService.autoScheduling();
 		logger.info("----自动排班----");
 	}
 	/**
