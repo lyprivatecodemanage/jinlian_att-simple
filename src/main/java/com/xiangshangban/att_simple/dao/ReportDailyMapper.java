@@ -24,4 +24,12 @@ public interface ReportDailyMapper {
 
 	ReportDaily selectByDate(@Param("companyId")String companyId, 
 			@Param("employeeId")String employeeId, @Param("attDate")String attDate);
+	
+	/**
+	 * 查询昨日请假人数
+	 * @param companyId
+	 * @param attDate
+	 * @return
+	 */
+	int selectYesterdayLeaveNumber(@Param("companyId")String companyId,@Param("attDate")String attDate);
 }
