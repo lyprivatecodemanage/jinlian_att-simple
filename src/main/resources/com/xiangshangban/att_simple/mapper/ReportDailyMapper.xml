@@ -50,6 +50,8 @@
     <result column="work_day" jdbcType="VARCHAR" property="workDay" />
     <result column="sign_in_time" jdbcType="VARCHAR" property="signInTime" />
     <result column="sign_out_time" jdbcType="VARCHAR" property="signOutTime" />
+    <result column="has_exception" jdbcType="VARCHAR" property="hasException" />
+    <result column="exception_mark" jdbcType="VARCHAR" property="exceptionMark" />
   </resultMap>
   <sql id="Base_Column_List">
     employee_id, company_id, att_date, report_id, dept_id, paiban_remark, check_info, 
@@ -61,6 +63,17 @@
     evection_time_week, evection_time_work, dept_name, begin_time1, end_time1, leave_other, 
     leave_amblosis, leave_pregnancy, work_day,sign_in_time,sign_out_time
   </sql>
+  
+  <!-- 查询昨日请假人数 -->
+  <select id="selectYesterdayLeaveNumber" resultType="java.lang.Integer">
+  	select count(*) from report_daily_ 
+	where company_id = #{companyId}
+	and att_date = #{attDate}
+	and leave_absence>'0' or leave_days_off>'0' or leave_annual>'0' or leave_sick>'0' or leave_marriage>'0' or leave_maternity>'0'
+	or leave_maternity_check>'0' or leave_paternity>'0' or leave_funeral>'0' or leave_nursing>'0' or leave_long_sick>'0' 
+	or leave_other>'0' or leave_amblosis>'0' or leave_pregnancy>'0'
+  </select>
+  
   <select id="selectByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ReportDailyKey" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
