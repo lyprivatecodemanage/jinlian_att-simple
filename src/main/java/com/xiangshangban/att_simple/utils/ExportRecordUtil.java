@@ -117,7 +117,6 @@ public class ExportRecordUtil {
             }
             try {
                 //将数据写入输出流
-            	System.out.println("empClassesRecord==============》"+workbook.toString());
                 workbook.write(out);
             } catch (IOException e) {
                 e.printStackTrace();

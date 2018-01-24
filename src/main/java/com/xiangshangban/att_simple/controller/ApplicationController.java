@@ -337,7 +337,7 @@ public class ApplicationController {
 		 * @param request
 		 * @return
 		 */
-		@RequestMapping(value = "/commonContactPeople",method=RequestMethod.POST)
+		@RequestMapping(value = "/commonContactPeople",produces="application/json;charset=utf-8" ,method=RequestMethod.POST)
 		public ReturnData commonContactPeople(@RequestBody String jsonString ,HttpServletRequest request) {
 			ReturnData returnData = new ReturnData();
 			try{
