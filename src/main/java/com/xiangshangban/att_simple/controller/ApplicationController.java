@@ -338,7 +338,7 @@ public class ApplicationController {
 		 * @return
 		 */
 		@RequestMapping(value = "/commonContactPeople",method=RequestMethod.POST)
-		public ReturnData commonContactPeople(String jsonString ,HttpServletRequest request) {
+		public ReturnData commonContactPeople(@RequestBody String jsonString ,HttpServletRequest request) {
 			ReturnData returnData = new ReturnData();
 			try{
 			String employeeId = request.getHeader("accessUserId");//员工id
