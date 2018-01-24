@@ -28,7 +28,7 @@ import com.xiangshangban.att_simple.utils.FormatUtil;
 import com.xiangshangban.att_simple.utils.TimeUtil;
 
 @Service
-/*@Transactional*/
+@Transactional
 public class ClassesServiceImpl implements ClassesService {
 
 	@Autowired
@@ -85,28 +85,34 @@ public class ClassesServiceImpl implements ClassesService {
 				&& restStartTime != null && restEndTime != null && restDays != null && festivalRestFlag != null
 				&& signInRule != null && signOutRule != null && onPunchCardRule != null && offPunchCardRule != null
 				&& employeeIdList != null && autoClassesFlag != null) {
+			// 先删除，传递上来的班次类型和使用该班次类型的人员班次信息(删除从指定生效日往后的班次)
+			Map<String, String> delParam = new HashMap<>();
+			delParam.put("companyId", companyId.toString());
 			// 判断是否有操作标志
 			if (operateFlag != null && !operateFlag.toString().trim().equals("")) {
-				// 先删除，传递上来的班次类型和使用该班次类型的人员班次信息(删除从指定生效日往后的班次)
-				Map<String, String> delParam = new HashMap<>();
 				delParam.put("classesTypeId", operateFlag.toString().trim());
-				delParam.put("companyId", companyId.toString());
 				// TODO 删除班次类型
 				classesTypeMapper.removeAppointClassesType(delParam);
-				// 删除人员班次(删除当前设置的班次生效时间之后的所有班次)
-				if (validDate != null && !validDate.toString().trim().equals("")) {
-					delParam.put("offSetTime", validDate.toString().trim());
-				} else {
-					Calendar instance = Calendar.getInstance();
-					instance.add(Calendar.DAY_OF_MONTH, 1);
-					delParam.put("offSetTime", new SimpleDateFormat("yyyy-MM-dd").format(instance.getTime()));
-				}
-				// TODO 删除当前公司使用该班次类型指定日期之后的人员班次
-				classesEmployeeMapper.deleteAppointClassesTypeEmp(delParam);
 			}
-
 			// 获取要排班的人员列表
 			JSONArray empArray = JSONArray.parseArray(JSONObject.toJSONString(employeeIdList));
+			// 删除人员班次(删除当前设置的班次生效时间之后的所有班次)
+			if (validDate != null && !validDate.toString().trim().equals("")) {
+				delParam.put("offSetTime", validDate.toString().trim());
+			} else {
+				Calendar instance = Calendar.getInstance();
+				instance.add(Calendar.DAY_OF_MONTH, 1);
+				delParam.put("offSetTime", new SimpleDateFormat("yyyy-MM-dd").format(instance.getTime()));
+			}
+			//TODO 去除一个人一天多个排班的情况
+			for(int g=0;g<empArray.size();g++){
+				JSONObject parseObject = JSONObject.parseObject(empArray.get(g).toString());
+				//设置人员名称
+				delParam.put("empId",parseObject.get("empId").toString().trim());
+				// TODO 删除当前公司,指定人员,指定日期之后的排班
+				classesEmployeeMapper.deleteAppointClassesTypeEmp(delParam);
+			}
+			
 			// TODO ①：添加班次类型
 			ClassesType classesType = new ClassesType();
 			// 班次类型的UUID

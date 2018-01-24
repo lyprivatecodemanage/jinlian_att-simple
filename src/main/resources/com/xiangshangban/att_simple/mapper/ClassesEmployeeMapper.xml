@@ -228,10 +228,16 @@
   
   <!-- 删除指定班次类型,指定人员，某个日期之后的班次 -->
   <delete id="deleteAppointClassesTypeEmp" parameterType="Map">
-  	delete from classes_employee_ where (classes_id = #{classesTypeId} or classes_id = '') and emp_company_Id = #{companyId} and the_date >= #{offSetTime} 
-  	<if test='empId !=null and empId!=""'>
-  		and emp_id = #{empId}
-  	</if>
+  	delete from classes_employee_ 
+  	<where>
+  		emp_company_Id = #{companyId} and the_date >= #{offSetTime} 
+  		<if test='classes_id!=null and classes_id!=""'>
+  			and (classes_id = #{classesTypeId} or classes_id = '')
+  		</if>
+  		<if test='empId !=null and empId!=""'>
+  			and emp_id = #{empId}
+  		</if>
+  	</where>
   </delete>
   
   <!-- 删除指定人员指定日期的排班 -->
