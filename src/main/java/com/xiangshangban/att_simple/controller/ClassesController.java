@@ -44,9 +44,9 @@ public class ClassesController {
 	
 	public static Logger logger = Logger.getLogger(ClassesController.class);
 	
-	/**
+	/***************
 	 * 操作日志访问路径
-	 */
+	 **************/
 	@Value("${sendUrl}")
 	private String sendUrl;
 	
@@ -309,7 +309,7 @@ public class ClassesController {
 	 * @param request
 	 * @param response
 	 */
-	@PostMapping("/export/Scheduling")
+	@PostMapping(value="export/scheduling",produces="application/json;charset=UTF-8")
 	public void exportScheduling(@RequestBody String requestParam, HttpServletRequest request, HttpServletResponse response){
 		try {
             response.setContentType("application/octet-stream ");
