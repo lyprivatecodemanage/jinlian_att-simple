@@ -46,8 +46,26 @@ public class ReportDaily extends ReportDailyKey {
     private String workDay;//应出天数
     private String signInTime;//签到
     private String signOutTime;//签退
+    private String hasException;//是否有异常待处理，0：否，1：是
+    private String exceptionMark;//异常描述
 
-    public String getReportId() {
+    public String getHasException() {
+		return hasException;
+	}
+
+	public void setHasException(String hasException) {
+		this.hasException = hasException;
+	}
+
+	public String getExceptionMark() {
+		return exceptionMark;
+	}
+
+	public void setExceptionMark(String exceptionMark) {
+		this.exceptionMark = exceptionMark;
+	}
+
+	public String getReportId() {
         return reportId;
     }
 

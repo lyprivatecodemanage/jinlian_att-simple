@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ApplicationTotalRecord;
+import com.xiangshangban.att_simple.bean.ApplicationTransferRecord;
+import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.dao.ApplicationBusinessTravelMapper;
 import com.xiangshangban.att_simple.dao.ApplicationCommonContactPeopleMapper;
 import com.xiangshangban.att_simple.dao.ApplicationFillCardMapper;
@@ -26,6 +28,7 @@ import com.xiangshangban.att_simple.dao.ApplicationTransferRecordMapper;
 import com.xiangshangban.att_simple.dao.ApplicationTypeMapper;
 import com.xiangshangban.att_simple.dao.EmployeeDao;
 import com.xiangshangban.att_simple.dao.VacationMapper;
+import com.xiangshangban.att_simple.utils.FormatUtil;
 import com.xiangshangban.att_simple.utils.TimeUtil;
 
 @Service("approverService")
@@ -142,6 +145,59 @@ public class ApproverServiceImpl implements ApproverService {
 	public int willApproverCount(String employeeId, String companyId) {
 		int i = applicationTotalRecordMapper.selectCountFromWillApprover(employeeId, companyId);
 		return i;
+	}
+	/**
+	 * 审批申请
+	 */
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED,rollbackForClassName="Exception")
+	public ReturnData approverApplication(String employeeId, String companyId, String applicationNo,
+			String approverDescription, String postscriptason, String transferPersonId,
+			String transferPersionAccessId) {
+		ReturnData returnData = new ReturnData();
+		String now = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(System.currentTimeMillis()));
+		ApplicationTotalRecord selectByPrimaryKey = applicationTotalRecordMapper.selectByPrimaryKey(applicationNo);
+		String previousOperaterTime = selectByPrimaryKey.getPreviousOperaterTime();
+		if("同意".equals(approverDescription)){
+			
+		}else if("转移".equals(approverDescription)){
+			ApplicationTransferRecord newApplicationTransferRecord = new ApplicationTransferRecord();
+			newApplicationTransferRecord.setId(FormatUtil.createUuid());//id
+			newApplicationTransferRecord.setCompanyId(companyId);//公司id
+			newApplicationTransferRecord.setTransferPersonId(transferPersonId);//移交人id
+			newApplicationTransferRecord.setApplicationNo(applicationNo);//申请单号
+			newApplicationTransferRecord.setTransferPersionAccessId(transferPersionAccessId);//移交接收人id
+			newApplicationTransferRecord.setOperaterTime(now);//操作时间
+			newApplicationTransferRecord.setTransferExplain(postscriptason);
+			if("0".equals(selectByPrimaryKey.getIsTransfer())){
+				newApplicationTransferRecord.setTransferTimes("1");
+			}else{
+				List<ApplicationTransferRecord> selectTransferByApplicationNo = applicationTransferRecordMapper.selectTransferByApplicationNo(applicationNo);
+				if(selectTransferByApplicationNo==null||selectTransferByApplicationNo.size()<1){
+					returnData.setMessage("数据异常");
+					returnData.setReturnCode("9999");
+					return returnData;
+				}else{
+					newApplicationTransferRecord.setTransferTimes(String.valueOf(selectTransferByApplicationNo.size()+1));//转移次数
+				}
+			}
+			applicationTransferRecordMapper.insertSelective(newApplicationTransferRecord);
+			selectByPrimaryKey.setIsTransfer("1");
+			selectByPrimaryKey.setOperaterId(employeeId);
+			selectByPrimaryKey.setLastApprover(transferPersionAccessId);
+			selectByPrimaryKey.setOperaterTime(now);
+			selectByPrimaryKey.setPreviousOperaterTime(previousOperaterTime);
+			applicationTotalRecordMapper.updateByPrimaryKeySelective(selectByPrimaryKey);
+		}else if("驳回".equals(approverDescription)){
+			selectByPrimaryKey.setIsComplete("1");
+			selectByPrimaryKey.setIsReject("1");
+			selectByPrimaryKey.setRejectReason(postscriptason);
+			selectByPrimaryKey.setOperaterId(employeeId);
+			selectByPrimaryKey.setOperaterTime(now);
+			selectByPrimaryKey.setPreviousOperaterTime(previousOperaterTime);
+			applicationTotalRecordMapper.updateByPrimaryKeySelective(selectByPrimaryKey);
+		}
+		return null;
 	}
 	
 

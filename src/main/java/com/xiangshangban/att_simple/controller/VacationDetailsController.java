@@ -3,6 +3,7 @@ package com.xiangshangban.att_simple.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,8 +38,10 @@ public class VacationDetailsController {
 		String changeingDateRank = obj.getString("changeingDateRank");
 		String varPageNo = obj.getString("pageNum");
 		String pageNum = obj.getString("pageRecordNum");
-		
 		String pageExcludeNumber = String.valueOf((Integer.parseInt(varPageNo)-1)*Integer.parseInt(pageNum));
+		
+		vacationType = StringUtils.isEmpty(vacationType)?null:vacationType;
+		changingReason = StringUtils.isEmpty(changingReason)?null:changingReason;
 		
 		resulet = vacationDetailsService.SelectVacationDetails(vacationId, vacationType, changingReason, changeingDateRank, pageExcludeNumber, pageNum);
 			

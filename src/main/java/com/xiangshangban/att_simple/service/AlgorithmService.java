@@ -5,6 +5,10 @@ import com.xiangshangban.att_simple.bean.AlgorithmResult;
 
 public interface AlgorithmService {
 	/**
+	 * 自动计算所有公司、所有人某一天的日报
+	 */
+	public void calculate(String countDate);
+	/**
 	 * 核心计算开始
 	 * @param companyId 公司ID
 	 * @param employeeId 员工ID
