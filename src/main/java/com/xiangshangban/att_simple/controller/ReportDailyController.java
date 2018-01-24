@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.xiangshangban.att_simple.bean.ReturnData;
-import com.xiangshangban.att_simple.dao.EmployeeDao;
 import com.xiangshangban.att_simple.service.ReportDailyService;
 
 @RestController
