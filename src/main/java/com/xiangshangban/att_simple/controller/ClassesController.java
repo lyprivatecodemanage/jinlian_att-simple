@@ -309,7 +309,7 @@ public class ClassesController {
 	 * @param request
 	 * @param response
 	 */
-	@PostMapping("/export/Scheduling")
+	@PostMapping("/export/scheduling")
 	public void exportScheduling(@RequestBody String requestParam, HttpServletRequest request, HttpServletResponse response){
 		try {
             response.setContentType("application/octet-stream ");

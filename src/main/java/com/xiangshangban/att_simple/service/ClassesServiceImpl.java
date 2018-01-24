@@ -565,9 +565,9 @@ public class ClassesServiceImpl implements ClassesService {
 		// 查询班次类型使用人数排行榜前三名
 		List<Map<String, String>> selectTopThreeClassesType = classesEmployeeMapper.selectTopThreeClassesType(companyId.trim());
 		//测试班次使用人数排行榜信息
-		for (Map<String, String> map : selectTopThreeClassesType) {
+		/*for (Map<String, String> map : selectTopThreeClassesType) {
 			System.out.println("=========="+map.get("classes_name")+"####"+map.get("totalnum").toString()+"==========");
-		}
+		}*/
 		resultInfo.setClassesTopInfo(selectTopThreeClassesType);
 		resultInfo.setMessage("请求数据成功");
 		resultInfo.setReturnCode("3000");
@@ -710,12 +710,11 @@ public class ClassesServiceImpl implements ClassesService {
 	public boolean deleteEmpDutyTime(String requestParam) {
 		// 解析请求参数
 		JSONObject parseObject = JSONObject.parseObject(requestParam);
-		Object classesEmpId = parseObject.get("empClassesId");
+		Object empClassesId = parseObject.get("empClassesId");
 		// 定义返回的结果
 		boolean result = false;
-		if (classesEmpId != null) {
-			int deleteAppointEmpDateClasses = classesEmployeeMapper
-					.deleteAppointEmpDateClasses(classesEmpId.toString().trim());
+		if (empClassesId != null) {
+			int deleteAppointEmpDateClasses = classesEmployeeMapper.deleteAppointEmpDateClasses(empClassesId.toString().trim());
 			if (deleteAppointEmpDateClasses > 0) {
 				result = true;
 			} else {
@@ -883,37 +882,15 @@ public class ClassesServiceImpl implements ClassesService {
 
 		if (empClassesId != null && !empClassesId.toString().trim().isEmpty()) {
 
-			ClassesEmployee selectPointEmpDateClasses = classesEmployeeMapper
-					.selectPointEmpDateClasses(empClassesId.toString().trim());
+			ClassesEmployee selectPointEmpDateClasses = classesEmployeeMapper.selectPointEmpDateClasses(empClassesId.toString().trim());
 
 			if (selectPointEmpDateClasses != null) {
-				result.put("classesDate",
-						(selectPointEmpDateClasses.getOnDutySchedulingDate() != null
-								&& !selectPointEmpDateClasses.getOnDutySchedulingDate().isEmpty())
-										? selectPointEmpDateClasses.getOnDutySchedulingDate().split(" ")[0] : "");
-
-				result.put("classesWeek",
-						selectPointEmpDateClasses.getWeek() != null ? selectPointEmpDateClasses.getWeek() : "");
-
-				result.put("onDutyTime",
-						(selectPointEmpDateClasses.getOnDutySchedulingDate() != null
-								&& !selectPointEmpDateClasses.getOnDutySchedulingDate().isEmpty())
-										? selectPointEmpDateClasses.getOnDutySchedulingDate().split(" ")[1] : "");
-
-				result.put("offDutyTime",
-						(selectPointEmpDateClasses.getOffDutySchedulingDate() != null
-								&& !selectPointEmpDateClasses.getOffDutySchedulingDate().isEmpty())
-										? selectPointEmpDateClasses.getOffDutySchedulingDate().split(" ")[1] : "");
-
-				result.put("restStartTime",
-						(selectPointEmpDateClasses.getRestStartTime() != null
-								&& !selectPointEmpDateClasses.getRestStartTime().isEmpty())
-										? selectPointEmpDateClasses.getRestStartTime().split(" ")[1] : "");
-
-				result.put("restEndTime",
-						(selectPointEmpDateClasses.getRestEndTime() != null
-								&& !selectPointEmpDateClasses.getRestEndTime().isEmpty())
-										? selectPointEmpDateClasses.getRestEndTime().split(" ")[1] : "");
+				result.put("classesDate",(selectPointEmpDateClasses.getOnDutySchedulingDate() != null && !selectPointEmpDateClasses.getOnDutySchedulingDate().isEmpty())? selectPointEmpDateClasses.getOnDutySchedulingDate().split(" ")[0] : "");
+				result.put("classesWeek",selectPointEmpDateClasses.getWeek() != null ? selectPointEmpDateClasses.getWeek() : "");
+				result.put("onDutyTime",(selectPointEmpDateClasses.getOnDutySchedulingDate() != null && !selectPointEmpDateClasses.getOnDutySchedulingDate().isEmpty())? selectPointEmpDateClasses.getOnDutySchedulingDate().split(" ")[1] : "");
+				result.put("offDutyTime",(selectPointEmpDateClasses.getOffDutySchedulingDate() != null && !selectPointEmpDateClasses.getOffDutySchedulingDate().isEmpty())? selectPointEmpDateClasses.getOffDutySchedulingDate().split(" ")[1] : "");
+				result.put("restStartTime",(selectPointEmpDateClasses.getRestStartTime() != null && !selectPointEmpDateClasses.getRestStartTime().isEmpty())? selectPointEmpDateClasses.getRestStartTime().split(" ")[1] : "");
+				result.put("restEndTime",(selectPointEmpDateClasses.getRestEndTime() != null&& !selectPointEmpDateClasses.getRestEndTime().isEmpty())? selectPointEmpDateClasses.getRestEndTime().split(" ")[1] : "");
 			}
 		}
 		return result;
