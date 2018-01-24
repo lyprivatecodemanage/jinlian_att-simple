@@ -241,20 +241,22 @@
   </delete>
   
   <!-- 删除指定人员指定日期的排班 -->
-  <update id="deleteAppointEmpDateClasses" parameterType="Map">
-  	update classes_employee_ set 
-  	classes_id = '',
-  	classes_name,
-  	on_duty_scheduling_date = '',
-  	off_duty_scheduling_date = '',
-  	rest_start_time = '',
-  	rest_end_time = '',
-  	sign_in_rule = '',
-  	sign_out_rule = '',
-  	on_punch_card_rule = '',
-  	off_punch_card_rule = '',
-  	divide_color = ''
-  	where id = #{empClassesId}
+  <update id="deleteAppointEmpDateClasses" parameterType="String">
+  	UPDATE classes_employee_
+	SET 
+	 classes_id = '',
+	 on_duty_scheduling_date = '',
+	 off_duty_scheduling_date = '',
+	 rest_start_time = '',
+	 rest_end_time = '',
+	 sign_in_rule = '',
+	 sign_out_rule = '',
+	 on_punch_card_rule = '',
+	 off_punch_card_rule = '',
+	 divide_color = '',
+	 classes_name = ''
+	WHERE
+	ID = #{empClassesId}
   </update>
   
   <!-- 更新指定人员指定日期的班次 -->
