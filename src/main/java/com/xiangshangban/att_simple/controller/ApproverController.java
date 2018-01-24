@@ -1,6 +1,7 @@
 package com.xiangshangban.att_simple.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -248,6 +249,82 @@ public class ApproverController {
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
 			returnData.setData("");
+			return returnData;
+		}catch(Exception e){
+			logger.info(e);
+			e.printStackTrace();
+			returnData.setMessage("服务器错误");
+			returnData.setReturnCode("3001");
+			return returnData;
+		}
+	}
+	/**
+	 * ****************web审批中心
+	 */
+	/**
+	 * 未完成工单数和本月已完成工单数
+	 * @param jsonString
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/webApproverCentreHeader",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+	public ReturnData webApproverCentreHeader(@RequestBody String jsonString,HttpServletRequest request){
+		ReturnData returnData = new ReturnData();
+		String employeeId = "";//管理员id
+		String companyId = "";//公司id
+		try{
+			employeeId = request.getHeader("accessUserId");//员工id
+			companyId = request.getHeader("companyId");//公司id
+			if(StringUtils.isEmpty(companyId)||StringUtils.isEmpty(employeeId)){
+				returnData.setMessage("请求信息错误");
+				returnData.setReturnCode("3012");
+				return returnData;
+			}
+			Map<String ,String > result = approverService.webApproverCentreHeader(companyId, employeeId);
+			returnData.setData(result);
+			returnData.setMessage("成功");
+			returnData.setReturnCode("3000");
+			return returnData;
+		}catch(Exception e){
+			logger.info(e);
+			e.printStackTrace();
+			returnData.setMessage("服务器错误");
+			returnData.setReturnCode("3001");
+			return returnData;
+		}
+	}
+	/**
+	 * 
+	 * @param jsonString
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/webApproverCentre",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+	public ReturnData webApproverCentre(@RequestBody String jsonString,HttpServletRequest request){
+		ReturnData returnData = new ReturnData();
+		String employeeId = "";
+		String companyId = "";
+		try{
+			employeeId = request.getHeader("accessUserId");//员工id
+			companyId = request.getHeader("companyId");//公司id
+			if(StringUtils.isEmpty(companyId)||StringUtils.isEmpty(employeeId)){
+				returnData.setMessage("请求信息错误");
+				returnData.setReturnCode("3012");
+				return returnData;
+			}
+			try{
+				JSONObject jobj = JSON.parseObject(jsonString);
+			}catch(Exception e){
+				logger.info(e);
+				e.printStackTrace();
+				returnData.setMessage("参数错误");
+				returnData.setReturnCode("3006");
+				return returnData;
+			}
+			ApplicationTotalRecord approverDetails = approverService.approverDetails(applicationNo,companyId);
+			returnData.setMessage("成功");
+			returnData.setReturnCode("3000");
+			returnData.setData(approverDetails);
 			return returnData;
 		}catch(Exception e){
 			logger.info(e);

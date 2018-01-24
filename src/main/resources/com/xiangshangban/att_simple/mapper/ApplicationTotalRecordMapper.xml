@@ -215,7 +215,24 @@
   	where atr.application_no = #{applicationNo}
   </select>
   
-  
+  <!-- web审批中心 -->
+  <!-- 未完成工单数 -->
+  <select id="selectCountWillApprover" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select count(atr.application_no) from application_total_record_ atr
+    where atr.company_id = #{companyId} and atr.is_complete = '0'
+  </select>
+  <!-- 本月已完成工单数 -->
+  <select id="selectCountCompletedApprover" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select count(atr.application_no) from application_total_record_ atr
+    where atr.company_id = #{companyId} and atr.is_complete = '1' and atr.operater_time between #{startTime} and #{endTime}
+  </select>
+  <!-- 审批中心列表查询 -->
+ <!--  <select id="selectWebApproverList" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select <include refid=""/>
+  	from application_total_record_ atr
+  	
+  	where 
+  </select> -->
   
   <!-- 系统 -->
   <!-- 根据单号查询申请状态 -->
