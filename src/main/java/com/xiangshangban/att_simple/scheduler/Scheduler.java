@@ -1,16 +1,13 @@
 package com.xiangshangban.att_simple.scheduler;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.xiangshangban.att_simple.bean.AlgorithmSign;
 import com.xiangshangban.att_simple.service.AlgorithmService;
 import com.xiangshangban.att_simple.service.ClassesService;
 import com.xiangshangban.att_simple.utils.TimeUtil;
-
 /**
  * 定时器类
  * @author 王勇辉
@@ -22,7 +19,7 @@ public class Scheduler {
 	//每天凌晨2点执行
 	private static final String SCHEDULED_TIME = "0 0 2 * * ?";
 	//每天凌晨0点执行
-	private static final String REPORT_TIME = "10 12 20 * * ?";//日报计算时间
+	private static final String REPORT_TIME = "0 5 11 * * ?";//日报计算时间
 	private final Logger logger = Logger.getLogger(Scheduler.class);
 	
 	@Autowired
@@ -34,7 +31,7 @@ public class Scheduler {
 	 */
 	@Scheduled(cron=SCHEDULED_TIME)
 	public void autoScheduling(){
-		/*classesService.autoScheduling();*/
+		classesService.autoScheduling();
 		logger.info("----自动排班----");
 	}
 	/**
