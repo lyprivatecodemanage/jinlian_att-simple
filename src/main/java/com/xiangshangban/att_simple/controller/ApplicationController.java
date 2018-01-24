@@ -337,8 +337,8 @@ public class ApplicationController {
 		 * @param request
 		 * @return
 		 */
-		@RequestMapping(value = "/commonContactPeople",produces="application/json;charset=utf-8",method=RequestMethod.POST)
-		public ReturnData commonContactPeople(@RequestBody String jsonString ,HttpServletRequest request) {
+		@RequestMapping(value = "/commonContactPeople",method=RequestMethod.POST)
+		public ReturnData commonContactPeople(String jsonString ,HttpServletRequest request) {
 			ReturnData returnData = new ReturnData();
 			try{
 			String employeeId = request.getHeader("accessUserId");//员工id
@@ -353,7 +353,7 @@ public class ApplicationController {
 			application.setApplicationId(employeeId);
 			//设置常用联系人
 			if("1".equals(application.getIsSetCommonContactPeople())){
-				if(application==null || StringUtils.isEmpty(application.getCommonContactPeopleList()) || application.getCommonContactPeopleList().size()<1){
+				if(application==null || application.getCommonContactPeopleList().size()<1 || StringUtils.isEmpty(application.getCommonContactPeopleList()) ){
 					for(ApplicationCommonContactPeople contactPeople :application.getCommonContactPeopleList()){
 						if(StringUtils.isEmpty(contactPeople.getCommonContactPeopleId())||StringUtils.isEmpty(contactPeople.getCommonContactPeopleName())||StringUtils.isEmpty(contactPeople.getType())){
 							returnData.setMessage("必传参数为空");
@@ -368,7 +368,8 @@ public class ApplicationController {
 					returnData.setReturnCode("3001");
 					return returnData;
 				}
-				
+				returnData.setMessage("成功");
+				returnData.setReturnCode("3000");
 			}
 			
 			}catch(Exception e){

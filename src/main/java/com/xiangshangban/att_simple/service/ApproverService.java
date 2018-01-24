@@ -1,6 +1,7 @@
 package com.xiangshangban.att_simple.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.xiangshangban.att_simple.bean.ApplicationTotalRecord;
 import com.xiangshangban.att_simple.bean.ReturnData;
@@ -46,4 +47,15 @@ public interface ApproverService {
 	   ReturnData approverApplication(String employeeId,String companyId,
 			   String applicationNo,String approverDescription,String postscriptason,
 			   String transferPersonId, String transferPersionAccessId);
+	   /**
+	    * 未完成工单数和本月已完成工单数
+	    * @param companyId
+	    * @param employeeId
+	    * @return
+	    */
+	   Map<String,String> webApproverCentreHeader(String companyId,String employeeId);
+	   
+	   
+	   
+	   
 }
