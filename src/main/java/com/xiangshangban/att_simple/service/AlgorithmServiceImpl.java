@@ -60,6 +60,23 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		}
 	}
 	/**
+	 * 计算一段日期区间的日报
+	 * @param companyId 公司ID
+	 * @param employeeId 员工ID
+	 * @param beginDate 开始日期，  格式yyyy-MM-dd
+	 * @param endDate 结束日期 ， 格式yyyy-MM-dd
+	 */
+	public void calculate(String companyId, String employeeId, String beginDate, String endDate) {
+		logger.info(beginDate+"到"+endDate+"日报计算开始");
+		String date = beginDate;
+		while(TimeUtil.compareTime(date+" 00:00:00", endDate+" 00:00:00")){
+			this.calculate(companyId, employeeId, date);
+			date = TimeUtil.getLongAfterDate(date+" 00:00:00", 1, Calendar.DATE);
+		}
+		logger.info(beginDate+"到"+endDate+"日报计算结束");
+		
+	}
+	/**
 	 * 核心计算开始
 	 */
 	@Override

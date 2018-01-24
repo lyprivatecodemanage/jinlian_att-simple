@@ -75,4 +75,7 @@ public class FormatUtil {
 	 * startYear, startDay, endDay, startMonth, endMonth, shiftDay,
 	 * listAttendancePlanShiftDay, map, attendancePlanService);
 	 */
+	public static void main(String[] args) {
+		System.out.println(createUuid());
+	}
 }
