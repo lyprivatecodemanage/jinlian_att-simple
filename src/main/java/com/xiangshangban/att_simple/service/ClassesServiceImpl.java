@@ -86,75 +86,75 @@ public class ClassesServiceImpl implements ClassesService {
 				&& signInRule != null && signOutRule != null && onPunchCardRule != null && offPunchCardRule != null
 				&& employeeIdList != null && autoClassesFlag != null) {
 			// 先删除，传递上来的班次类型和使用该班次类型的人员班次信息(删除从指定生效日往后的班次)
-			Map<String, String> delParam = new HashMap<>();
-			delParam.put("companyId", companyId.toString());
-			// 判断是否有操作标志
-			if (operateFlag != null && !operateFlag.toString().trim().equals("")) {
-				delParam.put("classesTypeId", operateFlag.toString().trim());
-				// TODO 删除班次类型
-				classesTypeMapper.removeAppointClassesType(delParam);
-			}
-			// 获取要排班的人员列表
-			JSONArray empArray = JSONArray.parseArray(JSONObject.toJSONString(employeeIdList));
-			// 删除人员班次(删除当前设置的班次生效时间之后的所有班次)
-			if (validDate != null && !validDate.toString().trim().equals("")) {
-				delParam.put("offSetTime", validDate.toString().trim());
-			} else {
-				Calendar instance = Calendar.getInstance();
-				instance.add(Calendar.DAY_OF_MONTH, 1);
-				delParam.put("offSetTime", new SimpleDateFormat("yyyy-MM-dd").format(instance.getTime()));
-			}
-			//TODO 去除一个人一天多个排班的情况
-			for(int g=0;g<empArray.size();g++){
-				JSONObject parseObject = JSONObject.parseObject(empArray.get(g).toString());
-				//设置人员名称
-				delParam.put("empId",parseObject.get("empId").toString().trim());
-				// TODO 删除当前公司,指定人员,指定日期之后的排班
-				classesEmployeeMapper.deleteAppointClassesTypeEmp(delParam);
-			}
-			
-			// TODO ①：添加班次类型
-			ClassesType classesType = new ClassesType();
-			// 班次类型的UUID
-			String typeUUID = FormatUtil.createUuid();
-			classesType.setId(typeUUID);
-			classesType.setClassesName(classesName.toString().trim());
-			classesType.setOnDutyTime(onDutyTime.toString().trim());
-			classesType.setOffDutyTime(offDutyTime.toString().trim());
-			classesType.setMorrowDutyTimeFlag(morrowFlag.toString().trim());
-			classesType.setRestTime(restStartTime.toString().trim() + "-" + restEndTime.toString().trim());
-			classesType.setRestDays(restDays.toString().trim());
-			classesType.setFestivalRestFlag(festivalRestFlag.toString().trim());
-			classesType.setSignInRule(signInRule.toString().trim());
-			classesType.setSignOutRule(signOutRule.toString().trim());
-			classesType.setOnPunchCardTime(onPunchCardRule.toString().trim());
-			classesType.setOffPunchCardTime(offPunchCardRule.toString().trim());
-			classesType.setAutoClassesFlag(autoClassesFlag.toString().trim());
-			classesType.setCompanyId(companyId);
-			// 创建该班次类型的时间
-			classesType.setCreateTime(TimeUtil.getCurrentTime());
-			
-			if(validDate != null && !validDate.toString().trim().equals("")){
-				//该班次类型生效的时间
-				classesType.setValidDate(validDate.toString().trim());
-			}else{
-				Calendar myCalendar = Calendar.getInstance();
-				myCalendar.add(Calendar.DAY_OF_MONTH, 1);
-				//该班次类型生效的时间
-				classesType.setValidDate(new SimpleDateFormat("yyyy-MM-dd").format(myCalendar.getTime()));
-			}
-			
-			int addClassesType = classesTypeMapper.insertSelective(classesType);
-			// TODO 添加班次类型成功====》添加人员班次
-			if (addClassesType > 0) {
-				int schedulingOperate = commonSchedulingOperate(validDate, empArray, classesType);
-				// 添加：结果
-				if (addClassesType > 0 && schedulingOperate > 0) {
-					result = true;
-				} else {
-					result = false;
-				}
-			}
+						Map<String, String> delParam = new HashMap<>();
+						delParam.put("companyId", companyId.toString());
+						// 判断是否有操作标志
+						if (operateFlag != null && !operateFlag.toString().trim().equals("")) {
+							delParam.put("classesTypeId", operateFlag.toString().trim());
+							// TODO 删除班次类型
+							classesTypeMapper.removeAppointClassesType(delParam);
+						}
+						// 获取要排班的人员列表
+						JSONArray empArray = JSONArray.parseArray(JSONObject.toJSONString(employeeIdList));
+						// 删除人员班次(删除当前设置的班次生效时间之后的所有班次)
+						if (validDate != null && !validDate.toString().trim().equals("")) {
+							delParam.put("offSetTime", validDate.toString().trim());
+						} else {
+							Calendar instance = Calendar.getInstance();
+							instance.add(Calendar.DAY_OF_MONTH, 1);
+							delParam.put("offSetTime", new SimpleDateFormat("yyyy-MM-dd").format(instance.getTime()));
+						}
+						//TODO 去除一个人一天多个排班的情况
+						for(int g=0;g<empArray.size();g++){
+							JSONObject parseObject = JSONObject.parseObject(empArray.get(g).toString());
+							//设置人员名称
+							delParam.put("empId",parseObject.get("empId").toString().trim());
+							// TODO 删除当前公司,指定人员,指定日期之后的排班
+							classesEmployeeMapper.deleteAppointClassesTypeEmp(delParam);
+						}
+						
+						// TODO ①：添加班次类型
+						ClassesType classesType = new ClassesType();
+						// 班次类型的UUID
+						String typeUUID = FormatUtil.createUuid();
+						classesType.setId(typeUUID);
+						classesType.setClassesName(classesName.toString().trim());
+						classesType.setOnDutyTime(onDutyTime.toString().trim());
+						classesType.setOffDutyTime(offDutyTime.toString().trim());
+						classesType.setMorrowDutyTimeFlag(morrowFlag.toString().trim());
+						classesType.setRestTime(restStartTime.toString().trim() + "-" + restEndTime.toString().trim());
+						classesType.setRestDays(restDays.toString().trim());
+						classesType.setFestivalRestFlag(festivalRestFlag.toString().trim());
+						classesType.setSignInRule(signInRule.toString().trim());
+						classesType.setSignOutRule(signOutRule.toString().trim());
+						classesType.setOnPunchCardTime(onPunchCardRule.toString().trim());
+						classesType.setOffPunchCardTime(offPunchCardRule.toString().trim());
+						classesType.setAutoClassesFlag(autoClassesFlag.toString().trim());
+						classesType.setCompanyId(companyId);
+						// 创建该班次类型的时间
+						classesType.setCreateTime(TimeUtil.getCurrentTime());
+						
+						if(validDate != null && !validDate.toString().trim().equals("")){
+							//该班次类型生效的时间
+							classesType.setValidDate(validDate.toString().trim());
+						}else{
+							Calendar myCalendar = Calendar.getInstance();
+							myCalendar.add(Calendar.DAY_OF_MONTH, 1);
+							//该班次类型生效的时间
+							classesType.setValidDate(new SimpleDateFormat("yyyy-MM-dd").format(myCalendar.getTime()));
+						}
+						
+						int addClassesType = classesTypeMapper.insertSelective(classesType);
+						// TODO 添加班次类型成功====》添加人员班次
+						if (addClassesType > 0) {
+							int schedulingOperate = commonSchedulingOperate(validDate, empArray, classesType);
+							// 添加：结果
+							if (addClassesType > 0 && schedulingOperate > 0) {
+								result = true;
+							} else {
+								result = false;
+							}
+						}
 		}
 		return result;
 	}
