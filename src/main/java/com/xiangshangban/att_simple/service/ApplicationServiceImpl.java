@@ -533,7 +533,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 				return returnData;
 			}else{//撤回操作
 				ApplicationTotalRecord record = new ApplicationTotalRecord();
-				record.setapplicationNo(applicationNo);
+				record.setApplicationNo(applicationNo);
 				record.setApplicationStatus("2");
 				int i = applicationTotalRecordMapper.updateByPrimaryKeySelective(record);
 				if(i>0){

@@ -3,6 +3,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.xiangshangban.att_simple.bean.AlgorithmParam;
@@ -11,11 +12,13 @@ import com.xiangshangban.att_simple.bean.AlgorithmResult;
 import com.xiangshangban.att_simple.bean.AlgorithmSign;
 import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ClassesEmployee;
+import com.xiangshangban.att_simple.bean.Company;
 import com.xiangshangban.att_simple.bean.Employee;
 import com.xiangshangban.att_simple.bean.ReportDaily;
 import com.xiangshangban.att_simple.bean.ReportExcept;
 import com.xiangshangban.att_simple.dao.AlgorithmMapper;
 import com.xiangshangban.att_simple.dao.ClassesEmployeeMapper;
+import com.xiangshangban.att_simple.dao.EmployeeDao;
 import com.xiangshangban.att_simple.dao.ReportDailyMapper;
 import com.xiangshangban.att_simple.dao.ReportExceptMapper;
 import com.xiangshangban.att_simple.utils.FormatUtil;
@@ -27,6 +30,7 @@ import com.xiangshangban.att_simple.utils.TimeUtil;
  */
 @Service("AlgorithmService")
 public class AlgorithmServiceImpl implements AlgorithmService {
+	private final Logger logger = Logger.getLogger(AlgorithmServiceImpl.class);
 	@Autowired
 	ClassesEmployeeMapper ClassesEmployeeMapper;
 	@Autowired
@@ -37,6 +41,24 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 	AlgorithmMapper algorithmMapper;
 	@Autowired
 	VacationService vacationService;
+	@Autowired
+	EmployeeDao employeeDao;
+	@Override
+	public void calculate(String countDate) {
+		List<Company> companyIdList = algorithmMapper.getAllCompanyList();
+		for(Company company : companyIdList){
+			List<Employee> empIdList = algorithmMapper.getEmployeeOnJobList(
+					company.getCompanyId(), countDate);
+			for(Employee emp:empIdList){
+				try {
+					this.calculate(company.getCompanyId(), emp.getEmployeeId(), countDate);
+				} catch (Exception e) {
+					logger.info("公司ID："+company.getCompanyId()+", 员工ID："+emp.getEmployeeId()+", "+countDate+ "日报计算异常");
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 	/**
 	 * 核心计算开始
 	 */
@@ -46,6 +68,9 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 			AlgorithmParam algorithmParam = this.generateAlgorithmParam(companyId, employeeId, countDate);//各种查询
 			AlgorithmResult result = new AlgorithmResult();
 			result.getReportDaily().setAttDate(countDate);
+			result.getReportDaily().setEmployeeId(employeeId);
+			result.getReportDaily().setCompanyId(companyId);
+			result.getReportDaily().setDeptId(algorithmParam.getEmployee().getDepartmentId());
 			this.calculateStandard(algorithmParam, result);//计算
 			this.postProcess(algorithmParam, result);//处理计算结果数据
 		}
@@ -654,7 +679,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 	public boolean preCondition(String companyId, String employeeId, String countDate) {
 		int noCheckAtt = algorithmMapper.getIsCheck(companyId, employeeId);
 		//查询是否为不考勤人员
-		if(noCheckAtt==0){//不考勤
+		if(noCheckAtt>0){//不考勤
 			return false;
 		}
 		return true;
@@ -664,7 +689,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 	public AlgorithmParam generateAlgorithmParam(String companyId, String employeeId, String countDate) {
 		AlgorithmParam algorithmParam = new AlgorithmParam();
 		algorithmParam.setEmployeeId(employeeId);
-		Employee employee = algorithmMapper.getEmployeeInfoById(companyId, employeeId);
+		Employee employee = employeeDao.selectByEmployee(employeeId, companyId);
 		algorithmParam.setEmployee(employee );
 		algorithmParam.setCompanyId(companyId);
 		algorithmParam.setCountDate(countDate);
@@ -709,7 +734,11 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 					Double.parseDouble(algorithmResult.getReportDaily().getNormalOverWork())/60.0+"", 
 					"日报重新生成调休", "0", algorithmResult.getReportDaily().getAttDate().split("-")[0]);//先扣除
 		}
+		//删除旧的日报
+		reportDailyMapper.deleteByDate(algorithmParam.getCompanyId(), 
+				algorithmParam.getEmployeeId(), algorithmResult.getReportDaily().getAttDate());
 		//报表处理（单位处理：由分转为半小时）
+		algorithmResult.getReportDaily().setReportId(FormatUtil.createUuid());;
 		reportDailyMapper.insertSelective(algorithmResult.getReportDaily());
 		
 		//调整状态(0:收入,1:支出)
