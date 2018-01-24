@@ -299,11 +299,19 @@ public class ApproverController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value = "/webApproverCentre",produces="application/json;charset=utf-8",method=RequestMethod.POST)
-	public ReturnData webApproverCentre(@RequestBody String jsonString,HttpServletRequest request){
+	@RequestMapping(value = "/webApproverCentreList",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+	public ReturnData webApproverCentreList(@RequestBody String jsonString,HttpServletRequest request){
 		ReturnData returnData = new ReturnData();
 		String employeeId = "";
 		String companyId = "";
+		String page = "";
+		String count ="";
+		String departmentId = "";
+		String applicationType = "";
+		String isComplete = "";
+		String employeeName = "";
+		String startTime = "";
+		String endTime = "";
 		try{
 			employeeId = request.getHeader("accessUserId");//员工id
 			companyId = request.getHeader("companyId");//公司id
@@ -314,6 +322,19 @@ public class ApproverController {
 			}
 			try{
 				JSONObject jobj = JSON.parseObject(jsonString);
+				page = jobj.getString("page");
+				count = jobj.getString("count");
+				departmentId = jobj.getString("departmentId");
+				applicationType = jobj.getString("applicationType");
+				isComplete = jobj.getString("isComplete");
+				employeeName = jobj.getString("employeeName");
+				startTime = jobj.getString("startTime");
+				endTime = jobj.getString("endTime");
+				if(StringUtils.isEmpty(page)||StringUtils.isEmpty(count)){
+					returnData.setMessage("必传参数为空");
+					returnData.setReturnCode("3006");
+					return returnData;
+				}
 			}catch(Exception e){
 				logger.info(e);
 				e.printStackTrace();
@@ -321,7 +342,17 @@ public class ApproverController {
 				returnData.setReturnCode("3006");
 				return returnData;
 			}
-			//ApplicationTotalRecord approverDetails = approverService.approverDetails(applicationNo,companyId);
+			if(!StringUtils.isEmpty(employeeName)){
+				employeeName = "%"+employeeName+"%";
+			}
+			if(!StringUtils.isEmpty(startTime)&&!StringUtils.isEmpty(endTime)){
+				startTime = startTime+" 00:00:00";
+				endTime = endTime+" 23:59:59";
+			}
+			page = String.valueOf((Integer.valueOf(page)-1)*Integer.valueOf(count));
+			approverService.webApproverCentreList(companyId,
+					page, count, departmentId, applicationType,
+					isComplete, employeeName, startTime, endTime);
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
 			//returnData.setData(approverDetails);

@@ -48,14 +48,20 @@ public interface ApproverService {
 			   String applicationNo,String approverDescription,String postscriptason,
 			   String transferPersonId, String transferPersionAccessId);
 	   /**
-	    * 未完成工单数和本月已完成工单数
+	    * web审批中心-未完成工单数和本月已完成工单数
 	    * @param companyId
 	    * @param employeeId
 	    * @return
 	    */
 	   Map<String,String> webApproverCentreHeader(String companyId,String employeeId);
-	   
-	   
+	   /**
+	    * web审批中心-列表分页,条件搜索
+	    * @param params
+	    * @return
+	    */
+	   ReturnData webApproverCentreList(String companyId,String page,String count,
+				String departmentId,String applicationType,String isComplete,
+				String employeeName,String startTime,String endTime);
 	   
 	   
 }

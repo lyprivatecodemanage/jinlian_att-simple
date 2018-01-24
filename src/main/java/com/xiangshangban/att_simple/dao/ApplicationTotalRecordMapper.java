@@ -110,7 +110,16 @@ public interface ApplicationTotalRecordMapper {
 			@Param("endTime")String endTime);
 	
 	
-	
+	List<ApplicationTotalRecord> selectWebApproverList(@Param("companyId")String companyId,
+			@Param("page")String page,
+			@Param("count")String count,
+			@Param("departmentId")String departmentId,
+			@Param("applicationType")String applicationType,
+			@Param("isComplete")String isComplete,
+			@Param("employeeName")String employeeName,
+			@Param("startTime")String startTime,
+			@Param("endTime")String endTime
+			);
 	
 	
 	/** 系统 **/
