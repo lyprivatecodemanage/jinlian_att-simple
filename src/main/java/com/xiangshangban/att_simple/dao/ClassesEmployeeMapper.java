@@ -66,7 +66,7 @@ public interface ClassesEmployeeMapper {
 	 * @param map
 	 * @return
 	 */
-	ClassesEmployee selectPointEmpDateClasses(@Param("/empClassesId") String empClassesId);
+	ClassesEmployee selectPointEmpDateClasses(@Param("empClassesId") String empClassesId);
 	
 	/**
 	 * 查询指定人员指定时间区间的班次信息
@@ -100,7 +100,7 @@ public interface ClassesEmployeeMapper {
 	 * @param classesEmpId 班次ID
 	 * @return
 	 */
-	int deleteAppointEmpDateClasses(@Param("classesEmpId")String classesEmpId);
+	int deleteAppointEmpDateClasses(@Param("empClassesId")String empClassesId);
 	
 	/**
 	 * 删除指定班次类型，指定时间之后的人员排班

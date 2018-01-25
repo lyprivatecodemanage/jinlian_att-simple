@@ -93,11 +93,33 @@ public interface ApplicationTotalRecordMapper {
 	 */
 	Integer selectCountFromWillApprover(@Param("employeeId")String employeeId,
 			@Param("companyId")String companyId);
+	/**
+	 * 未完成工单数
+	 * @param employeeId
+	 * @param companyId
+	 * @return
+	 */
+	Integer selectCountWillApprover(@Param("companyId")String companyId);
+	/**
+	 * 本月已完成工单数
+	 * @param employeeId
+	 * @param companyId
+	 * @return
+	 */
+	Integer selectCountCompletedApprover(@Param("companyId")String companyId,@Param("startTime")String startTime,
+			@Param("endTime")String endTime);
 	
 	
-	
-	
-	
+	List<ApplicationTotalRecord> selectWebApproverList(@Param("companyId")String companyId,
+			@Param("page")String page,
+			@Param("count")String count,
+			@Param("departmentId")String departmentId,
+			@Param("applicationType")String applicationType,
+			@Param("isComplete")String isComplete,
+			@Param("employeeName")String employeeName,
+			@Param("startTime")String startTime,
+			@Param("endTime")String endTime
+			);
 	
 	
 	/** 系统 **/

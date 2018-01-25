@@ -12,19 +12,32 @@ public class ApplicationTotalRecord {
     private String applicationNo;
     //操作时间
     private String operaterTime;
+    
+    private String applicationTime;//申请时间 
+    
+    private String previousOperaterTime;
     //操作人id
     private String operaterId;
     //申请类型(1:请假;2:加班;3:出差;4:外出;5:补卡;6:年假微调;7:调休微调)
     private String applicationType;
     //最后一次审批人id
     private String lastApprover;
+    
+    private String lastApproverName;//最后一次审批人姓名
     //是否抄送(0:否;1:是)
     private String isCopy;
     //申请人id
     private String applicationId;
-    private String applicationName;
+    
+    private String applicationName;//申请人姓名
     //公司id
     private String companyId;
+    
+    private String companyName;//公司名称
+    
+    private String departmentId;//部门id
+    
+    private String departmentName;//部门名称
     //是否驳回(0:否;1:是)
     private String isReject;
     //申请单状态(0:删除;1:正常;2:撤回)
@@ -56,11 +69,11 @@ public class ApplicationTotalRecord {
 		this.isComplete = isComplete;
 	}
 
-	public String getapplicationNo() {
+	public String getApplicationNo() {
         return applicationNo;
     }
 
-    public void setapplicationNo(String applicationNo) {
+    public void setApplicationNo(String applicationNo) {
         this.applicationNo = applicationNo;
     }
 
@@ -206,6 +219,54 @@ public class ApplicationTotalRecord {
 
 	public void setApplicationToCopyPersonList(List<ApplicationToCopyPerson> applicationToCopyPersonList) {
 		this.applicationToCopyPersonList = applicationToCopyPersonList;
+	}
+
+	public String getPreviousOperaterTime() {
+		return previousOperaterTime;
+	}
+
+	public void setPreviousOperaterTime(String previousOperaterTime) {
+		this.previousOperaterTime = previousOperaterTime;
+	}
+
+	public String getLastApproverName() {
+		return lastApproverName;
+	}
+
+	public void setLastApproverName(String lastApproverName) {
+		this.lastApproverName = lastApproverName;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	public String getDepartmentId() {
+		return departmentId;
+	}
+
+	public void setDepartmentId(String departmentId) {
+		this.departmentId = departmentId;
+	}
+
+	public String getDepartmentName() {
+		return departmentName;
+	}
+
+	public void setDepartmentName(String departmentName) {
+		this.departmentName = departmentName;
+	}
+
+	public String getApplicationTime() {
+		return applicationTime;
+	}
+
+	public void setApplicationTime(String applicationTime) {
+		this.applicationTime = applicationTime;
 	}
     
     

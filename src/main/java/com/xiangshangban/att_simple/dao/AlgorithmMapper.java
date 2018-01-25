@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ClassesEmployee;
+import com.xiangshangban.att_simple.bean.Company;
 import com.xiangshangban.att_simple.bean.Employee;
 
 @Mapper
@@ -85,14 +86,6 @@ public interface AlgorithmMapper {
 	List<Application> getOverByTime(@Param("companyId")String companyId, 
 			@Param("employeeId")String employeeId, @Param("beginTime") String beginTime);
 	/**
-	 * 获取员工信息
-	 * @param companyId
-	 * @param employeeId
-	 * @return
-	 */
-	Employee getEmployeeInfoById(@Param("companyId")String companyId, 
-			@Param("employeeId")String employeeId);
-	/**
 	 * 查询人员是否需要考勤
 	 * @param companyId
 	 * @param employeeId
@@ -103,4 +96,12 @@ public interface AlgorithmMapper {
 	
 	String getVacationId(@Param("companyId")String companyId, 
 			@Param("employeeId")String employeeId, @Param("attDate")String attDate);
+	
+	List<Company> getAllCompanyList();
+	/**
+	 * 查询某一天在职的所有人员
+	 * @param companyId
+	 * @return
+	 */
+	List<Employee> getEmployeeOnJobList(@Param("companyId")String companyId, @Param("attDate")String attDate);
 }

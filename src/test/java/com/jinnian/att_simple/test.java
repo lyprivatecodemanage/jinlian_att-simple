@@ -59,8 +59,8 @@ public class test {
 			e.printStackTrace();
 
 		}*/
-		System.out.println(TimeUtil.getDateBefore(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date(System.currentTimeMillis())),"7"));
-
+		System.out.println(TimeUtil.getCurrentMonthFirstDateOrMaxDate(false)+"\t"+TimeUtil.getCurrentMonthFirstDateOrMaxDate(true));
+		
 	}
 	
 	public void setValue(List<Integer> list){
