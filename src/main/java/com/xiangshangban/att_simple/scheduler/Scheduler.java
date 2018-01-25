@@ -20,12 +20,14 @@ public class Scheduler {
 	private static final String SCHEDULED_TIME = "0 0 2 * * ?";
 	//每天凌晨0点执行
 	private static final String REPORT_TIME = "0 5 11 * * ?";//日报计算时间
+	
 	private final Logger logger = Logger.getLogger(Scheduler.class);
 	
 	@Autowired
 	private ClassesService classesService;
 	@Autowired
 	private AlgorithmService algorithmService;
+	
 	/**
 	 * 自动排班
 	 */

@@ -197,6 +197,14 @@ public class ClassesServiceImpl implements ClassesService {
 		}
 		return returnData;
 	}
+	
+	/**
+	 * 查询指定班次类别信息
+	 */
+	@Override
+	public ClassesType queryPointClassesTypeData(String classesTypeId) {
+		return classesTypeMapper.selectPointClassesTypeInfo(classesTypeId);
+	}
 
 	/**
 	 * 删除指定的班次类型
