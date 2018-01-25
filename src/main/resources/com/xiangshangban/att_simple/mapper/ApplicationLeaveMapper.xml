@@ -43,7 +43,7 @@
 	END AS leave_type_name
 	,count(leave_type) as leave_count from application_leave_ l
 	LEFT JOIN application_total_record_ r
-	ON l.application_no = r.applcation_no and l.employee_id = r.application_id and l.company_id = r.company_id
+	ON l.application_no = r.application_no and l.employee_id = r.application_id and l.company_id = r.company_id
 	where l.company_id = #{companyId}
 	and r.is_complete = '1'
 	and l.application_time like #{applicationTime}
@@ -70,7 +70,7 @@
 			and leave_type = #{leaveType}
 		</if>
 		<if test="employeeName != null">
-			and e.employee_name = #{employeeName}
+			and e.employee_name like '%#{employeeName}%'
 		</if>
 	)t
 	<where>
@@ -124,7 +124,7 @@
 			and leave_type = #{leaveType}
 		</if>
 		<if test="employeeName != null">
-			and e.employee_name = #{employeeName}
+			and e.employee_name like '%#{employeeName}%'
 		</if>
 	)t
 	where rn > ${pageExcludeNumber}

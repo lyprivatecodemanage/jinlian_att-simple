@@ -64,6 +64,99 @@
     leave_amblosis, leave_pregnancy, work_day,sign_in_time,sign_out_time
   </sql>
   
+  <!-- 考勤日报模糊总数查询 -->
+  <select id="selectReportDailyTotalNumber" resultType="java.lang.Integer">
+  	select
+  	<include refid="Base_Column_List"></include>
+  	from report_daily_ rd
+	LEFT JOIN organization.employee_ e
+	ON rd.dept_id = e.department_id and rd.employee_id = e.employee_id and rd.company_id = e.company_id
+	LEFT JOIN organization.department_ d
+	ON e.department_id = d.department_id and e.company_id = d.company_id
+	where rd.company_id = #{companyId}
+	<if test="beginDate != null">
+		and att_date <![CDATA[>]]> #{beginDate} 
+	</if>
+	<if test="endDate != null">
+		and att_date <![CDATA[<]]> #{endDate} 
+	</if>
+	<if test="departmentId != null">
+		and rd.dept_id = #{departmentId}
+	</if>
+	<if test="exceptionMark != null">
+		and exception_mark = #{exceptionMark}
+	</if>
+	<if test="employeeName != null">
+		and e.employee_name like '%#{employeeName}%'
+	</if>
+  </select>
+  
+  <!-- 日报模糊查询列表 -->
+  <select id="selectReportDaily" resultMap="resultMap">
+  	select 
+	<include refid="Base_Column_List"/>
+	from (SELECT 
+	report_id,dept_id,d.department_name,att_date,sign_in_time,sign_out_time,real_work_time,exception_mark,
+	CASE
+		exception_mark when '1' then '迟到'
+		when '2' then '早退'
+		when '3' then '未到'
+		when '4' then '未退'
+		when '5' then '迟到且早退'
+		when '6' then '迟到且未退'
+		when '7' then '未到且早退'
+		when '8' then '旷工'
+	end exception_mark_name,
+	normal_over_work, 
+	to_char((to_number(leave_absence,'9')+to_number(leave_days_off,'9')+to_number(leave_annual,'9')+to_number(leave_sick,'9')+to_number(leave_marriage,'9')+to_number(leave_maternity,'9')
+	+to_number(leave_maternity_check,'9')+to_number(leave_paternity,'9')+to_number(leave_funeral,'9')+to_number(leave_nursing,'9')+to_number(leave_long_sick,'9')+to_number(leave_other,'9')
+	+to_number(leave_amblosis,'9')+to_number(leave_pregnancy,'9')),'9') leavedate
+	,evection_time_work,out_time_work,
+	<trim prefix="row_number() over(ORDER BY " suffix=") rn">
+		<if test="signInTime != null">
+			sign_in_time  ${signInTimeRank}
+		</if>
+		<if test="signOutTime != null">
+			sign_out_time ${signOutTimeRank}
+		</if>
+		<if test="realWorkTime != null">
+			real_work_time ${realWorkTimeRank}
+		</if>
+	</trim> 
+	from report_daily_ rd
+	LEFT JOIN organization.employee_ e
+	ON rd.dept_id = e.department_id and rd.employee_id = e.employee_id and rd.company_id = e.company_id
+	LEFT JOIN organization.department_ d
+	ON e.department_id = d.department_id and e.company_id = d.company_id
+	where rd.company_id = #{companyId}
+	<if test="beginDate != null">
+		and att_date <![CDATA[>]]> #{beginDate} 
+	</if>
+	<if test="endDate != null">
+		and att_date <![CDATA[<]]> #{endDate} 
+	</if>
+	<if test="departmentId != null">
+		and rd.dept_id = #{departmentId}
+	</if>
+	<if test="exceptionMark != null">
+		and exception_mark = #{exceptionMark}
+	</if>
+	<if test="employeeName != null">
+		and e.employee_name like '%#{employeeName}%'
+	</if>
+	)t
+	where rn>${pageExcludeNumber}
+	limit ${pageNum}
+  </select>
+  
+  <!-- 使用唯一列查询日报信息 -->
+  <select id="selectById" resultMap="BaseResultMap">
+  	select 
+  	<include refid="Base_Column_List" />
+  	from report_daily_
+  	where report_id = #{rid}
+  </select>
+  
   <!-- 查询昨日请假人数 -->
   <select id="selectYesterdayLeaveNumber" resultType="java.lang.Integer">
   	select count(*) from report_daily_ 
@@ -72,6 +165,14 @@
 	and leave_absence>'0' or leave_days_off>'0' or leave_annual>'0' or leave_sick>'0' or leave_marriage>'0' or leave_maternity>'0'
 	or leave_maternity_check>'0' or leave_paternity>'0' or leave_funeral>'0' or leave_nursing>'0' or leave_long_sick>'0' 
 	or leave_other>'0' or leave_amblosis>'0' or leave_pregnancy>'0'
+  </select>
+  
+  <!-- 查询昨日考勤异常人数 -->
+  <select id="selectYesterdayExcption" resultType="java.lang.Integer">
+  	select count(*) from report_daily_ 
+	where company_id = #{companyId}
+	and att_date = #{attDate}
+	and has_exception = '1'
   </select>
   
   <select id="selectByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ReportDailyKey" resultMap="BaseResultMap">

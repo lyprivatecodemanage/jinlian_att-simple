@@ -37,8 +37,68 @@ public class Paging {
     private String pageExcludeNumber;
     //每页显示数据条数
     private String pageNum;
+    //签到时间
+    private String signInTimeRank;
+    //签退时间
+    private String signOutTimeRank;
+    //实际上班时长
+    private String realWorkTimeRank;
+    //开始时间
+    private String beginDate;
+    //结束时间
+    private String endDate;
+    //异常类型
+    private String exceptionMark;
     
-    public String getLeaveType() {
+    public String getExceptionMark() {
+		return exceptionMark;
+	}
+
+	public void setExceptionMark(String exceptionMark) {
+		this.exceptionMark = StringUtils.isEmpty(exceptionMark)?null:exceptionMark;
+	}
+
+	public String getBeginDate() {
+		return beginDate;
+	}
+
+	public void setBeginDate(String beginDate) {
+		this.beginDate = StringUtils.isEmpty(beginDate)?null:beginDate;
+	}
+
+	public String getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(String endDate) {
+		this.endDate = StringUtils.isEmpty(endDate)?null:endDate;
+	}
+
+	public String getSignInTimeRank() {
+		return signInTimeRank;
+	}
+
+	public void setSignInTimeRank(String signInTimeRank) {
+		this.signInTimeRank = StringUtils.isEmpty(signInTimeRank)?null:signInTimeRank;
+	}
+
+	public String getSignOutTimeRank() {
+		return signOutTimeRank;
+	}
+
+	public void setSignOutTimeRank(String signOutTimeRank) {
+		this.signOutTimeRank = StringUtils.isEmpty(signOutTimeRank)?null:signOutTimeRank;
+	}
+
+	public String getRealWorkTimeRank() {
+		return realWorkTimeRank;
+	}
+
+	public void setRealWorkTimeRank(String realWorkTimeRank) {
+		this.realWorkTimeRank = StringUtils.isEmpty(realWorkTimeRank)?null:realWorkTimeRank;
+	}
+
+	public String getLeaveType() {
 		return leaveType;
 	}
 
