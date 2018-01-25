@@ -50,7 +50,66 @@ public class ClassesServiceImpl implements ClassesService {
 	public String queryEmpNameById(String empId, String companyId) {
 		return classesEmployeeMapper.selectEmpNameById(empId, companyId);
 	}
-
+	
+	/**
+	 * 创建公司的时候，给公司添加默认“常规班”
+	 */
+	@Override
+	public boolean addCompanyDefaultClasses(String companyId) {
+		//初始化返回的结果
+		boolean result = false;
+		ClassesType classesType = new ClassesType();
+		classesType.setId(FormatUtil.createUuid());
+		classesType.setClassesName("常规班次");
+		classesType.setOnDutyTime("09:00");
+		classesType.setOffDutyTime("18:00");
+		classesType.setMorrowDutyTimeFlag("0");
+		classesType.setRestTime("12:00-13:00");
+		classesType.setRestDays("67");
+		classesType.setFestivalRestFlag("1");
+		classesType.setSignInRule("15");
+		classesType.setSignOutRule("0");
+		classesType.setOnPunchCardTime("180");
+		classesType.setOffPunchCardTime("480");
+		classesType.setAutoClassesFlag("1");
+		classesType.setCompanyId(companyId.trim());
+		classesType.setCreateTime(TimeUtil.getCurrentTime());
+		classesType.setValidDate("");
+		classesType.setIsDefault("1");
+		int insertSelective = classesTypeMapper.insertSelective(classesType);
+		if(insertSelective>0){
+			result = true;
+		}else{
+			result = false;
+		}
+		return result;
+	}
+	
+	/**
+	 * 员工入职的时候，给人员排公司默认“常规班”
+	 */
+	@Override
+	public boolean addDefaultEmpClasses(String companyId,JSONArray empArray) {
+		//操作结果
+		boolean result = false;
+		//设置生效时间
+		String validDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date().getTime());
+		//查询当前公司默认的班次类型
+		ClassesType classesType = classesTypeMapper.selectDefaultClassesType(companyId);
+		if(classesType!=null){
+			//更新常规班的生效时间
+			classesType.setValidDate(validDate);
+			classesTypeMapper.updateByPrimaryKey(classesType);
+			int operateResult = commonSchedulingOperate(validDate, empArray, classesType);
+			if(operateResult>0){
+				result = true;
+			}else{
+				result = false;
+			}
+		}
+		return result;
+	}
+	
 	/**
 	 * 添加新的班次类型
 	 */
@@ -77,6 +136,7 @@ public class ClassesServiceImpl implements ClassesService {
 		Object employeeIdList = jsonObject.get("employeeIdList");
 		Object autoClassesFlag = jsonObject.get("autoClassesFlag");
 		Object validDate = jsonObject.get("validDate");
+		
 
 		// 声明要返回的数据
 		boolean result = false;
@@ -85,7 +145,7 @@ public class ClassesServiceImpl implements ClassesService {
 				&& restStartTime != null && restEndTime != null && restDays != null && festivalRestFlag != null
 				&& signInRule != null && signOutRule != null && onPunchCardRule != null && offPunchCardRule != null
 				&& employeeIdList != null && autoClassesFlag != null) {
-			// 先删除，传递上来的班次类型和使用该班次类型的人员班次信息(删除从指定生效日往后的班次)
+						// 先删除，传递上来的班次类型和使用该班次类型的人员班次信息(删除从指定生效日往后的班次)
 						Map<String, String> delParam = new HashMap<>();
 						delParam.put("companyId", companyId.toString());
 						// 判断是否有操作标志
@@ -143,7 +203,7 @@ public class ClassesServiceImpl implements ClassesService {
 							//该班次类型生效的时间
 							classesType.setValidDate(new SimpleDateFormat("yyyy-MM-dd").format(myCalendar.getTime()));
 						}
-						
+						classesType.setIsDefault("0");
 						int addClassesType = classesTypeMapper.insertSelective(classesType);
 						// TODO 添加班次类型成功====》添加人员班次
 						if (addClassesType > 0) {
