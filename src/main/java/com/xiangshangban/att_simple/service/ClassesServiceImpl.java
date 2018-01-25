@@ -499,7 +499,7 @@ public class ClassesServiceImpl implements ClassesService {
 					}
 				}
 				outterMap.put("classesList", innerList);
-				// 添加本周工时到集合中
+				// 添加本周工时到集合中   
 				outterMap.put("thisWeekHours", String.valueOf(theWeekhour));
 				realData.add(outterMap);
 			}
@@ -1123,18 +1123,6 @@ public class ClassesServiceImpl implements ClassesService {
 		}
 		return result;
 	}
-
-	
-	// TODO 排除法定节假日
-	/*for (Festival festival : allFestivalInfo) {
-		if (!classesEmployee.getOnDutySchedulingDate().equals("")) {
-			if (classesEmployee.getOnDutySchedulingDate().split(" ")[0]
-					.equals(festival.getFestivalDate())) {
-				// 设置休息日的班次
-				setRestDaysClasses(classesEmployee);
-			}
-		}
-	}*/
 	
 	/**
 	 * 设置(休息日/节假日)的班次
