@@ -35,21 +35,14 @@
     application_hour, application_time,employee_name,department_name,leave_type_name,approver_name
   </sql>
    
-   <select id="selectLeaveKeyData" parameterType="java.lang.String" resultMap="BaseResultMap">
-   	select leave_type,CASE
-	WHEN (leave_type='1'::VARCHAR) THEN '事假'::VARCHAR
-	WHEN (leave_type='2'::VARCHAR) THEN '年假'::VARCHAR
-	WHEN (leave_type='3'::VARCHAR) THEN '调休假'::VARCHAR
-	END AS leave_type_name
-	,count(leave_type) as leave_count from application_leave_ l
+   <select id="selectLeaveKeyData" parameterType="java.lang.String" resultType="java.lang.Integer">
+   select count(leave_type) from application_leave_ l
 	LEFT JOIN application_total_record_ r
 	ON l.application_no = r.application_no and l.employee_id = r.application_id and l.company_id = r.company_id
 	where l.company_id = #{companyId}
 	and r.is_complete = '1'
 	and l.application_time like #{applicationTime}
-	GROUP BY leave_type
-	ORDER BY leave_type
-	LIMIT 3
+	and leave_type= #{leaveType}
    </select>
    
    <!-- 请假记录记录模糊查询总条数 -->

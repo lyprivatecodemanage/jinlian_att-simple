@@ -751,30 +751,33 @@ public class ReportDailyServiceImpl implements ReportDailyService {
            ReportDaily rd = list.get(i);  
             row = sheet.createRow(i+1);  
             int j = 0;  
-            //"部门","姓名*","日期","签到时间","签退时间","出勤时长","异常情况","加班时间","请假时间", "出差时间","外出时间"
+            //"部门","姓名*","日期","签到时间","签退时间","出勤时长(h)","异常情况","加班时间(h)","请假时间(h)", "出差时间(h)","外出时间(h)"
             row.createCell(j++).setCellValue(rd.getDepartmentName());//部门
             row.createCell(j++).setCellValue(rd.getEmployeeName());//姓名
-            row.createCell(j++).setCellValue(rd.getAttDate());//姓名
+            row.createCell(j++).setCellValue(rd.getAttDate());//日期
             row.createCell(j++).setCellValue(rd.getSignInTime());//签到时间
             row.createCell(j++).setCellValue(rd.getSignOutTime());//签退时间
-            row.createCell(j++).setCellValue(rd.getRealWorkTime());//出勤时长
+            //出勤时长
+            double rwt = Double.parseDouble(rd.getRealWorkTime())/60;
+            rwt = Math.floor(rwt*10)/10;
+            row.createCell(j++).setCellValue(rwt);
             row.createCell(j++).setCellValue(rd.getExceptionMarkName());//异常情况
-            //分钟换算小时
+            //加班时间
             double now = Double.parseDouble(rd.getNormalOverWork())/60;
             now = Math.floor(now*10)/10;
-            row.createCell(j++).setCellValue(now);//加班时间
-            
+            row.createCell(j++).setCellValue(now);
+            //请假时间
             double ld = Double.parseDouble(rd.getLeaveDate())/60;
             ld = Math.floor(ld*10)/10;
-            row.createCell(j++).setCellValue(ld);//请假时间
-            
+            row.createCell(j++).setCellValue(ld);
+            //出差时间
             double etw = Double.parseDouble(rd.getEvectionTimeWork())/60;
             etw = Math.floor(etw*10)/10;
-            row.createCell(j++).setCellValue(etw);//出差时间
-            
+            row.createCell(j++).setCellValue(etw);
+            //外出时间
             double otw = Double.parseDouble(rd.getOutTimeWork())/60;
             otw = Math.floor(otw*10)/10;
-            row.createCell(j++).setCellValue(otw);//外出时间
+            row.createCell(j++).setCellValue(otw);
         }  
         try {  
             workbook.write(out); 

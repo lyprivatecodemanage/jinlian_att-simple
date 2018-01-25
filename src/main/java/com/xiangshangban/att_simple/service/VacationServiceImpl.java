@@ -319,12 +319,10 @@ public class VacationServiceImpl implements VacationService {
 		List<Vacation> list = vacationMapper.selectResetAnnualLeave(companyId, year);
 			
 		for (Vacation vacation : list) {
-			AnnualLeaveAdjustment(vacation.getVacationId(),"1", vacation.getAnnualLeaveBalance(),"年假一键清零", auditorEmployeeId, year);
-		}
+			returndata = resetAnnualLeave(vacation.getVacationId(),"1", vacation.getAnnualLeaveBalance(),"年假一键清零", auditorEmployeeId, year);
 			
-		returndata.setReturnCode("3000");
-		returndata.setMessage("数据请求成功");
-	    return returndata;
+		}
+		return returndata;
 	}
 
 	/**
@@ -409,4 +407,101 @@ public class VacationServiceImpl implements VacationService {
 		return returndata;
 	}
 
+	public ReturnData resetAnnualLeave(String vacationId, String vacationMold, String annualLeave,
+			String adjustingInstruction,String auditorEmployeeId,String year) {
+		// TODO Auto-generated method stub
+		ReturnData returndata = new ReturnData();
+		double limitChange = 0;
+		String changingReason;
+		if (StringUtils.isEmpty(vacationId) || StringUtils.isEmpty(vacationMold) || StringUtils.isEmpty(annualLeave) || StringUtils.isEmpty(year)){
+			returndata.setReturnCode("3006");
+			returndata.setMessage("参数为空");
+            return returndata;
+		}
+		
+		//判断调整增减
+		if(vacationMold.equals("0")){
+			limitChange = Double.parseDouble(annualLeave);
+		}
+		if(vacationMold.equals("1")){
+			limitChange = Double.parseDouble("-"+annualLeave);
+		}
+		
+		//查询年假假期详情最后一次修改的值
+		VacationDetails vacationDetails = vacationDetailsMapper.SelectVacationIdByEndResult(vacationId,"0",year);
+		
+		//若员工没有任何假期操作
+		if(vacationDetails == null){
+			//新增微调为第一个假期操作
+			VacationDetails vd = new VacationDetails();
+			vd.setVacationDetailsId(FormatUtil.createUuid());
+			vd.setVacationId(vacationId);
+			vd.setVacationType("0");
+			vd.setVacationMold(vacationMold);
+			vd.setLimitChange(annualLeave);
+			vd.setVacationTotal(String.valueOf(limitChange));
+			vd.setVacationBalance(String.valueOf(limitChange));
+			
+			if("0".equals(auditorEmployeeId)){
+				changingReason = vd.Tweaks;
+			}else{
+				changingReason = vd.manualAdjustment;
+			}
+			
+			vd.setChangingReason(changingReason);
+			vd.setAdjustingInstruction(adjustingInstruction);
+			vd.setAuditorEmployeeId(auditorEmployeeId);
+			vd.setChangeingDate(sdf.format(new Date()));
+			vd.setYear(year);
+			
+			int num = vacationMapper.UpdateAnnualLeave(vacationId, String.valueOf(limitChange), String.valueOf(limitChange),year);
+			
+			if(num > 0){
+				vacationDetailsMapper.insertSelective(vd);
+				
+				returndata.setReturnCode("3000");
+				returndata.setMessage("数据请求成功");
+		        return returndata;
+			}
+		}else{
+			//使用查询出来最后一条结果的总额和余额  加上调整的值
+			double o = Double.parseDouble(vacationDetails.getVacationBalance())+limitChange;
+			
+			VacationDetails vd = new VacationDetails();
+			vd.setVacationDetailsId(FormatUtil.createUuid());
+			vd.setVacationId(vacationId);
+			vd.setVacationType("0");
+			vd.setVacationMold(vacationMold);
+			vd.setLimitChange(annualLeave);
+			vd.setVacationTotal(vacationDetails.getVacationTotal());
+			vd.setVacationBalance(String.valueOf(o));
+			
+			if("0".equals(auditorEmployeeId)){
+				changingReason = vd.Tweaks;
+			}else{
+				changingReason = vd.manualAdjustment;
+			}
+			
+			vd.setChangingReason(changingReason);
+			vd.setAdjustingInstruction(adjustingInstruction);
+			vd.setAuditorEmployeeId(auditorEmployeeId);
+			vd.setChangeingDate(sdf.format(new Date()));
+			vd.setYear(year);
+			
+			int num = vacationMapper.UpdateAnnualLeave(vacationId,vacationDetails.getVacationTotal(),String.valueOf(o),year);
+			
+			if(num > 0){
+				vacationDetailsMapper.insertSelective(vd);
+				
+				returndata.setReturnCode("3000");
+				returndata.setMessage("数据请求成功");
+		        return returndata;
+			}
+		}
+		
+		returndata.setReturnCode("3001");
+		returndata.setMessage("服务器错误");
+        return returndata;
+	}
+	
 }

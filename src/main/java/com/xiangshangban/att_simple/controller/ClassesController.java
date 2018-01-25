@@ -133,6 +133,7 @@ public class ClassesController {
 		  ],
 	 	 "autoClassesFlag":"1",
 	 	 "validDate":"2018-01-30"
+	 	 "isDefault":"0"
 	 }
 	 * @param request
 	 * @return
@@ -327,15 +328,15 @@ public class ClassesController {
 	/**
 	 * 根据条件查询当前公司人员的班次排列，以及人数最多的三个班次（班次类型有几个显示几个）的人数
 	 * @param requestParam
-	 * 	{
-			"classesTypeId":"XASXLASKMX"（班次编号）
-			"deptId":"dasdasdas”（人员部门编号）
-			"empName":"小青"（人员名称）
-			"perviousWeek":"0/1"（是否查看上周的数据0：没有该搜索条件 1：有该搜索条件）
-			"thisWeek":"0/1"(是否查看本周班次 0：不查看 1：查看)------->默认显示本周的
-			"nextWeek":"0/1"(是否查看下一周的班次 0：不查看 1：查看)
-			"page":"1"(当前页码)
-			"rows":"5"（每一页要显示的行数）
+	 * {
+			"classesTypeId":"",
+			"deptId":"",
+			"empName":"",
+			"perviousWeek":"0",
+			"thisWeek":"1",
+			"nextWeek":"0",
+			"page":"1",
+			"rows":"5"
 		}
 	 * @param request
 	 * @return

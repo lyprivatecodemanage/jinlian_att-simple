@@ -43,7 +43,7 @@ public interface ClassesTypeMapper {
 	List<String> selectALLCompany();
 	
 	/**
-	 * 删除指定的班次类型
+	 * 删除指定的班次类型(更新班次类别信息的时候使用)
 	 * @param map
 	 * @return
 	 */
@@ -67,4 +67,12 @@ public interface ClassesTypeMapper {
 	 * @return
 	 */
 	ClassesType selectByPrimaryKey(@Param("id") String id);
+	
+	/**
+	 * 更新班次类别名称
+	 * @param classesTypeId
+	 * @param classesName
+	 * @return
+	 */
+	int updateClassesTypeName(@Param("classesTypeId")String classesTypeId,@Param("classesName")String classesName);
 }

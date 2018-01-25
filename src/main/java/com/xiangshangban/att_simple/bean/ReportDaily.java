@@ -52,8 +52,17 @@ public class ReportDaily extends ReportDailyKey {
     private String exceptionMarkName;//异常名称
     private String employeeName;//人员名称
     private String leaveDate;//请假时间
+    private String matterLeave;//事假时间（除年假调休假以外所有假）
     
-    public String getDepartmentName() {
+    public String getMatterLeave() {
+		return matterLeave;
+	}
+
+	public void setMatterLeave(String matterLeave) {
+		this.matterLeave = matterLeave;
+	}
+
+	public String getDepartmentName() {
 		return departmentName;
 	}
 
