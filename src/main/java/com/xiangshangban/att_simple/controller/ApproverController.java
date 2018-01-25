@@ -91,8 +91,8 @@ public class ApproverController {
 							approver.setStatusDescription("已转移");
 						}
 					}
-					if("1".equals(approver.getIsCopy())&&!StringUtils.isEmpty(approver.getCopyPersonId())
-							&&employeeId.equals(approver.getCopyPersonId())){
+					if("1".equals(approver.getIsCopy())&&!StringUtils.isEmpty(approver.getAppCopyPersonId())
+							&&employeeId.equals(approver.getAppCopyPersonId())){
 						approver.setStatusDescription("抄送");
 					}
 				}
@@ -350,12 +350,12 @@ public class ApproverController {
 				endTime = endTime+" 23:59:59";
 			}
 			page = String.valueOf((Integer.valueOf(page)-1)*Integer.valueOf(count));
-			approverService.webApproverCentreList(companyId,
+			List<ApplicationTotalRecord> webApproverCentreList = approverService.webApproverCentreList(companyId,
 					page, count, departmentId, applicationType,
 					isComplete, employeeName, startTime, endTime);
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
-//			returnData.setData(approverDetails);
+			returnData.setData(webApproverCentreList);
 			return returnData;
 		}catch(Exception e){
 			logger.info(e);

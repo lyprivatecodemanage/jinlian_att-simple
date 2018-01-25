@@ -537,7 +537,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 			reportExcept.setEmployeeId(employeeId);
 			reportExcept.setCompanyId(companyId);
 			reportExcept.setExceptDate(countDate);
-			reportExcept.setExceptType("6");
+			reportExcept.setExceptType("5");
 			result.getReportExcept().add(reportExcept);
 		}else{
 			String lateLine = TimeUtil.getLongAfter(
@@ -727,16 +727,8 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 
 	@Override
 	public void postProcess(AlgorithmParam algorithmParam, AlgorithmResult algorithmResult) {
-		this.proReport(algorithmResult);
-		//删除已生成的异常
-		reportExceptMapper.deleteExceptByDate(algorithmParam.getCompanyId(), 
-				algorithmParam.getEmployeeId(), algorithmResult.getReportDaily().getAttDate());
-		
-		//异常处理
-		for(ReportExcept reportExcept:algorithmResult.getReportExcept()){
-			reportExcept.setExceptId(FormatUtil.createUuid());
-			reportExceptMapper.insertSelective(reportExcept);
-		}
+		this.proReportData(algorithmResult);
+		this.proException(algorithmParam, algorithmResult);
 		//加班转调休生成处理，将对应日期生成的调休时长改动
 		String vacationId = algorithmMapper.getVacationId(algorithmParam.getCompanyId(), 
 				algorithmParam.getEmployeeId(), algorithmResult.getReportDaily().getAttDate());
@@ -765,10 +757,64 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 				"日报计算生成调休", "0", algorithmResult.getReportDaily().getAttDate().split("-")[0]);
 	}
 	/**
+	 * 考勤异常数据处理
+	 * @param algorithmParam
+	 * @param algorithmResult
+	 */
+	private void proException(AlgorithmParam algorithmParam, AlgorithmResult algorithmResult) {
+		//删除已生成的异常
+		reportExceptMapper.deleteExceptByDate(algorithmParam.getCompanyId(), 
+				algorithmParam.getEmployeeId(), algorithmResult.getReportDaily().getAttDate());
+		
+		//异常处理
+		if(algorithmResult.getReportExcept().size()>0){
+			String exceptionMark = "";
+			for(ReportExcept reportExcept:algorithmResult.getReportExcept()){
+				reportExcept.setExceptId(FormatUtil.createUuid());
+				reportExceptMapper.insertSelective(reportExcept);
+				
+				exceptionMark=exceptionMark+reportExcept.getExceptType()+",";
+			}
+			
+			algorithmResult.getReportDaily().setHasException("1");
+			//异常类型： 1迟到  ;2早退；3未签到; 4未签退 ； 5	旷工; 6 无效； 7	过早打卡; 8过晚打卡；9重复打卡;10无排班打卡；11其它
+			//报表中异常类型(1.迟到 2.早退 3.未到 4.未退 5.迟到且早退 6.迟到且未退 7.未到且早退 8.未到且未退(旷工))
+			switch (exceptionMark) {
+			case "1,":
+				exceptionMark="1";
+				break;
+			case "2,":
+				exceptionMark="2";	
+				break;
+			case "3,":
+				exceptionMark="3";
+				break;
+			case "4,":
+				exceptionMark="4";
+				break;
+			case "1,2,":
+				exceptionMark="5";
+				break;
+			case "1,3,":
+				exceptionMark="6";	
+				break;
+			case "2,4,":
+				exceptionMark="7";
+				break;
+			case "5,":
+				exceptionMark="8";	
+				break;
+			default:
+				break;
+			}
+			algorithmResult.getReportDaily().setExceptionMark(exceptionMark);
+		}
+	}
+	/**
 	 * 处理前文计算的日报数据：秒-》分钟
 	 * @param algorithmResult
 	 */
-	public void proReport(AlgorithmResult algorithmResult) {
+	public void proReportData(AlgorithmResult algorithmResult) {
 		//应出时长
 		algorithmResult.getReportDaily().setWorkTime(
 				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getWorkTime()));

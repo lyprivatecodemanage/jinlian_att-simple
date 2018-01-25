@@ -11,7 +11,7 @@
     <result column="last_approver_name"  property="lastApproverName" />
     <result column="is_copy"  property="isCopy" />
     <result column="application_id"  property="applicationId" />
-    <result column="employee_name"  property="applicationName" />
+    <result column="application_name"  property="applicationName" />
     <result column="department_id"  property="deparmentId" />
     <result column="department_name"  property="departmentName" />
     <result column="company_id"  property="companyId" />
@@ -21,7 +21,7 @@
     <result column="is_transfer"  property="isTransfer" />
     <result column="is_complete"  property="isComplete" />
     <result column="is_skip_rest_day"  property="isSkipRestDay" />
-    <result column="copy_person_id"  property="copyPersonId" />
+    <result column="copy_person_id"  property="appCopyPersonId" />
     <result column="transfer_person_id"  property="transferPersonId" />
   </resultMap>
   <sql id="Base_Column_List">
@@ -156,7 +156,7 @@
     <result column="is_transfer"  property="isTransfer" />
     <result column="is_complete"  property="isComplete" />
     <result column="is_skip_rest_day"  property="isSkipRestDay" />
-    <result column="copy_person_id"  property="copyPersonId" />
+    <result column="copy_person_id"  property="appCopyPersonId" />
     <result column="transfer_person_id"  property="transferPersonId" />
     <collection property="applicationTransferRecordList" 
     ofType="com.xiangshangban.att_simple.bean.ApplicationTransferRecord" >
@@ -174,8 +174,8 @@
     ofType="com.xiangshangban.att_simple.bean.ApplicationToCopyPerson">
     	<result column="cp_id" property="id"/>
     	<result column="cp_application_no" property="applicationNo"/>
-    	<result column="cp_copy_person_id" property="copyPersonId"/>
-    	<result column="cp_employee_name" property="copyPersonName"/>
+    	<result column="cp_copy_person_id" property="appCopyPersonId"/>
+    	<result column="cp_employee_name" property="appCopyPersonName"/>
     	<result column="cp_operater_time" property="operaterTime"/>
     	<result column="cp_company_id" property="companyId"/>
     </collection>
@@ -233,12 +233,18 @@
   <!-- 审批中心列表查询 -->
   <select id="selectWebApproverList" parameterType="java.lang.String" resultMap="BaseResultMap">
   	select case atr.application_type when '1' then '请假'  
-	when '2' then '加班'   when '3' then '出差'   when '4' then '外出'   when '5' then '补卡'   end as application_type,
+	when '2' then '加班'   when '3' then '出差'   when '4' then '外出'   when '5' then '补卡'  end as application_type,
 	case atr.is_complete when '0' then '未完成' when '1' then '已完成' end as is_complete,
-	e.employee_name last_approver_name,
-	t.employee_name employee_name,
-	t.department_name department_name,
-	t.application_time application_time  
+	e.employee_name as last_approver_name,
+	 case atr.application_type when '1' then a.employee_name  
+	when '2' then b.employee_name when '3' then c.employee_name  
+	when '4' then d.employee_name   when '5' then d.employee_name end as application_name,
+	 case atr.application_type when '1' then a.department_name  
+	when '2' then b.department_name when '3' then c.department_name  
+	when '4' then d.department_name   when '5' then f.department_name end as department_name,
+	 case atr.application_type when '1' then a.application_time  
+	when '2' then b.application_time when '3' then c.application_time  
+	when '4' then d.application_time when '5' then f.application_time end as application_time
 	from att_simple.application_total_record_ atr 
 	left join 
 	(
@@ -246,11 +252,42 @@
 	left join organization.employee_ e on e.employee_id = l.employee_id and e.company_id = #{companyId}
 	left join organization.department_ d on e.department_id = d.department_id
 	left join organization.company_ c on c.company_id = e.company_id 
-	) t on t.application_no = atr.application_no
+	) a on a.application_no = atr.application_no
+	left join 
+	(
+	select l.*,e.employee_name,d.department_name,c.company_name from att_simple.application_overtime_ l 
+	left join organization.employee_ e on e.employee_id = l.employee_id and e.company_id = #{companyId}
+	left join organization.department_ d on e.department_id = d.department_id
+	left join organization.company_ c on c.company_id = e.company_id 
+	) b on b.application_no = atr.application_no
+	left join 
+	(
+	select l.*,e.employee_name,d.department_name,c.company_name from att_simple.application_overtime_ l 
+	left join organization.employee_ e on e.employee_id = l.employee_id and e.company_id = #{companyId}
+	left join organization.department_ d on e.department_id = d.department_id
+	left join organization.company_ c on c.company_id = e.company_id 
+	) c on c.application_no = atr.application_no
+	left join 
+	(
+	select l.*,e.employee_name,d.department_name,c.company_name from att_simple.application_overtime_ l 
+	left join organization.employee_ e on e.employee_id = l.employee_id and e.company_id = #{companyId}
+	left join organization.department_ d on e.department_id = d.department_id
+	left join organization.company_ c on c.company_id = e.company_id 
+	) d on d.application_no = atr.application_no
+	left join 
+	(
+	select l.*,e.employee_name,d.department_name,c.company_name from att_simple.application_overtime_ l 
+	left join organization.employee_ e on e.employee_id = l.employee_id and e.company_id = #{companyId}
+	left join organization.department_ d on e.department_id = d.department_id
+	left join organization.company_ c on c.company_id = e.company_id 
+	) f on f.application_no = atr.application_no
+	
 	left join organization.employee_ e on atr.last_approver = e.employee_id and e.company_id = atr.company_id
-	where atr.company_id = #{companyId}
+	where atr.company_id = #{companyId} 
 	<if test="departmentId!=null and departmentId!=''">
-	and t.department_id = #{departmentId} 
+	and case atr.application_type when '1' then a.department_name  
+	when '2' then b.department_name when '3' then c.department_name  
+	when '4' then d.department_name   when '5' then f.department_name end = #{departmentId} 
 	</if>
 	<if test="applicationType!=null and applicationType!=''">
 	and atr.application_type = #{applicationType}
@@ -259,12 +296,18 @@
 	and atr.is_complete = #{isComplete}
 	</if>
 	<if test="employeeName!=null and employeeName!=''">
-	and t.employee_name like #{empoyeeName}
+	and case atr.application_type when '1' then a.employee_name  
+	when '2' then b.employee_name when '3' then c.employee_name  
+	when '4' then d.employee_name   when '5' then d.employee_name end like #{employeeName}
 	</if>
 	<if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
-	and t.application_time between #{startTime} and #{endTime}
+	and case atr.application_type when '1' then a.application_time  
+	when '2' then b.application_time when '3' then c.application_time  
+	when '4' then d.application_time when '5' then f.application_time end between #{startTime} and #{endTime}
 	</if>
-	order by t.application_time desc
+	order by case atr.application_type when '1' then a.application_time  
+	when '2' then b.application_time when '3' then c.application_time  
+	when '4' then d.application_time when '5' then f.application_time end desc
 	limit #{count}::integer offset #{page}::integer
   </select>
   <!-- web审批中-申请单查看详情 -->
