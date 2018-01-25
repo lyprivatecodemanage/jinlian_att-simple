@@ -16,8 +16,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.arjuna.ats.internal.jdbc.drivers.modifiers.list;
 import com.xiangshangban.att_simple.AttSimple;
@@ -49,6 +51,62 @@ public class ClassesController {
 	 **************/
 	@Value("${sendUrl}")
 	private String sendUrl;
+	
+	/**
+	 * 添加公司默认常规班
+	 * @param companyId
+	 * @return
+	 */
+	@PostMapping("/addDefaultClassesType")
+	public String addDefaultClassesType(@RequestParam String companyId){
+		//初始化返回结果
+		String result = "";
+		if(companyId!=null && !companyId.trim().isEmpty()){
+			boolean addCompanyDefaultClasses = classesService.addCompanyDefaultClasses(companyId);
+			if(addCompanyDefaultClasses){
+				result = "添加成功";
+			}else{
+				result = "添加失败";
+			}
+		}else{
+			result = "参数【公司ID】异常";
+		}
+		return result;
+	}
+	
+	/**
+	 * 人员入职的时候给这些人员排“公司默认常规班次”
+	 * @param requestParam
+	 * {
+	 * 	  "companyId":"CAJKCLA",
+	 * 	  "empIdList":[ 
+			 {"empId":"XFGCDSDSFSDFSDF13213"},
+			 {"empId":"XFGCDSDSFSDFSDF46557"}
+		  ]
+	 * }
+	 * @return
+	 */
+	@PostMapping("/addDefaultEmpClasses")
+	public String addDefaultEmpClasses(@RequestBody String requestParam){
+		//解析请求数据
+		JSONObject parseObject = JSONObject.parseObject(requestParam);
+		Object companyId = parseObject.get("companyId");
+		Object empIdList = parseObject.get("empIdList");
+		JSONArray parseArray = JSONArray.parseArray(JSONArray.toJSONString(empIdList));
+		//初始化返回结果
+		String result = "";
+		if((companyId!=null && !companyId.toString().trim().isEmpty()) && (parseArray!=null && parseArray.size()>0)){
+			boolean addDefaultEmpClasses = classesService.addDefaultEmpClasses(companyId.toString().trim(),parseArray);
+			if(addDefaultEmpClasses){
+				result = "排班成功";
+			}else{
+				result = "排班失败";
+			}
+		}else{
+			result = "参数异常";
+		}
+		return result;
+	}
 	
 	/**
 	 * 新增/修改班次类型
