@@ -53,7 +53,7 @@ public class ApplicationTotalRecord {
     
     private String statusDescription;//审批中,已完成,已驳回
     
-    private String copyPersonId;
+    private String appCopyPersonId;
     
     private String transferPersonId;
     
@@ -189,12 +189,12 @@ public class ApplicationTotalRecord {
 		this.applicationName = applicationName;
 	}
 
-	public String getCopyPersonId() {
-		return copyPersonId;
+	public String getAppCopyPersonId() {
+		return appCopyPersonId;
 	}
 
-	public void setCopyPersonId(String copyPersonId) {
-		this.copyPersonId = copyPersonId;
+	public void setAppCopyPersonId(String appCopyPersonId) {
+		this.appCopyPersonId = appCopyPersonId;
 	}
 
 	public String getTransferPersonId() {

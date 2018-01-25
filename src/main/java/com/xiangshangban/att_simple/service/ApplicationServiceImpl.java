@@ -433,8 +433,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 		if("1".equals(applicationRecordStatus.getIsCopy())){//抄送
 			List<ApplicationToCopyPerson> copyPersonList = applicationToCopyPersonMapper.selectCopyPersonByApplicationNo(applicationNo);
 			for(int i=0;i<copyPersonList.size();i++){
-				Employee emp=employeeDao.selectNameByEmployeeIdAndDepartmentIdAndCompanyId(copyPersonList.get(i).getCopyPersonId(), null, companyId);
-				copyPersonList.get(i).setCopyPersonName(emp.getEmployeeName());
+				Employee emp=employeeDao.selectNameByEmployeeIdAndDepartmentIdAndCompanyId(copyPersonList.get(i).getAppCopyPersonId(), null, companyId);
+				copyPersonList.get(i).setAppCopyPersonName(emp.getEmployeeName());
 			}
 			application.setCopyPersonList(copyPersonList);
 		}
