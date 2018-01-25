@@ -49,3 +49,4 @@ public class Scheduler {
 		logger.info("日报计算完成时间"+TimeUtil.getCurrentTime()); 
 	}
 }
+

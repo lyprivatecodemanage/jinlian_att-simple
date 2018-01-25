@@ -122,6 +122,21 @@ public class TimeUtil {
         return sdf.format(calendar.getTime());
     }
 	/**
+	 * ture:取当月最大日期;false:取当月第一天日期
+	 * @param flag
+	 * @return
+	 */
+	public static String getCurrentMonthFirstDateOrMaxDate(boolean flag){
+		int i = 1;
+		if(flag){
+			i = getCurrentMaxDate();
+		}
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, i);
+        return sdf.format(calendar.getTime());
+	}
+	/**
 	 * 获取下月1日日期
 	 * @return
 	 */

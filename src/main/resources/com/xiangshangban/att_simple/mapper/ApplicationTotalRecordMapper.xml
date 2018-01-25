@@ -4,12 +4,16 @@
   <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.ApplicationTotalRecord">
     <id column="application_no"  property="applicationNo" />
     <result column="operater_time"  property="operaterTime" />
+    <result column="application_time"  property="applicationTime" />
     <result column="operater_id"  property="operaterId" />
     <result column="application_type"  property="applicationType" />
     <result column="last_approver"  property="lastApprover" />
+    <result column="last_approver_name"  property="lastApproverName" />
     <result column="is_copy"  property="isCopy" />
     <result column="application_id"  property="applicationId" />
     <result column="employee_name"  property="applicationName" />
+    <result column="department_id"  property="deparmentId" />
+    <result column="department_name"  property="departmentName" />
     <result column="company_id"  property="companyId" />
     <result column="is_reject"  property="isReject" />
     <result column="application_status"  property="applicationStatus" />
@@ -63,8 +67,8 @@
   </insert>
 	<!-- 申请列表 -->  
 	<select id="selectApplicationList" parameterType="java.lang.String" resultMap="BaseResultMap">
-  	select application_no,application_type,is_reject,is_transfer,is_complete from att_simple.application_total_record_ atr
-  	where atr.application_id =#{applicationId} and atr.company_id =#{companyId} order by atr.operater_time DESC
+  	select <include refid="Base_Column_List"/> from att_simple.application_total_record_ atr
+  	where atr.application_id =#{employeeId} and atr.company_id =#{companyId} order by atr.operater_time DESC
   	limit #{count}::integer offset #{page}::integer
   </select>
   <!-- 审批列表 -->
@@ -215,7 +219,58 @@
   	where atr.application_no = #{applicationNo}
   </select>
   
-  
+  <!-- web审批中心 -->
+  <!-- 未完成工单数 -->
+  <select id="selectCountWillApprover" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select count(atr.application_no) from application_total_record_ atr
+    where atr.company_id = #{companyId} and atr.is_complete = '0'
+  </select>
+  <!-- 本月已完成工单数 -->
+  <select id="selectCountCompletedApprover" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select count(atr.application_no) from application_total_record_ atr
+    where atr.company_id = #{companyId} and atr.is_complete = '1' and atr.operater_time between #{startTime} and #{endTime}
+  </select>
+  <!-- 审批中心列表查询 -->
+  <select id="selectWebApproverList" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select case atr.application_type when '1' then '请假'  
+	when '2' then '加班'   when '3' then '出差'   when '4' then '外出'   when '5' then '补卡'   end as application_type,
+	case atr.is_complete when '0' then '未完成' when '1' then '已完成' end as is_complete,
+	e.employee_name last_approver_name,
+	t.employee_name employee_name,
+	t.department_name department_name,
+	t.application_time application_time  
+	from att_simple.application_total_record_ atr 
+	left join 
+	(
+	select l.*,e.employee_name,d.department_name,c.company_name from att_simple.application_leave_ l 
+	left join organization.employee_ e on e.employee_id = l.employee_id and e.company_id = #{companyId}
+	left join organization.department_ d on e.department_id = d.department_id
+	left join organization.company_ c on c.company_id = e.company_id 
+	) t on t.application_no = atr.application_no
+	left join organization.employee_ e on atr.last_approver = e.employee_id and e.company_id = atr.company_id
+	where atr.company_id = #{companyId}
+	<if test="departmentId!=null and departmentId!=''">
+	and t.department_id = #{departmentId} 
+	</if>
+	<if test="applicationType!=null and applicationType!=''">
+	and atr.application_type = #{applicationType}
+	</if>
+	<if test="isComplete!=null and isComplete!=''">
+	and atr.is_complete = #{isComplete}
+	</if>
+	<if test="employeeName!=null and employeeName!=''">
+	and t.employee_name like #{empoyeeName}
+	</if>
+	<if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
+	and t.application_time between #{startTime} and #{endTime}
+	</if>
+	order by t.application_time desc
+	limit #{count}::integer offset #{page}::integer
+  </select>
+  <!-- web审批中-申请单查看详情 -->
+<!--   <select id="">
+  	select 
+  </select> -->
   
   <!-- 系统 -->
   <!-- 根据单号查询申请状态 -->

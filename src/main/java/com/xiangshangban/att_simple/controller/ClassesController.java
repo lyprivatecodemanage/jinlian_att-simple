@@ -44,9 +44,9 @@ public class ClassesController {
 	
 	public static Logger logger = Logger.getLogger(ClassesController.class);
 	
-	/**
+	/***************
 	 * 操作日志访问路径
-	 */
+	 **************/
 	@Value("${sendUrl}")
 	private String sendUrl;
 	
@@ -84,7 +84,16 @@ public class ClassesController {
 		String companyId = request.getHeader("companyId");
 		String accessUserId = request.getHeader("accessUserId");
 		if((companyId!=null && !companyId.isEmpty()) && (accessUserId!=null && !accessUserId.isEmpty())){
-			boolean addNewClassesType = classesService.addNewClassesType(requestParam, companyId.trim());
+			
+			//查询当前公司已经存在的班次类别ID和Name
+			List<ClassesType> queryAllClassesIdAndName = classesService.queryAllClassesIdAndName(companyId);
+			boolean addNewClassesType = false;
+			if(queryAllClassesIdAndName!=null && queryAllClassesIdAndName.size()>5){
+				returnData.setReturnCode("3001");
+				returnData.setMessage("班次类别最多存在5个,当前不能进行新增操作");
+			}else{
+				addNewClassesType = classesService.addNewClassesType(requestParam, companyId.trim());
+			}
 			if(addNewClassesType){
 				returnData.setReturnCode("3000");
 				returnData.setMessage("添加成功");
@@ -300,7 +309,7 @@ public class ClassesController {
 	 * @param request
 	 * @param response
 	 */
-	@PostMapping("/exportScheduling")
+	@PostMapping(value="export/scheduling",produces="application/json;charset=UTF-8")
 	public void exportScheduling(@RequestBody String requestParam, HttpServletRequest request, HttpServletResponse response){
 		try {
             response.setContentType("application/octet-stream ");

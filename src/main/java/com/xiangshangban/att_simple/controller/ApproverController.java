@@ -1,6 +1,7 @@
 package com.xiangshangban.att_simple.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -257,7 +258,111 @@ public class ApproverController {
 			return returnData;
 		}
 	}
-	
-	
-	
+	/**
+	 * ****************web审批中心
+	 */
+	/**
+	 * 未完成工单数和本月已完成工单数
+	 * @param jsonString
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/webApproverCentreHeader",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+	public ReturnData webApproverCentreHeader(@RequestBody String jsonString,HttpServletRequest request){
+		ReturnData returnData = new ReturnData();
+		String employeeId = "";//管理员id
+		String companyId = "";//公司id
+		try{
+			employeeId = request.getHeader("accessUserId");//员工id
+			companyId = request.getHeader("companyId");//公司id
+			if(StringUtils.isEmpty(companyId)||StringUtils.isEmpty(employeeId)){
+				returnData.setMessage("请求信息错误");
+				returnData.setReturnCode("3012");
+				return returnData;
+			}
+			Map<String ,String > result = approverService.webApproverCentreHeader(companyId, employeeId);
+			returnData.setData(result);
+			returnData.setMessage("成功");
+			returnData.setReturnCode("3000");
+			return returnData;
+		}catch(Exception e){
+			logger.info(e);
+			e.printStackTrace();
+			returnData.setMessage("服务器错误");
+			returnData.setReturnCode("3001");
+			return returnData;
+		}
+	}
+	/**
+	 * 
+	 * @param jsonString
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/webApproverCentreList",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+	public ReturnData webApproverCentreList(@RequestBody String jsonString,HttpServletRequest request){
+		ReturnData returnData = new ReturnData();
+		String employeeId = "";
+		String companyId = "";
+		String page = "";
+		String count ="";
+		String departmentId = "";
+		String applicationType = "";
+		String isComplete = "";
+		String employeeName = "";
+		String startTime = "";
+		String endTime = "";
+		try{
+			employeeId = request.getHeader("accessUserId");//员工id
+			companyId = request.getHeader("companyId");//公司id
+			if(StringUtils.isEmpty(companyId)||StringUtils.isEmpty(employeeId)){
+				returnData.setMessage("请求信息错误");
+				returnData.setReturnCode("3012");
+				return returnData;
+			}
+			try{
+				JSONObject jobj = JSON.parseObject(jsonString);
+				page = jobj.getString("page");
+				count = jobj.getString("count");
+				departmentId = jobj.getString("departmentId");
+				applicationType = jobj.getString("applicationType");
+				isComplete = jobj.getString("isComplete");
+				employeeName = jobj.getString("employeeName");
+				startTime = jobj.getString("startTime");
+				endTime = jobj.getString("endTime");
+				if(StringUtils.isEmpty(page)||StringUtils.isEmpty(count)){
+					returnData.setMessage("必传参数为空");
+					returnData.setReturnCode("3006");
+					return returnData;
+				}
+			}catch(Exception e){
+				logger.info(e);
+				e.printStackTrace();
+				returnData.setMessage("参数错误");
+				returnData.setReturnCode("3006");
+				return returnData;
+			}
+			if(!StringUtils.isEmpty(employeeName)){
+				employeeName = "%"+employeeName+"%";
+			}
+			if(!StringUtils.isEmpty(startTime)&&!StringUtils.isEmpty(endTime)){
+				startTime = startTime+" 00:00:00";
+				endTime = endTime+" 23:59:59";
+			}
+			page = String.valueOf((Integer.valueOf(page)-1)*Integer.valueOf(count));
+			approverService.webApproverCentreList(companyId,
+					page, count, departmentId, applicationType,
+					isComplete, employeeName, startTime, endTime);
+			returnData.setMessage("成功");
+			returnData.setReturnCode("3000");
+//			returnData.setData(approverDetails);
+			return returnData;
+		}catch(Exception e){
+			logger.info(e);
+			e.printStackTrace();
+			returnData.setMessage("服务器错误");
+			returnData.setReturnCode("3001");
+			return returnData;
+		}
+	}
 }

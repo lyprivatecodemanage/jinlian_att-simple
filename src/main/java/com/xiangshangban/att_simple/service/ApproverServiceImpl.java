@@ -3,7 +3,9 @@ package com.xiangshangban.att_simple.service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -200,5 +202,38 @@ public class ApproverServiceImpl implements ApproverService {
 		return null;
 	}
 	
-
+	
+	/**
+	 * *********************web审批中心
+	 */
+	
+	/**
+	 * web审批中心-未完成工单数和本月已完成工单数
+	 */
+	@Override
+	public Map<String,String> webApproverCentreHeader(String companyId, String employeeId) {
+		Map<String,String> result = new HashMap<String,String>();
+		String startTime = TimeUtil.getCurrentMonthFirstDateOrMaxDate(false);
+		String endTime = TimeUtil.getCurrentMonthFirstDateOrMaxDate(true);
+		int willComleteNum = applicationTotalRecordMapper.selectCountWillApprover(companyId);
+		int completedNum = applicationTotalRecordMapper.selectCountCompletedApprover(companyId, startTime, endTime);
+		result.put("willComleteNum", String.valueOf(willComleteNum));
+		result.put("completedNum", String.valueOf(completedNum));
+		return result;
+	}
+	
+	/**
+	 * web审批中心-列表分页,条件搜索
+	 */
+	@Override
+	public ReturnData webApproverCentreList(String companyId,String page,String count,
+			String departmentId,String applicationType,String isComplete,
+			String employeeName,String startTime,String endTime) {
+		ReturnData returnData = new ReturnData();
+		applicationTotalRecordMapper.selectWebApproverList(companyId, 
+				page, count, departmentId, applicationType, isComplete, employeeName, startTime, endTime);
+		return null;
+	}
+	
+	
 }
