@@ -30,6 +30,13 @@ public interface ClassesTypeMapper {
 	int insertSelective(ClassesType record);
 	
 	/**
+	 * 查询当前公司默认的班次类别
+	 * @param companyId
+	 * @return
+	 */
+	ClassesType selectDefaultClassesType(@Param("companyId") String companyId);
+	
+	/**
 	 * 删除指定的班次类型
 	 * @param map
 	 * @return

@@ -32,6 +32,8 @@ public class ClassesType {
     private String companyId;//公司ID
     
     private String validDate;//班次类型生效的时间
+    
+    private String isDefault;//标志位（0：不是公司默认的班次 1：是公司默认的班次）
 
     public String getId() {
         return id;
@@ -160,6 +162,12 @@ public class ClassesType {
 	public void setValidDate(String validDate) {
 		this.validDate = validDate;
 	}
-    
-    
+
+	public String getIsDefault() {
+		return isDefault;
+	}
+
+	public void setIsDefault(String isDefault) {
+		this.isDefault = isDefault;
+	}
 }
