@@ -18,7 +18,7 @@ public class Scheduler {
 	//每天凌晨2点执行
 	private static final String SCHEDULED_TIME = "0 0 2 * * ?";
 	//每天凌晨0点执行
-	private static final String REPORT_TIME = "0 5 11 * * ?";//日报计算时间
+	private static final String REPORT_TIME = "0 36 17 * * ?";//日报计算时间
 	
 	private final Logger logger = Logger.getLogger(Scheduler.class);
 	
