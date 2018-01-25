@@ -123,4 +123,14 @@ public interface ClassesEmployeeMapper {
 	 * @return
 	 */
 	List<Map> selectAllEmpClassesType(@Param("classesEmpId")String currentDate);
+	
+	/**
+	 * 查询该公司人员该日排班信息
+	 * @param companyId
+	 * @param employeeId
+	 * @param theDate
+	 * @return
+	 */
+	ClassesEmployee replenishCheckingDate(@Param("companyId")String companyId,@Param("employeeId")String employeeId,@Param("theDate")String theDate);
+	
 }

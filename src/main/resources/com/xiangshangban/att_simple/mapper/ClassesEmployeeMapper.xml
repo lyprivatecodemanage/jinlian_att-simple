@@ -43,6 +43,15 @@
       #{week,jdbcType=VARCHAR})
   </insert>
   
+  <select id="replenishCheckingDate" resultMap="BaseResultMap">
+  	select
+  	<include refid="Base_Column_List" />
+  	from classes_employee_
+  	where emp_company_id = #{companyId}
+  	and emp_id = #{employeeId}
+  	and the_date = #{theDate}
+  </select>
+  
   <!-- 添加新的人员班次 -->
   <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ClassesEmployee">
     insert into classes_employee_
