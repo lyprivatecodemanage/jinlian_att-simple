@@ -142,8 +142,8 @@ public class ClassesController {
 			returnData.setReturnCode("3000");
 			returnData.setMessage("请求数据成功");
 			//增加操作日志:记录web端的操作
-			String addOperateLog = addOperateLog(accessUserId,companyId,"在班次设置界面查看当前公司所有的班次类别名称");
-			logger.info("【查询当前公司所有班次类别】------>操作日志"+addOperateLog);
+			/*String addOperateLog = addOperateLog(accessUserId,companyId,"在班次设置界面查看当前公司所有的班次类别名称");
+			logger.info("【查询当前公司所有班次类别】------>操作日志"+addOperateLog);*/
 		}else{
 			returnData.setReturnCode("3013");
 			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
@@ -213,8 +213,8 @@ public class ClassesController {
 			returnData.setReturnCode("3000");
 			returnData.setMessage("请求数据成功");
 			//增加操作日志:记录web端的操作
-			String addOperateLog = addOperateLog(accessUserId,companyId,"在班次设置界面查看指定班次类别详细信息");
-			logger.info("【查询指定班次类别详细信息】------>操作日志"+addOperateLog);
+			/*String addOperateLog = addOperateLog(accessUserId,companyId,"在班次设置界面查看指定班次类别详细信息");
+			logger.info("【查询指定班次类别详细信息】------>操作日志"+addOperateLog);*/
 		}else{
 			returnData.setReturnCode("3013");
 			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
@@ -244,8 +244,13 @@ public class ClassesController {
 			if(deleteAppointClassesType){
 				returnData.setReturnCode("3000");
 				returnData.setMessage("删除成功");
+				//查询班次类型名称
+				JSONObject parseObject = JSONObject.parseObject(requestParam);
+				Object classesTypeId = parseObject.get("classesTypeId");
+				ClassesType queryPointClassesTypeData = classesService.queryPointClassesTypeData(classesTypeId.toString().trim());
+				String classesName = queryPointClassesTypeData.getClassesName();
 				//增加操作日志:记录web端的操作
-				String addOperateLog = addOperateLog(accessUserId,companyId,"在班次设置界面删除指定班次类别");
+				String addOperateLog = addOperateLog(accessUserId,companyId,"在班次设置界面删除【"+classesName+"】班次");
 				logger.info("【删除指定班次类别】------>操作日志"+addOperateLog);
 			}else{
 				returnData.setReturnCode("3001");
@@ -285,8 +290,8 @@ public class ClassesController {
 		if((companyId!=null && !companyId.isEmpty()) && (accessUserId!=null && !accessUserId.isEmpty())){
 			returnData = classesService.queryClassesInfo(requestParam,companyId.trim());
 			//增加操作日志:记录web端的操作
-			String addOperateLog = addOperateLog(accessUserId,companyId,"在班次管理界面查看公司所有人班次信息");
-			logger.info("【查询所有人员班次信息】------>操作日志"+addOperateLog);
+			/*String addOperateLog = addOperateLog(accessUserId,companyId,"在班次管理界面查看公司所有人班次信息");
+			logger.info("【查询所有人员班次信息】------>操作日志"+addOperateLog);*/
 		}else{
 			returnData.setReturnCode("3013");
 			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
@@ -533,8 +538,8 @@ public class ClassesController {
 			//根据人员ID获取人员名称
 			String empName = classesService.queryEmpNameById(empId.toString(), companyId);
 			//增加操作日志:记录web端的操作
-			String addOperateLog = addOperateLog(accessUserId,companyId,"在班次管理界面查看【"+empName+"】"+pointDate.toString()+"日的排班");
-			logger.info("【查看指定人员指定日期的排班】------>操作日志"+addOperateLog);
+		/*	String addOperateLog = addOperateLog(accessUserId,companyId,"在班次管理界面查看【"+empName+"】"+pointDate.toString()+"日的排班");
+			logger.info("【查看指定人员指定日期的排班】------>操作日志"+addOperateLog);*/
 		}else{
 			returnData.setReturnCode("3013");
 			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
@@ -618,8 +623,8 @@ public class ClassesController {
 			returnData.setReturnCode("3000");
 			returnData.setMessage("请求数据成功");
 			//增加操作日志:记录web端的操作
-			String addOperateLog = addOperateLog(accessUserId,companyId,"在班次设置界面查看无需考勤人员");
-			logger.info("【查看无需考勤人员】------>操作日志"+addOperateLog);
+			/*String addOperateLog = addOperateLog(accessUserId,companyId,"在班次设置界面查看无需考勤人员");
+			logger.info("【查看无需考勤人员】------>操作日志"+addOperateLog);*/
 		}else{
 			returnData.setReturnCode("3013");
 			returnData.setMessage("请求头参数缺失【未知的登录人（公司）ID】");
