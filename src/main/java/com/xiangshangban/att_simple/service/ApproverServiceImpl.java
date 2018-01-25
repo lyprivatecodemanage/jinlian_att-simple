@@ -208,7 +208,7 @@ public class ApproverServiceImpl implements ApproverService {
 	 */
 	
 	/**
-	 * 未完成工单数和本月已完成工单数
+	 * web审批中心-未完成工单数和本月已完成工单数
 	 */
 	@Override
 	public Map<String,String> webApproverCentreHeader(String companyId, String employeeId) {
@@ -222,6 +222,18 @@ public class ApproverServiceImpl implements ApproverService {
 		return result;
 	}
 	
+	/**
+	 * web审批中心-列表分页,条件搜索
+	 */
+	@Override
+	public ReturnData webApproverCentreList(String companyId,String page,String count,
+			String departmentId,String applicationType,String isComplete,
+			String employeeName,String startTime,String endTime) {
+		ReturnData returnData = new ReturnData();
+		applicationTotalRecordMapper.selectWebApproverList(companyId, 
+				page, count, departmentId, applicationType, isComplete, employeeName, startTime, endTime);
+		return null;
+	}
 	
 	
 }
