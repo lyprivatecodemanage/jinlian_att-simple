@@ -92,7 +92,7 @@
   </select>
   
   <!-- 日报模糊查询列表 -->
-  <select id="selectReportDaily" resultMap="resultMap">
+  <select id="selectReportDaily" resultMap="BaseResultMap">
   	select 
 	<include refid="Base_Column_List"/>
 	from (SELECT 
