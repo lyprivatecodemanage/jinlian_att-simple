@@ -21,7 +21,7 @@
     <result column="is_transfer"  property="isTransfer" />
     <result column="is_complete"  property="isComplete" />
     <result column="is_skip_rest_day"  property="isSkipRestDay" />
-    <result column="copy_person_id"  property="copyPersonId" />
+    <result column="copy_person_id"  property="appCopyPersonId" />
     <result column="transfer_person_id"  property="transferPersonId" />
   </resultMap>
   <sql id="Base_Column_List">
@@ -156,7 +156,7 @@
     <result column="is_transfer"  property="isTransfer" />
     <result column="is_complete"  property="isComplete" />
     <result column="is_skip_rest_day"  property="isSkipRestDay" />
-    <result column="copy_person_id"  property="copyPersonId" />
+    <result column="copy_person_id"  property="appCopyPersonId" />
     <result column="transfer_person_id"  property="transferPersonId" />
     <collection property="applicationTransferRecordList" 
     ofType="com.xiangshangban.att_simple.bean.ApplicationTransferRecord" >
@@ -174,8 +174,8 @@
     ofType="com.xiangshangban.att_simple.bean.ApplicationToCopyPerson">
     	<result column="cp_id" property="id"/>
     	<result column="cp_application_no" property="applicationNo"/>
-    	<result column="cp_copy_person_id" property="copyPersonId"/>
-    	<result column="cp_employee_name" property="copyPersonName"/>
+    	<result column="cp_copy_person_id" property="appCopyPersonId"/>
+    	<result column="cp_employee_name" property="appCopyPersonName"/>
     	<result column="cp_operater_time" property="operaterTime"/>
     	<result column="cp_company_id" property="companyId"/>
     </collection>

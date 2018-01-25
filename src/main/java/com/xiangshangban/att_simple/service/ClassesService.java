@@ -45,6 +45,12 @@ public interface ClassesService {
 	Map queryPointClassesTypeInfo(String requestParam,String companyId);
 	
 	/**
+	 * 查询指定班次类别名称
+	 * @param classesTypeId
+	 */
+	ClassesType queryPointClassesTypeData(String classesTypeId);
+	
+	/**
 	 * 删除指定的班次类型
 	 * @param requestParam
 	 * @param companyId

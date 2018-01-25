@@ -616,8 +616,8 @@ public class ApplicationController {
 			for(int i=0;i<copyPersonListArray.size();i++){
 				JSONObject jobj1 = JSON.parseObject(copyPersonListArray.get(i).toString());
 				ApplicationToCopyPerson copyPerson = new ApplicationToCopyPerson();
-				copyPerson.setCopyPersonId(jobj1.getString("copyPersonId"));
-				copyPerson.setCopyPersonName(jobj1.getString("copyPersonName"));
+				copyPerson.setAppCopyPersonId(jobj1.getString("appCopyPersonId"));
+				copyPerson.setAppCopyPersonName(jobj1.getString("appCopyPersonName"));
 			}
 			JSONArray transferRecordListArray = JSONArray.parseArray(jobj.getString("transferRecordList"));
 			for(int i=0;i<transferRecordListArray.size();i++){

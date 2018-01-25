@@ -9,7 +9,7 @@ public class ReportExcept {
 
     private String exceptTime;//异常具体时间（迟到、早退）
 
-    private String exceptType;//异常类型： 1迟到  ;2早退；3未签到; 4未签退 ； 5	无效; 6旷工； 7	过早打卡; 8过晚打卡；9重复打卡;10无排班打卡；11其它
+    private String exceptType;//异常类型： 1迟到  ;2早退；3未签到; 4未签退 ； 5	旷工; 6 无效； 7	过早打卡; 8过晚打卡；9重复打卡;10无排班打卡；11其它
 
     private String lackTime;
 
