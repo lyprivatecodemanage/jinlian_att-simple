@@ -90,8 +90,8 @@ public class ApproverController {
 							approver.setStatusDescription("已转移");
 						}
 					}
-					if("1".equals(approver.getIsCopy())&&!StringUtils.isEmpty(approver.getCopyPersonId())
-							&&employeeId.equals(approver.getCopyPersonId())){
+					if("1".equals(approver.getIsCopy())&&!StringUtils.isEmpty(approver.getAppCopyPersonId())
+							&&employeeId.equals(approver.getAppCopyPersonId())){
 						approver.setStatusDescription("抄送");
 					}
 				}
