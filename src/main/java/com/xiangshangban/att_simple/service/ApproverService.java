@@ -59,7 +59,7 @@ public interface ApproverService {
 	    * @param params
 	    * @return
 	    */
-	   ReturnData webApproverCentreList(String companyId,String page,String count,
+	   List<ApplicationTotalRecord> webApproverCentreList(String companyId,String page,String count,
 				String departmentId,String applicationType,String isComplete,
 				String employeeName,String startTime,String endTime);
 	   
