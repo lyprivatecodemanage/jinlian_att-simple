@@ -14,4 +14,6 @@ public interface ReportDailyService {
 	ReturnData oneKeyChecking(String [] reportIds,String companyId);
 	
 	ReturnData selectReportDaily(Paging paging);
+	
+	ReturnData replaceReplenishChecking(String companyId,String reportId,String beginDate,String beginTime,String endDate,String endTime,String reason);
 }
