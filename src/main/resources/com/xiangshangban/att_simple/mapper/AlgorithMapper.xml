@@ -12,8 +12,8 @@
     <result column="week" jdbcType="VARCHAR" property="week" />
     <result column="sign_in_rule" jdbcType="VARCHAR" property="signInRule" />
     <result column="sign_out_rule" jdbcType="VARCHAR" property="signOutRule" />
-    <result column="on_punch_card_rule" jdbcType="VARCHAR" property="onPunchCardTime" />
-    <result column="off_punch_card_rule" jdbcType="VARCHAR" property="offPunchCardTime" />
+    <result column="on_punch_card_rule" jdbcType="VARCHAR" property="onPunchCardRule" />
+    <result column="off_punch_card_rule" jdbcType="VARCHAR" property="offPunchCardRule" />
   </resultMap>
   <resultMap id="ClassesMap" type="com.xiangshangban.att_simple.bean.ClassesType">
     <id column="id" jdbcType="VARCHAR" property="id" />
@@ -105,12 +105,15 @@
 		<result column="seniority" property="seniority" />
 	</resultMap>
   <select id="getPlanByDate" resultMap="ClassesEmployee">
-  	select a.emp_id, a.emp_company_id, a.classes_id, a.on_duty_scheduling_date,
-  		 a.off_duty_scheduling_date,a.rest_start_time, a.rest_end_time, a.week,
+  	select a.emp_id, a.emp_company_id, a.classes_id, 
+			to_char(a.on_duty_scheduling_date::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') on_duty_scheduling_date,
+  		to_char(a.off_duty_scheduling_date::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') off_duty_scheduling_date, 
+			to_char(a.rest_start_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') rest_start_time, 
+			to_char(a.rest_end_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') rest_end_time, a.week,
   		 a.sign_in_rule, a.sign_out_rule, a.on_punch_card_rule, a.off_punch_card_rule
 	FROM classes_employee_ AS a
-	WHERE a.emp_company_id=#{companyId} AND a.emp_id=#{employeeId} AND a.on_duty_scheduling_date!=NULL 
-	AND a.on_duty_scheduling_date!='' AND a.on_duty_scheduling_date::DATE=#{countDate}::DATE
+	WHERE a.emp_company_id=#{companyId} AND a.emp_id=#{employeeId} AND a.on_duty_scheduling_date IS NOT NULL
+	AND a.on_duty_scheduling_date!='' AND a.the_date::DATE=#{countDate}::DATE
   </select>
   <select id="getMinSignIn" resultType="String">
   	SELECT min(record_date) 
@@ -149,7 +152,8 @@
 	) AS c 
   </select>
   <select id="getLeaveByTime" resultMap="ApplicationMap">
-  	SELECT DISTINCT a.start_time,a.end_time,a.employee_id,
+  	SELECT DISTINCT to_char(a.start_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') start_time, 
+		  to_char(a.end_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss')  end_time,a.employee_id,
   			a.department_id,a.company_id, '1' AS application_type,
   			leave_type AS applicaiton_children_type
 	FROM application_leave_ a
@@ -158,10 +162,11 @@
 	AND  b.is_complete='1' AND b.is_reject='0'
 	AND ((#{endTime} BETWEEN a.start_time AND a.end_time)
 			OR (a.end_time BETWEEN #{beginTime} AND #{endTime}))
-	ORDER BY a.start_time
+	ORDER BY start_time
   </select>
   <select id="getOutByTime" resultMap="ApplicationMap">
-  	SELECT DISTINCT a.start_time,a.end_time,a.employee_id,
+  	SELECT DISTINCT to_char(a.start_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') start_time, 
+		  to_char(a.end_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss')  end_time,a.employee_id,
   		a.department_id,a.company_id, b.is_skip_rest_day, '4' AS application_type
 	FROM application_outgoing_ a
 	LEFT JOIN application_total_record_ AS b ON a.application_no=b.application_no
@@ -169,10 +174,11 @@
 	AND  b.is_complete='1' AND b.is_reject='0'
 	AND ((#{endTime} BETWEEN a.start_time AND a.end_time)
 			OR (a.end_time BETWEEN #{beginTime} AND #{endTime}))
-	ORDER BY a.start_time
+	ORDER BY start_time
   </select>
     <select id="getBusinessByTime" resultMap="ApplicationMap">
-  	SELECT DISTINCT a.start_time,a.end_time,a.employee_id,
+  	SELECT DISTINCT to_char(a.start_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') start_time, 
+		  to_char(a.end_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss')  end_time,a.employee_id,
   		a.department_id,a.company_id, b.is_skip_rest_day, '3' AS application_type
 	FROM application_business_travel_ a
 	LEFT JOIN application_total_record_ AS b ON a.application_no=b.application_no
@@ -180,15 +186,16 @@
 	AND  b.is_complete='1' AND b.is_reject='0'
 	AND ((#{endTime} BETWEEN a.start_time AND a.end_time)
 			OR (a.end_time BETWEEN #{beginTime} AND #{endTime}))
-	ORDER BY a.start_time
+	ORDER BY start_time
   </select>
   <select id="getOverByTime"  resultMap="ApplicationMap">
-  	SELECT DISTINCT a.start_time,a.end_time,a.employee_id,
+  	SELECT DISTINCT to_char(a.start_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') start_time, 
+		  to_char(a.end_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss')  end_time,a.employee_id,
   		a.department_id,a.company_id, '2' AS application_type
 	FROM application_overtime_ a
 	WHERE a.employee_id=#{employeeId} AND a.company_id=#{companyId}
 	AND a.start_time::date=#{beginTime}::date
-	ORDER BY a.start_time
+	ORDER BY start_time
   </select>
   <select id="getIsCheck" resultType="int">
   	SELECT count(id) 

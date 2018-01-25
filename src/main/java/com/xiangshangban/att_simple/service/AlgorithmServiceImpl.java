@@ -710,6 +710,9 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		algorithmParam.setEmployee(employee );
 		algorithmParam.setCompanyId(companyId);
 		algorithmParam.setCountDate(countDate);
+		if("E01B7DC3D374432D9DA9004CB70D4DA2".equals(companyId) && "A46D67FDEA9C4046B8AA12B00A1926FE".equals(employeeId)){
+			logger.info("查询");
+		}
 		//查询当天的排班
 		algorithmParam.setClassesEmployee(
 				algorithmMapper.getPlanByDate(companyId, employee.getEmployeeId(), countDate));
