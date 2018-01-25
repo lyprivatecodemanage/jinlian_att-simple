@@ -191,6 +191,7 @@ public class ClassesController {
 					Map innerMap = new HashMap();
 					innerMap.put("id",classesType.getId());
 					innerMap.put("classes_name", classesType.getClassesName());
+					innerMap.put("is_default",classesType.getIsDefault());
 					listMap.add(innerMap);
 				}
 				returnData.setData(listMap);
