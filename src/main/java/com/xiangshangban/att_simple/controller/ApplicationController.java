@@ -26,9 +26,12 @@ import com.xiangshangban.att_simple.bean.ApplicationTotalRecord;
 import com.xiangshangban.att_simple.bean.ApplicationTransferRecord;
 import com.xiangshangban.att_simple.bean.ApplicationType;
 import com.xiangshangban.att_simple.bean.ClassesEmployee;
+import com.xiangshangban.att_simple.bean.Company;
 import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.service.ApplicationService;
 import com.xiangshangban.att_simple.service.ClassesService;
+import com.xiangshangban.att_simple.service.CompanyService;
+import com.xiangshangban.att_simple.service.OSSFileService;
 import com.xiangshangban.att_simple.utils.DateCompareUtil;
 import com.xiangshangban.att_simple.utils.FormatUtil;
 import com.xiangshangban.att_simple.utils.TimeUtil;
@@ -47,6 +50,10 @@ public class ApplicationController {
 		private ApplicationService applicationService;
 		@Autowired
 		private ClassesService classesService;
+		@Autowired
+		private OSSFileService oSSFileService;
+		@Autowired
+		private CompanyService companyService;
 		/**
 		 * app申请页面
 		 * @param jsonString
@@ -339,6 +346,7 @@ public class ApplicationController {
 		 */
 		@RequestMapping(value = "/commonContactPeople",produces="application/json;charset=utf-8" ,method=RequestMethod.POST)
 		public ReturnData commonContactPeople(@RequestBody String jsonString ,HttpServletRequest request) {
+			
 			ReturnData returnData = new ReturnData();
 			try{
 			String employeeId = request.getHeader("accessUserId");//员工id
@@ -484,6 +492,7 @@ public class ApplicationController {
 				return returnData;
 			}
 			Application application = applicationService.applicationDetails(applicationNo, employeeId, null, companyId);
+			this.getUploadVoucher(companyId, application);
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
 			returnData.setData(application);
@@ -636,5 +645,11 @@ public class ApplicationController {
 				commonContactPeople.setType(jobj1.getString("type"));
 			}
 			
+		}
+		private void getUploadVoucher(String companyId,Application application){
+			Company company = companyService.selectCompany(companyId);
+			String uploadVoucher = oSSFileService.getPathByKey(company.getCompanyNo(),
+					"approval", application.getUploadVoucher());
+			application.setUploadVoucher(uploadVoucher);
 		}
 	}

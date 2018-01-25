@@ -3,6 +3,7 @@ package com.xiangshangban.att_simple.service;
 import java.util.List;
 import java.util.Map;
 
+import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ApplicationTotalRecord;
 import com.xiangshangban.att_simple.bean.ReturnData;
 
@@ -62,6 +63,12 @@ public interface ApproverService {
 	   List<ApplicationTotalRecord> webApproverCentreList(String companyId,String page,String count,
 				String departmentId,String applicationType,String isComplete,
 				String employeeName,String startTime,String endTime);
-	   
-	   
+	   /**
+	    * web审批中心-查看
+	    * @param companyId
+	    * @param employeeId
+	    * @param applicationNo
+	    * @return
+	    */
+	   Application webApproverCentreLook(String companyId,String employeeId,String applicationNo);
 }

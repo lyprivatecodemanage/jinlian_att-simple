@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.arjuna.ats.internal.jdbc.drivers.modifiers.list;
 import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ApplicationLeave;
 import com.xiangshangban.att_simple.bean.Paging;

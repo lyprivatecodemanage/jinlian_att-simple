@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.xiangshangban.att_simple.bean.Vacation;
 import com.xiangshangban.att_simple.bean.VacationDetails;
 
 @Mapper

@@ -15,9 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ApplicationTotalRecord;
+import com.xiangshangban.att_simple.bean.Company;
 import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.service.ApproverService;
+import com.xiangshangban.att_simple.service.CompanyService;
+import com.xiangshangban.att_simple.service.OSSFileService;
 
 /** app所有假勤审批处理器
  * 
@@ -28,6 +32,10 @@ public class ApproverController {
 	private static final Logger logger = Logger.getLogger(ApproverController.class);
 	@Autowired
 	private ApproverService approverService;
+	@Autowired
+	private OSSFileService oSSFileService;
+	@Autowired
+	private CompanyService companyService;
 	/**
 	 * 审批首页列表/历史列表/条件筛选
 	 * @param jsonString
@@ -35,7 +43,7 @@ public class ApproverController {
 	 * @return
 	 */
 	@RequestMapping(value = "/approverIndexPage",produces="application/json;charset=utf-8",method=RequestMethod.POST)
-	public ReturnData approverIndexPage(String jsonString,HttpServletRequest request){
+	public ReturnData approverIndexPage(@RequestBody String jsonString,HttpServletRequest request){
 		ReturnData returnData = new ReturnData();
 		String employeeId = "";
 		String companyId = "";
@@ -294,7 +302,7 @@ public class ApproverController {
 		}
 	}
 	/**
-	 * 
+	 * web审批中心列表
 	 * @param jsonString
 	 * @param request
 	 * @return
@@ -364,5 +372,61 @@ public class ApproverController {
 			returnData.setReturnCode("3001");
 			return returnData;
 		}
+	}
+	/**
+	 * web审批中心-查看
+	 * @param jsonString
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/webApproverCentreLook",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+	public ReturnData webApproverCentreLook(@RequestBody String jsonString,HttpServletRequest request){
+		ReturnData returnData = new ReturnData();
+		String employeeId = "";
+		String companyId = "";
+		String applicationNo = "";
+		try{
+			employeeId = request.getHeader("accessUserId");//员工id
+			companyId = request.getHeader("companyId");//公司id
+			if(StringUtils.isEmpty(companyId)||StringUtils.isEmpty(employeeId)){
+				returnData.setMessage("请求信息错误");
+				returnData.setReturnCode("3012");
+				return returnData;
+			}
+			try{
+				JSONObject jobj = JSON.parseObject(jsonString);
+				applicationNo = jobj.getString("applicationNo");
+				if(StringUtils.isEmpty(applicationNo)){
+					returnData.setMessage("必传参数为空");
+					returnData.setReturnCode("3006");
+					return returnData;
+				}
+			}catch(Exception e){
+				logger.info(e);
+				e.printStackTrace();
+				returnData.setMessage("参数错误");
+				returnData.setReturnCode("3006");
+				return returnData;
+			}
+			Application application = approverService.webApproverCentreLook(companyId, employeeId, applicationNo);
+			this.getUploadVoucher(companyId, application);
+			returnData.setMessage("成功");
+			returnData.setReturnCode("3000");
+			returnData.setData(application);
+			return returnData;
+		}catch(Exception e){
+			logger.info(e);
+			e.printStackTrace();
+			returnData.setMessage("服务器错误");
+			returnData.setReturnCode("3001");
+			return returnData;
+		}
+	}
+	
+	private void getUploadVoucher(String companyId,Application application){
+		Company company = companyService.selectCompany(companyId);
+		String uploadVoucher = oSSFileService.getPathByKey(company.getCompanyNo(),
+				"approval", application.getUploadVoucher());
+		application.setUploadVoucher(uploadVoucher);
 	}
 }

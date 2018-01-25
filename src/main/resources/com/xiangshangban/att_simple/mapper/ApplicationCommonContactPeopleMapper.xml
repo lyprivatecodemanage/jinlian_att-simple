@@ -15,8 +15,9 @@
   <!-- 分页查询常用联系人 -->
   <select id="commonContactPeopleList" parameterType="java.lang.String" resultMap="BaseResultMap">
   	select <include refid="Base_Column_List"/> from application_common_contact_people_
-  	where employeeId = #{employeeId} and companyId = #{companyId} and type =#{type} 
-  	limit #{count}::integer offset #{page}::integer order by common_contact_people_name
+  	where employee_id = #{employeeId} and company_id = #{companyId} and type =#{type} 
+  	order by common_contact_people_name 
+  	limit #{count}::integer offset #{page}::integer 
   </select>
   <!-- 查询employeId对应的常用联系人个数 -->
   <select id="selectCountByEmployeeIdAndCompanyId" parameterType="java.lang.String" resultType="java.lang.Integer">
@@ -32,10 +33,10 @@
   <select id="selectByAll" parameterType="com.xiangshangban.att_simple.bean.ApplicationCommonContactPeople" resultType="java.lang.Integer">
   	select count(id) from att_simple.application_common_contact_people_
   		where 
-  		employee_id = #{commonContactPeople.employeeId}
-  		and company_id = #{commonContactPeople.companyId}
-  		and common_contact_people_id = #{commonContactPeople.commonContactPeopleId}
-  		and type = #{commonContactPeople.type}
+  		employee_id = #{employeeId}
+  		and company_id = #{companyId}
+  		and common_contact_people_id = #{commonContactPeopleId}
+  		and type = #{type}
   </select>
   <!-- 删除常用联系人,条件:employeeId,companyId,type -->
 	<delete id="deleteByEmployeeIdAndCompanyIdAndType" parameterType="java.lang.String">
