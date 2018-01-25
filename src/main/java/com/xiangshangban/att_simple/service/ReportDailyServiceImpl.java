@@ -15,13 +15,11 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.xiangshangban.att_simple.bean.ApplicationFillCard;
 import com.xiangshangban.att_simple.bean.ClassesEmployee;
-import com.xiangshangban.att_simple.bean.ClassesType;
 import com.xiangshangban.att_simple.bean.Paging;
 import com.xiangshangban.att_simple.bean.ReportDaily;
 import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.dao.ApplicationFillCardMapper;
 import com.xiangshangban.att_simple.dao.ClassesEmployeeMapper;
-import com.xiangshangban.att_simple.dao.ClassesTypeMapper;
 import com.xiangshangban.att_simple.dao.EmployeeDao;
 import com.xiangshangban.att_simple.dao.ReportDailyMapper;
 import com.xiangshangban.att_simple.utils.FormatUtil;
@@ -44,6 +42,9 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 	
 	@Autowired
 	ApplicationFillCardMapper applicationFillCardMapper;
+	
+	@Autowired
+	AlgorithmService algorithmService;
 	
 	@Override
 	public ReturnData CheckingKeyData(String companyId) {
@@ -157,6 +158,8 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 						
 						applicationFillCardMapper.insertApplicationFillCardRecord(af);
 						
+						algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
+						
 						returndata.setReturnCode("3000");
 						returndata.setMessage("数据请求成功");
 						return returndata;
@@ -180,6 +183,8 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 						af.setApplicationTime(date);
 						
 						applicationFillCardMapper.insertApplicationFillCardRecord(af);
+						
+						algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
 						
 						returndata.setReturnCode("3000");
 						returndata.setMessage("数据请求成功");
@@ -205,6 +210,8 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 						
 						applicationFillCardMapper.insertApplicationFillCardRecord(af);
 						
+						algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
+						
 						returndata.setReturnCode("3000");
 						returndata.setMessage("数据请求成功");
 						return returndata;
@@ -228,6 +235,8 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 						af.setApplicationTime(date);
 						
 						applicationFillCardMapper.insertApplicationFillCardRecord(af);
+						
+						algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
 						
 						returndata.setReturnCode("3000");
 						returndata.setMessage("数据请求成功");
@@ -259,6 +268,8 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 							
 							applicationFillCardMapper.insertApplicationFillCardRecord(af);
 							
+							algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
+							
 							returndata.setReturnCode("3000");
 							returndata.setMessage("数据请求成功");
 							return returndata;
@@ -289,6 +300,8 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 							af.setFillCardTime(ce.getOffDutySchedulingDate());
 							
 							applicationFillCardMapper.insertApplicationFillCardRecord(af);
+							//触发日报计算
+							algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
 							
 							returndata.setReturnCode("3000");
 							returndata.setMessage("数据请求成功");
@@ -321,6 +334,8 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 							
 							applicationFillCardMapper.insertApplicationFillCardRecord(af);
 							
+							algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
+							
 							returndata.setReturnCode("3000");
 							returndata.setMessage("数据请求成功");
 							return returndata;
@@ -351,6 +366,8 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 							af.setFillCardTime(ce.getOffDutySchedulingDate());
 							
 							applicationFillCardMapper.insertApplicationFillCardRecord(af);
+							
+							algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
 							
 							returndata.setReturnCode("3000");
 							returndata.setMessage("数据请求成功");
@@ -389,6 +406,280 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 		}
 		returndata.setReturnCode("3001");
 		returndata.setMessage("服务器错误");
+		return returndata;
+	}
+
+	@Override
+	public ReturnData replaceReplenishChecking(String companyId,String reportId, String beginDate, String beginTime, String endDate,
+			String endTime, String reason) {
+		// TODO Auto-generated method stub
+		ReturnData returndata = new ReturnData();
+		ReportDaily rd = reportDailyMapper.selectById(reportId);
+		
+		//获取系统当前时间
+		String date = sdf.format(new Date());
+		
+		//当日报记录存在考勤异常  并且 公司ID与登录人的ID相等(预防缓存数据导致可操作别公司数据问题)时  加入集合准备补勤
+		if(rd.getHasException().equals("1")&& companyId.equals(rd.getCompanyId())){
+			//根据考勤日报的考勤异常类型进行相应代考勤操作
+			switch(rd.getExceptionMark()){
+			case "1"://迟到异常
+					if(true){
+						ApplicationFillCard af = new ApplicationFillCard();
+						af.setApplicationNo(FormatUtil.createUuid());
+						af.setEmployeeId(rd.getEmployeeId());
+						af.setDepartmentId(rd.getDeptId());
+						af.setCompanyId(rd.getCompanyId());
+						af.setFillCardType("3");
+						af.setFillCardTime(beginDate+" "+beginTime);
+						af.setReason("代补勤");
+						af.setApprover("1");
+						af.setOperaterTime(date);
+						af.setIsTransfer("0");
+						af.setApplicationTime(date);
+						//新增补卡申请
+						int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
+						if(num>0){
+							//触发日报计算
+							algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
+							
+							returndata.setReturnCode("3000");
+							returndata.setMessage("数据请求成功");
+							return returndata;
+						}
+						returndata.setReturnCode("3001");
+						returndata.setMessage("服务器错误");
+						return returndata;
+					}
+			case "2"://早退异常
+					if(true){
+						ApplicationFillCard af = new ApplicationFillCard();
+						af.setApplicationNo(FormatUtil.createUuid());
+						af.setEmployeeId(rd.getEmployeeId());
+						af.setDepartmentId(rd.getDeptId());
+						af.setCompanyId(rd.getCompanyId());
+						af.setFillCardType("4");
+						af.setFillCardTime(endDate+" "+endTime);
+						af.setReason("代补勤");
+						af.setApprover("1");
+						af.setOperaterTime(date);
+						af.setIsTransfer("0");
+						af.setApplicationTime(date);
+						
+						int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
+						
+						if(num>0){
+							algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
+							
+							returndata.setReturnCode("3000");
+							returndata.setMessage("数据请求成功");
+							return returndata;
+						}
+						returndata.setReturnCode("3001");
+						returndata.setMessage("服务器错误");
+						return returndata;
+					}
+			case "3"://未到异常
+				if(true){
+					ApplicationFillCard af = new ApplicationFillCard();
+					af.setApplicationNo(FormatUtil.createUuid());
+					af.setEmployeeId(rd.getEmployeeId());
+					af.setDepartmentId(rd.getDeptId());
+					af.setCompanyId(rd.getCompanyId());
+					af.setFillCardType("1");
+					af.setFillCardTime(beginDate+" "+beginTime);
+					af.setReason("代补勤");
+					af.setApprover("1");
+					af.setOperaterTime(date);
+					af.setIsTransfer("0");
+					af.setApplicationTime(date);
+					
+					int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
+					
+					if(num>0){
+						algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
+						
+						returndata.setReturnCode("3000");
+						returndata.setMessage("数据请求成功");
+						return returndata;
+					}
+					returndata.setReturnCode("3001");
+					returndata.setMessage("服务器错误");
+					return returndata;
+				}
+				
+			case "4"://未退异常
+				if(true){
+					ApplicationFillCard af = new ApplicationFillCard();
+					af.setApplicationNo(FormatUtil.createUuid());
+					af.setEmployeeId(rd.getEmployeeId());
+					af.setDepartmentId(rd.getDeptId());
+					af.setCompanyId(rd.getCompanyId());
+					af.setFillCardType("2"); 
+					af.setFillCardTime(endDate+" "+endTime);
+					af.setReason("代补勤");
+					af.setApprover("1");
+					af.setOperaterTime(date);
+					af.setIsTransfer("0");
+					af.setApplicationTime(date);
+					
+					int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
+					
+					if(num>0){
+						algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
+						
+						returndata.setReturnCode("3000");
+						returndata.setMessage("数据请求成功");
+						return returndata;
+					}
+					returndata.setReturnCode("3001");
+					returndata.setMessage("服务器错误");
+					return returndata;
+				}
+			case "5"://迟到且早退异常
+				if(true){
+					ApplicationFillCard af = new ApplicationFillCard();
+					af.setApplicationNo(FormatUtil.createUuid());
+					af.setEmployeeId(rd.getEmployeeId());
+					af.setDepartmentId(rd.getDeptId());
+					af.setCompanyId(rd.getCompanyId());
+					af.setFillCardType("3");
+					af.setFillCardTime(beginDate+" "+beginTime);
+					af.setReason("代补勤");
+					af.setApprover("1");
+					af.setOperaterTime(date);
+					af.setIsTransfer("0");
+					af.setApplicationTime(date);
+					
+					int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
+					
+					if(num>0){
+						af.setFillCardType("4");
+						af.setFillCardTime(endDate+" "+endTime);
+						
+						int i = applicationFillCardMapper.insertApplicationFillCardRecord(af);
+						
+						if(i>0){
+							algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
+							
+							returndata.setReturnCode("3000");
+							returndata.setMessage("数据请求成功");
+							return returndata;
+						}
+					}
+					returndata.setReturnCode("3001");
+					returndata.setMessage("服务器错误");
+					return returndata;
+				}
+			case "6"://迟到且未退异常
+				if(true){
+					ApplicationFillCard af = new ApplicationFillCard();
+					af.setApplicationNo(FormatUtil.createUuid());
+					af.setEmployeeId(rd.getEmployeeId());
+					af.setDepartmentId(rd.getDeptId());
+					af.setCompanyId(rd.getCompanyId());
+					af.setFillCardType("3"); 
+					af.setFillCardTime(beginDate+" "+beginTime);
+					af.setReason("代补勤");
+					af.setApprover("1");
+					af.setOperaterTime(date);
+					af.setIsTransfer("0");
+					af.setApplicationTime(date);
+					
+					int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
+					
+					if(num>0){
+						af.setFillCardType("2");
+						af.setFillCardTime(endDate+" "+endTime);
+						
+						int i = applicationFillCardMapper.insertApplicationFillCardRecord(af);
+
+						if(i>0){
+							algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
+							
+							returndata.setReturnCode("3000");
+							returndata.setMessage("数据请求成功");
+							return returndata;
+						}
+					}
+					returndata.setReturnCode("3001");
+					returndata.setMessage("服务器错误");
+					return returndata;
+				}
+			case "7"://未到且早退异常
+				if(true){
+					ApplicationFillCard af = new ApplicationFillCard();
+					af.setApplicationNo(FormatUtil.createUuid());
+					af.setEmployeeId(rd.getEmployeeId());
+					af.setDepartmentId(rd.getDeptId());
+					af.setCompanyId(rd.getCompanyId());
+					af.setFillCardType("1");
+					af.setFillCardTime(beginDate+" "+beginTime);
+					af.setReason("代补勤");
+					af.setApprover("1");
+					af.setOperaterTime(date);
+					af.setIsTransfer("0");
+					af.setApplicationTime(date);
+					
+					int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
+					
+					if(num>0){
+						af.setFillCardType("4");
+						af.setFillCardTime(endDate+" "+endTime);
+						
+						int i = applicationFillCardMapper.insertApplicationFillCardRecord(af);
+						
+						if(i>0){
+							algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
+							
+							returndata.setReturnCode("3000");
+							returndata.setMessage("数据请求成功");
+							return returndata;
+						}
+					}
+					returndata.setReturnCode("3001");
+					returndata.setMessage("服务器错误");
+					return returndata;
+				}
+			case "8"://未到且未退异常
+				if(true){
+					ApplicationFillCard af = new ApplicationFillCard();
+					af.setApplicationNo(FormatUtil.createUuid());
+					af.setEmployeeId(rd.getEmployeeId());
+					af.setDepartmentId(rd.getDeptId());
+					af.setCompanyId(rd.getCompanyId());
+					af.setFillCardType("1");
+					af.setFillCardTime(beginDate+" "+beginTime);
+					af.setReason("代补勤");
+					af.setApprover("1");
+					af.setOperaterTime(date);
+					af.setIsTransfer("0");
+					af.setApplicationTime(date);
+					
+					int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
+					
+					if(num>0){
+						af.setFillCardType("2");
+						af.setFillCardTime(endDate+" "+endTime);
+						
+						int i = applicationFillCardMapper.insertApplicationFillCardRecord(af);
+						
+						if(i>0){
+							algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
+							
+							returndata.setReturnCode("3000");
+							returndata.setMessage("数据请求成功");
+							return returndata;
+						}
+					}
+					returndata.setReturnCode("3001");
+					returndata.setMessage("服务器错误");
+					return returndata;
+				}
+			}
+		}
+		returndata.setReturnCode("3000");
+		returndata.setMessage("数据请求成功");
 		return returndata;
 	}
 
