@@ -77,6 +77,7 @@ public class ReportDailyController {
 		String pageNum = obj.getString("pageRecordNum");
 		
 		Paging p = new Paging();
+		p.setCompanyId(companyId);
 		p.setBeginDate(beginDate);
 		p.setEndDate(endDate);
 		p.setDepartmentId(departmentId);
@@ -89,6 +90,29 @@ public class ReportDailyController {
 		p.setPageNum(pageNum);
 		
 		result = reportDailyService.selectReportDaily(p);
+		
+		return result;
+	}
+	
+	/**
+	 * 焦振/代补勤
+	 * @param obejctString
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/replaceReplenishChecking",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+	public ReturnData replaceReplenishChecking(@RequestBody String obejctString,HttpServletRequest request){
+		ReturnData result = new ReturnData();
+		JSONObject obj = JSON.parseObject(obejctString);
+		String companyId = request.getHeader("companyId");
+		String reportId = obj.getString("reportId");
+		String beginDate = obj.getString("beginDate");
+		String beginTime = obj.getString("beginTime");
+		String endDate = obj.getString("endDate");
+		String endTime = obj.getString("endTime");
+		String reason = obj.getString("reason");
+		
+		result = reportDailyService.replaceReplenishChecking(companyId,reportId, beginDate, beginTime, endDate, endTime, reason);
 		
 		return result;
 	}

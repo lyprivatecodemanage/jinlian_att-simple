@@ -48,8 +48,44 @@ public class ReportDaily extends ReportDailyKey {
     private String signOutTime;//签退
     private String hasException;//是否有异常待处理，0：否，1：是
     private String exceptionMark;//异常描述
+    private String departmentName;//部门名称
+    private String exceptionMarkName;//异常名称
+    private String employeeName;//人员名称
+    private String leaveDate;//请假时间
+    
+    public String getDepartmentName() {
+		return departmentName;
+	}
 
-    public String getHasException() {
+	public void setDepartmentName(String departmentName) {
+		this.departmentName = departmentName;
+	}
+
+	public String getExceptionMarkName() {
+		return exceptionMarkName;
+	}
+
+	public void setExceptionMarkName(String exceptionMarkName) {
+		this.exceptionMarkName = exceptionMarkName;
+	}
+
+	public String getEmployeeName() {
+		return employeeName;
+	}
+
+	public void setEmployeeName(String employeeName) {
+		this.employeeName = employeeName;
+	}
+
+	public String getLeaveDate() {
+		return leaveDate;
+	}
+
+	public void setLeaveDate(String leaveDate) {
+		this.leaveDate = leaveDate;
+	}
+
+	public String getHasException() {
 		return hasException;
 	}
 
