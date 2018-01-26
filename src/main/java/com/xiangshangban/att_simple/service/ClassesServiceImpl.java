@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.arjuna.ats.internal.jdbc.drivers.modifiers.list;
 import com.xiangshangban.att_simple.bean.ClassesEmployee;
 import com.xiangshangban.att_simple.bean.ClassesType;
 import com.xiangshangban.att_simple.bean.Festival;
@@ -133,6 +134,7 @@ public class ClassesServiceImpl implements ClassesService {
 		Object employeeIdList = jsonObject.get("employeeIdList");
 		Object autoClassesFlag = jsonObject.get("autoClassesFlag");
 		Object validDate = jsonObject.get("validDate");
+		Object isDefault = jsonObject.get("isDefault");
 		
 
 		// 声明要返回的数据
@@ -141,7 +143,7 @@ public class ClassesServiceImpl implements ClassesService {
 		if (classesName != null && onDutyTime != null && offDutyTime != null && morrowFlag != null
 				&& restStartTime != null && restEndTime != null && restDays != null && festivalRestFlag != null
 				&& signInRule != null && signOutRule != null && onPunchCardRule != null && offPunchCardRule != null
-				&& employeeIdList != null && autoClassesFlag != null) {
+				&& employeeIdList != null && autoClassesFlag != null && isDefault!=null) {
 						// 先删除，传递上来的班次类型和使用该班次类型的人员班次信息(删除从指定生效日往后的班次)
 						Map<String, String> delParam = new HashMap<>();
 						
@@ -149,8 +151,13 @@ public class ClassesServiceImpl implements ClassesService {
 						// 判断是否有操作标志
 						if (operateFlag != null && !operateFlag.toString().trim().equals("")) {
 							delParam.put("classesTypeId", operateFlag.toString().trim());
+							delParam.put("delDate","");
 							// TODO 删除班次类型
 							classesTypeMapper.removeAppointClassesType(delParam);
+							//更新旧的班次类别名称
+							classesTypeMapper.updateClassesTypeName(operateFlag.toString().trim(), classesName.toString().trim());
+							//将原本使用旧班次类型的人员的班次列表名称进行更新
+							classesEmployeeMapper.updateEmpClassesName(operateFlag.toString().trim(), classesName.toString().trim());
 						}
 						// 获取要排班的人员列表
 						JSONArray empArray = JSONArray.parseArray(JSONObject.toJSONString(employeeIdList));
@@ -201,7 +208,8 @@ public class ClassesServiceImpl implements ClassesService {
 							//该班次类型生效的时间
 							classesType.setValidDate(new SimpleDateFormat("yyyy-MM-dd").format(myCalendar.getTime()));
 						}
-						classesType.setIsDefault("0");
+						classesType.setIsDefault(isDefault.toString().trim());
+						classesType.setDelDate("");
 						int addClassesType = classesTypeMapper.insertSelective(classesType);
 						// TODO 添加班次类型成功====》添加人员班次
 						if (addClassesType > 0) {
@@ -282,10 +290,14 @@ public class ClassesServiceImpl implements ClassesService {
 			Map<String, String> param = new HashMap<>();
 			param.put("classesTypeId", object.toString().trim());
 			param.put("companyId", companyId);
-
+			param.put("delDate", new SimpleDateFormat("yyyy-MM-dd").format(new Date().getTime()));
+			//删除指定的班次类型
 			int removeAppointClassesType = classesTypeMapper.removeAppointClassesType(param);
-
-			if (removeAppointClassesType > 0) {
+			param.put("offSetTime",new SimpleDateFormat("yyyy-MM-dd").format(new Date().getTime()));
+			//删除使用该班次类型的人员班次(从指定的时间之后)
+			int deleteAppointClassesTypeEmp = classesEmployeeMapper.deleteAppointClassesTypeEmp(param);
+			
+			if (removeAppointClassesType > 0 && deleteAppointClassesTypeEmp>0) {
 				result = true;
 			} else {
 				result = false;
@@ -476,6 +488,7 @@ public class ClassesServiceImpl implements ClassesService {
 					innerMap.put("theDate", listMap.get(key).get(s).get("theDate"));
 					innerMap.put("week", listMap.get(key).get(s).get("week"));
 					innerMap.put("classesId", listMap.get(key).get(s).get("classesId"));
+					innerMap.put("classesTypeId",listMap.get(key).get(s).get("classesTypeId"));
 					innerMap.put("classesName", listMap.get(key).get(s).get("classesName"));
 					innerMap.put("colorFlag", listMap.get(key).get(s).get("colorFlag"));
 
@@ -498,7 +511,6 @@ public class ClassesServiceImpl implements ClassesService {
 					}
 					innerList.add(innerMap);
 				}
-
 				// 将数据完善为一整个周的数据(避免有的班次没有排，造成前端列表展示困难)
 				if (innerList.size() < 7) {
 					try {
@@ -520,6 +532,7 @@ public class ClassesServiceImpl implements ClassesService {
 								Map<String, Object> emptyMap = new HashMap<>();
 								emptyMap.put("classesName", "");
 								emptyMap.put("classesId", "");
+								emptyMap.put("classesTypeId","");
 								emptyMap.put("colorFlag", "");
 								// 时间倒退一天
 								firstDate.add(Calendar.DAY_OF_MONTH, -1);
@@ -539,6 +552,7 @@ public class ClassesServiceImpl implements ClassesService {
 								Map<String, Object> emptyMap = new HashMap<>();
 								emptyMap.put("classesName", "");
 								emptyMap.put("classesId", "");
+								emptyMap.put("classesTypeId","");
 								emptyMap.put("colorFlag", "");
 								// 时间增加一天
 								lastDate.add(Calendar.DAY_OF_MONTH, +1);
@@ -554,6 +568,31 @@ public class ClassesServiceImpl implements ClassesService {
 						}
 					} catch (ParseException e) {
 						e.printStackTrace();
+					}
+				}
+				
+				//遍历innerList,判断该天班次是不是历史班次(历史班次不可操作)
+				for (Map<String, Object> map : innerList) {
+					Object classesId = map.get("classesTypeId");
+					if(classesId!=null && !classesId.toString().trim().isEmpty()){
+						//根据班次类型id查询班次类别详细信息
+						ClassesType selectByPrimaryKey = classesTypeMapper.selectByPrimaryKey(classesId.toString().trim());
+						if(selectByPrimaryKey!=null){
+							String delDate = selectByPrimaryKey.getDelDate();
+							if(delDate!=null && !delDate.isEmpty()){ //该班次类别已经删除
+								//判断当前班次的时间是不是位于班次类别删除日之前
+								Object theDate = map.get("theDate");
+								if(TimeUtil.compareTime(delDate+" "+"00:00:00",theDate.toString().trim()+" "+"00:00:00")){ //删除班次类别时间，大于当前班次日期（历史）
+									map.put("isHistory","1");
+								}else{
+									map.put("isHistory","0");
+								}
+							}else{ //该班次类别没有进行删除
+								map.put("isHistory","0");
+							}
+						}
+					}else{
+						map.put("isHistory","0");
 					}
 				}
 				outterMap.put("classesList", innerList);
@@ -1223,6 +1262,7 @@ public class ClassesServiceImpl implements ClassesService {
 		map.put("theDate", selectClassesInfo.get(i).get("the_date"));
 		map.put("week", selectClassesInfo.get(i).get("week"));
 		map.put("classesId", selectClassesInfo.get(i).get("id"));
+		map.put("classesTypeId",selectClassesInfo.get(i).get("classes_id"));
 		map.put("classesName", selectClassesInfo.get(i).get("classes_name"));
 		map.put("onDutySchedulingDate", selectClassesInfo.get(i).get("on_duty_scheduling_date"));
 		map.put("offDutySchedulingDate", selectClassesInfo.get(i).get("off_duty_scheduling_date"));

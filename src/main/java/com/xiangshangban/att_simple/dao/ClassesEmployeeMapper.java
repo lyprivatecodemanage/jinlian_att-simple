@@ -27,6 +27,12 @@ public interface ClassesEmployeeMapper {
 
     int updateByPrimaryKey(ClassesEmployee record);
     
+    /**
+     * 更改人员班次类型的名称
+     * @return
+     */
+    int updateEmpClassesName(@Param("classesTypeId") String classesTypeId,@Param("classesName") String classesName);
+    
    /**
     * 通过人员ID和公司ID查询人员的姓名
     * @param empId 人员ID

@@ -240,7 +240,7 @@
   	delete from classes_employee_ 
   	<where>
   		emp_company_Id = #{companyId} and the_date >= #{offSetTime} 
-  		<if test='classes_id!=null and classes_id!=""'>
+  		<if test='classesTypeId!=null and classesTypeId!=""'>
   			and (classes_id = #{classesTypeId} or classes_id = '')
   		</if>
   		<if test='empId !=null and empId!=""'>
@@ -436,4 +436,12 @@
   <select id="selectEmpNameById" parameterType="String" resultType="String">
   	select employee_name from organization.employee_ where employee_id = #{empId} and company_id = #{companyId}
   </select>
+  
+  <!-- 更新人员班次类型的名称 -->
+  <update id="updateEmpClassesName" parameterType="String">
+  	UPDATE classes_employee_
+	SET classes_name = #{classesName}
+	WHERE
+		classes_id = #{classesTypeId}
+  </update>
 </mapper>
