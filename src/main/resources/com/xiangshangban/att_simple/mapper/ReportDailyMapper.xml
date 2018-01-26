@@ -56,6 +56,7 @@
     <result column="exception_mark_name" jdbcType="VARCHAR" property="exceptionMarkName" />
     <result column="employee_name" jdbcType="VARCHAR" property="employeeName" />
     <result column="leavedate" jdbcType="VARCHAR" property="leaveDate" />
+    <result column="matter_leave" jdbcType="VARCHAR" property="matterLeave" />
   </resultMap>
   <sql id="Base_Column_List">
     employee_id, company_id, att_date, report_id, dept_id, paiban_remark, check_info, 
@@ -65,8 +66,62 @@
     leave_maternity_check, leave_paternity, leave_funeral, leave_nursing, leave_welfare, 
     new_welfare, leave_long_sick, out_time_holiday, out_time_week, out_time_work, evection_time_holiday, 
     evection_time_week, evection_time_work, dept_name, begin_time1, end_time1, leave_other, 
+    leave_amblosis, leave_pregnancy, work_day,sign_in_time,sign_out_time,exception_mark
+  </sql>
+  
+  <sql id="reportDepartment">
+    employee_id, company_id, att_date, report_id, dept_id, paiban_remark, check_info, 
+    work_time, real_work_time, real_attendance_time, late, late_time, early, early_time, 
+    absent, absent_time, normal_over_work, week_over_work, holiday_over_work, change_time, 
+    leave_absence, leave_days_off, leave_annual, leave_sick, leave_marriage, leave_maternity, 
+    leave_maternity_check, leave_paternity, leave_funeral, leave_nursing, leave_welfare, 
+    new_welfare, leave_long_sick, out_time_holiday, out_time_week, out_time_work, evection_time_holiday, 
+    evection_time_week, evection_time_work, dept_name, begin_time1, end_time1, leave_other, 
     leave_amblosis, leave_pregnancy, work_day,sign_in_time,sign_out_time,exception_mark,department_name,exception_mark_name,employee_name,leavedate
   </sql>
+  
+  <!-- 根据公司ID查询某月 月报数据导出报表 -->
+  <select id="MonthReportExcel" resultType="java.lang.Integer">
+  	SELECT 
+	dept_id,d.department_name,rd.employee_id,e.employee_name,
+	sum(to_number(work_time,'999')) work_time,sum(to_number(real_work_time,'999')) real_work_time,sum((to_number(leave_absence,'999')+to_number(leave_sick,'999')+to_number(leave_marriage,'999')+to_number(leave_maternity,'999')
+	+to_number(leave_maternity_check,'999')+to_number(leave_paternity,'999')+to_number(leave_funeral,'999')+to_number(leave_nursing,'999')+to_number(leave_long_sick,'999')
+	+to_number(leave_other,'999')+to_number(leave_amblosis,'999')+to_number(leave_pregnancy,'999'))) matter_leave,sum(to_number(leave_annual,'999')) leave_annual,sum(to_number(leave_days_off,'999')) leave_days_off
+	from report_daily_ rd
+	LEFT JOIN organization.employee_ e
+	ON rd.dept_id = e.department_id and rd.employee_id = e.employee_id and rd.company_id = e.company_id
+	LEFT JOIN organization.department_ d
+	ON e.department_id = d.department_id and e.company_id = d.company_id
+	where rd.company_id = #{companyId}
+	and att_date like '#{attDate}%'
+	LIMIT #{pageNum} OFFSET #{pageExcludeNumber}
+  </select>
+  
+  <!-- 月报数据统总数 -->
+  <select id="selectMonthReportFuzzyTotalNumber" resultType="java.lang.Integer">
+	select count(*) from (select count(employee_id) from report_daily_
+	where company_id = #{companyId} 
+	and att_date like '#{attDate}%'
+	GROUP BY employee_id)t
+  </select>
+  
+  <!-- 月报数据统计分页模糊查询 -->
+  <select id="selectMonthReportFuzzy" resultMap="BaseResultMap">
+  	SELECT 
+	dept_id,d.department_name,rd.employee_id,e.employee_name,
+	sum(to_number(work_time,'999')) work_time,sum(to_number(real_work_time,'999')) real_work_time,sum((to_number(leave_absence,'999')+to_number(leave_sick,'999')+to_number(leave_marriage,'999')+to_number(leave_maternity,'999')
+	+to_number(leave_maternity_check,'999')+to_number(leave_paternity,'999')+to_number(leave_funeral,'999')+to_number(leave_nursing,'999')+to_number(leave_long_sick,'999')
+	+to_number(leave_other,'999')+to_number(leave_amblosis,'999')+to_number(leave_pregnancy,'999'))) matter_leave,sum(to_number(leave_annual,'999')) leave_annual,sum(to_number(leave_days_off,'999')) leave_days_off
+	from report_daily_ rd
+	LEFT JOIN organization.employee_ e
+	ON rd.dept_id = e.department_id and rd.employee_id = e.employee_id and rd.company_id = e.company_id
+	LEFT JOIN organization.department_ d
+	ON e.department_id = d.department_id and e.company_id = d.company_id
+	where rd.company_id = #{companyId}
+	and att_date like '#{attDate}%'
+	LIMIT #{pageNum} OFFSET #{pageExcludeNumber}
+	GROUP BY rd.employee_id,dept_id,d.department_name,rd.employee_id,e.employee_name
+  </select>
   
   <!-- 查询一个员工在某月存在几次请假 -->
   <select id="selectLeaveCount">
@@ -108,7 +163,7 @@
   <!-- 考勤日报模糊总数查询 -->
   <select id="selectReportDailyTotalNumber" resultType="java.lang.Integer">
   	select
-  	<include refid="Base_Column_List"></include>
+  	count(*)
   	from report_daily_ rd
 	LEFT JOIN organization.employee_ e
 	ON rd.dept_id = e.department_id and rd.employee_id = e.employee_id and rd.company_id = e.company_id
@@ -135,7 +190,7 @@
   <!-- 日报模糊查询列表 -->
   <select id="selectReportDaily" resultMap="BaseResultMap">
   	select 
-	<include refid="Base_Column_List"/>
+	<include refid="reportDepartment"/>
 	from (SELECT 
 	report_id,dept_id,d.department_name,rd.employee_id,e.employee_name,att_date,sign_in_time,sign_out_time,real_work_time,exception_mark,
 	CASE
@@ -193,7 +248,7 @@
   <!-- 使用唯一列查询日报信息 -->
   <select id="selectById" resultMap="BaseResultMap">
   	select 
-  	<include refid="Base_Column_List" />
+  	<include refid="reportDepartment" />
   	from report_daily_
   	where report_id = #{rid}
   </select>

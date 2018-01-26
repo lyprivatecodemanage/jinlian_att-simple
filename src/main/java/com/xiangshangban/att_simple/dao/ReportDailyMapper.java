@@ -88,4 +88,26 @@ public interface ReportDailyMapper {
 	 * @return
 	 */
 	int selectLeaveCount(@Param("companyId")String companyId,@Param("employeeId")String employeeId,@Param("attDate")String attDate);
+	
+	/**
+	 * 月报数据统计
+	 * @param paging
+	 * @return
+	 */
+	List<ReportDaily> selectMonthReportFuzzy(Paging paging);
+	
+	/**
+	 * 月报数据统总数
+	 * @param paging
+	 * @return
+	 */
+	int selectMonthReportFuzzyTotalNumber(Paging paging);
+	
+	/**
+	 * 月报报表
+	 * @param companyId
+	 * @param attDate
+	 * @return
+	 */
+	List<ReportDaily> MonthReportExcel(@Param("companyId")String companyId,@Param("attDate")String attDate);
 }
