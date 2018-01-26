@@ -40,8 +40,8 @@ public class ApplicationLeaveController {
 		pg.setEmployeeName(job.getString("employeeName"));
 		pg.setApplicationHourRank(job.getString("applicationHourRank"));
 		pg.setApplicationTimeRank(job.getString("applicationTimeRank"));
-		pg.setPageNum(job.getString("pageNum"));
-		pg.setPageExcludeNumber(String.valueOf((Integer.parseInt(job.getString("varPageNo"))-1)*Integer.parseInt(job.getString("pageNum"))));
+		pg.setPageNum(job.getString("pageRecordNum"));
+		pg.setPageExcludeNumber(String.valueOf((Integer.parseInt(job.getString("pageNum"))-1)*Integer.parseInt(job.getString("pageRecordNum"))));
 		
 		returndata = applicationLeaveService.selectCompleteLeave(pg);
 		

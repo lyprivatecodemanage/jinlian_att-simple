@@ -48,5 +48,5 @@ public interface ApplicationLeaveMapper {
 	 * @param companyId
 	 * @return
 	 */
-	List<ApplicationLeave> selectLeaveKeyData(@Param("companyId")String companyId,@Param("applicationTime")String applicationTime);
+	int selectLeaveKeyData(@Param("companyId")String companyId,@Param("applicationTime")String applicationTime,@Param("leaveType")String leaveType);
 }
