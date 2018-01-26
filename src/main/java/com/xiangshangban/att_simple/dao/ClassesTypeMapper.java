@@ -37,6 +37,12 @@ public interface ClassesTypeMapper {
 	ClassesType selectDefaultClassesType(@Param("companyId") String companyId);
 	
 	/**
+	 * 查询所有已经有班次类别的公司ID
+	 * @return
+	 */
+	List<String> selectALLCompany();
+	
+	/**
 	 * 删除指定的班次类型
 	 * @param map
 	 * @return

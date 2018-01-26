@@ -1,5 +1,7 @@
 package com.xiangshangban.att_simple.service;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -9,6 +11,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -681,6 +691,104 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 		returndata.setReturnCode("3000");
 		returndata.setMessage("数据请求成功");
 		return returndata;
+	}
+
+	@Override
+	public ReturnData ReportDailyExcel(String excelName,OutputStream out,String companyId, String beginDate, String endDate) {
+		// TODO Auto-generated method stub
+		ReturnData returndata = new ReturnData();
+		
+		List<ReportDaily> list = reportDailyMapper.selectDateRangeReportDaily(companyId, beginDate, endDate);
+		
+		String[] headers = new String[]{"部门","姓名*","日期","签到时间","签退时间","出勤时长","异常情况",
+				"加班时间","请假时间", "出差时间","外出时间"};  
+		 // 第一步，创建一个webbook，对应一个Excel文件  
+		HSSFWorkbook workbook = new HSSFWorkbook();  
+        //生成一个表格  
+        HSSFSheet sheet = workbook.createSheet(excelName);  
+        //设置表格默认列宽度为15个字符  
+        sheet.setDefaultColumnWidth(20);  
+        //生成一个样式，用来设置标题样式  
+        HSSFCellStyle style = workbook.createCellStyle();  
+        //设置这些样式  
+        style.setFillForegroundColor(HSSFColor.SKY_BLUE.index);  
+        style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);  
+        style.setBorderBottom(HSSFCellStyle.BORDER_THIN);  
+        style.setBorderLeft(HSSFCellStyle.BORDER_THIN);  
+        style.setBorderRight(HSSFCellStyle.BORDER_THIN);  
+        style.setBorderTop(HSSFCellStyle.BORDER_THIN);  
+        style.setAlignment(HSSFCellStyle.ALIGN_CENTER);  
+        //生成一个字体  
+        HSSFFont font = workbook.createFont();  
+        font.setColor(HSSFColor.VIOLET.index);  
+        font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);  
+        //把字体应用到当前的样式  
+        style.setFont(font);  
+        // 生成并设置另一个样式,用于设置内容样式  
+        HSSFCellStyle style2 = workbook.createCellStyle();  
+        style2.setFillForegroundColor(HSSFColor.LIGHT_YELLOW.index);  
+        style2.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);  
+        style2.setBorderBottom(HSSFCellStyle.BORDER_THIN);  
+        style2.setBorderLeft(HSSFCellStyle.BORDER_THIN);  
+        style2.setBorderRight(HSSFCellStyle.BORDER_THIN);  
+        style2.setBorderTop(HSSFCellStyle.BORDER_THIN);  
+        style2.setAlignment(HSSFCellStyle.ALIGN_CENTER);  
+        style2.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);  
+        // 生成另一个字体  
+        HSSFFont font2 = workbook.createFont();  
+        font2.setBoldweight(HSSFFont.BOLDWEIGHT_NORMAL);  
+        // 把字体应用到当前的样式  
+        style2.setFont(font2);  
+        //产生表格标题行  
+        HSSFRow row = sheet.createRow(0);  
+        for(int i = 0; i<headers.length;i++){  
+            HSSFCell cell = row.createCell(i);  
+            cell.setCellStyle(style);  
+            HSSFRichTextString text = new HSSFRichTextString(headers[i]);  
+            cell.setCellValue(text);  
+        }  
+        for (int i=0;i<list.size();i++) {  
+           ReportDaily rd = list.get(i);  
+            row = sheet.createRow(i+1);  
+            int j = 0;  
+            //"部门","姓名*","日期","签到时间","签退时间","出勤时长","异常情况","加班时间","请假时间", "出差时间","外出时间"
+            row.createCell(j++).setCellValue(rd.getDepartmentName());//部门
+            row.createCell(j++).setCellValue(rd.getEmployeeName());//姓名
+            row.createCell(j++).setCellValue(rd.getAttDate());//姓名
+            row.createCell(j++).setCellValue(rd.getSignInTime());//签到时间
+            row.createCell(j++).setCellValue(rd.getSignOutTime());//签退时间
+            row.createCell(j++).setCellValue(rd.getRealWorkTime());//出勤时长
+            row.createCell(j++).setCellValue(rd.getExceptionMarkName());//异常情况
+            //分钟换算小时
+            double now = Double.parseDouble(rd.getNormalOverWork())/60;
+            now = Math.floor(now*10)/10;
+            row.createCell(j++).setCellValue(now);//加班时间
+            
+            double ld = Double.parseDouble(rd.getLeaveDate())/60;
+            ld = Math.floor(ld*10)/10;
+            row.createCell(j++).setCellValue(ld);//请假时间
+            
+            double etw = Double.parseDouble(rd.getEvectionTimeWork())/60;
+            etw = Math.floor(etw*10)/10;
+            row.createCell(j++).setCellValue(etw);//出差时间
+            
+            double otw = Double.parseDouble(rd.getOutTimeWork())/60;
+            otw = Math.floor(otw*10)/10;
+            row.createCell(j++).setCellValue(otw);//外出时间
+        }  
+        try {  
+            workbook.write(out); 
+            
+            returndata.setReturnCode("3000");
+    		returndata.setMessage("数据请求成功");
+    		return returndata;
+        } catch (IOException e) {  
+            e.printStackTrace();  
+            
+            returndata.setReturnCode("3001");
+    		returndata.setMessage("服务器错误");
+    		return returndata;
+        }
 	}
 
 }

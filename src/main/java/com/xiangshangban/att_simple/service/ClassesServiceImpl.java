@@ -74,7 +74,7 @@ public class ClassesServiceImpl implements ClassesService {
 		classesType.setAutoClassesFlag("1");
 		classesType.setCompanyId(companyId.trim());
 		classesType.setCreateTime(TimeUtil.getCurrentTime());
-		classesType.setValidDate("");
+		classesType.setValidDate(new SimpleDateFormat("yyyy-MM-dd").format(new Date().getTime()));
 		classesType.setIsDefault("1");
 		int insertSelective = classesTypeMapper.insertSelective(classesType);
 		if(insertSelective>0){
@@ -97,9 +97,6 @@ public class ClassesServiceImpl implements ClassesService {
 		//查询当前公司默认的班次类型
 		ClassesType classesType = classesTypeMapper.selectDefaultClassesType(companyId);
 		if(classesType!=null){
-			//更新常规班的生效时间
-			classesType.setValidDate(validDate);
-			classesTypeMapper.updateByPrimaryKey(classesType);
 			int operateResult = commonSchedulingOperate(validDate, empArray, classesType);
 			if(operateResult>0){
 				result = true;
@@ -147,6 +144,7 @@ public class ClassesServiceImpl implements ClassesService {
 				&& employeeIdList != null && autoClassesFlag != null) {
 						// 先删除，传递上来的班次类型和使用该班次类型的人员班次信息(删除从指定生效日往后的班次)
 						Map<String, String> delParam = new HashMap<>();
+						
 						delParam.put("companyId", companyId.toString());
 						// 判断是否有操作标志
 						if (operateFlag != null && !operateFlag.toString().trim().equals("")) {
@@ -854,46 +852,54 @@ public class ClassesServiceImpl implements ClassesService {
 	 */
 	@Override
 	public boolean autoScheduling() {
-		// 查询所有公司已经排班的人员信息
-		List<Map> selectAllClassesEmp = classesEmployeeMapper.selectAllClassesEmp(null);
 		// 初始化要返回的结果
 		int result = 0;
-		if (selectAllClassesEmp != null && selectAllClassesEmp.size() > 0) {
-			// 遍历人员信息
-			for (int r = 0; r < selectAllClassesEmp.size(); r++) {
-				// 人员ID
-				String empId = selectAllClassesEmp.get(r).get("emp_id").toString().trim();
-				// 方便调用公共排班方法，将人员ID转换为JSONArray对象
-				Map<String, String> param = new HashMap<>();
-				param.put("empId", empId);
-				List<Map> listMap = new ArrayList<>();
-				listMap.add(param);
-				JSONArray empArray = JSONArray.parseArray(JSONArray.toJSONString(listMap));
-				// 班次类型ID
-				String classesTypeId = selectAllClassesEmp.get(r).get("classes_id").toString().trim();
-				// 根据班次类型ID查询，班次类型详细信息
-				ClassesType classesType = classesTypeMapper.selectByPrimaryKey(classesTypeId);
-				if (classesType != null) {
-					// 获取班次创建日期
-					String createTime = classesType.getCreateTime();
-					int dateInterval = 0;
-					if (createTime != null && !createTime.isEmpty()) {
-						// 判断班次类型创建时间到现在的时间间隔
-						dateInterval = TimeUtil.dayOfDate(
-								new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date().getTime()), createTime);
-					}
-					// 获取班次类型自动更新的周期
-					String classesCycle = classesType.getAutoClassesFlag();
-					if (dateInterval != 0) {
-						if (classesCycle.equals("1")) { // 周期是一个月(30天)
-							// 判断周期是否到来
-							if ((dateInterval % 30) == 0) {
-								result = commonOperateForAutoScheduling(classesType, empArray);
-							}
-						} else if (classesCycle.equals("2")) { // 周期是一个季度(90天)
-							// 判断周期是否到来（生效时间为当天）
-							if ((dateInterval % 90) == 0) {
-								result = commonOperateForAutoScheduling(classesType, empArray);
+		//查询所有有班次类别的公司
+		List<String> selectALLCompany = classesTypeMapper.selectALLCompany();
+		if(selectALLCompany!=null && selectALLCompany.size()>0){
+			for (String companyId : selectALLCompany) {
+				if(companyId!=null && !companyId.isEmpty()){
+					// 查询所有公司已经排班的人员信息
+					List<Map> selectAllClassesEmp = classesEmployeeMapper.selectAllClassesEmp(companyId);
+					if (selectAllClassesEmp != null && selectAllClassesEmp.size() > 0) {
+						// 遍历人员信息
+						for (int r = 0; r < selectAllClassesEmp.size(); r++) {
+							// 人员ID
+							String empId = selectAllClassesEmp.get(r).get("emp_id").toString().trim();
+							// 方便调用公共排班方法，将人员ID转换为JSONArray对象
+							Map<String, String> param = new HashMap<>();
+							param.put("empId", empId);
+							List<Map> listMap = new ArrayList<>();
+							listMap.add(param);
+							JSONArray empArray = JSONArray.parseArray(JSONArray.toJSONString(listMap));
+							// 班次类型ID
+							String classesTypeId = selectAllClassesEmp.get(r).get("classes_id").toString().trim();
+							// 根据班次类型ID查询，班次类型详细信息
+							ClassesType myclassesType = classesTypeMapper.selectByPrimaryKey(classesTypeId);
+							if (myclassesType != null) {
+								// 获取班次创建日期
+								String createTime = myclassesType.getCreateTime();
+								int dateInterval = 0;
+								if (createTime != null && !createTime.isEmpty()) {
+									// 判断班次类型创建时间到现在的时间间隔
+									dateInterval = TimeUtil.dayOfDate(
+											new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date().getTime()), createTime);
+								}
+								// 获取班次类型自动更新的周期
+								String classesCycle = myclassesType.getAutoClassesFlag();
+								if (dateInterval != 0) {
+									if (classesCycle.equals("1")) { // 周期是一个月(30天)
+										// 判断周期是否到来
+										if ((dateInterval % 30) == 0) {
+											result = commonOperateForAutoScheduling(myclassesType, empArray);
+										}
+									} else if (classesCycle.equals("2")) { // 周期是一个季度(90天)
+										// 判断周期是否到来（生效时间为当天）
+										if ((dateInterval % 90) == 0) {
+											result = commonOperateForAutoScheduling(myclassesType, empArray);
+										}
+									}
+								}
 							}
 						}
 					}

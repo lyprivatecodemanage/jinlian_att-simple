@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,10 +59,12 @@ public class ClassesController {
 	 * @return
 	 */
 	@PostMapping("/addDefaultClassesType")
-	public String addDefaultClassesType(@RequestParam String companyId){
+	public String addDefaultClassesType(@RequestBody String requestParam){
+		JSONObject parseObject = JSONObject.parseObject(requestParam);
+		String companyId = (String)parseObject.get("companyId");
 		//初始化返回结果
 		String result = "";
-		if(companyId!=null && !companyId.trim().isEmpty()){
+		if(StringUtils.isNotEmpty(companyId)){
 			boolean addCompanyDefaultClasses = classesService.addCompanyDefaultClasses(companyId);
 			if(addCompanyDefaultClasses){
 				result = "添加成功";
@@ -112,25 +115,24 @@ public class ClassesController {
 	 * 新增/修改班次类型
 	 * @param requestParam
 	 {
-  		 "classesId":"",(通过有无班次ID,来判断用户进行的是新增的操作还是更新的操作)
-         "classesName":"常白班",（班次名称）
-         "on_duty_time":"09:00",(上班时间)
-         "off_duty_time":"18:00",（下班时间）
-         "morrowFlag":"0/1",(是否是次日的这个时间下班 0:不是 1:是)
-         "restStartTime":"12:00",每天的休息时间段:开始时间
-         "restEndTime":"13:00",每天的休息时间段:结束时间
-         "restDays":"67",(传递的是67的时候，表示一周的周六和周日休息、传递的是"5,2"表示做5休2)
-         "festivalRestFlag":"0/1",(法定假日是否休息标志位0:不休息 1:休息)
-		 "signInRule":"20",（签到晚20分钟不算迟到）
-		 "signOutRule":"20",(签退早20分钟不算早退)
- 		 "onPunchCardRule":"20", (上班打卡限制，允许提前20分钟)
-		 "offPunchCardRule":"20", (下班打卡限制，允许推迟20分钟)
-		 "employeeIdList":[  (使用改排班的人员列表)
-			 {"empId":"XFGCDSDSFSDFSDF13213"},
-			 {"empId":"XFGCDSDSFSDFSDF46557"}
+  		 "classesId":"FEBE9F295CCD4C7BA8D04A8000EF7960",
+         "classesName":"woo班次",
+         "on_duty_time":"09:00",
+         "off_duty_time":"18:00",
+         "morrowFlag":"0",
+         "restStartTime":"12:00",
+         "restEndTime":"13:00",
+         "restDays":"67",
+         "festivalRestFlag":"1",
+		 "signInRule":"20",
+		 "signOutRule":"20",
+ 		 "onPunchCardRule":"20", 
+		 "offPunchCardRule":"20", 
+		 "employeeIdList":[  
+			 {"empId":"EBC4C2504333417385743DADD3002FAC"}
 		  ],
-	 	 "autoClassesFlag":"1/2",(自动排班周期 1:月  2:季度)
-	 	 "validDate":"2018-01-16"(当前班次生效的时间，没有的时候不传)
+	 	 "autoClassesFlag":"1",
+	 	 "validDate":"2018-01-30"
 	 }
 	 * @param request
 	 * @return
@@ -154,13 +156,13 @@ public class ClassesController {
 			}
 			if(addNewClassesType){
 				returnData.setReturnCode("3000");
-				returnData.setMessage("添加成功");
+				returnData.setMessage("排班成功");
 				//增加操作日志:记录web端的操作
 				String addOperateLog = addOperateLog(accessUserId,companyId,"在班次设置界面(新增/更新)班次设置");
 				logger.info("【(新增/修改)班次设置】------>操作日志"+addOperateLog);
 			}else{
 				returnData.setReturnCode("3001");
-				returnData.setMessage("添加失败");
+				returnData.setMessage("排班失败");
 			}
 		}else{
 			returnData.setReturnCode("3013");

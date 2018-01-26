@@ -38,12 +38,13 @@ public class VacationDetailsController {
 		String changeingDateRank = obj.getString("changeingDateRank");
 		String varPageNo = obj.getString("pageNum");
 		String pageNum = obj.getString("pageRecordNum");
+		String year = obj.getString("year");
 		String pageExcludeNumber = String.valueOf((Integer.parseInt(varPageNo)-1)*Integer.parseInt(pageNum));
 		
 		vacationType = StringUtils.isEmpty(vacationType)?null:vacationType;
 		changingReason = StringUtils.isEmpty(changingReason)?null:changingReason;
 		
-		resulet = vacationDetailsService.SelectVacationDetails(vacationId, vacationType, changingReason, changeingDateRank, pageExcludeNumber, pageNum);
+		resulet = vacationDetailsService.SelectVacationDetails(vacationId, vacationType, changingReason, changeingDateRank, pageExcludeNumber, pageNum,year);
 			
 		return resulet;
 	}

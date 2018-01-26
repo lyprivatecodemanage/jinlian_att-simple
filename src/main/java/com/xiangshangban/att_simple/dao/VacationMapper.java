@@ -17,7 +17,7 @@ public interface VacationMapper {
 
     int insertSelective(Vacation record);
 
-    Vacation selectByPrimaryKey(String vacationId);
+    Vacation selectByPrimaryKey(@Param("vacationId")String vacationId,@Param("year")String year);
 
     int updateByPrimaryKeySelective(Vacation record);
 

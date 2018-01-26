@@ -39,7 +39,7 @@
   </sql>
   <sql id="Details_Employee_List">
     vacation_details_id,vacation_id,vacation_type,vacation_type_name,vacation_mold, limit_change, vacation_total, 
-    vacation_balance, changing_reason, auditor_employee_id,employee_name,changeing_date,adjusting_instruction
+    vacation_balance, changing_reason, auditor_employee_id,employee_name,changeing_date,adjusting_instruction,year_
   </sql>
   
   <!-- select -->
@@ -51,6 +51,9 @@
 	</if>
 	<if test="changingReason != null">
 		and changing_reason = #{changingReason}
+	</if>
+	<if test="year != null">
+		and year_ = #{year}
 	</if>
   </select>
   <select id="SelectVacationDetails" parameterType="java.lang.String" resultMap="DetailsEmployeeMap">
@@ -64,13 +67,13 @@
 		THEN '年假'::TEXT
 		END AS vacation_type_name , 
 	vacation_mold, limit_change, vacation_total, 
-	vacation_balance, changing_reason, auditor_employee_id,e.employee_name,changeing_date,adjusting_instruction,
-	<trim prefix="row_number() over(" suffix=") rn">
+	vacation_balance, changing_reason, auditor_employee_id,e.employee_name,changeing_date,adjusting_instruction,vd.year_,
+	<trim prefix="row_number() over(" suffix=") rn ">
 		order by changeing_date ${changeingDateRank}
 	</trim>
 	from vacation_details vd
 	LEFT join vacation v
-	on vd.vacation_id = v.vacation_id
+	on vd.vacation_id = v.vacation_id and vd.year_ = v.year_
 	LEFT JOIN organization.employee_ e
 	on vd.auditor_employee_id = e.employee_id and v.company_id = e.company_id
 	<where>
@@ -83,9 +86,12 @@
 		<if test="vacationId != null">
 			and vd.vacation_id = #{vacationId}
 		</if>
+		<if test="year != null">
+			and vd.year_ = #{year}
+		</if>
 	</where>
-	)t
-	where rn > ${pageExcludeNumber}
+	) as t
+	where rn <![CDATA[>]]> ${pageExcludeNumber}
 	LIMIT ${pageNum}
   </select>
   <select id="SelectVacationIdByEndResult" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -103,6 +109,7 @@
     <include refid="Base_Column_List" />
     from vacation_details
     where vacation_details_id = #{vacationDetailsId,jdbcType=VARCHAR}
+    and year_ #{year}
   </select>
   <!-- delete -->
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
