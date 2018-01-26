@@ -31,6 +31,8 @@ public class VacationServiceImpl implements VacationService {
 
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
+	SimpleDateFormat sdate = new SimpleDateFormat("yyyy-MM-dd");
+	
 	computeVacation cv = new computeVacation();
 
 	@Value("${sendUrl}")
@@ -319,9 +321,11 @@ public class VacationServiceImpl implements VacationService {
 		List<Vacation> list = vacationMapper.selectResetAnnualLeave(companyId, year);
 			
 		for (Vacation vacation : list) {
-			returndata = resetAnnualLeave(vacation.getVacationId(),"1", vacation.getAnnualLeaveBalance(),"年假一键清零", auditorEmployeeId, year);
-			
+			 resetAnnualLeave(vacation.getVacationId(),"1", vacation.getAnnualLeaveBalance(),"年假一键清零", auditorEmployeeId, year);
 		}
+		
+		returndata.setReturnCode("3000");
+		returndata.setMessage("数据请求成功");
 		return returndata;
 	}
 
@@ -338,13 +342,15 @@ public class VacationServiceImpl implements VacationService {
 			
 			for (Employee employee : list) {
 				//判断员工工龄字段不能为空
-				if(StringUtils.isNotEmpty(employee.getSeniority()) && StringUtils.isNotEmpty(employee.getProbationaryExpired())){
+				if(StringUtils.isNotEmpty(employee.getSeniority()) && StringUtils.isNotEmpty(employee.getProbationaryExpired()) && StringUtils.isNotEmpty(employee.getEntryTime())){
 				
 					//年假天数
-					int AVday = 0;
+					double AVday = 0;
 					
 					try {
 						AVday = cv.ABCAnnualFormula(employee.getSeniority(), 1, employee.getProbationaryExpired(), 0, 0);
+						//计算入职时间到现在时间的年假  累加入职前年假
+						AVday += cv.computeAnnualVacation(sdate.parse(employee.getEntryTime()));
 					} catch (ParseException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -402,8 +408,8 @@ public class VacationServiceImpl implements VacationService {
 				}
 			}
 		
-		returndata.setReturnCode("3001");
-		returndata.setMessage("服务器错误");
+		returndata.setReturnCode("3000");
+		returndata.setMessage("数据请求成功");
 		return returndata;
 	}
 
