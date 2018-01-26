@@ -98,6 +98,7 @@ v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name,yea
     <include refid="Base_Column_List" />
     from vacation
     where vacation_id = #{vacationId,jdbcType=VARCHAR}
+    and year_ = #{year}
   </select>
   <select id="SelectEmployeeVacation" resultMap="BaseResultMap">
   	select

@@ -234,6 +234,27 @@ public class ApproverServiceImpl implements ApproverService {
 				page, count, departmentId, applicationType, isComplete, employeeName, startTime, endTime);
 		return selectWebApproverList;
 	}
+	/**
+	 * web审批中心-查看
+	 */
+	@Override
+	public Application webApproverCentreLook(String companyId, String employeeId, String applicationNo) {
+		ApplicationTotalRecord selectByPrimaryKey = applicationTotalRecordMapper.selectByPrimaryKey(applicationNo);
+		Application selectDetailsByApplicationNo = null;
+		if("1".equals(selectByPrimaryKey.getApplicationType())){//请假
+			 selectDetailsByApplicationNo = applicationLeaveMapper.selectDetailsByApplicationNo(applicationNo);
+		}else if("2".equals(selectByPrimaryKey.getApplicationType())){//加班
+			 selectDetailsByApplicationNo = applicationOvertimeMapper.selectDetailsByApplicationNo(applicationNo);
+		}else if("3".equals(selectByPrimaryKey.getApplicationType())){//出差
+			 selectDetailsByApplicationNo = applicationBusinessTravelMapper.selectDetailsByApplicationNo(applicationNo);
+		}else if("4".equals(selectByPrimaryKey.getApplicationType())){//外出
+			 selectDetailsByApplicationNo = applicationOutgoingMapper.selectDetailsByApplicationNo(applicationNo);
+		}else if("5".equals(selectByPrimaryKey.getApplicationType())){//补卡
+			 selectDetailsByApplicationNo = applicationFillCardMapper.selectDetailsByApplicationNo(applicationNo);
+		}
+		
+		return selectDetailsByApplicationNo;
+	}
 	
 	
 }

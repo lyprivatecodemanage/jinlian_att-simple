@@ -91,8 +91,8 @@ public class VacationServiceImpl implements VacationService {
 			String adjustingInstruction,String auditorEmployeeId,String year) {
 		// TODO Auto-generated method stub
 		ReturnData returndata = new ReturnData();
-		int limitChange = 0;
-		
+		double limitChange = 0;
+		String changingReason;
 		if (StringUtils.isEmpty(vacationId) || StringUtils.isEmpty(vacationMold) || StringUtils.isEmpty(annualLeave) || StringUtils.isEmpty(year)){
 			returndata.setReturnCode("3006");
 			returndata.setMessage("参数为空");
@@ -101,10 +101,10 @@ public class VacationServiceImpl implements VacationService {
 		
 		//判断调整增减
 		if(vacationMold.equals("0")){
-			limitChange = Integer.parseInt(annualLeave);
+			limitChange = Double.parseDouble(annualLeave);
 		}
 		if(vacationMold.equals("1")){
-			limitChange = Integer.parseInt("-"+annualLeave);
+			limitChange = Double.parseDouble("-"+annualLeave);
 		}
 		
 		//查询年假假期详情最后一次修改的值
@@ -121,7 +121,14 @@ public class VacationServiceImpl implements VacationService {
 			vd.setLimitChange(annualLeave);
 			vd.setVacationTotal(String.valueOf(limitChange));
 			vd.setVacationBalance(String.valueOf(limitChange));
-			vd.setChangingReason(vd.manualAdjustment);
+			
+			if("0".equals(auditorEmployeeId)){
+				changingReason = vd.Tweaks;
+			}else{
+				changingReason = vd.manualAdjustment;
+			}
+			
+			vd.setChangingReason(changingReason);
 			vd.setAdjustingInstruction(adjustingInstruction);
 			vd.setAuditorEmployeeId(auditorEmployeeId);
 			vd.setChangeingDate(sdf.format(new Date()));
@@ -138,8 +145,8 @@ public class VacationServiceImpl implements VacationService {
 			}
 		}else{
 			//使用查询出来最后一条结果的总额和余额  加上调整的值
-			int i = Integer.parseInt(vacationDetails.getVacationTotal())+limitChange;
-			int o = Integer.parseInt(vacationDetails.getVacationBalance())+limitChange;
+			double i = Double.parseDouble(vacationDetails.getVacationTotal())+limitChange;
+			double o = Double.parseDouble(vacationDetails.getVacationBalance())+limitChange;
 			
 			VacationDetails vd = new VacationDetails();
 			vd.setVacationDetailsId(FormatUtil.createUuid());
@@ -149,7 +156,14 @@ public class VacationServiceImpl implements VacationService {
 			vd.setLimitChange(annualLeave);
 			vd.setVacationTotal(String.valueOf(i));
 			vd.setVacationBalance(String.valueOf(o));
-			vd.setChangingReason(vd.manualAdjustment);
+			
+			if("0".equals(auditorEmployeeId)){
+				changingReason = vd.Tweaks;
+			}else{
+				changingReason = vd.manualAdjustment;
+			}
+			
+			vd.setChangingReason(changingReason);
 			vd.setAdjustingInstruction(adjustingInstruction);
 			vd.setAuditorEmployeeId(auditorEmployeeId);
 			vd.setChangeingDate(sdf.format(new Date()));
@@ -246,7 +260,14 @@ public class VacationServiceImpl implements VacationService {
 			vd.setVacationTotal(String.valueOf(i));
 			vd.setVacationBalance(String.valueOf(o));
 			vd.setAdjustingInstruction(adjustingInstruction);
-			vd.setChangingReason(vd.manualAdjustment);
+			
+			if("0".equals(auditorEmployeeId)){
+				changingReason = vd.Tweaks;
+			}else{
+				changingReason = vd.manualAdjustment;
+			}
+			
+			vd.setChangingReason(changingReason);
 			vd.setAuditorEmployeeId(auditorEmployeeId);
 			vd.setChangeingDate(sdf.format(new Date()));
 			vd.setYear(year);

@@ -71,9 +71,14 @@
   	where atr.application_id =#{employeeId} and atr.company_id =#{companyId} order by atr.operater_time DESC
   	limit #{count}::integer offset #{page}::integer
   </select>
+   <sql id="T_Base_Column_List">
+    t.application_no, t.operater_time, t.operater_id, t.application_type, t.last_approver, t.is_copy, 
+    t.application_id, t.company_id, t.is_reject, t.application_status, t.reject_reason, 
+    t.is_transfer, t.is_complete, t.is_skip_rest_day
+  </sql>
   <!-- 审批列表 -->
   <select id="selectApproverListTotal" parameterType="java.lang.String" resultMap="BaseResultMap">
- 	select <include refid="Base_Column_List"/> ,e.employee_name,t.copy_person_id,t.transfer_person_id from 
+ 	select <include refid="T_Base_Column_List"/> ,e.employee_name,t.copy_person_id,t.transfer_person_id from 
 	(select atr.*,cp.copy_person_id,tr.transfer_person_id from application_total_record_ atr 
 	LEFT JOIN att_simple.application_to_copy_person_ cp on atr.application_no = cp.application_no and cp.company_id = atr.company_id
 	left join att_simple.application_transfer_record_ tr on atr.application_no = tr.application_no and tr.company_id = atr.company_id
@@ -105,11 +110,11 @@
 	  	and e.employee_id = t.application_id 
 	where t.application_status = '1' 
 	<if test="applicationType!=null and application!=''">
-  	and atr.application_type = #{applicationType}
+  	and t.application_type = #{applicationType}
   	</if>
   	<choose>
   		<when test="statusDescription=='未审批'">
-  		and t.is_complete='0' and t.last_approver = #{employeeId} and application_status = '1'
+  		and t.is_complete='0' and t.last_approver = #{employeeId} and t.application_status = '1'
   		</when>
   		<when test="statusDescription=='已转移'">
   		and t.last_approver!=#{employeeId} and t.transfer_person_id =#{employeeId}
@@ -125,7 +130,7 @@
   		</when>
   	</choose>
   	<if test="applicationTimeStart!=null and applicationTimeEnd!=null">
-  	and applicationTime between #{applicationTimeStart} and #{applicationTimeEnd} 
+  	and t.operater_time between #{applicationTimeStart} and #{applicationTimeEnd} 
   	</if>
   	<if test="employeeName!=null and employeeName!=''">
   	and e.employee_name like #{employeeName} 
@@ -311,7 +316,7 @@
 	limit #{count}::integer offset #{page}::integer
   </select>
   <!-- web审批中-申请单查看详情 -->
-<!--   <select id="">
+  <!-- <select id="">
   	select 
   </select> -->
   

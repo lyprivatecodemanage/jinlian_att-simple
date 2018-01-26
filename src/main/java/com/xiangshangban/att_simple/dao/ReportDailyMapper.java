@@ -64,4 +64,28 @@ public interface ReportDailyMapper {
 	 * @return
 	 */
 	int selectReportDailyTotalNumber(Paging paging);
+	
+	/**
+	 * 查询该日期段的日报信息
+	 * @param companyId
+	 * @param beginDate
+	 * @param endDate
+	 * @return
+	 */
+	List<ReportDaily> selectDateRangeReportDaily(@Param("companyId")String companyId,@Param("beginDate")String beginDate,@Param("endDate")String endDate);
+	
+	/**
+	 * 查询某个月该员工是否存在考勤异常
+	 * @param employeeId
+	 * @return
+	 */
+	int selectMonthEcxeptionEmployee(@Param("companyId")String companyId,@Param("employeeId")String employeeId,@Param("attDate")String attDate);
+	
+	/**
+	 * 查询一个员工在某月存在几次请假
+	 * @param companyId
+	 * @param employeeId
+	 * @return
+	 */
+	int selectLeaveCount(@Param("companyId")String companyId,@Param("employeeId")String employeeId,@Param("attDate")String attDate);
 }

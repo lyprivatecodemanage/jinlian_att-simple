@@ -5,8 +5,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.xiangshangban.att_simple.bean.Vacation;
 import com.xiangshangban.att_simple.bean.Paging;
+import com.xiangshangban.att_simple.bean.Vacation;
 
 @Mapper
 public interface VacationMapper {
@@ -17,7 +17,7 @@ public interface VacationMapper {
 
     int insertSelective(Vacation record);
 
-    Vacation selectByPrimaryKey(String vacationId);
+    Vacation selectByPrimaryKey(@Param("vacationId")String vacationId,@Param("year")String year);
 
     int updateByPrimaryKeySelective(Vacation record);
 

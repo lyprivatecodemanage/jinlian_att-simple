@@ -65,8 +65,45 @@
     leave_maternity_check, leave_paternity, leave_funeral, leave_nursing, leave_welfare, 
     new_welfare, leave_long_sick, out_time_holiday, out_time_week, out_time_work, evection_time_holiday, 
     evection_time_week, evection_time_work, dept_name, begin_time1, end_time1, leave_other, 
-    leave_amblosis, leave_pregnancy, work_day,sign_in_time,sign_out_time
+    leave_amblosis, leave_pregnancy, work_day,sign_in_time,sign_out_time,exception_mark,department_name,exception_mark_name,employee_name,leavedate
   </sql>
+  
+  <!-- 查询一个员工在某月存在几次请假 -->
+  <select id="selectLeaveCount">
+  	select count(*) from (
+	select ((to_number(leave_absence,'9')+to_number(leave_days_off,'9')+to_number(leave_annual,'9')+to_number(leave_sick,'9')+to_number(leave_marriage,'9')+to_number(leave_maternity,'9')
+	+to_number(leave_maternity_check,'9')+to_number(leave_paternity,'9')+to_number(leave_funeral,'9')+to_number(leave_nursing,'9')+to_number(leave_long_sick,'9')+to_number(leave_other,'9')
+	+to_number(leave_amblosis,'9')+to_number(leave_pregnancy,'9'))) leavedate 
+	from report_daily_ 
+	where company_id = #{companyId}
+	and employee_id = #{employeeId}
+	and att_date like '#{attDate}%'
+	) t
+	where leavedate > 0
+  </select>
+  
+  <!-- 查询某个月该员工是否存在考勤异常 -->
+  <select id="selectMonthEcxeptionEmployee" resultMap="BaseResultMap">
+  	select count(*) from report_daily_
+	where company_id = #{companyId}
+	and employee_id = #{employeeId}
+	and att_date like '#{attDate}%'
+	and has_exception = '1'
+  </select>
+  
+  <!-- 查询该日期段的日报信息 -->
+  <select id="selectDateRangeReportDaily" resultMap="BaseResultMap">
+  	select 
+	<include refid="Base_Column_List"></include>
+	from report_daily_
+	where company_id = #{companyId}
+	<if test="beginDate != null">
+		and att_date <![CDATA[>]]> #{beginDate}
+	</if>
+	<if test="endDate != null">
+		and att_date <![CDATA[<]]> #{endDate}
+	</if>
+  </select>
   
   <!-- 考勤日报模糊总数查询 -->
   <select id="selectReportDailyTotalNumber" resultType="java.lang.Integer">
