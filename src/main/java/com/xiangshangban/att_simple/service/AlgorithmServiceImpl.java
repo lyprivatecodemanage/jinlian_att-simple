@@ -822,8 +822,8 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		algorithmResult.getReportDaily().setRealWorkTime(
 				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getRealWorkTime()));
 		//事假
-		algorithmResult.getReportDaily().setRealWorkTime(
-				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getRealWorkTime()));
+		algorithmResult.getReportDaily().setLeaveAbsence(
+				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getLeaveAbsence()));
 		//年假
 		algorithmResult.getReportDaily().setLeaveAnnual(
 				TimeUtil.parseSecondToMinuteHalfDayUnit(algorithmResult.getReportDaily().getLeaveAnnual()));
