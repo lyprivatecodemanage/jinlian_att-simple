@@ -9,5 +9,5 @@ import com.xiangshangban.att_simple.bean.ReturnData;
 public interface VacationDetailsService {
 
 	ReturnData SelectVacationDetails(String vacationId,String vacationType,String changingReason,String changeingDateRank,
-			String pageExcludeNumber,String pageNum);
+			String pageExcludeNumber,String pageNum,String year);
 }
