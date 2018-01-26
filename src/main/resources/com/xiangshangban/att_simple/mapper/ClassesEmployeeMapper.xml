@@ -422,13 +422,11 @@
 		COALESCE (MAX(the_date), '') AS last_date
 	FROM
 		classes_employee_
-  	<where>
+  	WHERE
   		classes_name !='临时班次'
   		AND classes_name != ''
-  		<if test='companyId!=null and companyId!=""'>
-  			and emp_company_id = #{companyId}
-  		</if>
-  	</where>
+		AND emp_company_id = #{companyId}
+  		AND classes_id in (SELECT id FROM classes_type WHERE company_id = #{companyId})
   	GROUP BY emp_id,classes_id,emp_company_id
   </select>
   

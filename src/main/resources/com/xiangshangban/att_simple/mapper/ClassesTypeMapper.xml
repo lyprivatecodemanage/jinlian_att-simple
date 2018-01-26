@@ -301,4 +301,14 @@
 	AND
 		is_default = '1'
   </select>
+  <!-- 查询所有已经有班次类别的公司ID -->
+  <select id="selectALLCompany" resultType="String">
+	SELECT DISTINCT
+		company_id
+	FROM
+		classes_type
+	WHERE
+		company_id != ''
+	AND company_id IS NOT NULL
+  </select>
 </mapper>
