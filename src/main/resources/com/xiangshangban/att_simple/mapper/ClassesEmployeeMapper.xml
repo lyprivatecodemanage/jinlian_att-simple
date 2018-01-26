@@ -402,6 +402,8 @@
 			AND
 				classes_id !=''
 			AND
+				classes_id in (SELECT id FROM classes_type WHERE company_id = #{companyId})
+			AND
 				emp_company_id = #{companyId}
 		) A
 	GROUP BY
