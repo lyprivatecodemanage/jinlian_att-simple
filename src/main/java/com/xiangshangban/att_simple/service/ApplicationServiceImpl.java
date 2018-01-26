@@ -300,6 +300,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 			}
 		}catch(Exception e){
 			logger.info(e);
+			e.printStackTrace();
 			return false;
 		}
 		return true;
@@ -322,7 +323,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 					page = String.valueOf(0);
 					//查询公司的人员
 					List<Employee> employeeList = employeeDao.selectCommonContactPeoplePage(employeeId,companyId, page, count);
-					
 					this.setValue("6",employeeList, null, null, commonContactPeopleList);
 				}
 		}else if(commonContactPeopleCount>0&&Integer.valueOf(page)>commonContactPeopleCount){//不满足分页条件
@@ -397,7 +397,19 @@ public class ApplicationServiceImpl implements ApplicationService {
 				mbc.setCommonContactPeopleId(employeeList.get(i).getEmployeeId());
 				mbc.setCommonContactPeopleName(employeeList.get(i).getEmployeeName());
 				mbc.setType("0");
-				applicationCommonContactPeopleList.add(applicationCommonContactPeople);
+				boolean flag = true;
+				if(applicationCommonContactPeopleList.size()>0){
+					for(int j=0;j<applicationCommonContactPeopleList.size();j++){
+						if(applicationCommonContactPeopleList.get(j).getCommonContactPeopleId().equals(employeeList.get(i).getEmployeeId())){
+							flag=false;
+						}
+					}
+					if(flag){
+						applicationCommonContactPeopleList.add(applicationCommonContactPeople);
+					}
+				}else{
+					applicationCommonContactPeopleList.add(applicationCommonContactPeople);
+				}
 			}
 			break;
 		}
@@ -433,8 +445,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 		if("1".equals(applicationRecordStatus.getIsCopy())){//抄送
 			List<ApplicationToCopyPerson> copyPersonList = applicationToCopyPersonMapper.selectCopyPersonByApplicationNo(applicationNo);
 			for(int i=0;i<copyPersonList.size();i++){
-				Employee emp=employeeDao.selectNameByEmployeeIdAndDepartmentIdAndCompanyId(copyPersonList.get(i).getCopyPersonId(), null, companyId);
-				copyPersonList.get(i).setCopyPersonName(emp.getEmployeeName());
+				Employee emp=employeeDao.selectNameByEmployeeIdAndDepartmentIdAndCompanyId(copyPersonList.get(i).getAppCopyPersonId(), null, companyId);
+				copyPersonList.get(i).setAppCopyPersonName(emp.getEmployeeName());
 			}
 			application.setCopyPersonList(copyPersonList);
 		}

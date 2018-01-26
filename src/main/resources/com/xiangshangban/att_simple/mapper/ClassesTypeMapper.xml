@@ -17,7 +17,8 @@
     <result column="auto_classes_flag" jdbcType="VARCHAR" property="autoClassesFlag" />
     <result column="create_time" jdbcType="VARCHAR" property="createTime" />
     <result column="company_id" jdbcType="VARCHAR" property="companyId" />
-    <result column="valid_date" jdbcType="VARCHAR" property="validDate" />
+    <result column="valid_date" jdbcType="VARCHAR" property="validDate" /> 
+    <result column="is_default" jdbcType="VARCHAR" property="isDefault" />
   </resultMap>
   <sql id="Base_Column_List">
     id, classes_name, on_duty_time, off_duty_time, morrow_duty_time_flag, rest_time, 
@@ -99,6 +100,9 @@
       <if test="validDate != null">
         valid_date,
       </if>
+      <if test="isDefault != null">
+        is_default,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -149,6 +153,9 @@
       <if test="validDate != null">
         #{validDate,jdbcType=VARCHAR},
       </if>
+      <if test="isDefault != null">
+        #{isDefault,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.xiangshangban.att_simple.bean.ClassesType">
@@ -196,6 +203,12 @@
       <if test="companyId != null">
         company_id = #{companyId,jdbcType=VARCHAR},
       </if>
+      <if test="validDate != null">
+        valid_date = #{validDate,jdbcType=VARCHAR},
+      </if>
+      <if test="isDefault != null">
+        is_default = #{isDefault,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
@@ -214,15 +227,18 @@
       off_punch_card_time = #{offPunchCardTime,jdbcType=VARCHAR},
       auto_classes_flag = #{autoClassesFlag,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=VARCHAR},
-      company_id = #{companyId,jdbcType=VARCHAR}
+      company_id = #{companyId,jdbcType=VARCHAR},
+      valid_date = #{validDate,jdbcType=VARCHAR},
+      is_default = #{isDefault,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
   
-  <!-- 查询当前公司所有的班次类型ID和Name -->
+  <!-- 查询当前公司所有的班次类型ID和Name,以及是否是默认的 -->
   <select id="selectAllClassesIdAndName" parameterType="String" resultMap="BaseResultMap">
   	SELECT
 	COALESCE(ID,'') AS ID,
-	COALESCE(classes_name,'') AS classes_name
+	COALESCE(classes_name,'') AS classes_name,
+	COALESCE(is_default,'') AS is_default
 	FROM
 		classes_type
 	WHERE
@@ -245,7 +261,8 @@
 	COALESCE(on_punch_card_time,'') AS on_punch_card_time,
 	COALESCE(off_punch_card_time,'') AS off_punch_card_time,
 	COALESCE(auto_classes_flag,'') AS auto_classes_flag,
-	COALESCE(valid_date,'') AS valid_date
+	COALESCE(valid_date,'') AS valid_date,
+	COALESCE(is_default,'') AS is_default
 	FROM
 		classes_type
 	WHERE
@@ -256,4 +273,32 @@
   <update id="removeAppointClassesType" parameterType="Map">
   	update classes_type set company_id = '' where company_id = #{companyId} and id = #{classesTypeId}
   </update>
+  
+   <!-- 查询当前公司默认的班次类别 -->
+  <select id="selectDefaultClassesType" parameterType="String" resultMap="BaseResultMap">
+  	SELECT
+	COALESCE(ID,'') AS ID,
+	COALESCE(classes_name,'') AS classes_name,
+	COALESCE(on_duty_time,'') AS on_duty_time,
+	COALESCE(off_duty_time,'') AS off_duty_time,
+	COALESCE(morrow_duty_time_flag,'') AS morrow_duty_time_flag,
+	COALESCE(rest_time,'') AS rest_time,
+	COALESCE(rest_days,'') AS rest_days,
+	COALESCE(festival_rest_flag,'') AS festival_rest_flag,
+	COALESCE(sign_in_rule,'') AS sign_in_rule,
+	COALESCE(sign_out_rule,'') AS sign_out_rule,
+	COALESCE(on_punch_card_time,'') AS on_punch_card_time,
+	COALESCE(off_punch_card_time,'') AS off_punch_card_time,
+	COALESCE(auto_classes_flag,'') AS auto_classes_flag,
+	COALESCE(create_time,'') AS create_time,
+	COALESCE(company_id,'') AS company_id,
+	COALESCE(valid_date,'') AS valid_date,
+	COALESCE(is_default,'') AS is_default
+	FROM
+		classes_type
+	WHERE
+		company_id = #{companyId}
+	AND
+		is_default = '1'
+  </select>
 </mapper>

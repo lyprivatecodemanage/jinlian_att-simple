@@ -226,13 +226,34 @@ public class ApproverServiceImpl implements ApproverService {
 	 * web审批中心-列表分页,条件搜索
 	 */
 	@Override
-	public ReturnData webApproverCentreList(String companyId,String page,String count,
+	public List<ApplicationTotalRecord> webApproverCentreList(String companyId,String page,String count,
 			String departmentId,String applicationType,String isComplete,
 			String employeeName,String startTime,String endTime) {
 		ReturnData returnData = new ReturnData();
-		applicationTotalRecordMapper.selectWebApproverList(companyId, 
+		List<ApplicationTotalRecord> selectWebApproverList = applicationTotalRecordMapper.selectWebApproverList(companyId, 
 				page, count, departmentId, applicationType, isComplete, employeeName, startTime, endTime);
-		return null;
+		return selectWebApproverList;
+	}
+	/**
+	 * web审批中心-查看
+	 */
+	@Override
+	public Application webApproverCentreLook(String companyId, String employeeId, String applicationNo) {
+		ApplicationTotalRecord selectByPrimaryKey = applicationTotalRecordMapper.selectByPrimaryKey(applicationNo);
+		Application selectDetailsByApplicationNo = null;
+		if("1".equals(selectByPrimaryKey.getApplicationType())){//请假
+			 selectDetailsByApplicationNo = applicationLeaveMapper.selectDetailsByApplicationNo(applicationNo);
+		}else if("2".equals(selectByPrimaryKey.getApplicationType())){//加班
+			 selectDetailsByApplicationNo = applicationOvertimeMapper.selectDetailsByApplicationNo(applicationNo);
+		}else if("3".equals(selectByPrimaryKey.getApplicationType())){//出差
+			 selectDetailsByApplicationNo = applicationBusinessTravelMapper.selectDetailsByApplicationNo(applicationNo);
+		}else if("4".equals(selectByPrimaryKey.getApplicationType())){//外出
+			 selectDetailsByApplicationNo = applicationOutgoingMapper.selectDetailsByApplicationNo(applicationNo);
+		}else if("5".equals(selectByPrimaryKey.getApplicationType())){//补卡
+			 selectDetailsByApplicationNo = applicationFillCardMapper.selectDetailsByApplicationNo(applicationNo);
+		}
+		
+		return selectDetailsByApplicationNo;
 	}
 	
 	

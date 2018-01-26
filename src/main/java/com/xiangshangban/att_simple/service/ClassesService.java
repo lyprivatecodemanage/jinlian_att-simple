@@ -4,6 +4,7 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONArray;
 import com.xiangshangban.att_simple.bean.ClassesEmployee;
 import com.xiangshangban.att_simple.bean.ClassesType;
 import com.xiangshangban.att_simple.bean.ReturnData;
@@ -21,6 +22,20 @@ public interface ClassesService {
 	 * @return
 	 */
 	String queryEmpNameById(String empId,String companyId);
+	
+	/**
+	 * 添加公司默认常规班
+	 * @param company
+	 * @return
+	 */
+	boolean addCompanyDefaultClasses(String company);
+	
+	/**
+	 * 给新入职的员工排（默认常规班）
+	 * @param requestParam
+	 * @return
+	 */
+	boolean addDefaultEmpClasses(String companyId,JSONArray empArray);
 	
 	/**
 	 * 添加新的班次类型

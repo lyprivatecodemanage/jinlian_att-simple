@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.ApplicationToCopyPerson">
     <id column="id"  property="id" />
     <result column="application_no"  property="applicationNo" />
-    <result column="copy_person_id"  property="copyPersonId" />
+    <result column="copy_person_id"  property="appCopyPersonId" />
     <result column="operater_time"  property="operaterTime" />
     <result column="company_id"  property="companyId" />
   </resultMap>
@@ -43,7 +43,7 @@
   <insert id="insert" parameterType="com.xiangshangban.att_simple.bean.ApplicationToCopyPerson">
     insert into application_to_copy_person_ (id, application_no, copy_person_id, 
       operater_time)
-    values (#{id}, #{applicationNo}, #{copyPersonId}, 
+    values (#{id}, #{applicationNo}, #{appCopyPersonId}, 
       #{operaterTime})
   </insert>
   <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ApplicationToCopyPerson">
@@ -55,7 +55,7 @@
       <if test="applicationNo != null">
         application_no,
       </if>
-      <if test="copyPersonId != null">
+      <if test="appCopyPersonId != null">
         copy_person_id,
       </if>
       <if test="operaterTime != null">
@@ -69,8 +69,8 @@
       <if test="applicationNo != null">
         #{applicationNo},
       </if>
-      <if test="copyPersonId != null">
-        #{copyPersonId},
+      <if test="appCopyPersonId != null">
+        #{appCopyPersonId},
       </if>
       <if test="operaterTime != null">
         #{operaterTime},
@@ -83,8 +83,8 @@
       <if test="applicationNo != null">
         application_no = #{applicationNo},
       </if>
-      <if test="copyPersonId != null">
-        copy_person_id = #{copyPersonId},
+      <if test="appCopyPersonId != null">
+        copy_person_id = #{appCopyPersonId},
       </if>
       <if test="operaterTime != null">
         operater_time = #{operaterTime},
@@ -95,7 +95,7 @@
   <update id="updateByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ApplicationToCopyPerson">
     update application_to_copy_person_
     set application_no = #{applicationNo},
-      copy_person_id = #{copyPersonId},
+      copy_person_id = #{appCopyPersonId},
       operater_time = #{operaterTime}
     where id = #{id}
   </update>

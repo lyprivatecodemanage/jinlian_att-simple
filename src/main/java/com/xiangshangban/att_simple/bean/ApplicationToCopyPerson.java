@@ -10,9 +10,9 @@ public class ApplicationToCopyPerson {
     //申请单号
     private String applicationNo;
     //抄送人id
-    private String copyPersonId;
+    private String appCopyPersonId;
     //抄送人姓名
-    private String copyPersonName;
+    private String appCopyPersonName;
     //操作时间
     private String operaterTime;
     private String companyId;
@@ -25,12 +25,12 @@ public class ApplicationToCopyPerson {
         this.id = id;
     }
 
-    public String getCopyPersonName() {
-		return copyPersonName;
+    public String getAppCopyPersonName() {
+		return appCopyPersonName;
 	}
 
-	public void setCopyPersonName(String copyPersonName) {
-		this.copyPersonName = copyPersonName;
+	public void setAppCopyPersonName(String appCopyPersonName) {
+		this.appCopyPersonName = appCopyPersonName;
 	}
 
 	public String getApplicationNo() {
@@ -41,12 +41,12 @@ public class ApplicationToCopyPerson {
         this.applicationNo = applicationNo;
     }
 
-    public String getCopyPersonId() {
-        return copyPersonId;
+    public String getAppCopyPersonId() {
+        return appCopyPersonId;
     }
 
-    public void setCopyPersonId(String copyPersonId) {
-        this.copyPersonId = copyPersonId;
+    public void setAppCopyPersonId(String appCopyPersonId) {
+        this.appCopyPersonId = appCopyPersonId;
     }
 
     public String getOperaterTime() {
