@@ -19,11 +19,12 @@
     <result column="company_id" jdbcType="VARCHAR" property="companyId" />
     <result column="valid_date" jdbcType="VARCHAR" property="validDate" /> 
     <result column="is_default" jdbcType="VARCHAR" property="isDefault" />
+    <result column="del_date" jdbcType="VARCHAR" property="delDate" />
   </resultMap>
   <sql id="Base_Column_List">
     id, classes_name, on_duty_time, off_duty_time, morrow_duty_time_flag, rest_time, 
     rest_days, festival_rest_flag, sign_in_rule, sign_out_rule, on_punch_card_time, off_punch_card_time, 
-    auto_classes_flag, create_time, company_id
+    auto_classes_flag, create_time, company_id , valid_date, is_default,del_date
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -103,6 +104,9 @@
       <if test="isDefault != null">
         is_default,
       </if>
+      <if test="delDate != null">
+        del_date,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -155,6 +159,9 @@
       </if>
       <if test="isDefault != null">
         #{isDefault,jdbcType=VARCHAR},
+      </if>
+      <if test="delDate != null">
+        #{delDate,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -209,6 +216,9 @@
       <if test="isDefault != null">
         is_default = #{isDefault,jdbcType=VARCHAR},
       </if>
+      <if test="delDate != null">
+        del_date = #{delDate,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
@@ -229,7 +239,8 @@
       create_time = #{createTime,jdbcType=VARCHAR},
       company_id = #{companyId,jdbcType=VARCHAR},
       valid_date = #{validDate,jdbcType=VARCHAR},
-      is_default = #{isDefault,jdbcType=VARCHAR}
+      is_default = #{isDefault,jdbcType=VARCHAR},
+      del_date = #{delDate,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
   
@@ -271,7 +282,11 @@
   
   <!-- 删除指定的班次类型 -->
   <update id="removeAppointClassesType" parameterType="Map">
-  	update classes_type set company_id = '' where company_id = #{companyId} and id = #{classesTypeId}
+  	update classes_type set company_id = '' 
+  	<if test='delDate!=null and delDate!=""'>
+  		,del_date = #{delDate}
+  	</if>
+  	where company_id = #{companyId} and id = #{classesTypeId}
   </update>
   
    <!-- 查询当前公司默认的班次类别 -->
@@ -301,4 +316,23 @@
 	AND
 		is_default = '1'
   </select>
+  
+  <!-- 查询所有已经有班次类别的公司ID -->
+  <select id="selectALLCompany" resultType="String">
+	SELECT DISTINCT
+		company_id
+	FROM
+		classes_type
+	WHERE
+		company_id != ''
+	AND company_id IS NOT NULL
+  </select>
+  
+  <!-- 更新班次类别的名称 -->
+  <update id="updateClassesTypeName" parameterType="String">
+  	UPDATE classes_type
+	SET classes_name = #{classesName}
+	WHERE
+		id = #{classesTypeId}
+  </update>
 </mapper>

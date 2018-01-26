@@ -42,7 +42,7 @@ public class ReportDaily extends ReportDailyKey {
     private String endTime1;//下班时间
     private String leaveAmblosis;//流产假
     private String leavePregnancy;//孕期工间休息假
-    private String leaveOther="";//其他假
+    private String leaveOther;//其他假
     private String workDay;//应出天数
     private String signInTime;//签到
     private String signOutTime;//签退
