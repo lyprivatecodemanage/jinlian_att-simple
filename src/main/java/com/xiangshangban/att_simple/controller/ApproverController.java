@@ -19,6 +19,7 @@ import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ApplicationTotalRecord;
 import com.xiangshangban.att_simple.bean.Company;
 import com.xiangshangban.att_simple.bean.ReturnData;
+import com.xiangshangban.att_simple.service.AlgorithmService;
 import com.xiangshangban.att_simple.service.ApproverService;
 import com.xiangshangban.att_simple.service.CompanyService;
 import com.xiangshangban.att_simple.service.OSSFileService;
@@ -36,6 +37,9 @@ public class ApproverController {
 	private OSSFileService oSSFileService;
 	@Autowired
 	private CompanyService companyService;
+	@Autowired
+	private AlgorithmService algorithmService;
+	
 	/**
 	 * 审批首页列表/历史列表/条件筛选
 	 * @param jsonString
@@ -251,9 +255,11 @@ public class ApproverController {
 					return returnData;
 				}
 			}
-			
-			
-			
+			returnData = approverService.approverApplication(employeeId, 
+					companyId, applicationNo, approverDescription, postscriptason, 
+					transferPersonId, transferPersionAccessId);
+			Application application = (Application)returnData.getData();
+			algorithmService.calculate(companyId, employeeId, application.getStartTime(), application.getEndTime());
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
 			returnData.setData("");

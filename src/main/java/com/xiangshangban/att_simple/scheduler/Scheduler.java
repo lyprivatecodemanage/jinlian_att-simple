@@ -17,9 +17,10 @@ public class Scheduler {
 	
 	//每天凌晨2点执行
 	private static final String SCHEDULED_TIME = "0 0 2 * * ?";
+	//每天凌晨1点执行
+	private static final String REPORT_TIME = "0 0 1 * * ?";//日报计算时间
 	//每天凌晨0点执行
-	private static final String REPORT_TIME = "0 29 11 * * ?";//日报计算时间
-	
+	private static final String REPORT_MONTH = "40 24 17 * * ?";//月报计算时间
 	private final Logger logger = Logger.getLogger(Scheduler.class);
 	
 	@Autowired
@@ -46,4 +47,14 @@ public class Scheduler {
 		logger.info(countDate+"日报计算完成");
 		logger.info("日报计算完成时间"+TimeUtil.getCurrentTime()); 
 	}
+	/**
+	 * 月报计算（测试用）
+	 */
+	/*@Scheduled(cron=REPORT_MONTH)
+	public void countReportMonth(){
+		logger.info("月报计算开始时间"+TimeUtil.getCurrentTime()); 
+		algorithmService.calculate("CBBF109CBECF4DE0BA0604E395532902", "9652BCE4F39B4E3B82C40A212151FD47", "2018-01-01", "2018-01-27");
+		logger.info("月报计算完成");
+		logger.info("月报计算完成时间"+TimeUtil.getCurrentTime()); 
+	}*/
 }

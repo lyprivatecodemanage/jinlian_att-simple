@@ -64,7 +64,7 @@ public class ApproverServiceImpl implements ApproverService {
 	@Autowired
 	private ApplicationTransferRecordMapper applicationTransferRecordMapper;//转移记录dao
 	@Autowired
-	VacationDetailsMapper vacationDetailsMapper;
+	private VacationDetailsMapper vacationDetailsMapper;//假期详情dao
 	
 	/**
 	 * 审批首页列表/历史列表/条件筛选
@@ -163,10 +163,28 @@ public class ApproverServiceImpl implements ApproverService {
 			String transferPersionAccessId) {
 		ReturnData returnData = new ReturnData();
 		String now = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(System.currentTimeMillis()));
+		Application selectDetailsByApplicationNo = applicationLeaveMapper.selectDetailsByApplicationNo(applicationNo);
 		ApplicationTotalRecord selectByPrimaryKey = applicationTotalRecordMapper.selectByPrimaryKey(applicationNo);
 		String previousOperaterTime = selectByPrimaryKey.getPreviousOperaterTime();
 		if("同意".equals(approverDescription)){
-			
+			if(selectByPrimaryKey!=null&&StringUtils.isNotEmpty(selectByPrimaryKey.getApplicationType())){
+				if("1".equals(selectByPrimaryKey.getApplicationType())){//请假
+					if("2".equals(selectDetailsByApplicationNo.getApplicationChildrenType())){//年假
+						//年假剩余扣减
+					}
+					if("3".equals(selectDetailsByApplicationNo.getApplicationChildrenType())){//调休假
+						//调休剩余扣减
+					}
+				}
+			selectByPrimaryKey.setIsComplete("1");
+			selectByPrimaryKey.setRejectReason(postscriptason);
+			applicationTotalRecordMapper.updateByPrimaryKeySelective(selectByPrimaryKey);
+			returnData.setData(selectDetailsByApplicationNo);
+			}else{
+				returnData.setMessage("审批单数据异常");
+				returnData.setReturnCode("9999");
+				return returnData;
+			}
 		}else if("转移".equals(approverDescription)){
 			ApplicationTransferRecord newApplicationTransferRecord = new ApplicationTransferRecord();
 			newApplicationTransferRecord.setId(FormatUtil.createUuid());//id
@@ -204,7 +222,7 @@ public class ApproverServiceImpl implements ApproverService {
 			selectByPrimaryKey.setPreviousOperaterTime(previousOperaterTime);
 			applicationTotalRecordMapper.updateByPrimaryKeySelective(selectByPrimaryKey);
 		}
-		return null;
+		return returnData;
 	}
 	
 	
@@ -291,5 +309,6 @@ public class ApproverServiceImpl implements ApproverService {
 		
 		return 1;
 	}
+	
 	
 }

@@ -371,7 +371,7 @@
 				H.the_date
 		) W
 	<where>
-		<if test='classesId!=null and classesId!=""'>
+		<if test='classesTypeId!=null and classesTypeId!=""'>
 			W.classes_id = #{classesTypeId}
 		</if>
 		<if test='deptId!=null and deptId!=""'>
@@ -435,11 +435,24 @@
   	select employee_name from organization.employee_ where employee_id = #{empId} and company_id = #{companyId}
   </select>
   
+  <!-- 查询指定公司一周内执行“一键排班”的次数 -->
+  <select id="selectOneKeyAccessCount" parameterType="String" resultType="int">
+  	SELECT
+		COUNT (1)
+	FROM
+		operate_log
+	WHERE
+		operate_emp_company = #{companyId}
+		AND operate_date BETWEEN #{monday}
+		AND #{weekend}
+		AND operate_content LIKE '%一键排班%'
+  </select>
+  
   <!-- 更新人员班次类型的名称 -->
- <!--  <update id="updateEmpClassesName" parameterType="String">
+  <update id="updateEmpClassesName" parameterType="String">
   	UPDATE classes_employee_
 	SET classes_name = #{classesName}
 	WHERE
 		classes_id = #{classesTypeId}
-  </update> -->
+  </update>
 </mapper>

@@ -76,6 +76,11 @@ public class FormatUtil {
 	 * listAttendancePlanShiftDay, map, attendancePlanService);
 	 */
 	public static void main(String[] args) {
-		System.out.println(createUuid());
+		int i=0;
+		while(i<50){
+			System.out.println(createUuid());
+			i++;
+		}
+		//System.out.println(createUuid());
 	}
 }
