@@ -1,4 +1,7 @@
 package com.xiangshangban.att_simple.bean;
+
+import org.apache.commons.lang.StringUtils;
+
 /**
  * 日报统计（算法中累加计算中）
  * @author 韦友弟
@@ -13,7 +16,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setWorkTime(String workTime, ReportDaily reportDaily) {
 		reportDaily.setWorkTime((
-				Long.parseLong(reportDaily.getWorkTime())+
+				(StringUtils.isNotEmpty(reportDaily.getWorkTime())?Long.parseLong(reportDaily.getWorkTime()):0)+
 				Long.parseLong(workTime))+"");
 		return reportDaily;
 	}
@@ -25,7 +28,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setRealWorkTime(String realWorkTime, ReportDaily reportDaily) {
 		reportDaily.setRealWorkTime((
-				Long.parseLong(reportDaily.getRealWorkTime())+
+				(StringUtils.isNotEmpty(reportDaily.getRealWorkTime())?Long.parseLong(reportDaily.getRealWorkTime()):0)+
 				Long.parseLong(realWorkTime))+"");
 		return reportDaily;
 	}
@@ -37,7 +40,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setRealAttendanceTime(String realAttendanceTime, ReportDaily reportDaily) {
 		reportDaily.setRealAttendanceTime((
-				Long.parseLong(reportDaily.getRealAttendanceTime())+
+				(StringUtils.isNotEmpty(reportDaily.getRealAttendanceTime())?Long.parseLong(reportDaily.getRealAttendanceTime()):0)+
 				Long.parseLong(realAttendanceTime))+"");
 		return reportDaily;
 	}
@@ -49,7 +52,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setLate(String late, ReportDaily reportDaily) {
 		reportDaily.setLate((
-				Long.parseLong(reportDaily.getLate())+
+				(StringUtils.isNotEmpty(reportDaily.getLate())?Long.parseLong(reportDaily.getLate()):0)+
 				Long.parseLong(late))+"");
 		return reportDaily;
 	}
@@ -61,7 +64,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setLateTime(String lateTime, ReportDaily reportDaily) {
 		reportDaily.setLateTime((
-				Long.parseLong(reportDaily.getLateTime())+
+				(StringUtils.isNotEmpty(reportDaily.getLateTime())?Long.parseLong(reportDaily.getLateTime()):0)+
 				Long.parseLong(lateTime))+"");
 		return reportDaily;
 	}
@@ -73,7 +76,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setEarly(String early, ReportDaily reportDaily) {
 		reportDaily.setEarly((
-				Long.parseLong(reportDaily.getEarly())+
+				(StringUtils.isNotEmpty(reportDaily.getEarly())?Long.parseLong(reportDaily.getEarly()):0)+
 				Long.parseLong(early))+"");
 		return reportDaily;
 	}
@@ -85,7 +88,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setEarlyTime(String earlyTime, ReportDaily reportDaily) {
 		reportDaily.setEarlyTime((
-				Long.parseLong(reportDaily.getEarlyTime())+
+				(StringUtils.isNotEmpty(reportDaily.getEarlyTime())?Long.parseLong(reportDaily.getEarlyTime()):0)+
 				Long.parseLong(earlyTime))+"");
 		return reportDaily;
 	}
@@ -97,7 +100,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setAbsent(String absent, ReportDaily reportDaily) {
 		reportDaily.setAbsent((
-				Long.parseLong(reportDaily.getAbsent())+
+				(StringUtils.isNotEmpty(reportDaily.getAbsent())?Long.parseLong(reportDaily.getAbsent()):0)+
 				Long.parseLong(absent))+"");
 		return reportDaily;
 	}
@@ -109,7 +112,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setAbsentTime(String absentTime, ReportDaily reportDaily) {
 		reportDaily.setAbsentTime((
-				Long.parseLong(reportDaily.getAbsentTime())+
+				(StringUtils.isNotEmpty(reportDaily.getAbsentTime())?Long.parseLong(reportDaily.getAbsentTime()):0)+
 				Long.parseLong(absentTime))+"");
 		return reportDaily;
 	}
@@ -121,7 +124,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setNormalOverWork(String normalOverWork, ReportDaily reportDaily) {
 		reportDaily.setNormalOverWork((
-				Long.parseLong(reportDaily.getNormalOverWork())+
+				(StringUtils.isNotEmpty(reportDaily.getNormalOverWork())?Long.parseLong(reportDaily.getNormalOverWork()):0)+
 				Long.parseLong(normalOverWork))+"");
 		return reportDaily;
 	}
@@ -133,7 +136,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setWeekOverWork(String weekOverWork, ReportDaily reportDaily) {
 		reportDaily.setWeekOverWork((
-				Long.parseLong(reportDaily.getWeekOverWork())+
+				(StringUtils.isNotEmpty(reportDaily.getWeekOverWork())?Long.parseLong(reportDaily.getWeekOverWork()):0)+
 				Long.parseLong(weekOverWork))+"");
 		return reportDaily;
 	}
@@ -145,7 +148,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setHolidayOverWork(String holidayOverWork, ReportDaily reportDaily) {
 		reportDaily.setHolidayOverWork((
-				Long.parseLong(reportDaily.getHolidayOverWork())+
+				(StringUtils.isNotEmpty(reportDaily.getHolidayOverWork())?Long.parseLong(reportDaily.getHolidayOverWork()):0)+
 				Long.parseLong(holidayOverWork))+"");
 		return reportDaily;
 	}
@@ -157,7 +160,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setChangeTime(String changeTime, ReportDaily reportDaily) {
 		reportDaily.setChangeTime((
-				Long.parseLong(reportDaily.getChangeTime())+
+				(StringUtils.isNotEmpty(reportDaily.getChangeTime())?Long.parseLong(reportDaily.getChangeTime()):0)+
 				Long.parseLong(changeTime))+"");
 		return reportDaily;
 	}
@@ -171,7 +174,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setLeaveAbsence(String leaveAbsence, ReportDaily reportDaily) {
 		reportDaily.setLeaveAbsence((
-				Long.parseLong(reportDaily.getLeaveAbsence())+
+				(StringUtils.isNotEmpty(reportDaily.getLeaveAbsence())?Long.parseLong(reportDaily.getLeaveAbsence()):0)+
 				Long.parseLong(leaveAbsence))+"");
 		return reportDaily;
 	}
@@ -183,7 +186,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setLeaveDaysOff(String leaveDaysOff, ReportDaily reportDaily) {
 		reportDaily.setLeaveDaysOff((
-				Long.parseLong(reportDaily.getLeaveDaysOff())+
+				(StringUtils.isNotEmpty(reportDaily.getLeaveDaysOff())?Long.parseLong(reportDaily.getLeaveDaysOff()):0)+
 				Long.parseLong(leaveDaysOff))+"");
 		return reportDaily;
 	}
@@ -195,7 +198,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setLeaveAnnual(String leaveAnnual, ReportDaily reportDaily) {
 		reportDaily.setLeaveAnnual((
-				Long.parseLong(reportDaily.getLeaveAnnual())+
+				(StringUtils.isNotEmpty(reportDaily.getLeaveAnnual())?Long.parseLong(reportDaily.getLeaveAnnual()):0)+
 				Long.parseLong(leaveAnnual))+"");
 		return reportDaily;
 	}
@@ -207,7 +210,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setLeaveSick(String leaveSick, ReportDaily reportDaily) {
 		reportDaily.setLeaveSick((
-				Long.parseLong(reportDaily.getLeaveSick())+
+				(StringUtils.isNotEmpty(reportDaily.getLeaveSick())?Long.parseLong(reportDaily.getLeaveSick()):0)+
 				Long.parseLong(leaveSick))+"");
 		return reportDaily;
 	}
@@ -219,7 +222,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setLeaveMarriage(String leaveMarriage, ReportDaily reportDaily) {
 		reportDaily.setLeaveMarriage((
-				Long.parseLong(reportDaily.getLeaveMarriage())+
+				(StringUtils.isNotEmpty(reportDaily.getLeaveMarriage())?Long.parseLong(reportDaily.getLeaveMarriage()):0)+
 				Long.parseLong(leaveMarriage))+"");
 		return reportDaily;
 	}
@@ -231,7 +234,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setLeaveMaternity(String leaveMaternity, ReportDaily reportDaily) {
 		reportDaily.setLeaveMaternity((
-				Long.parseLong(reportDaily.getLeaveMaternity())+
+				(StringUtils.isNotEmpty(reportDaily.getLeaveMaternity())?Long.parseLong(reportDaily.getLeaveMaternity()):0)+
 				Long.parseLong(leaveMaternity))+"");
 		return reportDaily;
 	}
@@ -243,7 +246,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setLeaveMaternityCheck(String leaveMaternityCheck, ReportDaily reportDaily) {
 		reportDaily.setLeaveMaternityCheck((
-				Long.parseLong(reportDaily.getLeaveMaternityCheck())+
+				(StringUtils.isNotEmpty(reportDaily.getLeaveMaternityCheck())?Long.parseLong(reportDaily.getLeaveMaternityCheck()):0)+
 				Long.parseLong(leaveMaternityCheck))+"");
 		return reportDaily;
 	}
@@ -255,7 +258,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setLeavePaternity(String leavePaternity, ReportDaily reportDaily) {
 		reportDaily.setLeavePaternity((
-				Long.parseLong(reportDaily.getLeavePaternity())+
+				(StringUtils.isNotEmpty(reportDaily.getLeavePaternity())?Long.parseLong(reportDaily.getLeavePaternity()):0)+
 				Long.parseLong(leavePaternity))+"");
 		return reportDaily;
 	}
@@ -267,7 +270,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setLeaveFuneral(String leaveFuneral, ReportDaily reportDaily) {
 		reportDaily.setLeaveFuneral((
-				Long.parseLong(reportDaily.getLeaveFuneral())+
+				(StringUtils.isNotEmpty(reportDaily.getLeaveFuneral())?Long.parseLong(reportDaily.getLeaveFuneral()):0)+
 				Long.parseLong(leaveFuneral))+"");
 		return reportDaily;
 	}
@@ -279,7 +282,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setLeaveNursing(String leaveNursing, ReportDaily reportDaily) {
 		reportDaily.setLeaveNursing((
-				Long.parseLong(reportDaily.getLeaveNursing())+
+				(StringUtils.isNotEmpty(reportDaily.getLeaveNursing())?Long.parseLong(reportDaily.getLeaveNursing()):0)+
 				Long.parseLong(leaveNursing))+"");
 		return reportDaily;
 	}
@@ -291,7 +294,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setLeaveWelfare(String leaveWelfare, ReportDaily reportDaily) {
 		reportDaily.setLeaveWelfare((
-				Long.parseLong(reportDaily.getLeaveWelfare())+
+				(StringUtils.isNotEmpty(reportDaily.getLeaveWelfare())?Long.parseLong(reportDaily.getLeaveWelfare()):0)+
 				Long.parseLong(leaveWelfare))+"");
 		return reportDaily;
 	}
@@ -303,7 +306,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setNewWelfare(String newWelfare, ReportDaily reportDaily) {
 		reportDaily.setNewWelfare((
-				Long.parseLong(reportDaily.getNewWelfare())+
+				(StringUtils.isNotEmpty(reportDaily.getNewWelfare())?Long.parseLong(reportDaily.getNewWelfare()):0)+
 				Long.parseLong(newWelfare))+"");
 		return reportDaily;
 	}
@@ -315,7 +318,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setLeaveLongSick(String leaveLongSick, ReportDaily reportDaily) {
 		reportDaily.setLeaveLongSick((
-				Long.parseLong(reportDaily.getLeaveLongSick())+
+				(StringUtils.isNotEmpty(reportDaily.getLeaveLongSick())?Long.parseLong(reportDaily.getLeaveLongSick()):0)+
 				Long.parseLong(leaveLongSick))+"");
 		return reportDaily;
 	}
@@ -327,7 +330,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setOutTimeHoliday(String outTimeHoliday, ReportDaily reportDaily) {
 		reportDaily.setOutTimeHoliday((
-				Long.parseLong(reportDaily.getOutTimeHoliday())+
+				(StringUtils.isNotEmpty(reportDaily.getOutTimeHoliday())?Long.parseLong(reportDaily.getOutTimeHoliday()):0)+
 				Long.parseLong(outTimeHoliday))+"");
 		return reportDaily;
 	}
@@ -339,7 +342,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setOutTimeWeek(String outTimeWeek, ReportDaily reportDaily) {
 		reportDaily.setOutTimeWeek((
-				Long.parseLong(reportDaily.getOutTimeWeek())+
+				(StringUtils.isNotEmpty(reportDaily.getOutTimeWeek())?Long.parseLong(reportDaily.getOutTimeWeek()):0)+
 				Long.parseLong(outTimeWeek))+"");
 		return reportDaily;
 	}
@@ -351,7 +354,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setOutTimeWork(String outTimeWork, ReportDaily reportDaily) {
 		reportDaily.setOutTimeWork((
-				Long.parseLong(reportDaily.getOutTimeWork())+
+				(StringUtils.isNotEmpty(reportDaily.getOutTimeWork())?Long.parseLong(reportDaily.getOutTimeWork()):0)+
 				Long.parseLong(outTimeWork))+"");
 		return reportDaily;
 	}
@@ -363,7 +366,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setEvectionTimeHoliday(String evectionTimeHoliday, ReportDaily reportDaily) {
 		reportDaily.setEvectionTimeHoliday((
-				Long.parseLong(reportDaily.getEvectionTimeHoliday())+
+				(StringUtils.isNotEmpty(reportDaily.getEvectionTimeHoliday())?Long.parseLong(reportDaily.getEvectionTimeHoliday()):0)+
 				Long.parseLong(evectionTimeHoliday))+"");
 		return reportDaily;
 	}
@@ -375,7 +378,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setEvectionTimeWeek(String evectionTimeWeek, ReportDaily reportDaily) {
 		reportDaily.setEvectionTimeWeek((
-				Long.parseLong(reportDaily.getEvectionTimeWeek())+
+				(StringUtils.isNotEmpty(reportDaily.getEvectionTimeWeek())?Long.parseLong(reportDaily.getEvectionTimeWeek()):0)+
 				Long.parseLong(evectionTimeWeek))+"");
 		return reportDaily;
 	}
@@ -387,7 +390,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setEvectionTimeWork(String evectionTimeWork, ReportDaily reportDaily) {
 		reportDaily.setEvectionTimeWork((
-				Long.parseLong(reportDaily.getEvectionTimeWork())+
+				(StringUtils.isNotEmpty(reportDaily.getEvectionTimeWork())?Long.parseLong(reportDaily.getEvectionTimeWork()):0)+
 				Long.parseLong(evectionTimeWork))+"");
 		return reportDaily;
 	}
@@ -400,7 +403,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setLeaveOther(String leaveOther, ReportDaily reportDaily) {
 		reportDaily.setLeaveOther((
-				Long.parseLong(reportDaily.getLeaveOther())+
+				(StringUtils.isNotEmpty(reportDaily.getLeaveOther())?Long.parseLong(reportDaily.getLeaveOther()):0)+
 				Long.parseLong(leaveOther))+"");
 		return reportDaily;
 	}
@@ -412,7 +415,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setLeaveAmblosis(String leaveAmblosis, ReportDaily reportDaily) {
 		reportDaily.setLeaveAmblosis((
-				Long.parseLong(reportDaily.getLeaveAmblosis())+
+				(StringUtils.isNotEmpty(reportDaily.getLeaveAmblosis())?Long.parseLong(reportDaily.getLeaveAmblosis()):0)+
 				Long.parseLong(leaveAmblosis))+"");
 		return reportDaily;
 	}
@@ -424,7 +427,7 @@ public class AlgorithmReport {
 	 */
 	public static ReportDaily setLeavePregnancy(String leavePregnancy, ReportDaily reportDaily) {
 		reportDaily.setLeavePregnancy((
-				Long.parseLong(reportDaily.getLeavePregnancy())+
+				(StringUtils.isNotEmpty(reportDaily.getLeavePregnancy())?Long.parseLong(reportDaily.getLeavePregnancy()):0)+
 				Long.parseLong(leavePregnancy))+"");
 		return reportDaily;
 	}
