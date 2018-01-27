@@ -65,12 +65,14 @@ public class ApplicationController {
 			Map<String,Object> result = new HashMap<String,Object>();
 			String employeeId = request.getHeader("accessUserId");//员工id
 			String companyId = request.getHeader("companyId");//公司id
+			JSONObject obj = JSON.parseObject(jsonString);
+			String year = obj.getString("year");
 			if(StringUtils.isEmpty(companyId)||StringUtils.isEmpty(employeeId)){
 				result.put("message", "请求信息错误");
 				result.put("returnCode", "3012");
 				return result;
 			}
-			result = applicationService.applicationIndexPage(employeeId, companyId);
+			result = applicationService.applicationIndexPage(employeeId, companyId,year);
 			result.put("message", "成功");
 			result.put("returnCode", "3000");
 			return result;

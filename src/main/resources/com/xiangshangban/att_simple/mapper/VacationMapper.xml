@@ -114,9 +114,10 @@ v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name,yea
   		<if test="employeeId != null">
   			and employee_id = #{employeeId}
   		</if>
+  		<if test="year != null">
+  			and year_ = #{year}
+  		</if>
   	</where>
-  	ORDER BY year_ DESC
-  	limit 1
   </select>
 	  
   <!-- delete -->

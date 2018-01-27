@@ -18,7 +18,7 @@ public interface ApplicationService {
 	 * @param companyId
 	 * @return
 	 */
-	Map<String,Object> applicationIndexPage(String employeeId,String companyId);
+	Map<String,Object> applicationIndexPage(String employeeId,String companyId,String year);
 	/**
 	 * 申请子类型
 	 * @param applicationType
