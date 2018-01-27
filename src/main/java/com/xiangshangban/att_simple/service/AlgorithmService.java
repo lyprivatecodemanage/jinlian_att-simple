@@ -15,7 +15,14 @@ public interface AlgorithmService {
 	 * @param countDate 计算日期
 	 */
 	public void calculate(String companyId,String employeeId, String countDate);
-	
+	/**
+	 * 计算一段日期区间的日报
+	 * @param companyId 公司ID
+	 * @param employeeId 员工ID
+	 * @param beginDate 开始日期，  格式yyyy-MM-dd
+	 * @param endDate 结束日期 ， 格式yyyy-MM-dd
+	 */
+	public void calculate(String companyId, String employeeId, String beginDate, String endDate);
 	/**
 	 * 预计算：计算某一个用户在某一天是否可以计算
 	 * @param companyId 公司ID

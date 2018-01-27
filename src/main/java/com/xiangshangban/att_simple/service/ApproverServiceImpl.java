@@ -18,6 +18,8 @@ import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ApplicationTotalRecord;
 import com.xiangshangban.att_simple.bean.ApplicationTransferRecord;
 import com.xiangshangban.att_simple.bean.ReturnData;
+import com.xiangshangban.att_simple.bean.Vacation;
+import com.xiangshangban.att_simple.bean.VacationDetails;
 import com.xiangshangban.att_simple.dao.ApplicationBusinessTravelMapper;
 import com.xiangshangban.att_simple.dao.ApplicationCommonContactPeopleMapper;
 import com.xiangshangban.att_simple.dao.ApplicationFillCardMapper;
@@ -29,6 +31,7 @@ import com.xiangshangban.att_simple.dao.ApplicationTotalRecordMapper;
 import com.xiangshangban.att_simple.dao.ApplicationTransferRecordMapper;
 import com.xiangshangban.att_simple.dao.ApplicationTypeMapper;
 import com.xiangshangban.att_simple.dao.EmployeeDao;
+import com.xiangshangban.att_simple.dao.VacationDetailsMapper;
 import com.xiangshangban.att_simple.dao.VacationMapper;
 import com.xiangshangban.att_simple.utils.FormatUtil;
 import com.xiangshangban.att_simple.utils.TimeUtil;
@@ -60,6 +63,8 @@ public class ApproverServiceImpl implements ApproverService {
 	private ApplicationCommonContactPeopleMapper  applicationCommonContactPeopleMapper;//常用联系人dao
 	@Autowired
 	private ApplicationTransferRecordMapper applicationTransferRecordMapper;//转移记录dao
+	@Autowired
+	private VacationDetailsMapper vacationDetailsMapper;//假期详情dao
 	
 	/**
 	 * 审批首页列表/历史列表/条件筛选
@@ -161,7 +166,40 @@ public class ApproverServiceImpl implements ApproverService {
 		ApplicationTotalRecord selectByPrimaryKey = applicationTotalRecordMapper.selectByPrimaryKey(applicationNo);
 		String previousOperaterTime = selectByPrimaryKey.getPreviousOperaterTime();
 		if("同意".equals(approverDescription)){
-			
+			if(selectByPrimaryKey!=null&&StringUtils.isNotEmpty(selectByPrimaryKey.getApplicationType())){
+			switch (selectByPrimaryKey.getApplicationType()) {
+			case "1"://请假
+				Application selectDetailsByApplicationNo = applicationLeaveMapper.selectDetailsByApplicationNo(applicationNo);
+				if("2".equals(selectDetailsByApplicationNo.getApplicationChildrenType())){//年假
+					Vacation EmployeeVacation = vacationMapper.SelectEmployeeVacation(companyId, null, employeeId);
+				}
+				if("3".equals(selectDetailsByApplicationNo.getApplicationChildrenType())){//调休假
+					
+				}
+				break;
+			case "2"://加班
+				
+				break;
+			case "3"://出差
+				
+				break;
+			case "4"://外出
+				
+				break;
+			case "5"://补卡
+				
+				break;
+			}
+			selectByPrimaryKey.setIsComplete("1");
+			selectByPrimaryKey.setRejectReason(postscriptason);
+			applicationTotalRecordMapper.updateByPrimaryKeySelective(selectByPrimaryKey);
+			returnData.setMessage("成功");
+			returnData.setReturnCode("3000");
+			}else{
+				returnData.setMessage("审批单数据异常");
+				returnData.setReturnCode("9999");
+				return returnData;
+			}
 		}else if("转移".equals(approverDescription)){
 			ApplicationTransferRecord newApplicationTransferRecord = new ApplicationTransferRecord();
 			newApplicationTransferRecord.setId(FormatUtil.createUuid());//id
@@ -199,7 +237,7 @@ public class ApproverServiceImpl implements ApproverService {
 			selectByPrimaryKey.setPreviousOperaterTime(previousOperaterTime);
 			applicationTotalRecordMapper.updateByPrimaryKeySelective(selectByPrimaryKey);
 		}
-		return null;
+		return returnData;
 	}
 	
 	
@@ -255,6 +293,7 @@ public class ApproverServiceImpl implements ApproverService {
 		
 		return selectDetailsByApplicationNo;
 	}
+	
 	
 	
 }

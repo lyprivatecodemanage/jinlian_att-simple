@@ -309,7 +309,7 @@
       evection_time_holiday, evection_time_week, 
       evection_time_work, dept_name, begin_time1, 
       end_time1, leave_other, leave_amblosis, 
-      leave_pregnancy, work_day,sign_in_time,sign_out_time,create_time)
+      leave_pregnancy, work_day,sign_in_time,sign_out_time,create_time,has_exception,exception_mark)
     values (#{employeeId,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR}, #{attDate,jdbcType=VARCHAR}, 
       #{reportId,jdbcType=VARCHAR}, #{deptId,jdbcType=VARCHAR}, #{paibanRemark,jdbcType=VARCHAR}, 
       #{checkInfo,jdbcType=VARCHAR}, #{workTime,jdbcType=VARCHAR}, #{realWorkTime,jdbcType=VARCHAR}, 
@@ -325,7 +325,7 @@
       #{evectionTimeHoliday,jdbcType=VARCHAR}, #{evectionTimeWeek,jdbcType=VARCHAR}, 
       #{evectionTimeWork,jdbcType=VARCHAR}, #{deptName,jdbcType=VARCHAR}, #{beginTime1,jdbcType=VARCHAR}, 
       #{endTime1,jdbcType=VARCHAR}, #{leaveOther,jdbcType=VARCHAR}, #{leaveAmblosis,jdbcType=VARCHAR}, 
-      #{leavePregnancy,jdbcType=VARCHAR}, #{workDay,jdbcType=VARCHAR},#{signInTime},#{signOutTime},
+      #{leavePregnancy,jdbcType=VARCHAR}, #{workDay,jdbcType=VARCHAR},#{signInTime},#{signOutTime},#{hasException},#{exceptionMark},
       to_char(now(),'yyyy-MM-dd hh24:mi:ss'))
   </insert>
   <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ReportDaily">
@@ -473,7 +473,13 @@
       	sign_in_time,
       </if>
       <if test="signOutTime!=null">
-      	sign_out_time=#{signOutTime},
+      	sign_out_time,
+      </if>
+      <if test="hasException!=null">
+      	has_exception,
+      </if>
+      <if test="exceptionMark!=null">
+      	exception_mark,
       </if>
       create_time
     </trim>
@@ -620,7 +626,13 @@
       	#{signInTime},
       </if>
       <if test="signOutTime!=null">
-      	sign_out_time=#{signOutTime},
+      	#{signOutTime},
+      </if>
+      <if test="hasException!=null">
+      	#{hasException},
+      </if>
+      <if test="exceptionMark!=null">
+      	#{exceptionMark},
       </if>
       to_char(now(),'yyyy-MM-dd hh24:mi:ss')
     </trim>
@@ -763,6 +775,12 @@
       <if test="signOutTime!=null">
       	sign_out_time=#{signOutTime},
       </if>
+      <if test="hasException!=null">
+      	has_exception=#{hasException},
+      </if>
+      <if test="exceptionMark!=null">
+      	exception_mark=#{exceptionMark},
+      </if>
       create_time=to_char(now(),'yyyy-MM-dd hh24:mi:ss')
     </set>
     where employee_id = #{employeeId,jdbcType=VARCHAR}
@@ -816,6 +834,8 @@
       work_day = #{workDay,jdbcType=VARCHAR},
       sign_in_time=#{signInTime},
       sign_out_time=#{signOutTime},
+      has_exception=#{hasException},
+      exception_mark=#{exceptionMark},
       create_time=to_char(now(),'yyyy-MM-dd hh24:mi:ss')
     where employee_id = #{employeeId,jdbcType=VARCHAR}
       and company_id = #{companyId,jdbcType=VARCHAR}

@@ -38,31 +38,31 @@ public interface ApplicationService {
 	 * @param params
 	 * @return
 	 */
-	ReturnData leaveApplication(Application application);
+	ReturnData leaveApplication(Application application)throws Exception;
 	/**
 	 * 加班申请
 	 * @param params
 	 * @return
 	 */
-	ReturnData overTimeApplication(Application application);
+	ReturnData overTimeApplication(Application application)throws Exception;
 	/**
 	 * 出差申请
 	 * @param params
 	 * @return
 	 */
-	ReturnData businessTravelApplication(Application application);
+	ReturnData businessTravelApplication(Application application)throws Exception;
 	/**
 	 * 外出申请
 	 * @param params
 	 * @return
 	 */
-	ReturnData outgoingApplication(Application application);
+	ReturnData outgoingApplication(Application application)throws Exception;
 	/**
 	 * 补卡申请
 	 * @param params
 	 * @return
 	 */
-	ReturnData fillCardApplication(Application application);
+	ReturnData fillCardApplication(Application application)throws Exception;
 	/**
 	 * 判断申请的时间段是否和别的重复
 	 * @return
@@ -73,7 +73,7 @@ public interface ApplicationService {
 	 * @param application
 	 * @return
 	 */
-	boolean commonContactPeople(Application application);
+	boolean commonContactPeople(Application application)throws Exception;
 	/**
 	 * 获取常用联系人列表
 	 * @param employeeId
