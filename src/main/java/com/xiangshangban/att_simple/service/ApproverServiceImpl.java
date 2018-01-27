@@ -163,38 +163,23 @@ public class ApproverServiceImpl implements ApproverService {
 			String transferPersionAccessId) {
 		ReturnData returnData = new ReturnData();
 		String now = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(System.currentTimeMillis()));
+		Application selectDetailsByApplicationNo = applicationLeaveMapper.selectDetailsByApplicationNo(applicationNo);
 		ApplicationTotalRecord selectByPrimaryKey = applicationTotalRecordMapper.selectByPrimaryKey(applicationNo);
 		String previousOperaterTime = selectByPrimaryKey.getPreviousOperaterTime();
 		if("同意".equals(approverDescription)){
 			if(selectByPrimaryKey!=null&&StringUtils.isNotEmpty(selectByPrimaryKey.getApplicationType())){
-			switch (selectByPrimaryKey.getApplicationType()) {
-			case "1"://请假
-				Application selectDetailsByApplicationNo = applicationLeaveMapper.selectDetailsByApplicationNo(applicationNo);
-				if("2".equals(selectDetailsByApplicationNo.getApplicationChildrenType())){//年假
-					Vacation EmployeeVacation = vacationMapper.SelectEmployeeVacation(companyId, null, employeeId);
+				if("1".equals(selectByPrimaryKey.getApplicationType())){//请假
+					if("2".equals(selectDetailsByApplicationNo.getApplicationChildrenType())){//年假
+						//年假剩余扣减
+					}
+					if("3".equals(selectDetailsByApplicationNo.getApplicationChildrenType())){//调休假
+						//调休剩余扣减
+					}
 				}
-				if("3".equals(selectDetailsByApplicationNo.getApplicationChildrenType())){//调休假
-					
-				}
-				break;
-			case "2"://加班
-				
-				break;
-			case "3"://出差
-				
-				break;
-			case "4"://外出
-				
-				break;
-			case "5"://补卡
-				
-				break;
-			}
 			selectByPrimaryKey.setIsComplete("1");
 			selectByPrimaryKey.setRejectReason(postscriptason);
 			applicationTotalRecordMapper.updateByPrimaryKeySelective(selectByPrimaryKey);
-			returnData.setMessage("成功");
-			returnData.setReturnCode("3000");
+			returnData.setData(selectDetailsByApplicationNo);
 			}else{
 				returnData.setMessage("审批单数据异常");
 				returnData.setReturnCode("9999");
