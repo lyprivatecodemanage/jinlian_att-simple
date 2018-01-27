@@ -794,6 +794,7 @@ public class TimeUtil {
 		/*Map map = getMondayAndWeekendDate("2018-01-10");
 		System.out.println(map.get("monday"));
 		System.out.println(map.get("weekend"));*/
-		System.out.println(compareTime("2018-01-23 00:00:00","2018-01-22 00:00:00"));
+//		System.out.println(compareTime("2018-01-23 00:00:00","2018-01-22 00:00:00"));
+		System.out.println(dayOfDate("2018-01-22 00:00:00","2018-01-25 00:00:00"));
 	}
 }

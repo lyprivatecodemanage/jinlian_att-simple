@@ -20,11 +20,12 @@
     <result column="valid_date" jdbcType="VARCHAR" property="validDate" /> 
     <result column="is_default" jdbcType="VARCHAR" property="isDefault" />
     <result column="del_date" jdbcType="VARCHAR" property="delDate" />
+    <result column="auto_scheduled_switch" jdbcType="VARCHAR" property="autoScheduledSwitch" />
   </resultMap>
   <sql id="Base_Column_List">
     id, classes_name, on_duty_time, off_duty_time, morrow_duty_time_flag, rest_time, 
     rest_days, festival_rest_flag, sign_in_rule, sign_out_rule, on_punch_card_time, off_punch_card_time, 
-    auto_classes_flag, create_time, company_id , valid_date, is_default,del_date
+    auto_classes_flag, create_time, company_id , valid_date, is_default,del_date,auto_scheduled_switch
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -107,6 +108,9 @@
       <if test="delDate != null">
         del_date,
       </if>
+      <if test="autoScheduledSwitch != null">
+        auto_scheduled_switch,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -162,6 +166,9 @@
       </if>
       <if test="delDate != null">
         #{delDate,jdbcType=VARCHAR},
+      </if>
+       <if test="autoScheduledSwitch != null">
+        #{autoScheduledSwitch,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -219,6 +226,9 @@
       <if test="delDate != null">
         del_date = #{delDate,jdbcType=VARCHAR},
       </if>
+      <if test="autoScheduledSwitch != null">
+        auto_scheduled_switch = #{autoScheduledSwitch,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
@@ -240,7 +250,8 @@
       company_id = #{companyId,jdbcType=VARCHAR},
       valid_date = #{validDate,jdbcType=VARCHAR},
       is_default = #{isDefault,jdbcType=VARCHAR},
-      del_date = #{delDate,jdbcType=VARCHAR}
+      del_date = #{delDate,jdbcType=VARCHAR},
+      auto_scheduled_switch = #{autoScheduledSwitch,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
   
@@ -273,7 +284,8 @@
 	COALESCE(off_punch_card_time,'') AS off_punch_card_time,
 	COALESCE(auto_classes_flag,'') AS auto_classes_flag,
 	COALESCE(valid_date,'') AS valid_date,
-	COALESCE(is_default,'') AS is_default
+	COALESCE(is_default,'') AS is_default,
+	COALESCE(auto_scheduled_switch,'') AS auto_scheduled_switch
 	FROM
 		classes_type
 	WHERE
