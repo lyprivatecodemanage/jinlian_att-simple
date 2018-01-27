@@ -337,6 +337,8 @@ public class VacationServiceImpl implements VacationService {
 		// TODO Auto-generated method stub
 		ReturnData returndata = new ReturnData();
 		
+			boolean flag = false;
+		
 			//查询该公司所有人员
 			List<Employee> list = employeeDao.findAllEmployeeByCompanyId(companyId);
 			
@@ -377,9 +379,7 @@ public class VacationServiceImpl implements VacationService {
 								if(num>0){
 									AnnualLeaveAdjustment(vacation.getVacationId(),"0",String.valueOf(AVday),"年假一键生成", auditorEmployeeId, year);
 									
-									returndata.setReturnCode("3000");
-									returndata.setMessage("数据请求成功");
-									return returndata;
+									flag = true;
 								}
 							}
 						}else{
@@ -399,18 +399,22 @@ public class VacationServiceImpl implements VacationService {
 							if(num>0){
 								AnnualLeaveAdjustment(v.getVacationId(),"0",String.valueOf(AVday),"年假一键生成", auditorEmployeeId, year);
 								
-								returndata.setReturnCode("3000");
-								returndata.setMessage("数据请求成功");
-								return returndata;
+								flag = true;
 							}
 						}
 					}
 				}
 			}
 		
-		returndata.setReturnCode("3000");
-		returndata.setMessage("数据请求成功");
-		return returndata;
+		if(flag){
+			returndata.setReturnCode("3000");
+			returndata.setMessage("数据请求成功");
+			return returndata;
+		}else{
+			returndata.setReturnCode("3001");
+			returndata.setMessage("服务器错误");
+			return returndata;
+		}
 	}
 
 	public ReturnData resetAnnualLeave(String vacationId, String vacationMold, String annualLeave,
