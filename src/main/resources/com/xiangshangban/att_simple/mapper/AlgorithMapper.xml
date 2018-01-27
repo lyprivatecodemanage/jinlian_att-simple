@@ -128,7 +128,7 @@
 		FROM application_fill_card_ b
 		LEFT JOIN application_total_record_ AS c ON b.application_no=c.application_no
 		WHERE b.employee_id=#{employeeId} AND b.company_id=#{companyId} 
-		AND  c.is_complete='1' AND c.is_reject='0'
+		AND  (c.application_no IS NOT NULL AND c.is_complete='1' AND c.is_reject='0' ) OR c.application_no IS NULL
 	   AND (b.fill_card_time BETWEEN #{beginTime} AND #{endTime})
 	) AS c 
   </select>
@@ -146,7 +146,7 @@
 		FROM application_fill_card_ b
 		LEFT JOIN application_total_record_ AS c ON b.application_no=c.application_no
 		WHERE b.employee_id=#{employeeId} AND b.company_id=#{companyId} 
-		AND  c.is_complete='1' AND c.is_reject='0'
+		AND  (c.application_no IS NOT NULL AND c.is_complete='1' AND c.is_reject='0' ) OR c.application_no IS NULL
 	   AND (b.fill_card_time BETWEEN #{beginTime} AND #{endTime})
 	) AS c 
   </select>
