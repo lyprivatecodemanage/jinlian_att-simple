@@ -132,7 +132,8 @@ public class ClassesController {
 			 {"empId":"EBC4C2504333417385743DADD3002FAC"}
 		  ],
 	 	 "autoClassesFlag":"1",
-	 	 "validDate":"2018-01-30"
+	 	 "autoScheduledSwitch":"0/1"
+	 	 "validDate":"2018-01-30",
 	 	 "isDefault":"0"
 	 }
 	 * @param request
@@ -238,7 +239,10 @@ public class ClassesController {
 		        "offPunchCardTime": "20",
 		        "autoClassesFlag": "1",
 		        "createTime": null,
-		        "companyId": null
+		        "companyId": null,
+		        "valid_date":"2018-01-22"---------->班次生效时间
+                "is_default":"0/1"------------------>是否是公司的默认班次类别（0：不是 1：是）
+                "auto_scheduled_switch":"0/1"--------------->是否开启自动排班（1：开启 0：不开启）
 		      },
 		      "classesEmp": [
 		        {
@@ -270,8 +274,8 @@ public class ClassesController {
 		//初始化返回的数据
 		ReturnData returnData = new ReturnData();
 		if((companyId!=null && !companyId.isEmpty()) && (accessUserId!=null && !accessUserId.isEmpty())){
-			Map allClassesTypeInfo = classesService.queryPointClassesTypeInfo(requestParam,companyId.trim());
-			returnData.setData(allClassesTypeInfo);
+			Map pointClassesTypeInfo = classesService.queryPointClassesTypeInfo(requestParam,companyId.trim());
+			returnData.setData(pointClassesTypeInfo);
 			returnData.setReturnCode("3000");
 			returnData.setMessage("请求数据成功");
 			//增加操作日志:记录web端的操作
