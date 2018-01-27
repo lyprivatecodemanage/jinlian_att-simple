@@ -371,7 +371,7 @@
 				H.the_date
 		) W
 	<where>
-		<if test='classesId!=null and classesId!=""'>
+		<if test='classesTypeId!=null and classesTypeId!=""'>
 			W.classes_id = #{classesTypeId}
 		</if>
 		<if test='deptId!=null and deptId!=""'>
