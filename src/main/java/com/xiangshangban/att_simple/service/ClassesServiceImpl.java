@@ -145,7 +145,7 @@ public class ClassesServiceImpl implements ClassesService {
 		if (classesName != null && onDutyTime != null && offDutyTime != null && morrowFlag != null
 				&& restStartTime != null && restEndTime != null && restDays != null && festivalRestFlag != null
 				&& signInRule != null && signOutRule != null && onPunchCardRule != null && offPunchCardRule != null
-				&& employeeIdList != null && autoClassesFlag != null && isDefault!=null && autoScheduledSwitch!= null) {
+				&& employeeIdList != null && autoClassesFlag != null && isDefault!=null && autoScheduledSwitch!=null) {
 						// 先删除，传递上来的班次类型和使用该班次类型的人员班次信息(删除从指定生效日往后的班次)
 						Map<String, String> delParam = new HashMap<>();
 						
@@ -156,6 +156,16 @@ public class ClassesServiceImpl implements ClassesService {
 							delParam.put("delDate","");
 							// TODO 删除班次类型
 							classesTypeMapper.removeAppointClassesType(delParam);
+							//查询旧的班次类型名称
+							ClassesType oldClassesType = classesTypeMapper.selectByPrimaryKey(operateFlag.toString().trim());
+							if(oldClassesType!=null){
+								if(oldClassesType.getClassesName().equals(classesName.toString().trim())){ //当没有更改班次类别名称的时候，在旧的班次名称后面添加（历史）字段
+									//更新旧的班次类别名称
+									classesTypeMapper.updateClassesTypeName(operateFlag.toString().trim(),oldClassesType.getClassesName()+"(历史)");
+									//将原本使用旧班次类型的人员的班次列表名称进行更新
+									classesEmployeeMapper.updateEmpClassesName(operateFlag.toString().trim(),oldClassesType.getClassesName()+"(历史)");
+								}
+							}
 						}
 						// 获取要排班的人员列表
 						JSONArray empArray = JSONArray.parseArray(JSONObject.toJSONString(employeeIdList));
@@ -220,7 +230,7 @@ public class ClassesServiceImpl implements ClassesService {
 								result = false;
 							}
 						}
-		}
+			}
 		return result;
 	}
 
@@ -731,6 +741,16 @@ public class ClassesServiceImpl implements ClassesService {
 		}
 	}
 
+	/**
+	 * 查询指定公司一周之内“一键排班”的次数
+	 */
+	@Override
+	public int queryOneKeyAccessCount(String monday, String weekend, String companyId) {
+		int accessCount = classesEmployeeMapper.selectOneKeyAccessCount(monday, weekend, companyId);
+		return accessCount;
+	}
+	
+	
 	/**
 	 * 给指定人员添加指定日期的班次（添加临时班次）
 	 * 
