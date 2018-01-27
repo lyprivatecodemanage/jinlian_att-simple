@@ -61,6 +61,16 @@ public class ApplicationTotalRecord {
     
     private List<ApplicationToCopyPerson> applicationToCopyPersonList;
     
+    private ApplicationLeave applicationLeave;
+    
+    private ApplicationOvertime applicationOvertime;
+    
+    private ApplicationBusinessTravel applicationBusinessTravel;
+    
+    private ApplicationOutgoing applicationOutgoing;
+    
+    private ApplicationFillCard applicationFillCard;
+    
     public String getIsComplete() {
 		return isComplete;
 	}
@@ -267,6 +277,46 @@ public class ApplicationTotalRecord {
 
 	public void setApplicationTime(String applicationTime) {
 		this.applicationTime = applicationTime;
+	}
+
+	public ApplicationLeave getApplicationLeave() {
+		return applicationLeave;
+	}
+
+	public void setApplicationLeave(ApplicationLeave applicationLeave) {
+		this.applicationLeave = applicationLeave;
+	}
+
+	public ApplicationOvertime getApplicationOvertime() {
+		return applicationOvertime;
+	}
+
+	public void setApplicationOvertime(ApplicationOvertime applicationOvertime) {
+		this.applicationOvertime = applicationOvertime;
+	}
+
+	public ApplicationBusinessTravel getApplicationBusinessTravel() {
+		return applicationBusinessTravel;
+	}
+
+	public void setApplicationBusinessTravel(ApplicationBusinessTravel applicationBusinessTravel) {
+		this.applicationBusinessTravel = applicationBusinessTravel;
+	}
+
+	public ApplicationOutgoing getApplicationOutgoing() {
+		return applicationOutgoing;
+	}
+
+	public void setApplicationOutgoing(ApplicationOutgoing applicationOutgoing) {
+		this.applicationOutgoing = applicationOutgoing;
+	}
+
+	public ApplicationFillCard getApplicationFillCard() {
+		return applicationFillCard;
+	}
+
+	public void setApplicationFillCard(ApplicationFillCard applicationFillCard) {
+		this.applicationFillCard = applicationFillCard;
 	}
     
     

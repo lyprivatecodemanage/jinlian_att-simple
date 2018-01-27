@@ -175,20 +175,20 @@
   </insert>
   <!-- 查询申请的时间段是否有重复 -->
   <select id="selectStartTimeIsRepeat" parameterType="com.xiangshangban.att_simple.bean.Application" resultType="java.lang.Integer">
-  select count(applcation_no) from 
+  select count(atr.application_no) from 
 application_total_record_ atr
-LEFT JOIN application_leave_ al on atr.applcation_no = al.application_no
-LEFT JOIN application_overtime_ ao on atr.applcation_no = ao.application_no
-left join application_business_travel_ abt on atr.applcation_no = abt.application_no
-left join application_outgoing_ aot on atr.applcation_no = aot.application_no
-where ((#{startTime} between al.start_time and al.end_time) or (#{endTime} between al.start_time and al.end_time) 
+LEFT JOIN application_leave_ al on atr.application_no = al.application_no
+LEFT JOIN application_overtime_ ao on atr.application_no = ao.application_no
+left join application_business_travel_ abt on atr.application_no = abt.application_no
+left join application_outgoing_ aot on atr.application_no = aot.application_no
+where atr.company_id = #{companyId} and atr.application_id = #{applicationId} and (((#{startTime} between al.start_time and al.end_time) or (#{endTime} between al.start_time and al.end_time) 
 	or (#{startTime} between ao.start_time and ao.end_time) or (#{endTime} between ao.start_time and ao.end_time)
 	or (#{startTime} between abt.start_time and abt.end_time) or (#{endTime} between abt.start_time and abt.end_time) 
 	or (#{startTime} between aot.start_time and aot.end_time) or (#{endTime} between aot.start_time and aot.end_time)) or
 	((al.start_time between #{startTime} and #{endTime}) or (al.end_time between #{startTime} and #{endTime}) 
 	or (ao.start_time between #{startTime} and #{endTime}) or (ao.end_time between #{startTime} and #{endTime}) 
 	or (abt.start_time between #{startTime} and #{endTime}) or (abt.end_time between #{startTime} and #{endTime})
-	or (aot.start_time between #{startTime} and #{endTime}) or (aot.end_time between #{startTime} and #{endTime}))
+	or (aot.start_time between #{startTime} and #{endTime}) or (aot.end_time between #{startTime} and #{endTime})))
   </select>
 	<resultMap type="com.xiangshangban.att_simple.bean.Application" id="Application_List">
 		<result column="application_no" property="applicationNo"/>

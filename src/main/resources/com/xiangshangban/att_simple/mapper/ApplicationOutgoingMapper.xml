@@ -24,9 +24,9 @@
   </sql>
   <!-- 添加外出申请记录 -->
   <insert id="insertApplicationOutgoingRecord" parameterType="com.xiangshangban.att_simple.bean.ApplicationOutgoing">
-  	insert into application_business_travel_ 
+  	insert into application_outgoing_ 
   	<trim  prefix="(" suffixOverrides="," suffix=")">
-  		<if test="applicationNo!=null and application!='' ">application_no,</if>
+  		<if test="applicationNo!=null and applicationNo!='' ">application_no,</if>
   		<if test="employeeId!=null and employeeId!='' ">employee_id,</if>
   		<if test="departmentId!=null and departmentId!='' ">department_id,</if>
   		<if test="companyId!=null and companyId!='' ">company_id,</if>
@@ -42,7 +42,7 @@
   		<if test="applicationTime!=null and applicationTime!=''">application_time</if>
   	</trim>
   	<trim prefix="values(" suffixOverrides="," suffix=")">
-  		<if test="applicationNo!=null and application!='' ">#{applicationNo},</if>
+  		<if test="applicationNo!=null and applicationNo!='' ">#{applicationNo},</if>
   		<if test="employeeId!=null and employeeId!='' ">#{employeeId},</if>
   		<if test="departmentId!=null and departmentId!='' ">#{departmentId},</if>
   		<if test="companyId!=null and companyId!='' ">#{companyId},</if>

@@ -141,8 +141,8 @@
   
   <!-- 待审批条数 -->
   <select id="selectCountFromWillApprover" parameterType="java.lang.String" resultType="java.lang.Integer">
-  	select count(atr.applicationNo) from att_simple.application_total_record_ atr 
-  	where atr.last_approver = #{employeeId} and atr.company_id = #{companyId} atr.is_complete='0'
+  	select count(atr.application_no) from att_simple.application_total_record_ atr 
+  	where atr.last_approver = #{employeeId} and atr.company_id = #{companyId} and atr.is_complete='0'
   </select>
   
   <resultMap id="ApproverDetailsResultMap" type="com.xiangshangban.att_simple.bean.ApplicationTotalRecord">
@@ -163,6 +163,95 @@
     <result column="is_skip_rest_day"  property="isSkipRestDay" />
     <result column="copy_person_id"  property="appCopyPersonId" />
     <result column="transfer_person_id"  property="transferPersonId" />
+    <association property="applicationLeave" 
+    javaType="com.xiangshangban.att_simple.bean.ApplicationLeave">
+    	<result column="al_application_no"  property="applicationNo" />
+	    <result column="al_employee_id"  property="employeeId" />
+	    <result column="al_department_id"  property="departmentId" />
+	    <result column="al_company_id"  property="companyId" />
+	    <result column="al_leave_type"  property="leaveType" />
+	    <result column="al_start_time"  property="startTime" />
+	    <result column="al_end_time"  property="endTime" />
+	    <result column="al_reason"  property="reason" />
+	    <result column="al_upload_voucher"  property="uploadVoucher" />
+	    <result column="al_approver"  property="approver" />
+	    <result column="al_copy_to_person"  property="copyToPerson" />
+	    <result column="al_operater_time"  property="operaterTime" />
+	    <result column="al_is_transfer"  property="isTransfer" />
+	    <result column="al_application_hour"  property="applicationHour" />
+	    <result column="al_application_time"  property="applicationTime" />
+	    <result column="al_employee_name" property="employeeName" />
+	    <result column="al_department_name" property="departmentName" />
+	    <result column="al_leave_type_name" property="leaveTypeName" />
+	    <result column="al_approver_name" property="approverName" />
+	    <result column="al_leave_count" property="leaveCount"/>
+    </association>
+    <association property="applicationOvertime" 
+    javaType="com.xiangshangban.att_simple.bean.ApplicationOvertime">
+    <result column="ao_application_no"  property="applicationNo" />
+    <result column="ao_employee_id"  property="employeeId" />
+    <result column="ao_department_id"  property="departmentId" />
+    <result column="ao_company_id"  property="companyId" />
+    <result column="ao_overtime_type"  property="overtimeType" />
+    <result column="ao_start_time"  property="startTime" />
+    <result column="ao_end_time"  property="endTime" />
+    <result column="ao_reason"  property="reason" />
+    <result column="ao_upload_voucher"  property="uploadVoucher" />
+    <result column="ao_approver"  property="approver" />
+    <result column="ao_operater_time"  property="operaterTime" />
+    <result column="ao_is_transfer"  property="isTransfer" />
+    <result column="ao_application_hour"  property="applicationHour" />
+    <result column="ao_application_time"  property="applicationTime" />
+  </association>
+  <association property="applicationBusinessTravel" 
+  javaType="com.xiangshangban.att_simple.bean.ApplicationBusinessTravel">
+    <result column="abt_application_no"  property="applicationNo" />
+    <result column="abt_employee_id"  property="employeeId" />
+    <result column="abt_department_id"  property="departmentId" />
+    <result column="abt_company_id"  property="companyId" />
+    <result column="abt_business_travel_type"  property="businessTravelType" />
+    <result column="abt_start_time"  property="startTime" />
+    <result column="abt_end_time"  property="endTime" />
+    <result column="abt_reason"  property="reason" />
+    <result column="abt_upload_voucher"  property="uploadVoucher" />
+    <result column="abt_approver"  property="approver" />
+    <result column="abt_operater_time"  property="operaterTime" />
+    <result column="abt_is_transfer"  property="isTransfer" />
+    <result column="abt_application_hour"  property="applicationHour" />
+    <result column="abt_application_time"  property="applicationTime" />
+  </association>
+  <association property="applicationOutgoing" 
+  javaType="com.xiangshangban.att_simple.bean.ApplicationOutgoing">
+    <result column="aot_application_no"  property="applicationNo" />
+    <result column="aot_employee_id"  property="employeeId" />
+    <result column="aot_department_id"  property="departmentId" />
+    <result column="aot_company_id"  property="companyId" />
+    <result column="aot_outgoing_location"  property="outgoingLocation" />
+    <result column="aot_start_time"  property="startTime" />
+    <result column="aot_end_time"  property="endTime" />
+    <result column="aot_reason"  property="reason" />
+    <result column="aot_upload_voucher"  property="uploadVoucher" />
+    <result column="aot_approver"  property="approver" />
+    <result column="aot_operater_time"  property="operaterTime" />
+    <result column="aot_is_transfer"  property="isTransfer" />
+    <result column="aot_application_hour"  property="applicationHour" />
+    <result column="aot_application_time"  property="applicationTime" />
+  </association>
+     <association property="applicationFillCard" 
+     javaType="com.xiangshangban.att_simple.bean.ApplicationFillCard">
+    <result column="afc_application_no"  property="applicationNo" />
+    <result column="afc_employee_id"  property="employeeId" />
+    <result column="afc_department_id"  property="departmentId" />
+    <result column="afc_company_id"  property="companyId" />
+    <result column="afc_fill_card_type"  property="fillCardType" />
+    <result column="afc_fill_card_time"  property="fillCardTime" />
+    <result column="afc_reason"  property="reason" />
+    <result column="afc_upload_voucher"  property="uploadVoucher" />
+    <result column="afc_approver"  property="approver" />
+    <result column="afc_operater_time"  property="operaterTime" />
+    <result column="afc_is_transfer"  property="isTransfer" />
+    <result column="afc_application_time"  property="applicationTime" />
+  </association>
     <collection property="applicationTransferRecordList" 
     ofType="com.xiangshangban.att_simple.bean.ApplicationTransferRecord" >
     	<result column="tr_id" property="id"/>
@@ -202,12 +291,57 @@
    <sql id="cp_Base_Column_List">
     acp.id, acp.application_no, acp.copy_person_id, acp.operater_time, acp.company_id
   </sql>
+  <sql id="AL_Base_Column_List">
+    al.application_no al_application_no, al.employee_id al_employee_id, al.department_id al_department_id,
+    al.company_id al_company_id, al.leave_type al_leave_type, al.start_time al_start_time, 
+    al.end_time al_end_time, al.reason al_reason, al.upload_voucher al_upload_voucher, al.approver al_approver,
+    al.copy_to_person al_coy_to_person, al.operater_time al_operater_time, al.is_transfer al_is_transfer, 
+    al.application_hour al_application_hour, al.application_time al_application_time
+  </sql>
+   <sql id="AO_Base_Column_List">
+    ao.application_no ao_application_no, ao.employee_id ao_employee_id, ao.department_id ao_department_id, 
+    ao.company_id ao_company_id, ao.overtime_type ao_overtime_type, ao.start_time ao_start_time, 
+    ao.end_time ao_end_time, ao.reason ao_reason, ao.upload_voucher ao_upload_voucher,
+    ao.approver ao_approver, ao.operater_time ao_operater_time, ao.is_transfer ao_is_transfer, 
+    ao.application_hour ao_application_hour, ao.application_time ao_application_time
+  </sql>
+  <sql id="ABT_Base_Column_List">
+    abt.application_no abt_application_no, abt.employee_id abt_employee_id, abt.department_id abt_department_id, 
+    abt.company_id abt_company_id, abt.business_travel_type abt_business_travel_type, 
+    abt.start_time abt_start_time, abt.end_time abt_end_time, abt.reason abt_reason, abt.upload_voucher abt_upload_voucher, 
+    abt.approver abt_approver, abt.operater_time abt_operater_time, abt.is_transfer abt_is_transfer, 
+    abt.application_hour abt_application_hour, abt.application_time abt_application_time
+  </sql>
+  <sql id="AOT_Base_Column_List">
+    aot.application_no aot_application_no, aot.employee_id aot_employee_id, aot.department_id aot_department_id, 
+    aot.company_id aot_company_id, aot.outgoing_location aot_outgoing_location, aot.start_time aot_start_time, 
+    aot.end_time aot_end_time, aot.reason aot_reason, aot.upload_voucher aot_upload_voucher, aot.approver aot_approver, 
+    aot.operater_time aot_operater_time, aot.is_transfer aot_is_transfer, aot.application_hour aot_application_hour, 
+    aot.application_time aot_application_time
+  </sql>
+  <sql id="AFC_Base_Column_List">
+    afc.application_no afc_application_no, afc.employee_id afc_employee_id, afc.department_id afc_department_id, 
+    afc.company_id afc_company_id, afc.fill_card_type afc_fill_card_type, afc.fill_card_time afc_fill_card_time, 
+    afc.reason afc_reason, afc.upload_voucher afc_upload_voucher, afc.approver afc_approver, 
+    afc.operater_time afc_operater_time, afc.is_transfer afc_is_transfer, afc.application_time afc_application_time
+  </sql>
   <!-- 审批详情 -->
   <select id="selectApproverDetails" parameterType="java.lang.String" resultMap="ApproverDetailsResultMap">
-  	select <include refid="Base_Column_List"/>,<include refid="TR_Base_Column_List"/>
-  	,<include refid="CP_Base_Column_List"/>
+  	select <include refid="Base_Column_List"/>,
+  	<include refid="AL_Base_Column_List"/>,
+  	<include refid="AO_Base_Column_List"/>,
+  	<include refid="ABT_Base_Column_List"/>,
+  	<include refid="AOT_Base_Column_List"/>,
+  	<include refid="AFC_Base_Column_List"/>,
+  	<include refid="TR_Base_Column_List"/>,
+  	<include refid="CP_Base_Column_List"/>
   	from att_simple.application_total_record_ atr 
-  	left join 
+  	left join application_leave_ al on atr.application_no = al.application_no
+  	left join application_overtime_ ao on atr.application_no = ao.application_no
+  	left join application_business_travel_ abt on atr.application_no = abt.application_no
+  	left join application_outgoing_ aot on atr.application_no = aot.application_no
+  	left join application_fill_card_ afc on atr.application_no = afc.application_no
+  	left join
   	(
   	select <include refid="tr_Base_Column_List"/>,e.employee_name
   	from att_simple.application_transfer_record_ trf
@@ -237,7 +371,7 @@
   </select>
   <!-- 审批中心列表查询 -->
   <select id="selectWebApproverList" parameterType="java.lang.String" resultMap="BaseResultMap">
-  	select case atr.application_type when '1' then '请假'  
+  	select atr.application_no,case atr.application_type when '1' then '请假'  
 	when '2' then '加班'   when '3' then '出差'   when '4' then '外出'   when '5' then '补卡'  end as application_type,
 	case atr.is_complete when '0' then '未完成' when '1' then '已完成' end as is_complete,
 	e.employee_name as last_approver_name,
@@ -267,21 +401,21 @@
 	) b on b.application_no = atr.application_no
 	left join 
 	(
-	select l.*,e.employee_name,d.department_name,c.company_name from att_simple.application_overtime_ l 
+	select l.*,e.employee_name,d.department_name,c.company_name from att_simple.application_business_travel_ l 
 	left join organization.employee_ e on e.employee_id = l.employee_id and e.company_id = #{companyId}
 	left join organization.department_ d on e.department_id = d.department_id
 	left join organization.company_ c on c.company_id = e.company_id 
 	) c on c.application_no = atr.application_no
 	left join 
 	(
-	select l.*,e.employee_name,d.department_name,c.company_name from att_simple.application_overtime_ l 
+	select l.*,e.employee_name,d.department_name,c.company_name from att_simple.application_outgoing_ l 
 	left join organization.employee_ e on e.employee_id = l.employee_id and e.company_id = #{companyId}
 	left join organization.department_ d on e.department_id = d.department_id
 	left join organization.company_ c on c.company_id = e.company_id 
 	) d on d.application_no = atr.application_no
 	left join 
 	(
-	select l.*,e.employee_name,d.department_name,c.company_name from att_simple.application_overtime_ l 
+	select l.*,e.employee_name,d.department_name,c.company_name from att_simple.application_fill_card_ l 
 	left join organization.employee_ e on e.employee_id = l.employee_id and e.company_id = #{companyId}
 	left join organization.department_ d on e.department_id = d.department_id
 	left join organization.company_ c on c.company_id = e.company_id 
@@ -290,9 +424,9 @@
 	left join organization.employee_ e on atr.last_approver = e.employee_id and e.company_id = atr.company_id
 	where atr.company_id = #{companyId} 
 	<if test="departmentId!=null and departmentId!=''">
-	and case atr.application_type when '1' then a.department_name  
-	when '2' then b.department_name when '3' then c.department_name  
-	when '4' then d.department_name   when '5' then f.department_name end = #{departmentId} 
+	and case atr.application_type when '1' then a.department_id  
+	when '2' then b.department_id when '3' then c.department_id  
+	when '4' then d.department_id   when '5' then f.department_id end = #{departmentId} 
 	</if>
 	<if test="applicationType!=null and applicationType!=''">
 	and atr.application_type = #{applicationType}
