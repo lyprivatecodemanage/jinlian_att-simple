@@ -430,7 +430,7 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 		String date = sdf.format(new Date());
 		
 		//当日报记录存在考勤异常  并且 公司ID与登录人的ID相等(预防缓存数据导致可操作别公司数据问题)时  加入集合准备补勤
-		if(rd.getHasException().equals("1")&& companyId.equals(rd.getCompanyId())){
+		if("1".equals(rd.getHasException())&& companyId.equals(rd.getCompanyId())){
 			//根据考勤日报的考勤异常类型进行相应代考勤操作
 			switch(rd.getExceptionMark()){
 			case "1"://迟到异常
@@ -687,9 +687,18 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 					return returndata;
 				}
 			}
+			returndata.setReturnCode("3000");
+			returndata.setMessage("数据请求成功");
+			return returndata;
 		}
-		returndata.setReturnCode("3000");
-		returndata.setMessage("数据请求成功");
+
+		if(!"1".equals(rd.getHasException())){
+			returndata.setReturnCode("4301");
+			returndata.setMessage("用户无异常");
+			return returndata;
+		}
+		returndata.setReturnCode("3001");
+		returndata.setMessage("服务器错误");
 		return returndata;
 	}
 

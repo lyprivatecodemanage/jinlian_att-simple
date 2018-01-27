@@ -18,6 +18,8 @@ import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ApplicationTotalRecord;
 import com.xiangshangban.att_simple.bean.ApplicationTransferRecord;
 import com.xiangshangban.att_simple.bean.ReturnData;
+import com.xiangshangban.att_simple.bean.Vacation;
+import com.xiangshangban.att_simple.bean.VacationDetails;
 import com.xiangshangban.att_simple.dao.ApplicationBusinessTravelMapper;
 import com.xiangshangban.att_simple.dao.ApplicationCommonContactPeopleMapper;
 import com.xiangshangban.att_simple.dao.ApplicationFillCardMapper;
@@ -29,6 +31,7 @@ import com.xiangshangban.att_simple.dao.ApplicationTotalRecordMapper;
 import com.xiangshangban.att_simple.dao.ApplicationTransferRecordMapper;
 import com.xiangshangban.att_simple.dao.ApplicationTypeMapper;
 import com.xiangshangban.att_simple.dao.EmployeeDao;
+import com.xiangshangban.att_simple.dao.VacationDetailsMapper;
 import com.xiangshangban.att_simple.dao.VacationMapper;
 import com.xiangshangban.att_simple.utils.FormatUtil;
 import com.xiangshangban.att_simple.utils.TimeUtil;
@@ -60,6 +63,8 @@ public class ApproverServiceImpl implements ApproverService {
 	private ApplicationCommonContactPeopleMapper  applicationCommonContactPeopleMapper;//常用联系人dao
 	@Autowired
 	private ApplicationTransferRecordMapper applicationTransferRecordMapper;//转移记录dao
+	@Autowired
+	VacationDetailsMapper vacationDetailsMapper;
 	
 	/**
 	 * 审批首页列表/历史列表/条件筛选
@@ -256,5 +261,35 @@ public class ApproverServiceImpl implements ApproverService {
 		return selectDetailsByApplicationNo;
 	}
 	
+	/**
+	 * 审批通过修改假期额度
+	 * @param leaveType 假期类型(0:年假  1:调休)
+	 * @param endDate 申请假期结束时间
+	 * @param leaveDay 请假时长(h)
+	 * @param employeeId 请假人员
+	 * @param companyId 请假人员公司
+	 * @param adjustingInstruction 请假理由
+	 * @return
+	 */
+	private int updateVacation(String leaveType,String endDate,String leaveDay,String employeeId,String companyId,String adjustingInstruction){
+		String year = endDate.substring(0,4);
+		
+		//年假
+		if(leaveType.equals("0")){
+			Vacation vacation = vacationMapper.SelectEmployeeVacation(companyId, null,employeeId,year);
+			
+			//查询年假假期详情最后一次修改的值
+			VacationDetails vacationDetails = vacationDetailsMapper.SelectVacationIdByEndResult(vacation.getVacationId(),"0",year);
+			
+			
+		} 
+		
+		//调休
+		if(leaveType.equals("1")){
+			
+		}
+		
+		return 1;
+	}
 	
 }

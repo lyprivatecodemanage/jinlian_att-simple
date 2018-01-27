@@ -88,6 +88,7 @@
 	WHEN (leave_type = '4'::VARCHAR) THEN '婚假'::TEXT 
 	WHEN (leave_type = '5'::VARCHAR) THEN '产假'::TEXT 
 	WHEN (leave_type = '6'::VARCHAR) THEN '丧假'::TEXT 
+	WHEN (leave_type = '7'::VARCHAR) THEN '病假'::TEXT
 	END as leave_type_name
 	, start_time, end_time, reason, upload_voucher, approver,
 	(select employee_name from organization.employee_ where employee_id = approver and company_id = l.company_id) as approver_name, 

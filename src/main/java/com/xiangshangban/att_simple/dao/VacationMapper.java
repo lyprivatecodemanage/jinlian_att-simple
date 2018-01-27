@@ -32,7 +32,7 @@ public interface VacationMapper {
      * @param employeeId
      * @return
      */
-    Vacation SelectEmployeeVacation(@Param("companyId")String companyId,@Param("deparmentId")String deparmentId,@Param("employeeId")String employeeId);
+    Vacation SelectEmployeeVacation(@Param("companyId")String companyId,@Param("deparmentId")String deparmentId,@Param("employeeId")String employeeId,@Param("year")String year);
     
     /**
      * 查询Vacation表中记录总条数

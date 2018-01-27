@@ -65,12 +65,13 @@ public class ApplicationController {
 			Map<String,Object> result = new HashMap<String,Object>();
 			String employeeId = request.getHeader("accessUserId");//员工id
 			String companyId = request.getHeader("companyId");//公司id
+			String year = request.getHeader("year");//公司id
 			if(StringUtils.isEmpty(companyId)||StringUtils.isEmpty(employeeId)){
 				result.put("message", "请求信息错误");
 				result.put("returnCode", "3012");
 				return result;
 			}
-			result = applicationService.applicationIndexPage(employeeId, companyId);
+			result = applicationService.applicationIndexPage(employeeId, companyId,year);
 			return result;
 		}
 		/**
@@ -175,6 +176,7 @@ public class ApplicationController {
 			Map<String,String> params = new HashMap<String,String>();
 			String employeeId = request.getHeader("accessUserId");
 			String companyId = request.getHeader("companyId");
+			String year = request.getHeader("year");
 			if(StringUtils.isEmpty(companyId)||StringUtils.isEmpty(employeeId)){
 				returnData.setMessage("请求头参数缺失");
 				returnData.setReturnCode("3013");
@@ -262,7 +264,7 @@ public class ApplicationController {
 					   return returnData;
 				   }
 				   application.setApplicationHour(String.valueOf(applicationHour));
-				   returnData = applicationService.leaveApplication(application);
+				   returnData = applicationService.leaveApplication(application,year);
 				   break;
 			   case "2"://加班
 				   //加班的申请时长=结束时间-开始时间	

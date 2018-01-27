@@ -2,6 +2,7 @@ package com.xiangshangban.att_simple.service;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -74,12 +75,13 @@ public class ApplicationServiceImpl implements ApplicationService {
 	
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED,rollbackForClassName="Exception")
-	public Map<String, Object> applicationIndexPage(String employeeId, String companyId) {
+	public Map<String, Object> applicationIndexPage(String employeeId, String companyId,String year) {
 		Map<String, Object> result = new HashMap<String,Object>();
 		//查询申请类型
 		List<ApplicationType> applicationTypeList = applicationTypeMapper.getApplicationTypeList();
+		
 		//查询年假剩余,年假额度,调休剩余,调休额度
-		Vacation vacation = vacationMapper.SelectEmployeeVacation(companyId, null, employeeId);
+		Vacation vacation = vacationMapper.SelectEmployeeVacation(companyId, null, employeeId,year);
 		result.put("applicaitonTypeList", applicationTypeList);
 		result.put("vacation", vacation);
 		return result;
@@ -89,13 +91,13 @@ public class ApplicationServiceImpl implements ApplicationService {
 	 */
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED,rollbackForClassName="Exception")
-	public ReturnData leaveApplication(Application application) {
+	public ReturnData leaveApplication(Application application,String year) {
 		ReturnData returnData = new ReturnData();
 		try{
 			//判断请假类型是否是年假和调休
 			if("2".equals(application.getApplicationChildrenType())||"3".equals(application.getApplicationChildrenType())){
 				//查询额度
-				Vacation vacation = vacationMapper.SelectEmployeeVacation(application.getCompanyId(), null, application.getApplicationId());
+				Vacation vacation = vacationMapper.SelectEmployeeVacation(application.getCompanyId(), null, application.getApplicationId(),year);
 				if("2".equals(application.getApplicationChildrenType())&&Integer.valueOf(application.getApplicationHour())>Integer.valueOf(vacation.getAnnualLeaveBalance())){
 					returnData.setMessage("年假剩余不足");
 					returnData.setReturnCode("4400");

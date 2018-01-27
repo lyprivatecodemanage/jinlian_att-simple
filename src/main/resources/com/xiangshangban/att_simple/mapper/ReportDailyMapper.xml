@@ -66,18 +66,18 @@
     leave_maternity_check, leave_paternity, leave_funeral, leave_nursing, leave_welfare, 
     new_welfare, leave_long_sick, out_time_holiday, out_time_week, out_time_work, evection_time_holiday, 
     evection_time_week, evection_time_work, dept_name, begin_time1, end_time1, leave_other, 
-    leave_amblosis, leave_pregnancy, work_day,sign_in_time,sign_out_time,exception_mark
+    leave_amblosis, leave_pregnancy, work_day,sign_in_time,sign_out_time,exception_mark,has_exception
   </sql>
   
   <sql id="reportDepartment">
-    employee_id, company_id, att_date, report_id, dept_id, paiban_remark, check_info, 
+    employee_id,company_id, att_date, report_id, dept_id, paiban_remark, check_info, 
     work_time, real_work_time, real_attendance_time, late, late_time, early, early_time, 
     absent, absent_time, normal_over_work, week_over_work, holiday_over_work, change_time, 
     leave_absence, leave_days_off, leave_annual, leave_sick, leave_marriage, leave_maternity, 
     leave_maternity_check, leave_paternity, leave_funeral, leave_nursing, leave_welfare, 
     new_welfare, leave_long_sick, out_time_holiday, out_time_week, out_time_work, evection_time_holiday, 
     evection_time_week, evection_time_work, dept_name, begin_time1, end_time1, leave_other, 
-    leave_amblosis, leave_pregnancy, work_day,sign_in_time,sign_out_time,exception_mark,department_name,exception_mark_name,employee_name,leavedate
+    leave_amblosis, leave_pregnancy, work_day,sign_in_time,sign_out_time,has_exception,exception_mark,department_name,exception_mark_name,employee_name,leavedate
   </sql>
   
   <!-- 根据公司ID查询某月 月报数据导出报表 -->
@@ -190,7 +190,7 @@
   <!-- 日报模糊查询列表 -->
   <select id="selectReportDaily" resultMap="BaseResultMap">
   	select 
-	<include refid="reportDepartment"/>
+	*
 	from (SELECT 
 	report_id,dept_id,d.department_name,rd.employee_id,e.employee_name,att_date,sign_in_time,sign_out_time,real_work_time,exception_mark,
 	CASE
@@ -209,13 +209,13 @@
 	+to_number(leave_amblosis,'9')+to_number(leave_pregnancy,'9')),'9') leavedate
 	,evection_time_work,out_time_work,
 	<trim prefix="row_number() over(ORDER BY " suffix=") rn">
-		<if test="signInTime != null">
+		<if test="signInTimeRank != null">
 			sign_in_time  ${signInTimeRank}
 		</if>
-		<if test="signOutTime != null">
+		<if test="signOutTimeRank != null">
 			sign_out_time ${signOutTimeRank}
 		</if>
-		<if test="realWorkTime != null">
+		<if test="realWorkTimeRank != null">
 			real_work_time ${realWorkTimeRank}
 		</if>
 	</trim> 
@@ -248,7 +248,7 @@
   <!-- 使用唯一列查询日报信息 -->
   <select id="selectById" resultMap="BaseResultMap">
   	select 
-  	<include refid="reportDepartment" />
+  	<include refid="Base_Column_List" />
   	from report_daily_
   	where report_id = #{rid}
   </select>
