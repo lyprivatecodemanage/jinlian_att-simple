@@ -204,7 +204,7 @@ public class TimeUtil {
 	/**
 	 * 或取某一年的某月最后一天日期yyyy-MM-dd
 	 * @param month 月份  格式：yyyy-MM
-	 * @return
+	 * @return date 最后一天是几号
 	 */
 	public static int getCurrentMaxDate(String month){
 		SimpleDateFormat fomat = new SimpleDateFormat("yyyy-MM-dd");
@@ -217,6 +217,24 @@ public class TimeUtil {
 	    calendar.set(Calendar.MONTH,calendar.get(Calendar.MONTH));
 	    int num = calendar.getActualMaximum(Calendar.DATE);
 	    return num;
+	}
+	/**
+	 * 获取某个日期所在月的最后一天日期
+	 * @param date 日期 yyyy-MM-dd
+	 * @return 某月最后一天日期  yyyy-MM-dd
+	 */
+	public static String getCurrentLastDate(String date){
+		SimpleDateFormat fomat = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar calendar = Calendar.getInstance();
+		String month = date.substring(0, 7);
+		try {
+			calendar.setTime(fomat.parse(month+"-01"));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	    calendar.set(Calendar.MONTH,calendar.get(Calendar.MONTH));
+	    int num = calendar.getActualMaximum(Calendar.DATE);
+	    return month+"-"+num;
 	}
 	/**
 	 * 或取某一年的某月的前一个月yyyy-MM
@@ -787,14 +805,14 @@ public class TimeUtil {
 		}
 	}
 	public static void main(String[] args) {
-//		System.out.println(containTimeLength("2017-10-16 10:00:00", "2017-10-16 10:05:00","2017-10-16 10:00:00", "2017-10-16 10:05:00")/60);
+		System.out.println(containTimeLength("2018-01-26 09:00:00", "2018-01-26 18:00:00","2018-01-26 09:00:00", "2018-01-26 18:00:00")/60);
 //		System.out.println(parseSecondToMinuteHalfDayUnit("14450"));
 //		System.out.println(getCurrentMaxDate());
 //		System.out.println(compareTime("2018-01-15 21:00:01","2018-01-15 01:00:01"));
 		/*Map map = getMondayAndWeekendDate("2018-01-10");
 		System.out.println(map.get("monday"));
 		System.out.println(map.get("weekend"));*/
-//		System.out.println(compareTime("2018-01-23 00:00:00","2018-01-22 00:00:00"));
-		System.out.println(dayOfDate("2018-01-22 00:00:00","2018-01-25 00:00:00"));
+		//System.out.println(getCurrentLastDate("2018-01-23"));
+//		System.out.println(dayOfDate("2018-01-22 00:00:00","2018-01-25 00:00:00"));
 	}
 }

@@ -164,37 +164,40 @@ public class ApproverServiceImpl implements ApproverService {
 		ReturnData returnData = new ReturnData();
 		String now = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(System.currentTimeMillis()));
 		ApplicationTotalRecord selectByPrimaryKey = applicationTotalRecordMapper.selectByPrimaryKey(applicationNo);
-		String previousOperaterTime = selectByPrimaryKey.getPreviousOperaterTime();
+		Application selectDetailsByApplicationNo =null;
+		if("1".equals(selectByPrimaryKey.getApplicationType())){
+			selectDetailsByApplicationNo = applicationLeaveMapper.selectDetailsByApplicationNo(applicationNo);
+		}else if("2".equals(selectByPrimaryKey.getApplicationType())){
+			selectDetailsByApplicationNo = applicationOvertimeMapper.selectDetailsByApplicationNo(applicationNo);
+		}else if("3".equals(selectByPrimaryKey.getApplicationType())){
+			selectDetailsByApplicationNo = applicationBusinessTravelMapper.selectDetailsByApplicationNo(applicationNo);
+		}else if("4".equals(selectByPrimaryKey.getApplicationType())){
+			selectDetailsByApplicationNo = applicationOutgoingMapper.selectDetailsByApplicationNo(applicationNo);
+		}else if("5".equals(selectByPrimaryKey.getApplicationType())){
+			selectDetailsByApplicationNo = applicationFillCardMapper.selectDetailsByApplicationNo(applicationNo);
+			selectDetailsByApplicationNo.setApplicationType("5");
+		}
+		String previousOperaterTime = selectByPrimaryKey.getOperaterTime();
+		selectByPrimaryKey.setPreviousOperaterTime(previousOperaterTime);
 		if("同意".equals(approverDescription)){
 			if(selectByPrimaryKey!=null&&StringUtils.isNotEmpty(selectByPrimaryKey.getApplicationType())){
-			switch (selectByPrimaryKey.getApplicationType()) {
-			case "1"://请假
-				Application selectDetailsByApplicationNo = applicationLeaveMapper.selectDetailsByApplicationNo(applicationNo);
-				if("2".equals(selectDetailsByApplicationNo.getApplicationChildrenType())){//年假
-					Vacation EmployeeVacation = vacationMapper.SelectEmployeeVacation(companyId, null, employeeId);
+				if("1".equals(selectByPrimaryKey.getApplicationType())){//请假
+					if("2".equals(selectDetailsByApplicationNo.getApplicationChildrenType())){//年假
+						//年假剩余扣减
+						this.updateVacation("0", selectDetailsByApplicationNo.getEndTime(), 
+								selectDetailsByApplicationNo.getApplicationHour(), selectByPrimaryKey.getApplicationId(), companyId, 
+								postscriptason);
+					}
+					if("3".equals(selectDetailsByApplicationNo.getApplicationChildrenType())){//调休假
+						//调休剩余扣减
+						this.updateVacation("1", selectDetailsByApplicationNo.getEndTime(), 
+								selectDetailsByApplicationNo.getApplicationHour(), selectByPrimaryKey.getApplicationId(), companyId, 
+								postscriptason);
+					}
 				}
-				if("3".equals(selectDetailsByApplicationNo.getApplicationChildrenType())){//调休假
-					
-				}
-				break;
-			case "2"://加班
-				
-				break;
-			case "3"://出差
-				
-				break;
-			case "4"://外出
-				
-				break;
-			case "5"://补卡
-				
-				break;
-			}
 			selectByPrimaryKey.setIsComplete("1");
 			selectByPrimaryKey.setRejectReason(postscriptason);
 			applicationTotalRecordMapper.updateByPrimaryKeySelective(selectByPrimaryKey);
-			returnData.setMessage("成功");
-			returnData.setReturnCode("3000");
 			}else{
 				returnData.setMessage("审批单数据异常");
 				returnData.setReturnCode("9999");
@@ -237,6 +240,7 @@ public class ApproverServiceImpl implements ApproverService {
 			selectByPrimaryKey.setPreviousOperaterTime(previousOperaterTime);
 			applicationTotalRecordMapper.updateByPrimaryKeySelective(selectByPrimaryKey);
 		}
+		returnData.setData(selectDetailsByApplicationNo);
 		return returnData;
 	}
 	
@@ -294,6 +298,197 @@ public class ApproverServiceImpl implements ApproverService {
 		return selectDetailsByApplicationNo;
 	}
 	
+	/**
+	 * 审批通过修改假期额度
+	 * @param leaveType 假期类型(0:年假  1:调休)
+	 * @param endDate 申请假期结束时间
+	 * @param leaveDay 请假时长(h)
+	 * @param employeeId 请假人员
+	 * @param companyId 请假人员公司
+	 * @param adjustingInstruction 请假理由
+	 * @return
+	 */
+	private int updateVacation(String leaveType,String endDate,String leaveDay,String auditorEmployeeId,String companyId,String adjustingInstruction){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		
+		String year = endDate.substring(0,4);
+		//年假
+		if(leaveType.equals("0")){
+			
+			if(Integer.parseInt(leaveDay)%8==0){
+				leaveDay = String.valueOf(Integer.parseInt(leaveDay)/8+0.0);
+			}else if(Integer.parseInt(leaveDay)%8<=4){
+				leaveDay = String.valueOf(Integer.parseInt(leaveDay)/8+0.5);
+			}else if(Integer.parseInt(leaveDay)%8>4){
+				leaveDay = String.valueOf(Integer.parseInt(leaveDay)/8+1);
+			}
+			
+			year = String.valueOf(Integer.parseInt(year)-1);
+			//查询前一年假期余额
+			Vacation vacation = vacationMapper.SelectEmployeeVacation(companyId, null,auditorEmployeeId,year);
+			
+			
+			if(vacation!=null && Integer.parseInt(vacation.getAnnualLeaveBalance())>0){
+				//如果上一年假期余额大于扣减额度则直接扣减上一年额度
+				if(Double.parseDouble(vacation.getAnnualLeaveBalance())-Double.parseDouble(leaveDay)>-1){
+					//使用查询出来最后一条结果的总额和余额  减去调整的值
+					double o = Double.parseDouble(vacation.getAnnualLeaveBalance())-Double.parseDouble(leaveDay);
+					
+					VacationDetails vd = new VacationDetails();
+					vd.setVacationDetailsId(FormatUtil.createUuid());
+					vd.setVacationId(vacation.getVacationId());
+					vd.setVacationType("0");
+					vd.setVacationMold("1");
+					vd.setLimitChange(leaveDay);
+					vd.setVacationTotal(vacation.getAnnualLeaveTotal());
+					vd.setVacationBalance(String.valueOf(o));
+					vd.setChangingReason(vd.Tweaks);
+					vd.setAdjustingInstruction(adjustingInstruction);
+					vd.setAuditorEmployeeId(auditorEmployeeId);
+					vd.setChangeingDate(sdf.format(new Date()));
+					vd.setYear(year);
+					
+					int num = vacationMapper.UpdateAnnualLeave(vacation.getVacationId(),vacation.getAnnualLeaveTotal(),String.valueOf(o),year);
+					
+					if(num > 0){
+						vacationDetailsMapper.insertSelective(vd);
+						
+						return 1;
+					}
+					return 0;
+				}else{//当上一年假期额度不够  则扣除相应的小时数  继续扣减当年额度
+					
+					//使用去年余额减去扣减额度 ，得到还才多少额度才够请假
+					double o = Double.parseDouble(vacation.getAnnualLeaveBalance())-Double.parseDouble(leaveDay);
+					
+					//查询当年假期余额
+					Vacation vacations = vacationMapper.SelectEmployeeVacation(companyId, null,auditorEmployeeId,String.valueOf(Integer.parseInt(year)+1));
+					
+					if(Double.parseDouble(vacations.getAnnualLeaveBalance())+o>-1){
+						VacationDetails vd = new VacationDetails();
+						vd.setVacationDetailsId(FormatUtil.createUuid());
+						vd.setVacationId(vacation.getVacationId());
+						vd.setVacationType("0");
+						vd.setVacationMold("1");
+						vd.setLimitChange(vacation.getAnnualLeaveBalance());
+						vd.setVacationTotal(vacation.getAnnualLeaveTotal());
+						vd.setVacationBalance("0");
+						vd.setChangingReason(vd.Tweaks);
+						vd.setAdjustingInstruction(adjustingInstruction);
+						vd.setAuditorEmployeeId(auditorEmployeeId);
+						vd.setChangeingDate(sdf.format(new Date()));
+						vd.setYear(year);
+						
+						int num = vacationMapper.UpdateAnnualLeave(vacation.getVacationId(),vacation.getAnnualLeaveTotal(),"0",year);
+						
+						if(num > 0){
+							vacationDetailsMapper.insertSelective(vd);
+							
+							String balance = String.valueOf(Double.parseDouble(vacations.getAnnualLeaveBalance())+o);
+							
+							VacationDetails vds = new VacationDetails();
+							vds.setVacationDetailsId(FormatUtil.createUuid());
+							vds.setVacationId(vacations.getVacationId());
+							vds.setVacationType("0");
+							vds.setVacationMold("1");
+							if(o<0){
+								o -= o*2;
+							}
+							vds.setLimitChange(String.valueOf(o));
+							vds.setVacationTotal(vacations.getAnnualLeaveTotal());
+							vds.setVacationBalance(balance);
+							vds.setChangingReason(vd.Tweaks);
+							vds.setAdjustingInstruction(adjustingInstruction);
+							vds.setAuditorEmployeeId(auditorEmployeeId);
+							vds.setChangeingDate(sdf.format(new Date()));
+							vds.setYear(String.valueOf(Integer.parseInt(year)+1));
+							
+							int nums = vacationMapper.UpdateAnnualLeave(vacations.getVacationId(),vacations.getAnnualLeaveTotal(),balance,String.valueOf(Integer.parseInt(year)+1));
+							
+							if(nums>0){
+								vacationDetailsMapper.insertSelective(vds);
+								
+								return 1;
+							}
+						}
+					}
+					return 0;
+				}
+			}else{
+				//上一年余额为0时  对当前假期进行扣减
+				year = String.valueOf(Integer.parseInt(year)+1);
+				//查询当年假期余额
+				Vacation vacations = vacationMapper.SelectEmployeeVacation(companyId, null,auditorEmployeeId,year);
+				
+				if(vacations!=null && Double.parseDouble(vacations.getAnnualLeaveBalance())>0){
+					//使用查询出来最后一条结果的总额和余额  减去调整的值
+					double o = Double.parseDouble(vacations.getAnnualLeaveBalance())-Double.parseDouble(leaveDay);
+					
+					if(o>-1){
+						VacationDetails vd = new VacationDetails();
+						vd.setVacationDetailsId(FormatUtil.createUuid());
+						vd.setVacationId(vacations.getVacationId());
+						vd.setVacationType("0");
+						vd.setVacationMold("1");
+						vd.setLimitChange(leaveDay);
+						vd.setVacationTotal(vacations.getAnnualLeaveTotal());
+						vd.setVacationBalance(String.valueOf(o));
+						vd.setChangingReason(vd.Tweaks);
+						vd.setAdjustingInstruction(adjustingInstruction);
+						vd.setAuditorEmployeeId(auditorEmployeeId);
+						vd.setChangeingDate(sdf.format(new Date()));
+						vd.setYear(year);
+						
+						int num = vacationMapper.UpdateAnnualLeave(vacations.getVacationId(),vacations.getAnnualLeaveTotal(),String.valueOf(o),year);
+						
+						if(num > 0){
+							vacationDetailsMapper.insertSelective(vd);
+							
+							return 1;
+						}
+					}
+				}
+				return 0;
+			}
+		} 
+		
+		//调休
+		if(leaveType.equals("1")){
+			//查询当年调休余额
+			Vacation vacation = vacationMapper.SelectEmployeeVacation(companyId, null,auditorEmployeeId,year);
+			
+			if(vacation!=null){
+			//当调休剩余时长 大于 调休时长
+			if(Double.parseDouble(vacation.getAdjustRestBalance())>Double.parseDouble(leaveDay)){
+				
+				String balance = String.valueOf(Double.parseDouble(vacation.getAdjustRestBalance())-Double.parseDouble(leaveDay));
+				
+				VacationDetails vd = new VacationDetails();
+				vd.setVacationDetailsId(FormatUtil.createUuid());
+				vd.setVacationId(vacation.getVacationId());
+				vd.setVacationType("1");
+				vd.setVacationMold("1");
+				vd.setLimitChange(leaveDay);
+				vd.setVacationTotal(vacation.getAdjustRestTotal());
+				vd.setVacationBalance(balance);
+				vd.setAdjustingInstruction(adjustingInstruction);
+				vd.setChangingReason(vd.Tweaks);
+				vd.setAuditorEmployeeId(auditorEmployeeId);
+				vd.setChangeingDate(sdf.format(new Date()));
+				vd.setYear(year);
+				
+				int num = vacationDetailsMapper.insertSelective(vd);
+				
+				if(num > 0){
+					vacationMapper.UpdateAdjustRest(vacation.getVacationId(),vacation.getAdjustRestTotal() ,balance);
+					
+					return 1;
+				}
+			}
+		}
+		}
+		return 0;
+	}
 	
 	
 }

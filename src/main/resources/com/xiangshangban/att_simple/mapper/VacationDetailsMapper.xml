@@ -67,10 +67,7 @@
 		THEN '年假'::TEXT
 		END AS vacation_type_name , 
 	vacation_mold, limit_change, vacation_total, 
-	vacation_balance, changing_reason, auditor_employee_id,e.employee_name,changeing_date,adjusting_instruction,vd.year_,
-	<trim prefix="row_number() over(" suffix=") rn ">
-		order by changeing_date ${changeingDateRank}
-	</trim>
+	vacation_balance, changing_reason, auditor_employee_id,e.employee_name,changeing_date,adjusting_instruction,vd.year_
 	from vacation_details vd
 	LEFT join vacation v
 	on vd.vacation_id = v.vacation_id and vd.year_ = v.year_
@@ -91,8 +88,8 @@
 		</if>
 	</where>
 	) as t
-	where rn <![CDATA[>]]> ${pageExcludeNumber}
-	LIMIT ${pageNum}
+	order by changeing_date ${changeingDateRank}
+	LIMIT ${pageNum} OFFSET ${pageExcludeNumber}
   </select>
   <select id="SelectVacationIdByEndResult" parameterType="java.lang.String" resultMap="BaseResultMap">
   	select
@@ -100,7 +97,9 @@
     from vacation_details
     where vacation_id = #{vacationId,jdbcType=VARCHAR}
     and vacation_type = #{vacationType,jdbcType=VARCHAR}
+    <if test="year != null">
     and year_ = #{year}
+    </if>
     order by changeing_date DESC
 	LIMIT 1
   </select>

@@ -52,8 +52,8 @@ public class VacationController {
 		String companyId = request.getHeader("companyId");
 		
 		v.setCompanyId(companyId);
-		v.setDepartmentId(StringUtils.isEmpty(json.getString("departmentId"))?null:json.getString("departmentId"));
-		v.setEmployeeName(StringUtils.isEmpty(json.getString("employeeName"))?null:json.getString("employeeName"));
+		v.setDepartmentId(json.getString("departmentId"));
+		v.setEmployeeName(json.getString("employeeName"));
 		v.setAnnualLeaveTotalRank(json.getString("annualLeaveTotalRank"));
 		v.setAnnualLeaveBalanceRank(json.getString("annualLeaveBalanceRank"));
 		v.setAdjustRestTotalRank(json.getString("adjustRestTotalRank"));
@@ -101,15 +101,17 @@ public class VacationController {
 	@RequestMapping(value="/AdjustRestAdjustment",produces="application/json;charset=utf-8",method=RequestMethod.POST)
 	public ReturnData AdjustRestAdjustment(@RequestBody String jsonStirng,HttpServletRequest request){
 		ReturnData result = new ReturnData();
-		
 		String auditorEmployeeId = request.getHeader("accessUserId");
+
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date());
 		
 		JSONObject obj = JSON.parseObject(jsonStirng);
 		String vacationId = obj.getString("vacationId");
 		String vacationMold = obj.getString("vacationMold");
 		String adjustRest = obj.getString("adjustRest");
 		String adjustingInstruction = obj.getString("adjustingInstruction");
-		String year = "0";
+		String year = c.get(Calendar.YEAR)+"";
 		
 		result = vacationService.AdjustRestAdjustment(vacationId, vacationMold, adjustRest, adjustingInstruction, auditorEmployeeId,year);
 		
@@ -213,6 +215,12 @@ public class VacationController {
 			
 			return result;
 		}else if("1".equals(timingJob)){
+			if(StringUtils.isEmpty(timingJobDate)){
+				result.setReturnCode("3006");
+				result.setMessage("必传参数为空");
+				return result;
+			}
+			
 			try {
 				Date date = times.parse(timingJobDate);
 				Calendar c = Calendar.getInstance();

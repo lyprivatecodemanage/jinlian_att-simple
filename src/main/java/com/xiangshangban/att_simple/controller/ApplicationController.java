@@ -65,12 +65,14 @@ public class ApplicationController {
 			Map<String,Object> result = new HashMap<String,Object>();
 			String employeeId = request.getHeader("accessUserId");//员工id
 			String companyId = request.getHeader("companyId");//公司id
+			JSONObject obj = JSON.parseObject(jsonString);
+			String year = obj.getString("year");
 			if(StringUtils.isEmpty(companyId)||StringUtils.isEmpty(employeeId)){
 				result.put("message", "请求信息错误");
 				result.put("returnCode", "3012");
 				return result;
 			}
-			result = applicationService.applicationIndexPage(employeeId, companyId);
+			result = applicationService.applicationIndexPage(employeeId, companyId,year);
 			result.put("message", "成功");
 			result.put("returnCode", "3000");
 			return result;
@@ -518,6 +520,60 @@ public class ApplicationController {
 			}
 			Application application = applicationService.applicationDetails(applicationNo, employeeId, null, companyId);
 			this.getUploadVoucher(companyId, application);
+			if("1".equals(application.getApplicationType())){
+				if("1".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("事假");
+				}
+				if("2".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("年假");
+				}
+				if("3".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("调休假");
+				}
+				if("4".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("婚假");
+				}
+				if("5".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("产假");
+				}
+				if("6".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("丧假");
+				}
+				if("7".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("病假");
+				}
+			}else if("2".equals(application.getApplicationType())){
+				if("1".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("加班");
+				}
+				if("2".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("预加班");
+				}
+			}else if("3".equals(application.getApplicationType())){
+				if("1".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("短期出差");
+				}
+				if("2".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("长期出差");
+				}
+			}else if("4".equals(application.getApplicationType())){
+				if("1".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("外出");
+				}
+			}else if("5".equals(application.getApplicationType())){
+				if("1".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("上班补卡");
+				}
+				if("2".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("下班补卡");
+				}
+				if("3".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("消迟到");
+				}
+				if("4".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("消早退");
+				}
+			}
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
 			returnData.setData(application);
@@ -558,18 +614,6 @@ public class ApplicationController {
 					   if(!StringUtils.isEmpty(classesEmployee.getClassesId())&&
 							   !StringUtils.isEmpty(classesEmployee.getOnDutySchedulingDate())&&
 							   !StringUtils.isEmpty(classesEmployee.getOffDutySchedulingDate())){//有班次
-						   /*if("2".equals(type)){//加班申请
-							   if((startTime.getTime()>sdf.parse(classesEmployee.getOnDutySchedulingDate()).getTime()
-									   &&startTime.getTime()<sdf.parse(classesEmployee.getOffDutySchedulingDate()).getTime())
-									   || (endTime.getTime()>sdf.parse(classesEmployee.getOnDutySchedulingDate()).getTime()
-									   &&endTime.getTime()<sdf.parse(classesEmployee.getOffDutySchedulingDate()).getTime())
-									   || (sdf.parse(classesEmployee.getOnDutySchedulingDate()).getTime()>endTime.getTime()
-									   &&sdf.parse(classesEmployee.getOffDutySchedulingDate()).getTime()<endTime.getTime())
-									   || (sdf.parse(classesEmployee.getOnDutySchedulingDate()).getTime()>endTime.getTime()
-									   &&sdf.parse(classesEmployee.getOffDutySchedulingDate()).getTime()<endTime.getTime())){
-								   
-							   }
-						   }*/
 						   if(startTime.getTime()>sdf.parse(classesEmployee.getOnDutySchedulingDate()).getTime()){
 						         start = sdf.format(startTime);
 						   }else{
@@ -581,6 +625,9 @@ public class ApplicationController {
 							   end = sdf.format(endTime);
 						   }
 						   double between=(sdf.parse(end).getTime()-sdf.parse(start).getTime())/1000;//除以1000是为了转换成秒
+						   if(between>=28800){
+							   between=28800;
+						   }
 						   applicationHour=applicationHour+(int)(Math.ceil(between/60/30)/2);
 					   }else {
 							  if("3".equals(type)||"4".equals(type)){

@@ -77,14 +77,19 @@
     t.is_transfer, t.is_complete, t.is_skip_rest_day
   </sql>
   <!-- 审批列表 -->
-  <select id="selectApproverListTotal" parameterType="java.lang.String" resultMap="BaseResultMap">
- 	select <include refid="T_Base_Column_List"/> ,e.employee_name,t.copy_person_id,t.transfer_person_id from 
+  <select id="selectApproverListTotal" parameterType="java.lang.String" resultMap="ApproverDetailsResultMap">
+ 	select <include refid="T_Base_Column_List"/> ,
+ 	<include refid="AL_Base_Column_List"/>,
+  	<include refid="AO_Base_Column_List"/>,
+  	<include refid="ABT_Base_Column_List"/>,
+  	<include refid="AOT_Base_Column_List"/>,
+  	<include refid="AFC_Base_Column_List"/>,e.employee_name,t.copy_person_id,t.transfer_person_id from 
 	(select atr.*,cp.copy_person_id,tr.transfer_person_id from application_total_record_ atr 
 	LEFT JOIN att_simple.application_to_copy_person_ cp on atr.application_no = cp.application_no and cp.company_id = atr.company_id
 	left join att_simple.application_transfer_record_ tr on atr.application_no = tr.application_no and tr.company_id = atr.company_id
 	where atr.company_id = #{companyId}
 	and atr.last_approver = #{employeeId} 
-	and is_copy = '0' and is_transfer = '0'
+	<!-- and is_copy = '0' and is_transfer = '0' -->
 	UNION
 	select atr.*,cp.copy_person_id,tr.transfer_person_id from application_total_record_ atr 
 	LEFT JOIN att_simple.application_to_copy_person_ cp on atr.application_no = cp.application_no and cp.company_id = atr.company_id
@@ -108,9 +113,18 @@
 	and is_transfer = '1' and is_copy='0') t
 	LEFT JOIN organization.employee_ e on e.company_id = #{companyId} 
 	  	and e.employee_id = t.application_id 
+	left join application_leave_ al on t.application_no = al.application_no
+  	left join application_overtime_ ao on t.application_no = ao.application_no
+  	left join application_business_travel_ abt on t.application_no = abt.application_no
+  	left join application_outgoing_ aot on t.application_no = aot.application_no
+  	left join application_fill_card_ afc on t.application_no = afc.application_no
 	where t.application_status = '1' 
-	<if test="applicationType!=null and application!=''">
+	<if test="applicationType!=null and applicationType!=''">
   	and t.application_type = #{applicationType}
+  	</if>
+  	<if test="statusDescription=='' or statusDescription==null">
+  	and (t.is_complete='0' and t.last_approver = #{employeeId} and t.application_status = '1'
+  	or t.is_complete='0' and t.is_copy='1' and t.copy_person_id = #{employeeId} and t.application_status = '1')
   	</if>
   	<choose>
   		<when test="statusDescription=='未审批'">
@@ -126,10 +140,10 @@
   		and t.is_complete='1' and t.is_reject='1'
   		</when>
   		<when test="statusDescription=='抄送'">
-  		and t.is_copy='1' and t.copy_person_id = #{employeeId} and application_status = '1'
+  		and t.is_copy='1' and t.copy_person_id = #{employeeId} and t.application_status = '1'
   		</when>
   	</choose>
-  	<if test="applicationTimeStart!=null and applicationTimeEnd!=null">
+  	<if test="applicationTimeStart!=null and applicationTimeStart!='' and applicationTimeEnd!=null and applicationTimeEnd!=''">
   	and t.operater_time between #{applicationTimeStart} and #{applicationTimeEnd} 
   	</if>
   	<if test="employeeName!=null and employeeName!=''">
@@ -175,7 +189,6 @@
 	    <result column="al_reason"  property="reason" />
 	    <result column="al_upload_voucher"  property="uploadVoucher" />
 	    <result column="al_approver"  property="approver" />
-	    <result column="al_copy_to_person"  property="copyToPerson" />
 	    <result column="al_operater_time"  property="operaterTime" />
 	    <result column="al_is_transfer"  property="isTransfer" />
 	    <result column="al_application_hour"  property="applicationHour" />
@@ -295,7 +308,7 @@
     al.application_no al_application_no, al.employee_id al_employee_id, al.department_id al_department_id,
     al.company_id al_company_id, al.leave_type al_leave_type, al.start_time al_start_time, 
     al.end_time al_end_time, al.reason al_reason, al.upload_voucher al_upload_voucher, al.approver al_approver,
-    al.copy_to_person al_coy_to_person, al.operater_time al_operater_time, al.is_transfer al_is_transfer, 
+    al.operater_time al_operater_time, al.is_transfer al_is_transfer, 
     al.application_hour al_application_hour, al.application_time al_application_time
   </sql>
    <sql id="AO_Base_Column_List">
@@ -327,7 +340,7 @@
   </sql>
   <!-- 审批详情 -->
   <select id="selectApproverDetails" parameterType="java.lang.String" resultMap="ApproverDetailsResultMap">
-  	select <include refid="Base_Column_List"/>,
+  	select <include refid="Base_Column_List"/>,e.employee_name,
   	<include refid="AL_Base_Column_List"/>,
   	<include refid="AO_Base_Column_List"/>,
   	<include refid="ABT_Base_Column_List"/>,
@@ -355,6 +368,8 @@
   	left join organization.employee_ e on e.employee_id = acp.copy_person_id and e.company_id = #{companyId}
   	where acp.application_no =#{applicationNo}
   	) cp on atr.application_no = cp.application_no
+  	LEFT JOIN organization.employee_ e on e.company_id = #{companyId} 
+	  	and e.employee_id = atr.application_id 
   	where atr.application_no = #{applicationNo}
   </select>
   
@@ -377,7 +392,7 @@
 	e.employee_name as last_approver_name,
 	 case atr.application_type when '1' then a.employee_name  
 	when '2' then b.employee_name when '3' then c.employee_name  
-	when '4' then d.employee_name   when '5' then d.employee_name end as application_name,
+	when '4' then d.employee_name   when '5' then f.employee_name end as application_name,
 	 case atr.application_type when '1' then a.department_name  
 	when '2' then b.department_name when '3' then c.department_name  
 	when '4' then d.department_name   when '5' then f.department_name end as department_name,
@@ -422,7 +437,7 @@
 	) f on f.application_no = atr.application_no
 	
 	left join organization.employee_ e on atr.last_approver = e.employee_id and e.company_id = atr.company_id
-	where atr.company_id = #{companyId} 
+	where atr.company_id = #{companyId} and atr.application_status = '1'
 	<if test="departmentId!=null and departmentId!=''">
 	and case atr.application_type when '1' then a.department_id  
 	when '2' then b.department_id when '3' then c.department_id  
@@ -592,6 +607,9 @@
       </if>
       <if test="isTransfer != null">
         is_transfer = #{isTransfer},
+      </if>
+      <if test="isComplete !=null">
+      	is_complete = #{isComplete}
       </if>
     </set>
     where application_no = #{applicationNo} and operater_time = #{previousOperaterTime}

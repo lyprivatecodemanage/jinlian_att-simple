@@ -14,10 +14,11 @@
     <result column="operater_time"  property="operaterTime" />
     <result column="is_transfer"  property="isTransfer" />
     <result column="application_time"  property="applicationTime" />
+    
   </resultMap>
   <sql id="Base_Column_List">
-    application_no, employee_id, department_id, company_id, fill_card_type, fill_card_time, 
-    reason, upload_voucher, approver, operater_time, is_transfer, application_time
+    afc.application_no, afc.employee_id, afc.department_id, afc.company_id, afc.fill_card_type, afc.fill_card_time, 
+    afc.reason, afc.upload_voucher, afc.approver, afc.operater_time, afc.is_transfer, afc.application_time
   </sql>
   <!-- 添加补卡申请记录 -->
   <insert id="insertApplicationFillCardRecord" parameterType="com.xiangshangban.att_simple.bean.ApplicationFillCard">
@@ -34,7 +35,6 @@
   		<if test="approver!=null and approver!=''">approver,</if>
   		<if test="operaterTime!=null and operaterTime!=''">operater_time,</if>
   		<if test="isTransfer!=null and isTransfer!=''">is_transfer,</if>
-  		<if test="applicationHour!=null and applicationHour!=''"> application_hour,</if>
   		<if test="applicationTime!=null and applicationTime!=''">application_time</if>
   	</trim>
   	<trim prefix="values(" suffixOverrides="," suffix=")">
@@ -49,7 +49,6 @@
   		<if test="approver!=null and approver!=''">#{approver},</if>
   		<if test="operaterTime!=null and operaterTime!=''">#{operaterTime},</if>
   		<if test="isTransfer!=null and isTransfer!=''">#{isTransfer},</if>
-  		<if test="applicationHour!=null and applicationHour!=''">#{applicationHour},</if>
   		<if test="applicationTime!=null and applicationTime!=''">#{applicationTime}</if>
   	</trim>
   </insert>
@@ -58,19 +57,17 @@
 		<result column="employee_id" property="applicationId"/>
 		<result column="department_id" property="departmentId"/>
 		<result column="company_id" property="companyId"/>
-		<result column="leave_type" property="applicationChildrenType"/>
+		<result column="fill_card_type" property="applicationChildrenType"/>
 		<result column="start_time" property="startTime"/>
-		<result column="end_time" property="endTime"/>
-		<result column="reason" property="reason"/>
 		<result column="upload_voucher" property="uploadVoucher"/>
 		<result column="approver" property="approver"/>
-		<result column="application_hour" property="applicationHour"/>
+		<result column="fill_card_time" property="fillCardTime"/>
 		<result column="application_time" property="applicationTime"/>
 	</resultMap>
       <!-- 根据申请单号查询详细内容 -->
   <select id="selectDetailsByApplicationNo" parameterType="java.lang.String" resultMap="Application_List"> 
   	select <include refid="Base_Column_List"/>
-  	from att_simple.application_fill_card_ o
-  	where o.application_no = #{applicationNo}
+  	from att_simple.application_fill_card_ afc
+  	where afc.application_no = #{applicationNo}
   </select>
 </mapper>

@@ -2,10 +2,12 @@ package com.xiangshangban.att_simple.controller;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xiangshangban.att_simple.bean.Paging;
 import com.xiangshangban.att_simple.bean.ReturnData;
@@ -49,7 +52,7 @@ public class ReportDailyController {
 	public ReturnData oneKeyChecking(@RequestBody String objectString,HttpServletRequest request){
 		ReturnData result = new ReturnData();
 		JSONObject obj = JSON.parseObject(objectString);
-		String [] reportIds = (String [])obj.get("reportIds");
+		List<String> reportIds =JSONArray.parseArray(obj.get("reportIds").toString(),String.class);
 		String companyId = request.getHeader("companyId");
 		
 		result = reportDailyService.oneKeyChecking(reportIds,companyId);
@@ -109,6 +112,7 @@ public class ReportDailyController {
 		ReturnData result = new ReturnData();
 		JSONObject obj = JSON.parseObject(objectString);
 		String companyId = request.getHeader("companyId");
+		
 		String reportId = obj.getString("reportId");
 		String beginDate = obj.getString("beginDate");
 		String beginTime = obj.getString("beginTime");
@@ -127,15 +131,23 @@ public class ReportDailyController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value="export/ReportDailyExcel",method=RequestMethod.POST)
+	@RequestMapping(value="export/ReportDailyExcel",produces="application/json;charset=UTF-8",method=RequestMethod.POST)
 	public ReturnData ReportDailyExcel(@RequestBody String objectString,HttpServletRequest request,HttpServletResponse response){
 		ReturnData result = new ReturnData();
-		JSONObject obj = JSON.parseObject(objectString);
-		String beginDate = obj.getString("beginDate");
-		String endDate = obj.getString("endDate");
 		try {
 			response.setContentType("octets/stream"); 
 			String agent = request.getHeader("USER-AGENT");
+			JSONObject obj = JSON.parseObject(objectString);
+			String beginDate = obj.getString("beginDate");
+			String endDate = obj.getString("endDate");
+			
+			if(StringUtils.isEmpty(beginDate)){
+				beginDate = null;
+			}
+			if(StringUtils.isEmpty(endDate)){
+				endDate = null;
+			}
+			
 			String excelName = "ReportDaily.xls";
 			if(agent!=null && agent.indexOf("MSIE")==-1&&agent.indexOf("rv:11")==-1 && 
 					agent.indexOf("Edge")==-1 && agent.indexOf("Apache-HttpClient")==-1){//非IE

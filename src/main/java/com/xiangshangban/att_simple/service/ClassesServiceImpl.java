@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -132,7 +133,7 @@ public class ClassesServiceImpl implements ClassesService {
 		Object onPunchCardRule = jsonObject.get("onPunchCardRule");
 		Object offPunchCardRule = jsonObject.get("offPunchCardRule");
 		Object employeeIdList = jsonObject.get("employeeIdList");
-		Object validDate = jsonObject.get("validDate");
+		String validDate = (String)jsonObject.get("validDate");
 		Object isDefault = jsonObject.get("isDefault");
 		//自动排班开关
 		Object autoScheduledSwitch = jsonObject.get("autoScheduledSwitch");
@@ -709,37 +710,44 @@ public class ClassesServiceImpl implements ClassesService {
 			// 遍历人员信息
 			for (int r = 0; r < selectAllClassesEmp.size(); r++) {
 				String empId = selectAllClassesEmp.get(r).get("emp_id").toString().trim();
-				Object lastDate = selectAllClassesEmp.get(r).get("last_date");
+				String lastDate = (String)selectAllClassesEmp.get(r).get("last_date");
 				// 最后的排班日期增加一为生效时间
 				Date parse;
 				try {
-					parse = new SimpleDateFormat("yyyy-MM-dd").parse(lastDate.toString().trim());
+					
+					String classesTypeId = selectAllClassesEmp.get(r).get("classes_id").toString().trim();
+					ClassesType classesType = new ClassesType();
+					if(StringUtils.isNotEmpty(classesTypeId)){
+						// 根据班次类型ID查询，班次类型详细信息
+						classesType = classesTypeMapper.selectByPrimaryKey(classesTypeId);
+					}else{
+						//人员未排过班，则默认从当前日期开始排班
+						lastDate = StringUtils.isEmpty(lastDate)?
+								TimeUtil.getLastDayDate(TimeUtil.getCurrentDate()):lastDate;
+						classesType = classesTypeMapper.selectDefaultClassesType(companyId);
+						
+					}
+					parse = new SimpleDateFormat("yyyy-MM-dd").parse(lastDate);
 					Calendar calendar = Calendar.getInstance();
 					calendar.setTime(parse);
 					calendar.add(Calendar.DAY_OF_MONTH, +1);
 					String validDate = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
-					String classesTypeId = selectAllClassesEmp.get(r).get("classes_id").toString().trim();
-					// 根据班次类型ID查询，班次类型详细信息
-					ClassesType classesType = classesTypeMapper.selectByPrimaryKey(classesTypeId);
 					if (classesType != null) {
 						Map<String, String> param = new HashMap<>();
 						param.put("empId", empId);
-						List<Map> listMap = new ArrayList<>();
+						List<Map<String, String>> listMap = new ArrayList<>();
 						listMap.add(param);
 						JSONArray empArray = JSONArray.parseArray(JSONArray.toJSONString(listMap));
 						// TODO 执行排班操作
 						result = commonSchedulingOperate(validDate, empArray, classesType);
 					}
+					
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
 			}
 		}
-		if (result > 0) {
-			return true;
-		} else {
-			return false;
-		}
+		return true;
 	}
 
 	/**
@@ -1087,7 +1095,7 @@ public class ClassesServiceImpl implements ClassesService {
 	 *            班次类型bean
 	 * @return
 	 */
-	public int commonSchedulingOperate(Object validDate, JSONArray empArray, ClassesType classesType) {
+	public int commonSchedulingOperate(String validDate, JSONArray empArray, ClassesType classesType) {
 		// 初始化添加班次结果变量
 		int result = 0;
 		// 根据访问次数，来确定排班修改的次数（每修改一次，改变一次颜色）

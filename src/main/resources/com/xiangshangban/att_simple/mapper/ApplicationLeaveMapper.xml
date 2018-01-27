@@ -12,7 +12,6 @@
     <result column="reason"  property="reason" />
     <result column="upload_voucher"  property="uploadVoucher" />
     <result column="approver"  property="approver" />
-    <result column="copy_to_person"  property="copyToPerson" />
     <result column="operater_time"  property="operaterTime" />
     <result column="is_transfer"  property="isTransfer" />
     <result column="application_hour"  property="applicationHour" />
@@ -25,14 +24,14 @@
   </resultMap>
   <sql id="Base_Column_List">
     application_no, employee_id, department_id, company_id, leave_type, start_time, 
-    end_time, reason, upload_voucher, approver, copy_to_person, operater_time, is_transfer, 
+    end_time, reason, upload_voucher, approver, operater_time, is_transfer, 
     application_hour, application_time
   </sql>
    
   <sql id="Leave_List">
     application_no, employee_id, department_id, company_id, leave_type, start_time, 
     end_time, reason, upload_voucher, approver, copy_to_person, operater_time, is_transfer, 
-    application_hour, application_time,employee_name,department_name,leave_type_name,approver_name
+    to_number(application_hour,'9999') application_hour, application_time,employee_name,department_name,leave_type_name,approver_name
   </sql>
    
    <select id="selectLeaveKeyData" parameterType="java.lang.String" resultType="java.lang.Integer">
@@ -63,7 +62,7 @@
 			and leave_type = #{leaveType}
 		</if>
 		<if test="employeeName != null">
-			and e.employee_name like '%#{employeeName}%'
+			and e.employee_name like '%${employeeName}%'
 		</if>
 	)t
 	<where>
@@ -88,19 +87,12 @@
 	WHEN (leave_type = '4'::VARCHAR) THEN '婚假'::TEXT 
 	WHEN (leave_type = '5'::VARCHAR) THEN '产假'::TEXT 
 	WHEN (leave_type = '6'::VARCHAR) THEN '丧假'::TEXT 
+	WHEN (leave_type = '7'::VARCHAR) THEN '病假'::TEXT
 	END as leave_type_name
 	, start_time, end_time, reason, upload_voucher, approver,
 	(select employee_name from organization.employee_ where employee_id = approver and company_id = l.company_id) as approver_name, 
 	l.copy_to_person, l.operater_time,l.is_transfer, 
-	application_hour, l.application_time,to_char(to_date(l.application_time,'YYYY'),'YYYY') AS year_,to_char(to_date(l.application_time,'YYYY-mm'),'mm') AS month_,
-	<trim prefix="row_number() over(order by " suffix=") rn">
-		<if test="applicationHourRank != null">
-			application_hour ${applicationHourRank}
-		</if>
-		<if test="applicationTimeRank != null">
-			application_time ${applicationTimeRank}
-		</if>
-	</trim>
+	application_hour, l.application_time,to_char(to_date(l.application_time,'YYYY'),'YYYY') AS year_,to_char(to_date(l.application_time,'YYYY-mm'),'mm') AS month_
 	FROM att_simple.application_leave_ l
 	LEFT JOIN organization.department_ d
 	on l.department_id = d.department_id and l.company_id = d.company_id
@@ -117,17 +109,24 @@
 			and leave_type = #{leaveType}
 		</if>
 		<if test="employeeName != null">
-			and e.employee_name like '%#{employeeName}%'
+			and e.employee_name like '%${employeeName}%'
 		</if>
 	)t
-	where rn > ${pageExcludeNumber}
-	<if test="year != null">
-		and year_ = #{year}
+	<where>
+		<if test="year != null">
+			and year_ = #{year}
+		</if>
+		<if test="month != null">
+			and month_ = #{month}
+		</if>
+	</where>  
+	<if test="applicationHourRank != null">
+		order by application_hour ${applicationHourRank}
 	</if>
-	<if test="month != null">
-		and month_ = #{month}
+	<if test="applicationTimeRank != null">
+		order by application_time ${applicationTimeRank}
 	</if>
-	LIMIT ${pageNum}
+	LIMIT ${pageNum} OFFSET ${pageExcludeNumber}
   </select>
   
   <!-- 添加请假申请记录 -->
@@ -174,7 +173,7 @@ LEFT JOIN application_leave_ al on atr.application_no = al.application_no
 LEFT JOIN application_overtime_ ao on atr.application_no = ao.application_no
 left join application_business_travel_ abt on atr.application_no = abt.application_no
 left join application_outgoing_ aot on atr.application_no = aot.application_no
-where atr.company_id = #{companyId} and atr.application_id = #{applicationId} and (((#{startTime} between al.start_time and al.end_time) or (#{endTime} between al.start_time and al.end_time) 
+where atr.company_id = #{companyId} and atr.is_reject !='1' and atr.application_id = #{applicationId} and (((#{startTime} between al.start_time and al.end_time) or (#{endTime} between al.start_time and al.end_time) 
 	or (#{startTime} between ao.start_time and ao.end_time) or (#{endTime} between ao.start_time and ao.end_time)
 	or (#{startTime} between abt.start_time and abt.end_time) or (#{endTime} between abt.start_time and abt.end_time) 
 	or (#{startTime} between aot.start_time and aot.end_time) or (#{endTime} between aot.start_time and aot.end_time)) or
