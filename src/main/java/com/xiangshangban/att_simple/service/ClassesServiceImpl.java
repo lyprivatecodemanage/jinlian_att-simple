@@ -182,6 +182,7 @@ public class ClassesServiceImpl implements ClassesService {
 							JSONObject parseObject = JSONObject.parseObject(empArray.get(g).toString());
 							//设置人员名称
 							delParam.put("empId",parseObject.get("empId").toString().trim());
+							delParam.put("classesTypeId",null);
 							// TODO 删除当前公司,指定人员,指定日期之后的排班
 							classesEmployeeMapper.deleteAppointClassesTypeEmp(delParam);
 						}
