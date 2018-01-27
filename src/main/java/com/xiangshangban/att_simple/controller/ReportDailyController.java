@@ -109,6 +109,7 @@ public class ReportDailyController {
 		ReturnData result = new ReturnData();
 		JSONObject obj = JSON.parseObject(objectString);
 		String companyId = request.getHeader("companyId");
+		
 		String reportId = obj.getString("reportId");
 		String beginDate = obj.getString("beginDate");
 		String beginTime = obj.getString("beginTime");
