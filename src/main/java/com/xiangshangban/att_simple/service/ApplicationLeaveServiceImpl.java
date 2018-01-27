@@ -1,8 +1,11 @@
 package com.xiangshangban.att_simple.service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,13 +57,19 @@ public class ApplicationLeaveServiceImpl implements ApplicationLeaveService {
 	public ReturnData selectLeaveKeyData(String companyId) {
 		// TODO Auto-generated method stub
 		ReturnData data = new ReturnData();
-		
+		Map<String,Object> map = new HashMap<>();
 		String applicationTime = sdf.format(new Date())+"%";
 		
-		List<ApplicationLeave> list = applicationLeaveMapper.selectLeaveKeyData(companyId,applicationTime);
+		int matterLeave= applicationLeaveMapper.selectLeaveKeyData(companyId,applicationTime,"1");
+		int annualLeave= applicationLeaveMapper.selectLeaveKeyData(companyId,applicationTime,"2");
+		int lieuLeave= applicationLeaveMapper.selectLeaveKeyData(companyId,applicationTime,"3");
 		
-		if(list!=null){
-			data.setData(JSONObject.toJSON(list));
+		map.put("matterLeave",matterLeave);
+		map.put("annualLeave", annualLeave);
+		map.put("lieuLeave", lieuLeave);
+		
+		if(map!=null){
+			data.setData(JSONObject.toJSON(map));
 			data.setReturnCode("3000");
 			data.setMessage("数据请求成功");
 			return data;

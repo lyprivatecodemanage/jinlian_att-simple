@@ -136,7 +136,7 @@ public class ReportDailyController {
 		try {
 			response.setContentType("octets/stream"); 
 			String agent = request.getHeader("USER-AGENT");
-			String excelName = "employee.xls";
+			String excelName = "ReportDaily.xls";
 			if(agent!=null && agent.indexOf("MSIE")==-1&&agent.indexOf("rv:11")==-1 && 
 					agent.indexOf("Edge")==-1 && agent.indexOf("Apache-HttpClient")==-1){//非IE
 				excelName = new String(excelName.getBytes("UTF-8"), "ISO-8859-1");
