@@ -1,4 +1,4 @@
-package com.xiangshangban.att_simple.filter;
+package com.xiangshangban.att_simple.scheduler;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -34,6 +34,7 @@ public class AnnualLeaveTimerTask{
 	
 	@Scheduled(cron="0 0 0 * * ?") //每天执行一次
     public void jobExamine() {   
+		System.out.println("---------------------------------");
 		ReturnData returndata = new ReturnData();
 		Date date = new Date();
 		Calendar c = Calendar.getInstance();
@@ -66,6 +67,7 @@ public class AnnualLeaveTimerTask{
 						 operateLog.setOperateContent("假期统计：年假一键清零定时任务");
 						 String sendRequet = HttpRequestFactory.sendRequet(sendUrl, operateLog);
 						 
+						 System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 					}
 					
 				}else if(alj.getJobType().equals("2")){//年假一键生成
@@ -83,6 +85,8 @@ public class AnnualLeaveTimerTask{
 						operateLog.setOperateType("3");
 						operateLog.setOperateContent("假期统计：年假一键生成定时任务");
 						String sendRequet = HttpRequestFactory.sendRequet(sendUrl, operateLog);
+						
+						System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 					}
 				}
 			}

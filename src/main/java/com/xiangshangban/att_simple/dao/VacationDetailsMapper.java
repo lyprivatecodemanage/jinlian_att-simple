@@ -36,7 +36,7 @@ public interface VacationDetailsMapper {
      * @return
      */
     int SelectTotalNum(@Param("vacationId")String vacationId,@Param("vacationType")String vacationType,
-    		@Param("changingReason")String changingReason);
+    		@Param("changingReason")String changingReason,@Param("year")String year);
     
     /**
      * 查询某个员工的假期详情里的所有记录并进行模糊分页处理
@@ -49,7 +49,7 @@ public interface VacationDetailsMapper {
      * @return
      */
     List<VacationDetails> SelectVacationDetails(@Param("vacationId")String vacationId,@Param("vacationType")String vacationType,
-    		@Param("changingReason")String changingReason,@Param("changeingDateRank")String changeingDateRank,@Param("pageExcludeNumber")String pageExcludeNumber,@Param("pageNum")String pageNum);
+    		@Param("changingReason")String changingReason,@Param("changeingDateRank")String changeingDateRank,@Param("pageExcludeNumber")String pageExcludeNumber,@Param("pageNum")String pageNum,@Param("year")String year);
 
     
 }

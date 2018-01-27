@@ -788,13 +788,13 @@ public class TimeUtil {
 	}
 	public static void main(String[] args) {
 //		System.out.println(containTimeLength("2017-10-16 10:00:00", "2017-10-16 10:05:00","2017-10-16 10:00:00", "2017-10-16 10:05:00")/60);
-		System.out.println(parseSecondToMinuteHalfDayUnit("14450"));
+//		System.out.println(parseSecondToMinuteHalfDayUnit("14450"));
 //		System.out.println(getCurrentMaxDate());
 //		System.out.println(compareTime("2018-01-15 21:00:01","2018-01-15 01:00:01"));
 		/*Map map = getMondayAndWeekendDate("2018-01-10");
 		System.out.println(map.get("monday"));
 		System.out.println(map.get("weekend"));*/
+//		System.out.println(compareTime("2018-01-23 00:00:00","2018-01-22 00:00:00"));
+		System.out.println(dayOfDate("2018-01-22 00:00:00","2018-01-25 00:00:00"));
 	}
-
-	
 }

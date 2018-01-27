@@ -2,7 +2,9 @@ package com.xiangshangban.att_simple.controller;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +12,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,9 +29,11 @@ import com.xiangshangban.att_simple.AttSimple;
 import com.xiangshangban.att_simple.bean.ClassesType;
 import com.xiangshangban.att_simple.bean.OperateLog;
 import com.xiangshangban.att_simple.bean.ReturnData;
+import com.xiangshangban.att_simple.dao.ClassesTypeMapper;
 import com.xiangshangban.att_simple.service.ClassesService;
 import com.xiangshangban.att_simple.service.NotClockingInEmpService;
 import com.xiangshangban.att_simple.utils.HttpRequestFactory;
+import com.xiangshangban.att_simple.utils.TimeUtil;
 
 /**
  * @author 王勇辉
@@ -44,6 +49,9 @@ public class ClassesController {
 	@Autowired
 	private NotClockingInEmpService notClockingInEmpService;
 	
+	@Autowired
+	private ClassesTypeMapper classesTypeMapper;
+	
 	public static Logger logger = Logger.getLogger(ClassesController.class);
 	
 	/***************
@@ -58,10 +66,12 @@ public class ClassesController {
 	 * @return
 	 */
 	@PostMapping("/addDefaultClassesType")
-	public String addDefaultClassesType(@RequestParam String companyId){
+	public String addDefaultClassesType(@RequestBody String requestParam){
+		JSONObject parseObject = JSONObject.parseObject(requestParam);
+		String companyId = (String)parseObject.get("companyId");
 		//初始化返回结果
 		String result = "";
-		if(companyId!=null && !companyId.trim().isEmpty()){
+		if(StringUtils.isNotEmpty(companyId)){
 			boolean addCompanyDefaultClasses = classesService.addCompanyDefaultClasses(companyId);
 			if(addCompanyDefaultClasses){
 				result = "添加成功";
@@ -112,25 +122,26 @@ public class ClassesController {
 	 * 新增/修改班次类型
 	 * @param requestParam
 	 {
-  		 "classesId":"",(通过有无班次ID,来判断用户进行的是新增的操作还是更新的操作)
-         "classesName":"常白班",（班次名称）
-         "on_duty_time":"09:00",(上班时间)
-         "off_duty_time":"18:00",（下班时间）
-         "morrowFlag":"0/1",(是否是次日的这个时间下班 0:不是 1:是)
-         "restStartTime":"12:00",每天的休息时间段:开始时间
-         "restEndTime":"13:00",每天的休息时间段:结束时间
-         "restDays":"67",(传递的是67的时候，表示一周的周六和周日休息、传递的是"5,2"表示做5休2)
-         "festivalRestFlag":"0/1",(法定假日是否休息标志位0:不休息 1:休息)
-		 "signInRule":"20",（签到晚20分钟不算迟到）
-		 "signOutRule":"20",(签退早20分钟不算早退)
- 		 "onPunchCardRule":"20", (上班打卡限制，允许提前20分钟)
-		 "offPunchCardRule":"20", (下班打卡限制，允许推迟20分钟)
-		 "employeeIdList":[  (使用改排班的人员列表)
-			 {"empId":"XFGCDSDSFSDFSDF13213"},
-			 {"empId":"XFGCDSDSFSDFSDF46557"}
+  		 "classesId":"FEBE9F295CCD4C7BA8D04A8000EF7960",
+         "classesName":"woo班次",
+         "on_duty_time":"09:00",
+         "off_duty_time":"18:00",
+         "morrowFlag":"0",
+         "restStartTime":"12:00",
+         "restEndTime":"13:00",
+         "restDays":"67",
+         "festivalRestFlag":"1",
+		 "signInRule":"20",
+		 "signOutRule":"20",
+ 		 "onPunchCardRule":"20", 
+		 "offPunchCardRule":"20", 
+		 "employeeIdList":[  
+			 {"empId":"EBC4C2504333417385743DADD3002FAC"}
 		  ],
-	 	 "autoClassesFlag":"1/2",(自动排班周期 1:月  2:季度)
-	 	 "validDate":"2018-01-16"(当前班次生效的时间，没有的时候不传)
+	 	 "autoClassesFlag":"1",
+	 	 "autoScheduledSwitch":"0/1"
+	 	 "validDate":"2018-01-30",
+	 	 "isDefault":"0"
 	 }
 	 * @param request
 	 * @return
@@ -150,17 +161,49 @@ public class ClassesController {
 				returnData.setReturnCode("3001");
 				returnData.setMessage("班次类别最多存在5个,当前不能进行新增操作");
 			}else{
+				//判断(新增/修改)的班次类别名称，是不是和公司已有的重名
+				JSONObject jsonObject = JSONObject.parseObject(requestParam);
+				Object classesName = jsonObject.get("classesName");
+				Object classesId = jsonObject.get("classesId");
+				if(classesId!=null){ //表明进行的是更新操作
+					//更新班次类别的时候，允许不做更改提交
+					//查询旧的班次类型名称
+					ClassesType oldClassesType = classesTypeMapper.selectByPrimaryKey(classesId.toString().trim());
+					if(oldClassesType!=null){
+						if(classesName!=null){
+							if(!oldClassesType.getClassesName().equals(classesName.toString().trim())){
+								for (ClassesType classesType : queryAllClassesIdAndName) {
+									if(classesType.getClassesName().equals(classesName.toString().trim())){
+										returnData.setReturnCode("3001");
+										returnData.setMessage("公司已存在该班次类别名称,请重新命名");
+										return returnData;
+									}
+								}
+							}
+						}
+					}
+				}else{ //进行的是新增操作
+					if(classesName!=null){
+						for (ClassesType classesType : queryAllClassesIdAndName) {
+							if(classesType.getClassesName().equals(classesName.toString().trim())){
+								returnData.setReturnCode("3001");
+								returnData.setMessage("公司已存在该班次类别名称,请重新命名");
+								return returnData;
+							}
+						}
+					}
+				}
 				addNewClassesType = classesService.addNewClassesType(requestParam, companyId.trim());
 			}
 			if(addNewClassesType){
 				returnData.setReturnCode("3000");
-				returnData.setMessage("添加成功");
+				returnData.setMessage("排班成功");
 				//增加操作日志:记录web端的操作
 				String addOperateLog = addOperateLog(accessUserId,companyId,"在班次设置界面(新增/更新)班次设置");
 				logger.info("【(新增/修改)班次设置】------>操作日志"+addOperateLog);
 			}else{
 				returnData.setReturnCode("3001");
-				returnData.setMessage("添加失败");
+				returnData.setMessage("排班失败");
 			}
 		}else{
 			returnData.setReturnCode("3013");
@@ -235,7 +278,10 @@ public class ClassesController {
 		        "offPunchCardTime": "20",
 		        "autoClassesFlag": "1",
 		        "createTime": null,
-		        "companyId": null
+		        "companyId": null,
+		        "valid_date":"2018-01-22"---------->班次生效时间
+                "is_default":"0/1"------------------>是否是公司的默认班次类别（0：不是 1：是）
+                "auto_scheduled_switch":"0/1"--------------->是否开启自动排班（1：开启 0：不开启）
 		      },
 		      "classesEmp": [
 		        {
@@ -267,8 +313,8 @@ public class ClassesController {
 		//初始化返回的数据
 		ReturnData returnData = new ReturnData();
 		if((companyId!=null && !companyId.isEmpty()) && (accessUserId!=null && !accessUserId.isEmpty())){
-			Map allClassesTypeInfo = classesService.queryPointClassesTypeInfo(requestParam,companyId.trim());
-			returnData.setData(allClassesTypeInfo);
+			Map pointClassesTypeInfo = classesService.queryPointClassesTypeInfo(requestParam,companyId.trim());
+			returnData.setData(pointClassesTypeInfo);
 			returnData.setReturnCode("3000");
 			returnData.setMessage("请求数据成功");
 			//增加操作日志:记录web端的操作
@@ -325,15 +371,15 @@ public class ClassesController {
 	/**
 	 * 根据条件查询当前公司人员的班次排列，以及人数最多的三个班次（班次类型有几个显示几个）的人数
 	 * @param requestParam
-	 * 	{
-			"classesTypeId":"XASXLASKMX"（班次编号）
-			"deptId":"dasdasdas”（人员部门编号）
-			"empName":"小青"（人员名称）
-			"perviousWeek":"0/1"（是否查看上周的数据0：没有该搜索条件 1：有该搜索条件）
-			"thisWeek":"0/1"(是否查看本周班次 0：不查看 1：查看)------->默认显示本周的
-			"nextWeek":"0/1"(是否查看下一周的班次 0：不查看 1：查看)
-			"page":"1"(当前页码)
-			"rows":"5"（每一页要显示的行数）
+	 * {
+			"classesTypeId":"",
+			"deptId":"",
+			"empName":"",
+			"perviousWeek":"0",
+			"thisWeek":"1",
+			"nextWeek":"0",
+			"page":"1",
+			"rows":"5"
 		}
 	 * @param request
 	 * @return
@@ -432,16 +478,29 @@ public class ClassesController {
 		//初始化返回的数据
 		ReturnData returnData = new ReturnData();
 		if((companyId!=null && !companyId.isEmpty()) && (accessUserId!=null && !accessUserId.isEmpty())){
-			boolean deleteAppointClassesType = classesService.oneButtonScheduling(companyId.trim());
-			if(deleteAppointClassesType){
-				returnData.setReturnCode("3000");
-				returnData.setMessage("排班成功");
-				 //增加操作日志:记录web端的操作
-    			String addOperateLog = addOperateLog(accessUserId,companyId,"在班次管理界面为公司所有已排班人员执行一键排班操作");
-    			logger.info("【一键排班】------>操作日志"+addOperateLog);
+			//获取当前时间
+			String currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date().getTime());
+			//获取当前日期所在周的(周一/周日)日期
+			Map<String, String> mondayAndWeekendDate = TimeUtil.getMondayAndWeekendDate(currentDate);
+			String monday = mondayAndWeekendDate.get("monday");
+			String weekend = mondayAndWeekendDate.get("weekend");
+			//查询一周之内，进行一键排班的次数
+			int oneKeyAccessCount = classesService.queryOneKeyAccessCount(monday,weekend,companyId);
+			if(oneKeyAccessCount<1){
+				boolean deleteAppointClassesType = classesService.oneButtonScheduling(companyId.trim());
+				if(deleteAppointClassesType){
+					returnData.setReturnCode("3000");
+					returnData.setMessage("排班成功");
+					 //增加操作日志:记录web端的操作
+					String addOperateLog = addOperateLog(accessUserId,companyId,"在班次管理界面为公司所有已排班人员执行一键排班操作");
+					logger.info("【一键排班】------>操作日志"+addOperateLog);
+				}else{
+					returnData.setReturnCode("3001");
+					returnData.setMessage("排班失败");
+				}
 			}else{
 				returnData.setReturnCode("3001");
-				returnData.setMessage("排班失败");
+				returnData.setMessage("一键排班一周只能执行一次");
 			}
 		}else{
 			returnData.setReturnCode("3013");

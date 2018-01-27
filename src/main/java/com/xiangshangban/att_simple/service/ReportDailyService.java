@@ -1,5 +1,7 @@
 package com.xiangshangban.att_simple.service;
 
+import java.io.OutputStream;
+
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,4 +18,6 @@ public interface ReportDailyService {
 	ReturnData selectReportDaily(Paging paging);
 	
 	ReturnData replaceReplenishChecking(String companyId,String reportId,String beginDate,String beginTime,String endDate,String endTime,String reason);
+	
+	ReturnData ReportDailyExcel(String excelName,OutputStream out,String companyId,String beginDate,String endDate);
 }

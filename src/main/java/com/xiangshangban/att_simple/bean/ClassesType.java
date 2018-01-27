@@ -26,6 +26,8 @@ public class ClassesType {
     private String offPunchCardTime;//下班允许推迟xx分钟打卡
 
     private String autoClassesFlag;//自动排班标志位（1：一个月进行一次排班 2：一个季度进行一次排班）
+    
+    private String autoScheduledSwitch;//自动排班开关（1：启用自动排班 0：不启用自动排班）
 
     private String createTime;//该班次类型生成的时间
 
@@ -34,6 +36,8 @@ public class ClassesType {
     private String validDate;//班次类型生效的时间
     
     private String isDefault;//标志位（0：不是公司默认的班次 1：是公司默认的班次）
+    
+    private String delDate;//班次类别删除时间
 
     public String getId() {
         return id;
@@ -169,5 +173,21 @@ public class ClassesType {
 
 	public void setIsDefault(String isDefault) {
 		this.isDefault = isDefault;
+	}
+
+	public String getDelDate() {
+		return delDate;
+	}
+
+	public void setDelDate(String delDate) {
+		this.delDate = delDate;
+	}
+
+	public String getAutoScheduledSwitch() {
+		return autoScheduledSwitch;
+	}
+
+	public void setAutoScheduledSwitch(String autoScheduledSwitch) {
+		this.autoScheduledSwitch = autoScheduledSwitch;
 	}
 }

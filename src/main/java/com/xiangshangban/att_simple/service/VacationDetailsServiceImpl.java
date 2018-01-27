@@ -25,16 +25,16 @@ public class VacationDetailsServiceImpl implements VacationDetailsService {
 	
 	@Override
 	public ReturnData SelectVacationDetails(String vacationId, String vacationType, String changingReason,
-			String changeingDateRank, String pageExcludeNumber, String pageNum) {
+			String changeingDateRank, String pageExcludeNumber, String pageNum,String year) {
 		// TODO Auto-generated method stub
 		ReturnData returndata = new ReturnData();
 		
-		List<VacationDetails> list = vacationDetailsMapper.SelectVacationDetails(vacationId, vacationType, changingReason, changeingDateRank, pageExcludeNumber, pageNum);
+		List<VacationDetails> list = vacationDetailsMapper.SelectVacationDetails(vacationId, vacationType, changingReason, changeingDateRank, pageExcludeNumber, pageNum,year);
 		
 		if(list != null){
-			Vacation v = vacationMapper.selectByPrimaryKey(vacationId);
+			Vacation v = vacationMapper.selectByPrimaryKey(vacationId,year);
 			if(v!=null){
-				int count = vacationDetailsMapper.SelectTotalNum(vacationId, vacationType, changingReason);
+				int count = vacationDetailsMapper.SelectTotalNum(vacationId, vacationType, changingReason,year);
 				int pageNo = 0;
 				if(count%Integer.parseInt(pageNum)==0){
 					pageNo = count/Integer.parseInt(pageNum);

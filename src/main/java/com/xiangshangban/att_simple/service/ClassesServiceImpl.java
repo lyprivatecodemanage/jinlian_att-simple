@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.arjuna.ats.internal.jdbc.drivers.modifiers.list;
 import com.xiangshangban.att_simple.bean.ClassesEmployee;
 import com.xiangshangban.att_simple.bean.ClassesType;
 import com.xiangshangban.att_simple.bean.Festival;
@@ -74,7 +75,7 @@ public class ClassesServiceImpl implements ClassesService {
 		classesType.setAutoClassesFlag("1");
 		classesType.setCompanyId(companyId.trim());
 		classesType.setCreateTime(TimeUtil.getCurrentTime());
-		classesType.setValidDate("");
+		classesType.setValidDate(new SimpleDateFormat("yyyy-MM-dd").format(new Date().getTime()));
 		classesType.setIsDefault("1");
 		int insertSelective = classesTypeMapper.insertSelective(classesType);
 		if(insertSelective>0){
@@ -97,9 +98,6 @@ public class ClassesServiceImpl implements ClassesService {
 		//查询当前公司默认的班次类型
 		ClassesType classesType = classesTypeMapper.selectDefaultClassesType(companyId);
 		if(classesType!=null){
-			//更新常规班的生效时间
-			classesType.setValidDate(validDate);
-			classesTypeMapper.updateByPrimaryKey(classesType);
 			int operateResult = commonSchedulingOperate(validDate, empArray, classesType);
 			if(operateResult>0){
 				result = true;
@@ -134,9 +132,12 @@ public class ClassesServiceImpl implements ClassesService {
 		Object onPunchCardRule = jsonObject.get("onPunchCardRule");
 		Object offPunchCardRule = jsonObject.get("offPunchCardRule");
 		Object employeeIdList = jsonObject.get("employeeIdList");
-		Object autoClassesFlag = jsonObject.get("autoClassesFlag");
 		Object validDate = jsonObject.get("validDate");
-		
+		Object isDefault = jsonObject.get("isDefault");
+		//自动排班开关
+		Object autoScheduledSwitch = jsonObject.get("autoScheduledSwitch");
+		//自动排班周期
+		Object autoClassesFlag = jsonObject.get("autoClassesFlag");
 
 		// 声明要返回的数据
 		boolean result = false;
@@ -144,15 +145,27 @@ public class ClassesServiceImpl implements ClassesService {
 		if (classesName != null && onDutyTime != null && offDutyTime != null && morrowFlag != null
 				&& restStartTime != null && restEndTime != null && restDays != null && festivalRestFlag != null
 				&& signInRule != null && signOutRule != null && onPunchCardRule != null && offPunchCardRule != null
-				&& employeeIdList != null && autoClassesFlag != null) {
+				&& employeeIdList != null && autoClassesFlag != null && isDefault!=null && autoScheduledSwitch!=null) {
 						// 先删除，传递上来的班次类型和使用该班次类型的人员班次信息(删除从指定生效日往后的班次)
 						Map<String, String> delParam = new HashMap<>();
+						
 						delParam.put("companyId", companyId.toString());
 						// 判断是否有操作标志
 						if (operateFlag != null && !operateFlag.toString().trim().equals("")) {
 							delParam.put("classesTypeId", operateFlag.toString().trim());
+							delParam.put("delDate","");
 							// TODO 删除班次类型
 							classesTypeMapper.removeAppointClassesType(delParam);
+							//查询旧的班次类型名称
+							ClassesType oldClassesType = classesTypeMapper.selectByPrimaryKey(operateFlag.toString().trim());
+							if(oldClassesType!=null){
+								if(oldClassesType.getClassesName().equals(classesName.toString().trim())){ //当没有更改班次类别名称的时候，在旧的班次名称后面添加（历史）字段
+									//更新旧的班次类别名称
+									classesTypeMapper.updateClassesTypeName(operateFlag.toString().trim(),oldClassesType.getClassesName()+"(历史)");
+									//将原本使用旧班次类型的人员的班次列表名称进行更新
+									classesEmployeeMapper.updateEmpClassesName(operateFlag.toString().trim(),oldClassesType.getClassesName()+"(历史)");
+								}
+							}
 						}
 						// 获取要排班的人员列表
 						JSONArray empArray = JSONArray.parseArray(JSONObject.toJSONString(employeeIdList));
@@ -169,6 +182,7 @@ public class ClassesServiceImpl implements ClassesService {
 							JSONObject parseObject = JSONObject.parseObject(empArray.get(g).toString());
 							//设置人员名称
 							delParam.put("empId",parseObject.get("empId").toString().trim());
+							delParam.put("classesTypeId",null);
 							// TODO 删除当前公司,指定人员,指定日期之后的排班
 							classesEmployeeMapper.deleteAppointClassesTypeEmp(delParam);
 						}
@@ -203,7 +217,9 @@ public class ClassesServiceImpl implements ClassesService {
 							//该班次类型生效的时间
 							classesType.setValidDate(new SimpleDateFormat("yyyy-MM-dd").format(myCalendar.getTime()));
 						}
-						classesType.setIsDefault("0");
+						classesType.setIsDefault(isDefault.toString().trim());
+						classesType.setDelDate("");
+						classesType.setAutoScheduledSwitch(autoScheduledSwitch.toString().trim());
 						int addClassesType = classesTypeMapper.insertSelective(classesType);
 						// TODO 添加班次类型成功====》添加人员班次
 						if (addClassesType > 0) {
@@ -215,7 +231,7 @@ public class ClassesServiceImpl implements ClassesService {
 								result = false;
 							}
 						}
-		}
+			}
 		return result;
 	}
 
@@ -284,10 +300,14 @@ public class ClassesServiceImpl implements ClassesService {
 			Map<String, String> param = new HashMap<>();
 			param.put("classesTypeId", object.toString().trim());
 			param.put("companyId", companyId);
-
+			param.put("delDate", new SimpleDateFormat("yyyy-MM-dd").format(new Date().getTime()));
+			//删除指定的班次类型
 			int removeAppointClassesType = classesTypeMapper.removeAppointClassesType(param);
-
-			if (removeAppointClassesType > 0) {
+			param.put("offSetTime",new SimpleDateFormat("yyyy-MM-dd").format(new Date().getTime()));
+			//删除使用该班次类型的人员班次(从指定的时间之后)
+			int deleteAppointClassesTypeEmp = classesEmployeeMapper.deleteAppointClassesTypeEmp(param);
+			
+			if (removeAppointClassesType > 0 && deleteAppointClassesTypeEmp>0) {
 				result = true;
 			} else {
 				result = false;
@@ -478,6 +498,7 @@ public class ClassesServiceImpl implements ClassesService {
 					innerMap.put("theDate", listMap.get(key).get(s).get("theDate"));
 					innerMap.put("week", listMap.get(key).get(s).get("week"));
 					innerMap.put("classesId", listMap.get(key).get(s).get("classesId"));
+					innerMap.put("classesTypeId",listMap.get(key).get(s).get("classesTypeId"));
 					innerMap.put("classesName", listMap.get(key).get(s).get("classesName"));
 					innerMap.put("colorFlag", listMap.get(key).get(s).get("colorFlag"));
 
@@ -500,7 +521,6 @@ public class ClassesServiceImpl implements ClassesService {
 					}
 					innerList.add(innerMap);
 				}
-
 				// 将数据完善为一整个周的数据(避免有的班次没有排，造成前端列表展示困难)
 				if (innerList.size() < 7) {
 					try {
@@ -522,6 +542,7 @@ public class ClassesServiceImpl implements ClassesService {
 								Map<String, Object> emptyMap = new HashMap<>();
 								emptyMap.put("classesName", "");
 								emptyMap.put("classesId", "");
+								emptyMap.put("classesTypeId","");
 								emptyMap.put("colorFlag", "");
 								// 时间倒退一天
 								firstDate.add(Calendar.DAY_OF_MONTH, -1);
@@ -541,6 +562,7 @@ public class ClassesServiceImpl implements ClassesService {
 								Map<String, Object> emptyMap = new HashMap<>();
 								emptyMap.put("classesName", "");
 								emptyMap.put("classesId", "");
+								emptyMap.put("classesTypeId","");
 								emptyMap.put("colorFlag", "");
 								// 时间增加一天
 								lastDate.add(Calendar.DAY_OF_MONTH, +1);
@@ -556,6 +578,31 @@ public class ClassesServiceImpl implements ClassesService {
 						}
 					} catch (ParseException e) {
 						e.printStackTrace();
+					}
+				}
+				
+				//遍历innerList,判断该天班次是不是历史班次(历史班次不可操作)
+				for (Map<String, Object> map : innerList) {
+					Object classesId = map.get("classesTypeId");
+					if(classesId!=null && !classesId.toString().trim().isEmpty()){
+						//根据班次类型id查询班次类别详细信息
+						ClassesType selectByPrimaryKey = classesTypeMapper.selectByPrimaryKey(classesId.toString().trim());
+						if(selectByPrimaryKey!=null){
+							String delDate = selectByPrimaryKey.getDelDate();
+							if(delDate!=null && !delDate.isEmpty()){ //该班次类别已经删除
+								//判断当前班次的时间是不是位于班次类别删除日之前
+								Object theDate = map.get("theDate");
+								if(TimeUtil.compareTime(delDate+" "+"00:00:00",theDate.toString().trim()+" "+"00:00:00")){ //删除班次类别时间，大于当前班次日期（历史）
+									map.put("isHistory","1");
+								}else{
+									map.put("isHistory","0");
+								}
+							}else{ //该班次类别没有进行删除
+								map.put("isHistory","0");
+							}
+						}
+					}else{
+						map.put("isHistory","0");
 					}
 				}
 				outterMap.put("classesList", innerList);
@@ -695,6 +742,16 @@ public class ClassesServiceImpl implements ClassesService {
 		}
 	}
 
+	/**
+	 * 查询指定公司一周之内“一键排班”的次数
+	 */
+	@Override
+	public int queryOneKeyAccessCount(String monday, String weekend, String companyId) {
+		int accessCount = classesEmployeeMapper.selectOneKeyAccessCount(monday, weekend, companyId);
+		return accessCount;
+	}
+	
+	
 	/**
 	 * 给指定人员添加指定日期的班次（添加临时班次）
 	 * 
@@ -854,46 +911,62 @@ public class ClassesServiceImpl implements ClassesService {
 	 */
 	@Override
 	public boolean autoScheduling() {
-		// 查询所有公司已经排班的人员信息
-		List<Map> selectAllClassesEmp = classesEmployeeMapper.selectAllClassesEmp(null);
 		// 初始化要返回的结果
 		int result = 0;
-		if (selectAllClassesEmp != null && selectAllClassesEmp.size() > 0) {
-			// 遍历人员信息
-			for (int r = 0; r < selectAllClassesEmp.size(); r++) {
-				// 人员ID
-				String empId = selectAllClassesEmp.get(r).get("emp_id").toString().trim();
-				// 方便调用公共排班方法，将人员ID转换为JSONArray对象
-				Map<String, String> param = new HashMap<>();
-				param.put("empId", empId);
-				List<Map> listMap = new ArrayList<>();
-				listMap.add(param);
-				JSONArray empArray = JSONArray.parseArray(JSONArray.toJSONString(listMap));
-				// 班次类型ID
-				String classesTypeId = selectAllClassesEmp.get(r).get("classes_id").toString().trim();
-				// 根据班次类型ID查询，班次类型详细信息
-				ClassesType classesType = classesTypeMapper.selectByPrimaryKey(classesTypeId);
-				if (classesType != null) {
-					// 获取班次创建日期
-					String createTime = classesType.getCreateTime();
-					int dateInterval = 0;
-					if (createTime != null && !createTime.isEmpty()) {
-						// 判断班次类型创建时间到现在的时间间隔
-						dateInterval = TimeUtil.dayOfDate(
-								new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date().getTime()), createTime);
-					}
-					// 获取班次类型自动更新的周期
-					String classesCycle = classesType.getAutoClassesFlag();
-					if (dateInterval != 0) {
-						if (classesCycle.equals("1")) { // 周期是一个月(30天)
-							// 判断周期是否到来
-							if ((dateInterval % 30) == 0) {
-								result = commonOperateForAutoScheduling(classesType, empArray);
-							}
-						} else if (classesCycle.equals("2")) { // 周期是一个季度(90天)
-							// 判断周期是否到来（生效时间为当天）
-							if ((dateInterval % 90) == 0) {
-								result = commonOperateForAutoScheduling(classesType, empArray);
+		//查询所有有班次类别的公司
+		List<String> selectALLCompany = classesTypeMapper.selectALLCompany();
+		if(selectALLCompany!=null && selectALLCompany.size()>0){
+			for (String companyId : selectALLCompany) {
+				if(companyId!=null && !companyId.isEmpty()){
+					// 查询所有公司已经排班的人员信息
+					List<Map> selectAllClassesEmp = classesEmployeeMapper.selectAllClassesEmp(companyId);
+					if (selectAllClassesEmp != null && selectAllClassesEmp.size() > 0) {
+						// 遍历人员信息
+						for (int r = 0; r < selectAllClassesEmp.size(); r++) {
+							// 人员ID
+							String empId = selectAllClassesEmp.get(r).get("emp_id").toString().trim();
+							// 方便调用公共排班方法，将人员ID转换为JSONArray对象
+							Map<String, String> param = new HashMap<>();
+							param.put("empId", empId);
+							List<Map> listMap = new ArrayList<>();
+							listMap.add(param);
+							JSONArray empArray = JSONArray.parseArray(JSONArray.toJSONString(listMap));
+							// 班次类型ID
+							String classesTypeId = selectAllClassesEmp.get(r).get("classes_id").toString().trim();
+							// 根据班次类型ID查询，班次类型详细信息
+							ClassesType myclassesType = classesTypeMapper.selectByPrimaryKey(classesTypeId);
+							if (myclassesType != null) {
+								//判断当前班次类别是否开启自动排班
+								String autoScheduledSwitch = myclassesType.getAutoScheduledSwitch();
+								if(autoScheduledSwitch!=null && !autoScheduledSwitch.isEmpty() ){
+									if(autoScheduledSwitch.equals("1")){ //开启自动排班
+										// 获取该班次类别生效时间
+										String validDate = myclassesType.getValidDate();
+										//初始化时间间隔变量
+										int dateInterval = 0;
+										if (validDate != null && !validDate.isEmpty()) {
+											// 判断班次类型生效时间到当前时间的时间间隔
+											dateInterval = TimeUtil.dayOfDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date().getTime()), validDate+" "+"00:00:00");
+										}
+										// 获取班次类型自动更新的周期
+										String classesCycle = myclassesType.getAutoClassesFlag();
+										if(classesCycle!=null && !classesCycle.isEmpty()){
+											if (dateInterval > 0) {
+												if (classesCycle.equals("1")) { // 周期是一个月(30天),每隔30天执行一次
+													// 判断周期是否到来
+													if ((dateInterval % 30) == 0) {
+														result = commonOperateForAutoScheduling(myclassesType, empArray);
+													}
+												} else if (classesCycle.equals("2")) { // 周期是一个季度(90天),每隔90天执行一次
+													// 判断周期是否到来（生效时间为当天）
+													if ((dateInterval % 90) == 0) {
+														result = commonOperateForAutoScheduling(myclassesType, empArray);
+													}
+												}
+											}
+										}
+									}
+								}
 							}
 						}
 					}
@@ -1217,6 +1290,7 @@ public class ClassesServiceImpl implements ClassesService {
 		map.put("theDate", selectClassesInfo.get(i).get("the_date"));
 		map.put("week", selectClassesInfo.get(i).get("week"));
 		map.put("classesId", selectClassesInfo.get(i).get("id"));
+		map.put("classesTypeId",selectClassesInfo.get(i).get("classes_id"));
 		map.put("classesName", selectClassesInfo.get(i).get("classes_name"));
 		map.put("onDutySchedulingDate", selectClassesInfo.get(i).get("on_duty_scheduling_date"));
 		map.put("offDutySchedulingDate", selectClassesInfo.get(i).get("off_duty_scheduling_date"));
@@ -1242,7 +1316,7 @@ public class ClassesServiceImpl implements ClassesService {
 		if (parseObject != null) {
 			delParam.put("empId", parseObject.get("empId").toString().trim());
 		}
-		// TODO 删除当前公司使用该班次类型指定人员指定日期之后的人员班次
+		// TODO 删除当前公司使用该班次类型,指定人员,指定日期之后的人员班次
 		int deleteAppointClassesTypeEmp = classesEmployeeMapper.deleteAppointClassesTypeEmp(delParam);
 		if (deleteAppointClassesTypeEmp > 0) {
 			result = commonSchedulingOperate(validDate, empArray, classesType);

@@ -276,6 +276,11 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 	 * @return
 	 */
 	public AlgorithmResult havePlan(AlgorithmParam algorithmParam, AlgorithmResult result) {
+		//设置初始值
+		String attBeginLine = algorithmParam.getClassesEmployee().getOnDutySchedulingDate();//应在岗的最早时间
+		String attEndLine = algorithmParam.getClassesEmployee().getOffDutySchedulingDate();//应在岗的最晚时间
+		algorithmParam.setAttBeginLine(attBeginLine);
+		algorithmParam.setAttEndLine(attEndLine);
 		//请假、外出、出差，将影响应在岗时间
 		this.countLeave(algorithmParam, result);
 		this.countOut(algorithmParam, result);
@@ -438,7 +443,8 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 			//请假类型(1:事假;2:年假;3:调休假;4:婚假;5:产假;6:丧假)
 			this.setApplyTime(result, application, currentApply);
 		}
-		
+		algorithmParam.setAttBeginLine(attBeginLine);
+		algorithmParam.setAttEndLine(attEndLine);
 		return timeLength;
 	}
 	public void setApplyTime(AlgorithmResult result, Application application, double currentApply) {
@@ -710,6 +716,9 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		algorithmParam.setEmployee(employee );
 		algorithmParam.setCompanyId(companyId);
 		algorithmParam.setCountDate(countDate);
+		if("4D758DEFD8B04A4F96FE289E48E09EB4".equals(companyId) && "4F1F7958F7AA4F539335859E84820869".equals(employeeId)){
+			logger.info("查询");
+		}
 		//查询当天的排班
 		algorithmParam.setClassesEmployee(
 				algorithmMapper.getPlanByDate(companyId, employee.getEmployeeId(), countDate));
@@ -822,8 +831,8 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		algorithmResult.getReportDaily().setRealWorkTime(
 				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getRealWorkTime()));
 		//事假
-		algorithmResult.getReportDaily().setRealWorkTime(
-				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getRealWorkTime()));
+		algorithmResult.getReportDaily().setLeaveAbsence(
+				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getLeaveAbsence()));
 		//年假
 		algorithmResult.getReportDaily().setLeaveAnnual(
 				TimeUtil.parseSecondToMinuteHalfDayUnit(algorithmResult.getReportDaily().getLeaveAnnual()));
