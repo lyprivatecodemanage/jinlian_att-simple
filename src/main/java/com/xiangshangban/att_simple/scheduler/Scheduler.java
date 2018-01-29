@@ -20,7 +20,7 @@ public class Scheduler {
 	//每天凌晨1点执行
 	private static final String REPORT_TIME = "0 0 1 * * ?";//日报计算时间
 	//每天凌晨0点执行
-	private static final String REPORT_MONTH = "0 5 15 * * ?";//月报计算时间
+	private static final String REPORT_MONTH = "30 58 15 * * ?";//月报计算时间
 	private final Logger logger = Logger.getLogger(Scheduler.class);
 	
 	@Autowired
