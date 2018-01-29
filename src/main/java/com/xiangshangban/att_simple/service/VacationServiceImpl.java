@@ -213,9 +213,7 @@ public class VacationServiceImpl implements VacationService {
 		}
 				
 		//查询调休假期详情最后一次修改的值
-		
-		
-		VacationDetails vacationDetails = vacationDetailsMapper.SelectVacationIdByEndResult(vacationId,"1",year);
+		VacationDetails vacationDetails = vacationDetailsMapper.SelectVacationIdByEndResult(vacationId,"1",null);
 		
 		//若员工没有任何假期操作
 		if(vacationDetails == null){

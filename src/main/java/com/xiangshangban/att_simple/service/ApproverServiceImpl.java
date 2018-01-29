@@ -427,6 +427,7 @@ public class ApproverServiceImpl implements ApproverService {
 			//查询当年调休余额
 			Vacation vacation = vacationMapper.SelectEmployeeVacation(companyId, null,auditorEmployeeId,year);
 			
+			if(vacation!=null){
 			//当调休剩余时长 大于 调休时长
 			if(Double.parseDouble(vacation.getAdjustRestBalance())>Double.parseDouble(leaveDay)){
 				
@@ -455,7 +456,7 @@ public class ApproverServiceImpl implements ApproverService {
 				}
 			}
 		}
-		
+		}
 		return 0;
 	}
 	
