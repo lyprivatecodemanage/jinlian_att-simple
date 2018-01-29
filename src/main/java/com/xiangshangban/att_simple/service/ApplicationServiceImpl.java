@@ -80,8 +80,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 		//查询申请类型
 		List<ApplicationType> applicationTypeList = applicationTypeMapper.getApplicationTypeList();
 		
-		
-		
 		//查询年假剩余,年假额度,调休剩余,调休额度
 		Vacation vacation = vacationMapper.SelectEmployeeVacation(companyId, null, employeeId,year);
 		result.put("applicaitonTypeList", applicationTypeList);
