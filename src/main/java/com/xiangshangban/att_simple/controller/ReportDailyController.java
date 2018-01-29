@@ -2,6 +2,7 @@ package com.xiangshangban.att_simple.controller;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xiangshangban.att_simple.bean.Paging;
 import com.xiangshangban.att_simple.bean.ReturnData;
@@ -49,7 +51,7 @@ public class ReportDailyController {
 	public ReturnData oneKeyChecking(@RequestBody String objectString,HttpServletRequest request){
 		ReturnData result = new ReturnData();
 		JSONObject obj = JSON.parseObject(objectString);
-		String [] reportIds = (String [])obj.get("reportIds");
+		List<String> reportIds =JSONArray.parseArray(obj.get("reportIds").toString(),String.class);
 		String companyId = request.getHeader("companyId");
 		
 		result = reportDailyService.oneKeyChecking(reportIds,companyId);

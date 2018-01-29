@@ -111,14 +111,14 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 	 * 一键补勤
 	 */
 	@Override
-	public ReturnData oneKeyChecking(String[] reportIds,String companyId) {
+	public ReturnData oneKeyChecking(List<String> reportIds,String companyId) {
 		// TODO Auto-generated method stub
 		ReturnData returndata = new ReturnData();
 		//获取存在考勤异常日报信息集合
 		List<ReportDaily> list = new ArrayList<>();
 		
 		//选择为空直接返回
-		if(reportIds.length<1){
+		if(reportIds.size()<1){
 			returndata.setReturnCode("3000");
 			returndata.setMessage("数据请求成功");
 			return returndata;
@@ -127,8 +127,9 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 		for (String rid : reportIds) {
 			ReportDaily rd = reportDailyMapper.selectById(rid);
 			
+			
 			//当日报记录存在考勤异常  并且 公司ID与登录人的ID相等(预防缓存数据导致可操作别公司数据问题)时  加入集合准备补勤
-			if(rd.getHasException().equals("1")&& companyId.equals(rd.getCompanyId())){
+			if(rd!=null && "1".equals(rd.getHasException())&& companyId.equals(rd.getCompanyId())){
 				list.add(rd);
 			}
 		}

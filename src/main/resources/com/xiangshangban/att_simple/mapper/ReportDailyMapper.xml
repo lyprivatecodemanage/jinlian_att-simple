@@ -183,7 +183,7 @@
 		and exception_mark = #{exceptionMark}
 	</if>
 	<if test="employeeName != null">
-		and e.employee_name like '%#{employeeName}%'
+		and e.employee_name like '%${employeeName}%'
 	</if>
   </select>
   
@@ -238,7 +238,7 @@
 		and exception_mark = #{exceptionMark}
 	</if>
 	<if test="employeeName != null">
-		and e.employee_name like '%#{employeeName}%'
+		and e.employee_name like '%${employeeName}%'
 	</if>
 	)t
 	where rn>${pageExcludeNumber}
