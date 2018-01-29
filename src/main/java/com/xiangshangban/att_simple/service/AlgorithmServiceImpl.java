@@ -142,7 +142,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 					//前一天是否有排班
 					if(algorithmParam.getClassesEmployeeLastDay()!=null 
 							&& StringUtils.isNotEmpty(algorithmParam.getClassesEmployeeLastDay().getOnDutySchedulingDate())){//有
-						//影响值：加班打卡有效开始时间=前一天打卡有效开始时间
+						//影响值：加班打卡有效开始时间=前一天打卡有效开始时间。取前一天打卡有效开始时间，可避免跨天班时，班次后加班抓不到加班记录的情况
 						overSignValidBegin = TimeUtil.getLongAfter(
 								algorithmParam.getClassesEmployeeLastDay().getOnDutySchedulingDate(),
 								-1*Integer.parseInt(algorithmParam.getClassesEmployee().getOnPunchCardRule()),
@@ -176,7 +176,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 							classesLast.getOffDutySchedulingDate(), 
 							Integer.parseInt(classesLast.getClassesType().getOffPunchCardTime()), 
 							Calendar.MINUTE);//前一天班次打卡结束时间
-					if(TimeUtil.compareTime(lastDateCardEnd, algorithmParam.getCountDate()+" 00:00:00")){//前一天班次打卡结束时间在当天
+					if(!TimeUtil.compareTime(algorithmParam.getCountDate()+" 00:00:00", lastDateCardEnd)){//前一天班次打卡结束时间在当天
 						overSignValidBegin = TimeUtil.getLongAfter(
 								algorithmParam.getClassesEmployeeLastDay().getOnDutySchedulingDate(),
 								-1*Integer.parseInt(algorithmParam.getClassesEmployee().getOnPunchCardRule()),
@@ -184,21 +184,21 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 					}
 				}
 				//抓取后一天的排班班次
-				//检查后一天班次打卡结束时间是否在当天
+				//检查后一天班次打卡开始时间是否在当天
 				ClassesEmployee classesNext = algorithmMapper.getPlanByDate(algorithmParam.getCompanyId(),
 						algorithmParam.getEmployeeId(), TimeUtil.getLongAfter(
 								algorithmParam.getCountDate()+" 00:00:00", 1, Calendar.DATE));
 				//检查次日班次打卡开始时间是否在当天
 				if(classesNext!=null && StringUtils.isNotEmpty(classesNext.getOnDutySchedulingDate())
 						&& StringUtils.isNotEmpty(classesNext.getOffDutySchedulingDate())){
-					String lastDateCardEnd = TimeUtil.getLongAfter(
-							classesNext.getOffDutySchedulingDate(), 
-							-1*Integer.parseInt(classesNext.getClassesType().getOffPunchCardTime()), 
+					String lastDateCardBegin = TimeUtil.getLongAfter(
+							classesNext.getOnDutySchedulingDate(), 
+							-1*Integer.parseInt(classesNext.getClassesType().getOnPunchCardTime()), 
 							Calendar.MINUTE);//次日班次打卡开始时间
-					if(TimeUtil.compareTime(lastDateCardEnd, algorithmParam.getCountDate()+" 00:00:00")){//次日班次打卡开始时间在当天
+					if(TimeUtil.compareTime(algorithmParam.getCountDate()+" 23:59:59", lastDateCardBegin)){//次日班次打卡开始时间在当天
 						overSignValidEnd = TimeUtil.getLongAfter(
-								algorithmParam.getClassesEmployee().getOnDutySchedulingDate(), 
-								-1*Integer.parseInt(algorithmParam.getClassesEmployee().getOnPunchCardRule()),
+								algorithmParam.getClassesEmployee().getOffDutySchedulingDate(), 
+								Integer.parseInt(algorithmParam.getClassesEmployee().getOffPunchCardRule()),
 								Calendar.MINUTE);
 					}
 				}
@@ -237,7 +237,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 					classesLast.getOffDutySchedulingDate(), 
 					Integer.parseInt(classesLast.getClassesType().getOffPunchCardTime()), 
 					Calendar.MINUTE);//前一天班次打卡结束时间
-			if(TimeUtil.compareTime(lastDateCardEnd, algorithmParam.getCountDate()+" 00:00:00")){//前一天班次打卡结束时间在当天
+			if(!TimeUtil.compareTime(algorithmParam.getCountDate()+" 00:00:00", lastDateCardEnd)){//前一天班次打卡结束时间在当天
 				algorithmParam.setSignInLimitLine(lastDateCardEnd);
 			}else{
 				algorithmParam.setSignInLimitLine(algorithmParam.getCountDate()+" 00:00:00");
@@ -259,13 +259,13 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 					classesNext.getOffDutySchedulingDate(), 
 					-1*Integer.parseInt(classesNext.getClassesType().getOffPunchCardTime()), 
 					Calendar.MINUTE);//次日班次打卡开始时间
-			if(TimeUtil.compareTime(lastDateCardEnd, algorithmParam.getCountDate()+" 00:00:00")){//次日班次打卡开始时间在当天
+			if(TimeUtil.compareTime(lastDateCardEnd, algorithmParam.getCountDate()+" 23:59:59")){//次日班次打卡开始时间在当天
 				algorithmParam.setSignOutLimitLine(lastDateCardEnd);
 			}else{
-				algorithmParam.setSignOutLimitLine(algorithmParam.getCountDate()+" 00:00:00");
+				algorithmParam.setSignOutLimitLine(algorithmParam.getCountDate()+" 23:59:59");
 			}
 		}else{//次日无排班
-			algorithmParam.setSignOutLimitLine(algorithmParam.getCountDate()+" 00:00:00");
+			algorithmParam.setSignOutLimitLine(algorithmParam.getCountDate()+" 23:59:59");
 		}
 		this.getNoPlanSign(algorithmParam, result);//签到签退、实出
 		this.countOutNoPlan(algorithmParam, result);//外出
@@ -775,10 +775,15 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		reportDailyMapper.insertSelective(algorithmResult.getReportDaily());
 		
 		//调整状态(0:收入,1:支出)
-		vacationService.AdjustRestAdjustment(
-				vacationId, "0", 
-				Double.parseDouble(algorithmResult.getReportDaily().getNormalOverWork())/60.0+"", 
-				"日报计算生成调休", "0", algorithmResult.getReportDaily().getAttDate().split("-")[0]);
+		if(StringUtils.isNotEmpty(algorithmResult.getReportDaily().getNormalOverWork())
+				&& 0!=Double.parseDouble(algorithmResult.getReportDaily().getNormalOverWork())){//调休时长大于0
+			//调整状态(0:收入,1:支出)
+			vacationService.AdjustRestAdjustment(
+					vacationId, "0", 
+					Double.parseDouble(algorithmResult.getReportDaily().getNormalOverWork())/60.0+"", 
+					"日报计算生成调休", "0", algorithmResult.getReportDaily().getAttDate().split("-")[0]);
+		}
+		
 	}
 	/**
 	 * 考勤异常数据处理
