@@ -49,4 +49,9 @@ public interface AlgorithmService {
      * @return 0：节假日，1：休息日   2：工作日
      */
     //public AttendenceSettingCalendar whatDay(AlgorithmParam algorithmParam);
+    /**
+     * 计算某个日期之后的应出勤
+     * @param countDate 日期
+     */
+	public void calculateMonth(String countDate);
 }
