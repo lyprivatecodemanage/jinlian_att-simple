@@ -100,7 +100,9 @@
     from vacation_details
     where vacation_id = #{vacationId,jdbcType=VARCHAR}
     and vacation_type = #{vacationType,jdbcType=VARCHAR}
+    <if test="year != null">
     and year_ = #{year}
+    </if>
     order by changeing_date DESC
 	LIMIT 1
   </select>

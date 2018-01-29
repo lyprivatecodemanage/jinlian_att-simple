@@ -101,15 +101,17 @@ public class VacationController {
 	@RequestMapping(value="/AdjustRestAdjustment",produces="application/json;charset=utf-8",method=RequestMethod.POST)
 	public ReturnData AdjustRestAdjustment(@RequestBody String jsonStirng,HttpServletRequest request){
 		ReturnData result = new ReturnData();
-		
 		String auditorEmployeeId = request.getHeader("accessUserId");
+
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date());
 		
 		JSONObject obj = JSON.parseObject(jsonStirng);
 		String vacationId = obj.getString("vacationId");
 		String vacationMold = obj.getString("vacationMold");
 		String adjustRest = obj.getString("adjustRest");
 		String adjustingInstruction = obj.getString("adjustingInstruction");
-		String year = "0";
+		String year = c.get(Calendar.YEAR)+"";
 		
 		result = vacationService.AdjustRestAdjustment(vacationId, vacationMold, adjustRest, adjustingInstruction, auditorEmployeeId,year);
 		
