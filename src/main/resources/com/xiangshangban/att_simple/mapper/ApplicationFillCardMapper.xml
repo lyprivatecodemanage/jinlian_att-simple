@@ -14,6 +14,7 @@
     <result column="operater_time"  property="operaterTime" />
     <result column="is_transfer"  property="isTransfer" />
     <result column="application_time"  property="applicationTime" />
+    
   </resultMap>
   <sql id="Base_Column_List">
     afc.application_no, afc.employee_id, afc.department_id, afc.company_id, afc.fill_card_type, afc.fill_card_time, 

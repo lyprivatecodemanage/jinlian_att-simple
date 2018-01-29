@@ -213,9 +213,7 @@ public class VacationServiceImpl implements VacationService {
 		}
 				
 		//查询调休假期详情最后一次修改的值
-		
-		
-		VacationDetails vacationDetails = vacationDetailsMapper.SelectVacationIdByEndResult(vacationId,"1",year);
+		VacationDetails vacationDetails = vacationDetailsMapper.SelectVacationIdByEndResult(vacationId,"1",null);
 		
 		//若员工没有任何假期操作
 		if(vacationDetails == null){
@@ -419,6 +417,16 @@ public class VacationServiceImpl implements VacationService {
 		}
 	}
 
+	/**
+	 * 清除余额
+	 * @param vacationId
+	 * @param vacationMold
+	 * @param annualLeave
+	 * @param adjustingInstruction
+	 * @param auditorEmployeeId
+	 * @param year
+	 * @return
+	 */
 	public ReturnData resetAnnualLeave(String vacationId, String vacationMold, String annualLeave,
 			String adjustingInstruction,String auditorEmployeeId,String year) {
 		// TODO Auto-generated method stub
