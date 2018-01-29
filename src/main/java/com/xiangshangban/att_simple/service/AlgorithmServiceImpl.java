@@ -70,7 +70,9 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 	public void calculate(String companyId, String employeeId, String beginDate, String endDate) {
 		logger.info(beginDate+"到"+endDate+"日报计算开始");
 		String date = beginDate;
-		while(TimeUtil.compareTime(endDate+" 00:00:00", date+" 00:00:00")){
+		String newEndDate = TimeUtil.getLongAfterDate(
+				TimeUtil.getCurrentLastDate(endDate), 1, Calendar.DATE);
+		while(TimeUtil.compareTime(newEndDate+" 00:00:00", date+" 00:00:00")){//循环日期段
 			this.calculate(companyId, employeeId, date);
 			date = TimeUtil.getLongAfterDate(date+" 00:00:00", 1, Calendar.DATE);
 		}
@@ -876,6 +878,78 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		//新增调休
 		algorithmResult.getReportDaily().setChangeTime(algorithmResult.getReportDaily().getNormalOverWork());
 	}
+	@Override
+	public void calculateMonth(String countDate) {
+		List<Company> companyIdList = algorithmMapper.getAllCompanyList();
+		for(Company company : companyIdList){
+			List<Employee> empIdList = algorithmMapper.getEmployeeOnJobList(
+					company.getCompanyId(), countDate);
+			for(Employee emp:empIdList){
+				try {
+					if(this.preCondition(company.getCompanyId(), emp.getEmployeeId(), countDate)){
+						this.calculate(company.getCompanyId(), emp.getEmployeeId(), countDate);
+						String date = countDate;
+						String endDate = TimeUtil.getLongAfterDate(
+								TimeUtil.getCurrentLastDate(countDate), 1, Calendar.DATE);
+						while(TimeUtil.compareTime(endDate+" 00:00:00", date+" 00:00:00")){
+							this.calculateMonth(company.getCompanyId(), emp.getEmployeeId(), date);
+							date = TimeUtil.getLongAfterDate(date+" 00:00:00", 1, Calendar.DATE);
+						}
+					}
+					
+				} catch (Exception e) {
+					logger.info("公司ID："+company.getCompanyId()+", 员工ID："+emp.getEmployeeId()+", "+countDate+ "后应出时长计算异常");
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		
+	}
+	/**
+	 * 用于月报统计时的应出计算
+	 * @param companyId
+	 * @param employeeId
+	 * @param countDate
+	 */
+	public void calculateMonth(String companyId, String employeeId, String countDate) {
+		AlgorithmParam algorithmParam = new AlgorithmParam();
+		algorithmParam.setEmployeeId(employeeId);
+		Employee employee = employeeDao.selectByEmployee(employeeId, companyId);
+		algorithmParam.setEmployee(employee );
+		algorithmParam.setCompanyId(companyId);
+		algorithmParam.setCountDate(countDate);
+		
+		AlgorithmResult result = new AlgorithmResult();
+		result.getReportDaily().setAttDate(countDate);
+		result.getReportDaily().setEmployeeId(employeeId);
+		result.getReportDaily().setCompanyId(companyId);
+		result.getReportDaily().setDeptId(algorithmParam.getEmployee().getDepartmentId());
+		
+		//查询当天的排班
+		algorithmParam.setClassesEmployee(
+				algorithmMapper.getPlanByDate(companyId, employee.getEmployeeId(), countDate));
+		//有排班
+		if(algorithmParam.getClassesEmployee()!=null 
+				&& StringUtils.isNotEmpty(algorithmParam.getClassesEmployee().getOnDutySchedulingDate())){
+			this.countWorkTime(algorithmParam, result);
+			//应出时长
+			result.getReportDaily().setWorkTime(
+					TimeUtil.parseSecondToMinuteHalfHourUnit(result.getReportDaily().getWorkTime()));
+			//查询日报数据是否存在
+			ReportDaily oldReportDaily = reportDailyMapper.selectByDate(algorithmParam.getCompanyId(), 
+					algorithmParam.getEmployeeId(), result.getReportDaily().getAttDate());
+			if(oldReportDaily!=null && StringUtils.isNotEmpty(oldReportDaily.getAttDate())){//存在，则修改应出时长
+				reportDailyMapper.updateWorkTime(result.getReportDaily());
+			}else{//不存在则更新
+				result.getReportDaily().setReportId(FormatUtil.createUuid());
+				reportDailyMapper.insertSelective(result.getReportDaily());
+			}
+			
+		}
+		
 	
+		
+	}
 	
 }
