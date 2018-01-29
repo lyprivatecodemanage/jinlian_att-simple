@@ -34,7 +34,6 @@
   		<if test="approver!=null and approver!=''">approver,</if>
   		<if test="operaterTime!=null and operaterTime!=''">operater_time,</if>
   		<if test="isTransfer!=null and isTransfer!=''">is_transfer,</if>
-  		<if test="applicationHour!=null and applicationHour!=''"> application_hour,</if>
   		<if test="applicationTime!=null and applicationTime!=''">application_time</if>
   	</trim>
   	<trim prefix="values(" suffixOverrides="," suffix=")">
@@ -49,7 +48,6 @@
   		<if test="approver!=null and approver!=''">#{approver},</if>
   		<if test="operaterTime!=null and operaterTime!=''">#{operaterTime},</if>
   		<if test="isTransfer!=null and isTransfer!=''">#{isTransfer},</if>
-  		<if test="applicationHour!=null and applicationHour!=''">#{applicationHour},</if>
   		<if test="applicationTime!=null and applicationTime!=''">#{applicationTime}</if>
   	</trim>
   </insert>
