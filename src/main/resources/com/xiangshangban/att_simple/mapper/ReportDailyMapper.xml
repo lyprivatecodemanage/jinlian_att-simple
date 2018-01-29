@@ -848,4 +848,11 @@
       and company_id = #{companyId,jdbcType=VARCHAR}
       and att_date = #{attDate,jdbcType=VARCHAR}
   </delete>
+  <update id="updateWorkTime" parameterType="com.xiangshangban.att_simple.bean.ReportDaily">
+  	update report_daily_
+  	set work_day = #{workDay,jdbcType=VARCHAR}, work_time = #{workTime,jdbcType=VARCHAR}
+  	where  employee_id = #{employeeId,jdbcType=VARCHAR}
+      and company_id = #{companyId,jdbcType=VARCHAR}
+      and att_date = #{attDate,jdbcType=VARCHAR}
+  </update>
 </mapper>

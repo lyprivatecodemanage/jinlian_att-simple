@@ -110,4 +110,10 @@ public interface ReportDailyMapper {
 	 * @return
 	 */
 	List<ReportDaily> MonthReportExcel(@Param("companyId")String companyId,@Param("attDate")String attDate);
+	/**
+	 * 修改应出天数和时长
+	 * @param reportDaily
+	 * @return
+	 */
+	int updateWorkTime(ReportDaily reportDaily);
 }

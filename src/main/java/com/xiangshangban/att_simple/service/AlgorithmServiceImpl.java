@@ -70,7 +70,9 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 	public void calculate(String companyId, String employeeId, String beginDate, String endDate) {
 		logger.info(beginDate+"到"+endDate+"日报计算开始");
 		String date = beginDate;
-		while(TimeUtil.compareTime(endDate+" 00:00:00", date+" 00:00:00")){
+		String newEndDate = TimeUtil.getLongAfterDate(
+				TimeUtil.getCurrentLastDate(endDate), 1, Calendar.DATE);
+		while(TimeUtil.compareTime(newEndDate+" 00:00:00", date+" 00:00:00")){//循环日期段
 			this.calculate(companyId, employeeId, date);
 			date = TimeUtil.getLongAfterDate(date+" 00:00:00", 1, Calendar.DATE);
 		}
@@ -573,14 +575,14 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 				result.getReportExcept().add(reportExcept);
 				result.getReportDaily().setLate("1");//迟到次数
 			}
-			if(StringUtils.isEmpty(signInTime)){//未签到
+			if(StringUtils.isEmpty(signOutTime)){//未签退
 				ReportExcept reportExcept = new ReportExcept();
 				reportExcept.setEmployeeId(employeeId);
 				reportExcept.setCompanyId(companyId);
 				reportExcept.setExceptDate(countDate);
 				reportExcept.setExceptType("4");
 				result.getReportExcept().add(reportExcept);
-			}else if(TimeUtil.compareTime(earlyLine, signInTime)){//早退
+			}else if(TimeUtil.compareTime(earlyLine, signOutTime)){//早退
 				ReportExcept reportExcept = new ReportExcept();
 				reportExcept.setEmployeeId(employeeId);
 				reportExcept.setCompanyId(companyId);
@@ -618,6 +620,16 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 	 * @param result
 	 */
 	public void getHasPlanSign(AlgorithmParam algorithmParam, AlgorithmResult result){
+		algorithmParam.setSignInLimitLine(
+				TimeUtil.getLongAfter(
+						algorithmParam.getClassesEmployee().getOnDutySchedulingDate(), 
+						-1*Integer.parseInt(algorithmParam.getClassesEmployee().getOnPunchCardRule()), 
+						Calendar.MINUTE));//上班打卡开始时间
+		algorithmParam.setSignOutLimitLine(
+				TimeUtil.getLongAfter(
+						algorithmParam.getClassesEmployee().getOffDutySchedulingDate(), 
+						Integer.parseInt(algorithmParam.getClassesEmployee().getOffPunchCardRule()), 
+						Calendar.MINUTE));//下班打卡结束时间
 		if(!TimeUtil.compareTime(algorithmParam.getAttEndLine(), algorithmParam.getAttBeginLine())){
 			//申请覆盖了上班时间，则不计算异常；签到签退时间按正常抓取
 			String centerLine = TimeUtil.getCenter(
@@ -866,6 +878,78 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		//新增调休
 		algorithmResult.getReportDaily().setChangeTime(algorithmResult.getReportDaily().getNormalOverWork());
 	}
+	@Override
+	public void calculateMonth(String countDate) {
+		List<Company> companyIdList = algorithmMapper.getAllCompanyList();
+		for(Company company : companyIdList){
+			List<Employee> empIdList = algorithmMapper.getEmployeeOnJobList(
+					company.getCompanyId(), countDate);
+			for(Employee emp:empIdList){
+				try {
+					if(this.preCondition(company.getCompanyId(), emp.getEmployeeId(), countDate)){
+						this.calculate(company.getCompanyId(), emp.getEmployeeId(), countDate);
+						String date = countDate;
+						String endDate = TimeUtil.getLongAfterDate(
+								TimeUtil.getCurrentLastDate(countDate), 1, Calendar.DATE);
+						while(TimeUtil.compareTime(endDate+" 00:00:00", date+" 00:00:00")){
+							this.calculateMonth(company.getCompanyId(), emp.getEmployeeId(), date);
+							date = TimeUtil.getLongAfterDate(date+" 00:00:00", 1, Calendar.DATE);
+						}
+					}
+					
+				} catch (Exception e) {
+					logger.info("公司ID："+company.getCompanyId()+", 员工ID："+emp.getEmployeeId()+", "+countDate+ "后应出时长计算异常");
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		
+	}
+	/**
+	 * 用于月报统计时的应出计算
+	 * @param companyId
+	 * @param employeeId
+	 * @param countDate
+	 */
+	public void calculateMonth(String companyId, String employeeId, String countDate) {
+		AlgorithmParam algorithmParam = new AlgorithmParam();
+		algorithmParam.setEmployeeId(employeeId);
+		Employee employee = employeeDao.selectByEmployee(employeeId, companyId);
+		algorithmParam.setEmployee(employee );
+		algorithmParam.setCompanyId(companyId);
+		algorithmParam.setCountDate(countDate);
+		
+		AlgorithmResult result = new AlgorithmResult();
+		result.getReportDaily().setAttDate(countDate);
+		result.getReportDaily().setEmployeeId(employeeId);
+		result.getReportDaily().setCompanyId(companyId);
+		result.getReportDaily().setDeptId(algorithmParam.getEmployee().getDepartmentId());
+		
+		//查询当天的排班
+		algorithmParam.setClassesEmployee(
+				algorithmMapper.getPlanByDate(companyId, employee.getEmployeeId(), countDate));
+		//有排班
+		if(algorithmParam.getClassesEmployee()!=null 
+				&& StringUtils.isNotEmpty(algorithmParam.getClassesEmployee().getOnDutySchedulingDate())){
+			this.countWorkTime(algorithmParam, result);
+			//应出时长
+			result.getReportDaily().setWorkTime(
+					TimeUtil.parseSecondToMinuteHalfHourUnit(result.getReportDaily().getWorkTime()));
+			//查询日报数据是否存在
+			ReportDaily oldReportDaily = reportDailyMapper.selectByDate(algorithmParam.getCompanyId(), 
+					algorithmParam.getEmployeeId(), result.getReportDaily().getAttDate());
+			if(oldReportDaily!=null && StringUtils.isNotEmpty(oldReportDaily.getAttDate())){//存在，则修改应出时长
+				reportDailyMapper.updateWorkTime(result.getReportDaily());
+			}else{//不存在则更新
+				result.getReportDaily().setReportId(FormatUtil.createUuid());
+				reportDailyMapper.insertSelective(result.getReportDaily());
+			}
+			
+		}
+		
 	
+		
+	}
 	
 }
