@@ -14,6 +14,7 @@
     <result column="operater_time"  property="operaterTime" />
     <result column="is_transfer"  property="isTransfer" />
     <result column="application_time"  property="applicationTime" />
+    
   </resultMap>
   <sql id="Base_Column_List">
     application_no, employee_id, department_id, company_id, fill_card_type, fill_card_time, 
@@ -62,7 +63,6 @@
 		<result column="reason" property="reason"/>
 		<result column="upload_voucher" property="uploadVoucher"/>
 		<result column="approver" property="approver"/>
-		<result column="application_hour" property="applicationHour"/>
 		<result column="application_time" property="applicationTime"/>
 	</resultMap>
       <!-- 根据申请单号查询详细内容 -->

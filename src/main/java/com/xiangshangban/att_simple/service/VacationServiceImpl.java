@@ -419,6 +419,16 @@ public class VacationServiceImpl implements VacationService {
 		}
 	}
 
+	/**
+	 * 清除余额
+	 * @param vacationId
+	 * @param vacationMold
+	 * @param annualLeave
+	 * @param adjustingInstruction
+	 * @param auditorEmployeeId
+	 * @param year
+	 * @return
+	 */
 	public ReturnData resetAnnualLeave(String vacationId, String vacationMold, String annualLeave,
 			String adjustingInstruction,String auditorEmployeeId,String year) {
 		// TODO Auto-generated method stub
