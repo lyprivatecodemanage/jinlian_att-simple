@@ -77,10 +77,10 @@ public class FormatUtil {
 	 */
 	public static void main(String[] args) {
 		int i=0;
-		while(i<50){
+		while(i<200){
 			System.out.println(createUuid());
 			i++;
 		}
-		//System.out.println(createUuid());
+		//System.out.println("67".contains("6"));
 	}
 }

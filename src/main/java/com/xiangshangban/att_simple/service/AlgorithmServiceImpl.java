@@ -59,6 +59,30 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 			}
 		}
 	}
+	@Override
+	public void calculateByCompany(String companyId, String beginDate, String endDate) {
+		logger.info(beginDate+"到"+endDate+"日报计算开始");
+		String date = beginDate;
+		String newEndDate = TimeUtil.getLongAfterDate(
+				TimeUtil.getCurrentLastDate(endDate), 1, Calendar.DATE);
+		while(TimeUtil.compareTime(newEndDate+" 00:00:00", date+" 00:00:00")){//循环日期段
+			List<Employee> empIdList = algorithmMapper.getEmployeeOnJobList(
+					companyId, "");
+			for(Employee emp:empIdList){
+				try {
+					
+					this.calculate(companyId, emp.getEmployeeId(), date);
+					date = TimeUtil.getLongAfterDate(date+" 00:00:00", 1, Calendar.DATE);
+					
+				} catch (Exception e) {
+					logger.info("公司ID："+companyId+", 员工ID："+emp.getEmployeeId()+", "+date+ "日报计算异常");
+					e.printStackTrace();
+				}
+			}
+			date = TimeUtil.getLongAfterDate(date+" 00:00:00", 1, Calendar.DATE);
+		}
+		logger.info(beginDate+"到"+endDate+"日报计算结束");
+	}
 	/**
 	 * 计算一段日期区间的日报
 	 * @param companyId 公司ID
@@ -956,5 +980,6 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 	
 		
 	}
+	
 	
 }
