@@ -520,6 +520,60 @@ public class ApplicationController {
 			}
 			Application application = applicationService.applicationDetails(applicationNo, employeeId, null, companyId);
 			this.getUploadVoucher(companyId, application);
+			if("1".equals(application.getApplicationType())){
+				if("1".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("事假");
+				}
+				if("2".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("年假");
+				}
+				if("3".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("调休假");
+				}
+				if("4".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("婚假");
+				}
+				if("5".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("产假");
+				}
+				if("6".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("丧假");
+				}
+				if("7".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("病假");
+				}
+			}else if("2".equals(application.getApplicationType())){
+				if("1".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("加班");
+				}
+				if("2".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("预加班");
+				}
+			}else if("3".equals(application.getApplicationType())){
+				if("1".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("短期出差");
+				}
+				if("2".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("长期出差");
+				}
+			}else if("4".equals(application.getApplicationType())){
+				if("1".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("外出");
+				}
+			}else if("5".equals(application.getApplicationType())){
+				if("1".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("上班补卡");
+				}
+				if("2".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("下班补卡");
+				}
+				if("3".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("消迟到");
+				}
+				if("4".equals(application.getApplicationChildrenType())){
+					application.setApplicationChildrenType("消早退");
+				}
+			}
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
 			returnData.setData(application);

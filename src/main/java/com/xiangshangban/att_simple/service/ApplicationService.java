@@ -32,7 +32,7 @@ public interface ApplicationService {
 	  * @param employeeId
 	  * @return
 	  */
-	 ReturnData applicationRevoke(String applicationNo,String companyId,String employeeId);
+	 ReturnData applicationRevoke(String applicationNo,String companyId,String employeeId)throws Exception;
 	/**
 	 * 请假申请
 	 * @param params

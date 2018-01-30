@@ -163,23 +163,40 @@ public class ApproverServiceImpl implements ApproverService {
 			String transferPersionAccessId) {
 		ReturnData returnData = new ReturnData();
 		String now = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(System.currentTimeMillis()));
-		Application selectDetailsByApplicationNo = applicationLeaveMapper.selectDetailsByApplicationNo(applicationNo);
 		ApplicationTotalRecord selectByPrimaryKey = applicationTotalRecordMapper.selectByPrimaryKey(applicationNo);
-		String previousOperaterTime = selectByPrimaryKey.getPreviousOperaterTime();
+		Application selectDetailsByApplicationNo =null;
+		if("1".equals(selectByPrimaryKey.getApplicationType())){
+			selectDetailsByApplicationNo = applicationLeaveMapper.selectDetailsByApplicationNo(applicationNo);
+		}else if("2".equals(selectByPrimaryKey.getApplicationType())){
+			selectDetailsByApplicationNo = applicationOvertimeMapper.selectDetailsByApplicationNo(applicationNo);
+		}else if("3".equals(selectByPrimaryKey.getApplicationType())){
+			selectDetailsByApplicationNo = applicationBusinessTravelMapper.selectDetailsByApplicationNo(applicationNo);
+		}else if("4".equals(selectByPrimaryKey.getApplicationType())){
+			selectDetailsByApplicationNo = applicationOutgoingMapper.selectDetailsByApplicationNo(applicationNo);
+		}else if("5".equals(selectByPrimaryKey.getApplicationType())){
+			selectDetailsByApplicationNo = applicationFillCardMapper.selectDetailsByApplicationNo(applicationNo);
+		}
+		String previousOperaterTime = selectByPrimaryKey.getOperaterTime();
+		selectByPrimaryKey.setPreviousOperaterTime(previousOperaterTime);
 		if("同意".equals(approverDescription)){
 			if(selectByPrimaryKey!=null&&StringUtils.isNotEmpty(selectByPrimaryKey.getApplicationType())){
 				if("1".equals(selectByPrimaryKey.getApplicationType())){//请假
 					if("2".equals(selectDetailsByApplicationNo.getApplicationChildrenType())){//年假
 						//年假剩余扣减
+						this.updateVacation("0", selectDetailsByApplicationNo.getEndTime(), 
+								selectDetailsByApplicationNo.getApplicationHour(), employeeId, companyId, 
+								postscriptason);
 					}
 					if("3".equals(selectDetailsByApplicationNo.getApplicationChildrenType())){//调休假
 						//调休剩余扣减
+						this.updateVacation("1", selectDetailsByApplicationNo.getEndTime(), 
+								selectDetailsByApplicationNo.getApplicationHour(), employeeId, companyId, 
+								postscriptason);
 					}
 				}
 			selectByPrimaryKey.setIsComplete("1");
 			selectByPrimaryKey.setRejectReason(postscriptason);
 			applicationTotalRecordMapper.updateByPrimaryKeySelective(selectByPrimaryKey);
-			returnData.setData(selectDetailsByApplicationNo);
 			}else{
 				returnData.setMessage("审批单数据异常");
 				returnData.setReturnCode("9999");
@@ -222,6 +239,7 @@ public class ApproverServiceImpl implements ApproverService {
 			selectByPrimaryKey.setPreviousOperaterTime(previousOperaterTime);
 			applicationTotalRecordMapper.updateByPrimaryKeySelective(selectByPrimaryKey);
 		}
+		returnData.setData(selectDetailsByApplicationNo);
 		return returnData;
 	}
 	

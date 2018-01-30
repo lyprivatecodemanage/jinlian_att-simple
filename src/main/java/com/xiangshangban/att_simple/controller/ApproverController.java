@@ -89,24 +89,28 @@ public class ApproverController {
 					companyId,page,count,applicationType,statusDescription,applicationTimeDescription,applicatrionPersonName);
 			if(approverIndexPage!=null&&approverIndexPage.size()>0){
 				for(ApplicationTotalRecord approver:approverIndexPage){
-					if("1".equals(approver.getIsComplete())){
-						if("0".equals(approver.getIsReject())){
-							approver.setStatusDescription("已通过");
-						}else{
-							approver.setStatusDescription("已驳回");
-						}
-					}else{
+					
 						if(employeeId.equals(approver.getLastApprover())){
-							approver.setStatusDescription("未审批");
+							if("1".equals(approver.getIsComplete())){
+								if("0".equals(approver.getIsReject())){
+									approver.setStatusDescription("已通过");
+								}else{
+									approver.setStatusDescription("已驳回");
+								}
+							}else{
+								approver.setStatusDescription("未审批");
+							}
 						}else if(!employeeId.equals(approver.getLastApprover())&&"1".equals(approver.getIsTransfer())
 								&&employeeId.equals(approver.getTransferPersonId())){
 							approver.setStatusDescription("已转移");
-						}
+						}else{
+							if("1".equals(approver.getIsCopy())&&!StringUtils.isEmpty(approver.getAppCopyPersonId())&&
+									employeeId.equals(approver.getAppCopyPersonId()))
+									{
+								approver.setStatusDescription("抄送");
+							}
 					}
-					if("1".equals(approver.getIsCopy())&&!StringUtils.isEmpty(approver.getAppCopyPersonId())
-							&&employeeId.equals(approver.getAppCopyPersonId())){
-						approver.setStatusDescription("抄送");
-					}
+					
 				}
 			}
 			returnData.setMessage("成功");
@@ -159,6 +163,58 @@ public class ApproverController {
 				return returnData;
 			}
 			ApplicationTotalRecord approverDetails = approverService.approverDetails(applicationNo,companyId);
+			if("1".equals(approverDetails.getApplicationType())){
+				if("1".equals(approverDetails.getApplicationLeave().getLeaveType())){
+					approverDetails.getApplicationLeave().setLeaveType("事假");
+				}
+				if("2".equals(approverDetails.getApplicationLeave().getLeaveType())){
+					approverDetails.getApplicationLeave().setLeaveType("年假");
+				}
+				if("3".equals(approverDetails.getApplicationLeave().getLeaveType())){
+					approverDetails.getApplicationLeave().setLeaveType("调休假");
+				}
+				if("4".equals(approverDetails.getApplicationLeave().getLeaveType())){
+					approverDetails.getApplicationLeave().setLeaveType("婚假");
+				}
+				if("5".equals(approverDetails.getApplicationLeave().getLeaveType())){
+					approverDetails.getApplicationLeave().setLeaveType("产假");
+				}
+				if("6".equals(approverDetails.getApplicationLeave().getLeaveType())){
+					approverDetails.getApplicationLeave().setLeaveType("丧假");
+				}
+				if("7".equals(approverDetails.getApplicationLeave().getLeaveType())){
+					approverDetails.getApplicationLeave().setLeaveType("病假");
+				}
+			}else if("2".equals(approverDetails.getApplicationType())){
+				if("1".equals(approverDetails.getApplicationOvertime().getOvertimeType())){
+					approverDetails.getApplicationOvertime().setOvertimeType("加班");
+				}
+				if("2".equals(approverDetails.getApplicationOvertime().getOvertimeType())){
+					approverDetails.getApplicationOvertime().setOvertimeType("预加班");
+				}
+			}else if("3".equals(approverDetails.getApplicationType())){
+				if("1".equals(approverDetails.getApplicationBusinessTravel().getBusinessTravelType())){
+					approverDetails.getApplicationBusinessTravel().setBusinessTravelType("短期出差");
+				}
+				if("2".equals(approverDetails.getApplicationBusinessTravel().getBusinessTravelType())){
+					approverDetails.getApplicationBusinessTravel().setBusinessTravelType("长期出差");
+				}
+			}else if("4".equals(approverDetails.getApplicationType())){
+				//前端转换
+			}else if("5".equals(approverDetails.getApplicationType())){
+				if("1".equals(approverDetails.getApplicationFillCard().getFillCardType())){
+					approverDetails.getApplicationFillCard().setFillCardType("上班补卡");
+				}
+				if("2".equals(approverDetails.getApplicationFillCard().getFillCardType())){
+					approverDetails.getApplicationFillCard().setFillCardType("下班补卡");
+				}
+				if("3".equals(approverDetails.getApplicationFillCard().getFillCardType())){
+					approverDetails.getApplicationFillCard().setFillCardType("消迟到");
+				}
+				if("4".equals(approverDetails.getApplicationFillCard().getFillCardType())){
+					approverDetails.getApplicationFillCard().setFillCardType("消早退");
+				}
+			}
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
 			returnData.setData(approverDetails);

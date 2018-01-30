@@ -89,6 +89,12 @@ public class ApplicationServiceImpl implements ApplicationService {
 			vacation.setAdjustRestBalance("");
 			vacation.setAdjustRestTotal("");
 			vacation.setAnnualLeaveTotal("");
+			vacation.setYear(year);
+		}else{
+			vacation.setAnnualLeaveBalance(String.valueOf(Double.valueOf(vacation.getAnnualLeaveBalance())*8));
+			vacation.setAdjustRestBalance(String.valueOf(Double.valueOf(vacation.getAdjustRestBalance())*8));
+			vacation.setAdjustRestTotal(String.valueOf(Double.valueOf(vacation.getAdjustRestTotal())*8));
+			vacation.setAnnualLeaveTotal(String.valueOf(Double.valueOf(vacation.getAnnualLeaveTotal())*8));
 		}
 		result.put("vacation", vacation);
 		return result;
@@ -576,15 +582,14 @@ public class ApplicationServiceImpl implements ApplicationService {
 	 */
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED,rollbackForClassName="Exception")
-	public ReturnData applicationRevoke(String applicationNo, String companyId, String employeeId) {
+	public ReturnData applicationRevoke(String applicationNo, String companyId, String employeeId)throws Exception{
 		ReturnData returnData = new ReturnData();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date now = new Date(System.currentTimeMillis());
-		try{
 		now = sdf.parse(sdf.format(now));
 		ApplicationTotalRecord selectByPrimaryKey = applicationTotalRecordMapper.selectByPrimaryKey(applicationNo);
 		if("0".equals(selectByPrimaryKey.getIsComplete())&&"0".equals(selectByPrimaryKey.getIsTransfer())){
-			Date operaterTime = sdf.parse(sdf.format(selectByPrimaryKey.getOperaterTime()));
+			Date operaterTime = sdf.parse(selectByPrimaryKey.getOperaterTime());
 			int minutes = (int)((now.getTime()-operaterTime.getTime())/1000/60);
 			if(minutes>=10){
 				returnData.setMessage("您的申请已超过十分钟,无法撤回");
@@ -594,6 +599,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 				ApplicationTotalRecord record = new ApplicationTotalRecord();
 				record.setApplicationNo(applicationNo);
 				record.setApplicationStatus("2");
+				record.setPreviousOperaterTime(selectByPrimaryKey.getOperaterTime());
 				int i = applicationTotalRecordMapper.updateByPrimaryKeySelective(record);
 				if(i>0){
 					returnData.setMessage("成功");
@@ -608,13 +614,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 		}else{
 			returnData.setMessage("您的申请已被处理,无法撤回");
 			returnData.setReturnCode("9999");
-			return returnData;
-		}
-		}catch(Exception e){
-			logger.info(e);
-			e.printStackTrace();
-			returnData.setMessage("服务器错误");
-			returnData.setReturnCode("3001");
 			return returnData;
 		}
 	}

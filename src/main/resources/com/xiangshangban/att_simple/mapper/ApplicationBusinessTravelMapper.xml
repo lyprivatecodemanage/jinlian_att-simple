@@ -63,7 +63,7 @@
 		<result column="employee_id" property="applicationId"/>
 		<result column="department_id" property="departmentId"/>
 		<result column="company_id" property="companyId"/>
-		<result column="leave_type" property="applicationChildrenType"/>
+		<result column="business_travel_type" property="applicationChildrenType"/>
 		<result column="start_time" property="startTime"/>
 		<result column="end_time" property="endTime"/>
 		<result column="reason" property="reason"/>
