@@ -54,4 +54,5 @@ public interface AlgorithmService {
      * @param countDate 日期
      */
 	public void calculateMonth(String countDate);
+	public void calculateByCompany(String companyId, String beginDate, String endDate);
 }
