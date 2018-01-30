@@ -16,13 +16,13 @@
   </resultMap>
   
   <sql id="Base_Column_List">
-    vacation_id, company_id, department_id, employee_id,to_number(annual_leave_total,'9999') annual_leave_total,to_number(annual_leave_balance,'9999') annual_leave_balance, 
-    to_number(adjust_rest_total,'9999')adjust_rest_total,to_number(adjust_rest_balance,'9999') adjust_rest_balance,year_
+    vacation_id, company_id, department_id, employee_id,annual_leave_total,annual_leave_balance, 
+    adjust_rest_total,adjust_rest_balance,year_
   </sql>
   
   <sql id="Vacation_Employee_Column_List">
-    vacation_id, company_id, department_id,employee_id,annual_leave_total,annual_leave_balance,
-adjust_rest_total,adjust_rest_balance,department_name,employee_name,year_
+    vacation_id, company_id, department_id,employee_id,to_number(annual_leave_total,'999.9') annual_leave_total,to_number(annual_leave_balance,'999.9')annual_leave_balance,
+to_number(adjust_rest_total,'999.9') adjust_rest_total,to_number(adjust_rest_balance,'999.9') adjust_rest_balance,department_name,employee_name,year_
   </sql>
   
   <sql id="Vacation_Employee_Column_List1">

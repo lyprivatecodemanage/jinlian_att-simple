@@ -277,6 +277,7 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 							int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
 							
 							if(num>0){
+								af.setApplicationNo(FormatUtil.createUuid());
 								af.setFillCardType("4");
 								af.setFillCardTime(ce.getOffDutySchedulingDate());
 								
@@ -310,6 +311,7 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 							int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
 							
 							if(num>0){
+								af.setApplicationNo(FormatUtil.createUuid());
 								af.setFillCardType("2");
 								af.setFillCardTime(ce.getOffDutySchedulingDate());
 								
@@ -343,6 +345,7 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 							int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
 							
 							if(num>0){
+								af.setApplicationNo(FormatUtil.createUuid());
 								af.setFillCardType("4");
 								af.setFillCardTime(ce.getOffDutySchedulingDate());
 								
@@ -376,6 +379,7 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 							int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
 							
 							if(num>0){
+								af.setApplicationNo(FormatUtil.createUuid());
 								af.setFillCardType("2");
 								af.setFillCardTime(ce.getOffDutySchedulingDate());
 								
@@ -578,6 +582,7 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 					int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
 					
 					if(num>0){
+						af.setApplicationNo(FormatUtil.createUuid());
 						af.setFillCardType("4");
 						af.setFillCardTime(endDate+" "+endTime);
 						
@@ -613,6 +618,7 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 					int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
 					
 					if(num>0){
+						af.setApplicationNo(FormatUtil.createUuid());
 						af.setFillCardType("2");
 						af.setFillCardTime(endDate+" "+endTime);
 						
@@ -648,6 +654,7 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 					int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
 					
 					if(num>0){
+						af.setApplicationNo(FormatUtil.createUuid());
 						af.setFillCardType("4");
 						af.setFillCardTime(endDate+" "+endTime);
 						
@@ -683,6 +690,7 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 					int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
 					
 					if(num>0){
+						af.setApplicationNo(FormatUtil.createUuid());
 						af.setFillCardType("2");
 						af.setFillCardTime(endDate+" "+endTime);
 						
