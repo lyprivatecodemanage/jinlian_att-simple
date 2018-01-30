@@ -347,12 +347,16 @@ public class VacationServiceImpl implements VacationService {
 				if(StringUtils.isNotEmpty(employee.getSeniority()) && StringUtils.isNotEmpty(employee.getProbationaryExpired()) && StringUtils.isNotEmpty(employee.getEntryTime())){
 					
 					//年假天数
-					double AVday = 0;
+					double AVday = 0.0;
 					
 					try {
 						AVday = cv.ABCAnnualFormula(employee.getSeniority(), 1, employee.getEntryTime(), 0, 0);
 						//计算入职时间到现在时间的年假  累加入职前年假
 						AVday += cv.computeAnnualVacation(sdate.parse(employee.getEntryTime()));
+						
+						if(AVday>15){
+							AVday = 15.0;
+						}
 					} catch (ParseException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

@@ -31,7 +31,7 @@
   <sql id="Leave_List">
     application_no, employee_id, department_id, company_id, leave_type, start_time, 
     end_time, reason, upload_voucher, approver, copy_to_person, operater_time, is_transfer, 
-    application_hour, application_time,employee_name,department_name,leave_type_name,approver_name
+    to_number(application_hour,'9999') application_hour, application_time,employee_name,department_name,leave_type_name,approver_name
   </sql>
    
    <select id="selectLeaveKeyData" parameterType="java.lang.String" resultType="java.lang.Integer">
@@ -62,7 +62,7 @@
 			and leave_type = #{leaveType}
 		</if>
 		<if test="employeeName != null">
-			and e.employee_name like '%#{employeeName}%'
+			and e.employee_name like '%${employeeName}%'
 		</if>
 	)t
 	<where>
@@ -92,15 +92,7 @@
 	, start_time, end_time, reason, upload_voucher, approver,
 	(select employee_name from organization.employee_ where employee_id = approver and company_id = l.company_id) as approver_name, 
 	l.copy_to_person, l.operater_time,l.is_transfer, 
-	application_hour, l.application_time,to_char(to_date(l.application_time,'YYYY'),'YYYY') AS year_,to_char(to_date(l.application_time,'YYYY-mm'),'mm') AS month_,
-	<trim prefix="row_number() over(order by " suffix=") rn">
-		<if test="applicationHourRank != null">
-			application_hour ${applicationHourRank}
-		</if>
-		<if test="applicationTimeRank != null">
-			application_time ${applicationTimeRank}
-		</if>
-	</trim>
+	application_hour, l.application_time,to_char(to_date(l.application_time,'YYYY'),'YYYY') AS year_,to_char(to_date(l.application_time,'YYYY-mm'),'mm') AS month_
 	FROM att_simple.application_leave_ l
 	LEFT JOIN organization.department_ d
 	on l.department_id = d.department_id and l.company_id = d.company_id
@@ -117,17 +109,24 @@
 			and leave_type = #{leaveType}
 		</if>
 		<if test="employeeName != null">
-			and e.employee_name like '%#{employeeName}%'
+			and e.employee_name like '%${employeeName}%'
 		</if>
 	)t
-	where rn > ${pageExcludeNumber}
-	<if test="year != null">
-		and year_ = #{year}
+	<where>
+		<if test="year != null">
+			and year_ = #{year}
+		</if>
+		<if test="month != null">
+			and month_ = #{month}
+		</if>
+	</where>  
+	<if test="applicationHourRank != null">
+		order by application_hour ${applicationHourRank}
 	</if>
-	<if test="month != null">
-		and month_ = #{month}
+	<if test="applicationTimeRank != null">
+		order by application_time ${applicationTimeRank}
 	</if>
-	LIMIT ${pageNum}
+	LIMIT ${pageNum} OFFSET ${pageExcludeNumber}
   </select>
   
   <!-- 添加请假申请记录 -->

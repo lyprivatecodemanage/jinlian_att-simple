@@ -2,6 +2,8 @@ package com.xiangshangban.att_simple.controller;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,14 +34,16 @@ public class MonthReportComtroller {
 	 * @return
 	 */
 	@RequestMapping(value="/MonthReportKeyData",produces="application/json;charset=utf-8",method=RequestMethod.POST)
-	public ReturnData MonthReportKeyData(@RequestBody String object,HttpServletRequest request){
+	public ReturnData MonthReportKeyData(HttpServletRequest request){
 		ReturnData result = new ReturnData();
 		
 		String companyId = request.getHeader("companyId");
 		
-		JSONObject obj = JSON.parseObject(object);
-		String year = obj.getString("year");
-		String month = obj.getString("month");
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date());
+		
+		String year = c.get(Calendar.YEAR)+"";
+		String month = c.get(Calendar.DAY_OF_MONTH)+1+"";
 		
 		result = monthReportService.monthReportKeyData(companyId, year, month);
 		
@@ -82,7 +86,7 @@ public class MonthReportComtroller {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value="export/MonthReportExcel",method=RequestMethod.POST)
+	@RequestMapping(value="export/MonthReportExcel",produces="application/json;chatset=utf-8",method=RequestMethod.POST)
 	public ReturnData MonthReportExcel(@RequestBody String objectString,HttpServletRequest request,HttpServletResponse response){
 		ReturnData result = new ReturnData();
 		JSONObject obj = JSON.parseObject(objectString);
