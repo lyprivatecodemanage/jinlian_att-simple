@@ -42,21 +42,7 @@ v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name,yea
   	select DISTINCT
   	<include refid="Vacation_Employee_Column_List"/>
 	from 
-	(select <include refid="Vacation_Employee_Column_List1"/>,
-	<trim prefix="row_number() over(order by " suffix=") rn">
-		<if test="annualLeaveTotalRank != null">
-			v.annual_leave_total ${annualLeaveTotalRank}
-		</if>
-		<if test="annualLeaveBalanceRank != null">
-			v.annual_leave_balance ${annualLeaveBalanceRank}
-		</if>
-		<if test="adjustRestTotalRank != null">
-			v.adjust_rest_total ${adjustRestTotalRank}
-		</if>
-		<if test="adjustRestBalanceRank != null">
-			v.adjust_rest_balance ${adjustRestBalanceRank}
-		</if>
-	</trim>
+	(select <include refid="Vacation_Employee_Column_List1"/>
 	from vacation v 
 	left join organization.employee_ e 
 	on v.employee_id = e.employee_id and v.company_id = e.company_id and v.department_id = e.department_id 
@@ -75,9 +61,20 @@ v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name,yea
 			and e.employee_name like '%${employeeName}%'
 		</if>
 	</where>
+	<if test="annualLeaveTotalRank != null">
+		ORDER BY v.annual_leave_total ${annualLeaveTotalRank}
+	</if>
+	<if test="annualLeaveBalanceRank != null">
+		ORDER BY v.annual_leave_balance ${annualLeaveBalanceRank}
+	</if>
+	<if test="adjustRestTotalRank != null">
+		ORDER BY v.adjust_rest_total ${adjustRestTotalRank}
+	</if>
+	<if test="adjustRestBalanceRank != null">
+		ORDER BY v.adjust_rest_balance ${adjustRestBalanceRank}
+	</if>
 	)t
-	where t.rn > ${pageExcludeNumber}
-	limit ${pageNum}
+	limit ${pageNum} OFFSET ${pageExcludeNumber}
   </select>
   <select id="SelectTotalNumber" resultType="java.lang.Integer">
   	select count(vacation_id) from vacation v
