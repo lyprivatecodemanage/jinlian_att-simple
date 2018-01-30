@@ -27,8 +27,6 @@ public class ApplicationLeave{
     private String uploadVoucher;
     //审批人id
     private String approver;
-    //抄送人id
-    private String copyToPerson;
     //操作时间
     private String operaterTime;
     //是否转移(0:否;1:是)
@@ -169,14 +167,6 @@ public class ApplicationLeave{
 
     public void setApprover(String approver) {
         this.approver = approver;
-    }
-
-    public String getCopyToPerson() {
-        return copyToPerson;
-    }
-
-    public void setCopyToPerson(String copyToPerson) {
-        this.copyToPerson = copyToPerson;
     }
 
     public String getOperaterTime() {

@@ -104,30 +104,54 @@ public class ApplicationServiceImpl implements ApplicationService {
 		c.setTime(new Date());
 		String year = c.get(Calendar.YEAR)-1+"";
 		String newyear = c.get(Calendar.YEAR)+"";
+		Employee employee =  employeeDao.selectByEmployee(application.getApplicationId(), application.getCompanyId());
 			//判断请假类型是否是年假和调休
 			if("2".equals(application.getApplicationChildrenType())||"3".equals(application.getApplicationChildrenType())){
+				
+				if("2".equals(application.getApplicationChildrenType())){
+					if(!StringUtils.isEmpty(employee.getProbationaryExpired())){
+						if(new SimpleDateFormat("yyyy-MM-dd").parse(employee.getProbationaryExpired()).getTime()>=
+								new Date(System.currentTimeMillis()).getTime()){
+							returnData.setMessage("您还在试用期,不享受年假福利");
+							returnData.setReturnCode("9999");
+							return returnData;
+						}
+					}else{
+						returnData.setMessage("您目前没有设置转正时间,请联系管理员完善您的个人信息");
+						returnData.setReturnCode("9999");
+						return returnData;
+					}
+				}
+				
 				//查询额度
 				Vacation vacation = vacationMapper.SelectEmployeeVacation(application.getCompanyId(), null, application.getApplicationId(),year);
 				if(vacation==null || "2".equals(application.getApplicationChildrenType())&&Integer.valueOf(application.getApplicationHour())>Integer.valueOf(vacation.getAnnualLeaveBalance())){
-					Integer balance = Integer.valueOf(application.getApplicationHour())-Integer.valueOf(vacation.getAnnualLeaveBalance());
+					Double balance=0d;
+					if(vacation!=null&&!StringUtils.isEmpty(vacation.getAnnualLeaveBalance())){
+						balance = Double.valueOf(application.getApplicationHour())-Double.valueOf(vacation.getAnnualLeaveBalance());
+					}else{
+						balance = Double.valueOf(application.getApplicationHour());
+					}
 					Vacation vacations = vacationMapper.SelectEmployeeVacation(application.getCompanyId(), null, application.getApplicationId(),newyear);
-					if(vacations==null || "2".equals(application.getApplicationChildrenType())&& balance >Integer.valueOf(vacations.getAnnualLeaveBalance())){
+					if(vacations==null || "2".equals(application.getApplicationChildrenType())&& balance >(Double.valueOf(vacations.getAnnualLeaveBalance())*8)){
 						returnData.setMessage("年假剩余不足");
 						returnData.setReturnCode("4400");
 						return returnData;
 					}
 				}
 				if(vacation == null || "3".equals(application.getApplicationChildrenType())&&Integer.valueOf(application.getApplicationHour())>Integer.valueOf(vacation.getAdjustRestBalance())){
-					Integer balance = Integer.valueOf(application.getApplicationHour())-Integer.valueOf(vacation.getAdjustRestBalance());
+					if(vacation==null){
+						vacation = vacationMapper.SelectEmployeeVacation(application.getCompanyId(), null, application.getApplicationId(),newyear);
+					}
+					Double balance = Double.valueOf(application.getApplicationHour())-Double.valueOf(vacation.getAdjustRestBalance());
 					Vacation vacations = vacationMapper.SelectEmployeeVacation(application.getCompanyId(), null, application.getApplicationId(),newyear);
-					if(vacations == null || "3".equals(application.getApplicationChildrenType())&&balance>Integer.valueOf(vacations.getAdjustRestBalance())){
+					if(vacations == null || "3".equals(application.getApplicationChildrenType())&&balance>Double.valueOf(vacations.getAdjustRestBalance())){
 						returnData.setMessage("调休剩余不足");
 						returnData.setReturnCode("4401");
 						return returnData;
 					}
 				}
 			}
-			Employee employee =  employeeDao.selectByEmployee(application.getApplicationId(), application.getCompanyId());
 			application.setDepartmentId(employee.getEmployeeBirthday());
 			//生成申请记录
 			applicationTotalRecordMapper.insertApplicationRecord(application);
@@ -171,6 +195,17 @@ public class ApplicationServiceImpl implements ApplicationService {
 		//生成加班申请记录
 		ApplicationOvertime applicationOvertime = (ApplicationOvertime)this.setValue("2", null, application, Class.forName("com.xiangshangban.att_simple.bean.ApplicationOvertime"),null);
 		applicationOvertimeMapper.insertApplicationOvertimeRecord(applicationOvertime);
+		//是否抄送
+		if("1".equals(application.getIsCopy())){
+			//添加抄送记录
+			for(ApplicationToCopyPerson applicationToCopyPerson :application.getAppCopyPersonList()){
+				applicationToCopyPerson.setId(FormatUtil.createUuid());
+				applicationToCopyPerson.setApplicationNo(application.getApplicationNo());
+				applicationToCopyPerson.setOperaterTime(application.getApplicationTime());
+				applicationToCopyPerson.setCompanyId(application.getCompanyId());
+				applicationToCopyPersonMapper.insertSelective(applicationToCopyPerson);
+			}
+		}
 		returnData.setMessage("成功");
 		returnData.setReturnCode("3000");
 		return	returnData;
@@ -196,6 +231,17 @@ public class ApplicationServiceImpl implements ApplicationService {
 			//生成出差记录
 			ApplicationBusinessTravel applicationBusinessTravel = (ApplicationBusinessTravel)this.setValue("3", null, application, Class.forName("com.xiangshangban.att_simple.bean.ApplicationBusinessTravel"), null);
 			applicationBusinessTravelMapper.insertApplicationBusinessTravelRecord(applicationBusinessTravel);
+			//是否抄送
+			if("1".equals(application.getIsCopy())){
+				//添加抄送记录
+				for(ApplicationToCopyPerson applicationToCopyPerson :application.getAppCopyPersonList()){
+					applicationToCopyPerson.setId(FormatUtil.createUuid());
+					applicationToCopyPerson.setApplicationNo(application.getApplicationNo());
+					applicationToCopyPerson.setOperaterTime(application.getApplicationTime());
+					applicationToCopyPerson.setCompanyId(application.getCompanyId());
+					applicationToCopyPersonMapper.insertSelective(applicationToCopyPerson);
+				}
+			}
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
 			return	returnData;
@@ -220,6 +266,17 @@ public class ApplicationServiceImpl implements ApplicationService {
 			//生成外出记录
 			ApplicationOutgoing applicationOutgoing = (ApplicationOutgoing)this.setValue("4", null, application, Class.forName("com.xiangshangban.att_simple.bean.ApplicationOutgoing"), null);
 			applicationOutgoingMapper.insertApplicationOutgoingRecord(applicationOutgoing);
+			//是否抄送
+			if("1".equals(application.getIsCopy())){
+				//添加抄送记录
+				for(ApplicationToCopyPerson applicationToCopyPerson :application.getAppCopyPersonList()){
+					applicationToCopyPerson.setId(FormatUtil.createUuid());
+					applicationToCopyPerson.setApplicationNo(application.getApplicationNo());
+					applicationToCopyPerson.setOperaterTime(application.getApplicationTime());
+					applicationToCopyPerson.setCompanyId(application.getCompanyId());
+					applicationToCopyPersonMapper.insertSelective(applicationToCopyPerson);
+				}
+			}
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
 			return	returnData;
@@ -244,6 +301,17 @@ public class ApplicationServiceImpl implements ApplicationService {
 			//生成外出记录
 			ApplicationFillCard applicationFillCard = (ApplicationFillCard)this.setValue("5", null, application, Class.forName("com.xiangshangban.att_simple.bean.ApplicationFillCard"), null);
 			applicationFillCardMapper.insertApplicationFillCardRecord(applicationFillCard);
+			//是否抄送
+			if("1".equals(application.getIsCopy())){
+				//添加抄送记录
+				for(ApplicationToCopyPerson applicationToCopyPerson :application.getAppCopyPersonList()){
+					applicationToCopyPerson.setId(FormatUtil.createUuid());
+					applicationToCopyPerson.setApplicationNo(application.getApplicationNo());
+					applicationToCopyPerson.setOperaterTime(application.getApplicationTime());
+					applicationToCopyPerson.setCompanyId(application.getCompanyId());
+					applicationToCopyPersonMapper.insertSelective(applicationToCopyPerson);
+				}
+			}
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
 			return	returnData;
@@ -443,6 +511,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 			}
 		/*}else{//已完成
 		}*/
+			applicationDetails.setOperaterTime(applicationRecordStatus.getOperaterTime());
+		Employee approver = employeeDao.selectNameByEmployeeIdAndDepartmentIdAndCompanyId(applicationDetails.getApprover(), null, companyId);
+		applicationDetails.setApproverNmae(approver.getEmployeeName());
 		return applicationDetails;
 	}
 	

@@ -175,7 +175,6 @@
 	    <result column="al_reason"  property="reason" />
 	    <result column="al_upload_voucher"  property="uploadVoucher" />
 	    <result column="al_approver"  property="approver" />
-	    <result column="al_copy_to_person"  property="copyToPerson" />
 	    <result column="al_operater_time"  property="operaterTime" />
 	    <result column="al_is_transfer"  property="isTransfer" />
 	    <result column="al_application_hour"  property="applicationHour" />
@@ -295,7 +294,7 @@
     al.application_no al_application_no, al.employee_id al_employee_id, al.department_id al_department_id,
     al.company_id al_company_id, al.leave_type al_leave_type, al.start_time al_start_time, 
     al.end_time al_end_time, al.reason al_reason, al.upload_voucher al_upload_voucher, al.approver al_approver,
-    al.copy_to_person al_coy_to_person, al.operater_time al_operater_time, al.is_transfer al_is_transfer, 
+    al.operater_time al_operater_time, al.is_transfer al_is_transfer, 
     al.application_hour al_application_hour, al.application_time al_application_time
   </sql>
    <sql id="AO_Base_Column_List">
@@ -377,7 +376,7 @@
 	e.employee_name as last_approver_name,
 	 case atr.application_type when '1' then a.employee_name  
 	when '2' then b.employee_name when '3' then c.employee_name  
-	when '4' then d.employee_name   when '5' then d.employee_name end as application_name,
+	when '4' then d.employee_name   when '5' then f.employee_name end as application_name,
 	 case atr.application_type when '1' then a.department_name  
 	when '2' then b.department_name when '3' then c.department_name  
 	when '4' then d.department_name   when '5' then f.department_name end as department_name,

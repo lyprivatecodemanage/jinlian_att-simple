@@ -12,7 +12,6 @@
     <result column="reason"  property="reason" />
     <result column="upload_voucher"  property="uploadVoucher" />
     <result column="approver"  property="approver" />
-    <result column="copy_to_person"  property="copyToPerson" />
     <result column="operater_time"  property="operaterTime" />
     <result column="is_transfer"  property="isTransfer" />
     <result column="application_hour"  property="applicationHour" />
@@ -25,7 +24,7 @@
   </resultMap>
   <sql id="Base_Column_List">
     application_no, employee_id, department_id, company_id, leave_type, start_time, 
-    end_time, reason, upload_voucher, approver, copy_to_person, operater_time, is_transfer, 
+    end_time, reason, upload_voucher, approver, operater_time, is_transfer, 
     application_hour, application_time
   </sql>
    
