@@ -26,7 +26,7 @@ public class MonthReportComtroller {
 	MonthReportService monthReportService;
 	
 	/**
-	 * 焦振 /月报数据统计
+	 * 焦振 /月报关键数据
 	 * @param object
 	 * @param request
 	 * @return
@@ -35,7 +35,7 @@ public class MonthReportComtroller {
 	public ReturnData MonthReportKeyData(@RequestBody String object,HttpServletRequest request){
 		ReturnData result = new ReturnData();
 		
-		String companyId = request.getHeader("compnayId");
+		String companyId = request.getHeader("companyId");
 		
 		JSONObject obj = JSON.parseObject(object);
 		String year = obj.getString("year");
@@ -57,7 +57,7 @@ public class MonthReportComtroller {
 	public ReturnData SelectMonthReportFuzzy(@RequestBody String object,HttpServletRequest request){
 		ReturnData result = new ReturnData();
 		
-		String companyId = request.getHeader("compnayId");
+		String companyId = request.getHeader("companyId");
 		JSONObject obj = JSON.parseObject(object);
 		String year = obj.getString("year");
 		String month = obj.getString("month");
@@ -66,8 +66,8 @@ public class MonthReportComtroller {
 		
 		Paging p = new Paging();
 		p.setCompanyId(companyId);
-		p.setYear(year);
-		p.setMonth(month);
+		String attDate = year+"-"+month;
+		p.setAttDate(attDate);
 		p.setPageExcludeNumber(String.valueOf((Integer.parseInt(varPageNo)-1)*Integer.parseInt(pageNum)));
 		p.setPageNum(pageNum);
 		

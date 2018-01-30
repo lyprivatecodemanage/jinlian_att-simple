@@ -93,7 +93,7 @@
 	LEFT JOIN organization.department_ d
 	ON e.department_id = d.department_id and e.company_id = d.company_id
 	where rd.company_id = #{companyId}
-	and att_date like '#{attDate}%'
+	and att_date like '%${attDate}%'
 	LIMIT #{pageNum} OFFSET #{pageExcludeNumber}
   </select>
   
@@ -101,7 +101,7 @@
   <select id="selectMonthReportFuzzyTotalNumber" resultType="java.lang.Integer">
 	select count(*) from (select count(employee_id) from report_daily_
 	where company_id = #{companyId} 
-	and att_date like '#{attDate}%'
+	and att_date like '%${attDate}%'
 	GROUP BY employee_id)t
   </select>
   
@@ -118,13 +118,13 @@
 	LEFT JOIN organization.department_ d
 	ON e.department_id = d.department_id and e.company_id = d.company_id
 	where rd.company_id = #{companyId}
-	and att_date like '#{attDate}%'
-	LIMIT #{pageNum} OFFSET #{pageExcludeNumber}
+	and att_date like '%${attDate}%'
 	GROUP BY rd.employee_id,dept_id,d.department_name,rd.employee_id,e.employee_name
+	LIMIT ${pageNum} OFFSET ${pageExcludeNumber}
   </select>
   
   <!-- 查询一个员工在某月存在几次请假 -->
-  <select id="selectLeaveCount">
+  <select id="selectLeaveCount" resultType="java.lang.Integer">
   	select count(*) from (
 	select ((to_number(leave_absence,'9')+to_number(leave_days_off,'9')+to_number(leave_annual,'9')+to_number(leave_sick,'9')+to_number(leave_marriage,'9')+to_number(leave_maternity,'9')
 	+to_number(leave_maternity_check,'9')+to_number(leave_paternity,'9')+to_number(leave_funeral,'9')+to_number(leave_nursing,'9')+to_number(leave_long_sick,'9')+to_number(leave_other,'9')
@@ -132,17 +132,17 @@
 	from report_daily_ 
 	where company_id = #{companyId}
 	and employee_id = #{employeeId}
-	and att_date like '#{attDate}%'
+	and att_date like '${attDate}%'
 	) t
 	where leavedate > 0
   </select>
   
   <!-- 查询某个月该员工是否存在考勤异常 -->
-  <select id="selectMonthEcxeptionEmployee" resultMap="BaseResultMap">
+  <select id="selectMonthEcxeptionEmployee" resultType="java.lang.Integer">
   	select count(*) from report_daily_
 	where company_id = #{companyId}
 	and employee_id = #{employeeId}
-	and att_date like '#{attDate}%'
+	and att_date like '${attDate}%'
 	and has_exception = '1'
   </select>
   
