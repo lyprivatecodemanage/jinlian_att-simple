@@ -414,7 +414,7 @@
   </select>
   
   <!-- 查询当前公司所有已经排过班次的人员ID、班次类型ID(排除临时班次)、最后一次班次的时间-->
-  <select id="selectAllClassesEmp" parameterType="String" resultType="Map">
+  <!-- <select id="selectAllClassesEmp" parameterType="String" resultType="Map">
  	SELECT
 		COALESCE (emp_id, '') AS emp_id,
 		COALESCE (emp_company_id, '') AS emp_company_id,
@@ -428,6 +428,22 @@
 		AND emp_company_id = #{companyId}
   		AND classes_id in (SELECT id FROM classes_type WHERE company_id = #{companyId})
   	GROUP BY emp_id,classes_id,emp_company_id
+  </select>
+   -->
+   <select id="selectAllClassesEmp" parameterType="String" resultType="Map">
+ 	SELECT COALESCE(a.emp_id,'') AS emp_id, COALESCE(b.emp_company_id,'') AS emp_company_id,
+	 		COALESCE(b.classes_id,'') AS classes_id, COALESCE(b.last_date,'') AS last_date 
+	 FROM (SELECT employee_id AS emp_id 
+	 		FROM organization.employee_ 
+	 			WHERE employee_status='0' AND company_id = #{companyId}
+			)a
+	 LEFT JOIN (SELECT emp_id, emp_company_id, classes_id, MAX(the_date) AS last_date
+			FROM classes_employee_
+	  			WHERE classes_name !='临时班次' AND classes_name != ''
+				AND emp_company_id = #{companyId}
+		  		AND classes_id in (SELECT id FROM classes_type WHERE company_id = #{companyId})
+	  		GROUP BY emp_id,classes_id,emp_company_id
+		) b ON a.emp_id = b.emp_id
   </select>
   
   <!-- 通过人员ID和公司ID查询人员名称 -->
