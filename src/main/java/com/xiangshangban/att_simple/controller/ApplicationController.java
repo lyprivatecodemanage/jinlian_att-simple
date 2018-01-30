@@ -614,18 +614,6 @@ public class ApplicationController {
 					   if(!StringUtils.isEmpty(classesEmployee.getClassesId())&&
 							   !StringUtils.isEmpty(classesEmployee.getOnDutySchedulingDate())&&
 							   !StringUtils.isEmpty(classesEmployee.getOffDutySchedulingDate())){//有班次
-						   /*if("2".equals(type)){//加班申请
-							   if((startTime.getTime()>sdf.parse(classesEmployee.getOnDutySchedulingDate()).getTime()
-									   &&startTime.getTime()<sdf.parse(classesEmployee.getOffDutySchedulingDate()).getTime())
-									   || (endTime.getTime()>sdf.parse(classesEmployee.getOnDutySchedulingDate()).getTime()
-									   &&endTime.getTime()<sdf.parse(classesEmployee.getOffDutySchedulingDate()).getTime())
-									   || (sdf.parse(classesEmployee.getOnDutySchedulingDate()).getTime()>endTime.getTime()
-									   &&sdf.parse(classesEmployee.getOffDutySchedulingDate()).getTime()<endTime.getTime())
-									   || (sdf.parse(classesEmployee.getOnDutySchedulingDate()).getTime()>endTime.getTime()
-									   &&sdf.parse(classesEmployee.getOffDutySchedulingDate()).getTime()<endTime.getTime())){
-								   
-							   }
-						   }*/
 						   if(startTime.getTime()>sdf.parse(classesEmployee.getOnDutySchedulingDate()).getTime()){
 						         start = sdf.format(startTime);
 						   }else{
@@ -637,6 +625,9 @@ public class ApplicationController {
 							   end = sdf.format(endTime);
 						   }
 						   double between=(sdf.parse(end).getTime()-sdf.parse(start).getTime())/1000;//除以1000是为了转换成秒
+						   if(between>=28800){
+							   between=28800;
+						   }
 						   applicationHour=applicationHour+(int)(Math.ceil(between/60/30)/2);
 					   }else {
 							  if("3".equals(type)||"4".equals(type)){

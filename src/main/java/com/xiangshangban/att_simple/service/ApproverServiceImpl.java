@@ -175,6 +175,7 @@ public class ApproverServiceImpl implements ApproverService {
 			selectDetailsByApplicationNo = applicationOutgoingMapper.selectDetailsByApplicationNo(applicationNo);
 		}else if("5".equals(selectByPrimaryKey.getApplicationType())){
 			selectDetailsByApplicationNo = applicationFillCardMapper.selectDetailsByApplicationNo(applicationNo);
+			selectDetailsByApplicationNo.setApplicationType("5");
 		}
 		String previousOperaterTime = selectByPrimaryKey.getOperaterTime();
 		selectByPrimaryKey.setPreviousOperaterTime(previousOperaterTime);
@@ -184,13 +185,13 @@ public class ApproverServiceImpl implements ApproverService {
 					if("2".equals(selectDetailsByApplicationNo.getApplicationChildrenType())){//年假
 						//年假剩余扣减
 						this.updateVacation("0", selectDetailsByApplicationNo.getEndTime(), 
-								selectDetailsByApplicationNo.getApplicationHour(), employeeId, companyId, 
+								selectDetailsByApplicationNo.getApplicationHour(), selectByPrimaryKey.getApplicationId(), companyId, 
 								postscriptason);
 					}
 					if("3".equals(selectDetailsByApplicationNo.getApplicationChildrenType())){//调休假
 						//调休剩余扣减
 						this.updateVacation("1", selectDetailsByApplicationNo.getEndTime(), 
-								selectDetailsByApplicationNo.getApplicationHour(), employeeId, companyId, 
+								selectDetailsByApplicationNo.getApplicationHour(), selectByPrimaryKey.getApplicationId(), companyId, 
 								postscriptason);
 					}
 				}

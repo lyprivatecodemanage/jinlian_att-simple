@@ -1,5 +1,6 @@
 package com.xiangshangban.att_simple.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -275,6 +276,8 @@ public class ApproverController {
 		String postscriptason = "";//附言
 		String transferPersonId ="";//移交人id
 		String transferPersionAccessId="";//移交目标人id
+		SimpleDateFormat sdfhm = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		JSONObject jobj = null;
 		try{
 			employeeId = request.getHeader("accessUserId");//员工id
@@ -315,7 +318,11 @@ public class ApproverController {
 					companyId, applicationNo, approverDescription, postscriptason, 
 					transferPersonId, transferPersionAccessId);
 			Application application = (Application)returnData.getData();
-			algorithmService.calculate(companyId, employeeId, application.getStartTime(), application.getEndTime());
+			if("5".equals(application.getApplicationType())){
+				algorithmService.calculate(companyId, employeeId, sdf.format(sdfhm.parse(application.getFillCardTime())));
+			}else{
+				algorithmService.calculate(companyId, employeeId, sdf.format(sdfhm.parse(application.getStartTime())), sdf.format(sdfhm.parse(application.getEndTime())));
+			}
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
 			returnData.setData("");

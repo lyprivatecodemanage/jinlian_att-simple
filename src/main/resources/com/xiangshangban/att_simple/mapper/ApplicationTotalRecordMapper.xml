@@ -124,7 +124,7 @@
   	</if>
   	<if test="statusDescription=='' or statusDescription==null">
   	and (t.is_complete='0' and t.last_approver = #{employeeId} and t.application_status = '1'
-  	or t.is_copy='1' and t.copy_person_id = #{employeeId} and t.application_status = '1')
+  	or t.is_complete='0' and t.is_copy='1' and t.copy_person_id = #{employeeId} and t.application_status = '1')
   	</if>
   	<choose>
   		<when test="statusDescription=='未审批'">
