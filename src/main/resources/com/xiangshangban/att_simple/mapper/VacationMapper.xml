@@ -67,13 +67,12 @@ v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name,yea
 	<where>
 		v.company_id = #{companyId} 
 		and year_ = #{year}
-		and uc.is_active = '1'
-		and uc.type = '1'
+		and e.employee_status = '0'
 		<if test="departmentId != null">
 			and v.department_id = #{departmentId}
 		</if>
 		<if test="employeeName != null">
-			and e.employee_name like '%#{employeeName}%'
+			and e.employee_name like '%${employeeName}%'
 		</if>
 	</where>
 	)t

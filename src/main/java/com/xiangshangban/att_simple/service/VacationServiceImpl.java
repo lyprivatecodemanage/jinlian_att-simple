@@ -343,14 +343,14 @@ public class VacationServiceImpl implements VacationService {
 			List<Employee> list = employeeDao.findAllEmployeeByCompanyId(companyId);
 			
 			for (Employee employee : list) {
-				//判断员工工龄字段不能为空
+				//判断员工工龄字段不能为空   试用期到期时间    入职时间
 				if(StringUtils.isNotEmpty(employee.getSeniority()) && StringUtils.isNotEmpty(employee.getProbationaryExpired()) && StringUtils.isNotEmpty(employee.getEntryTime())){
-				
+					
 					//年假天数
 					double AVday = 0;
 					
 					try {
-						AVday = cv.ABCAnnualFormula(employee.getSeniority(), 1, employee.getProbationaryExpired(), 0, 0);
+						AVday = cv.ABCAnnualFormula(employee.getSeniority(), 1, employee.getEntryTime(), 0, 0);
 						//计算入职时间到现在时间的年假  累加入职前年假
 						AVday += cv.computeAnnualVacation(sdate.parse(employee.getEntryTime()));
 					} catch (ParseException e) {

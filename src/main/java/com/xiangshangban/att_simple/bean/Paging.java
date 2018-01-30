@@ -49,8 +49,18 @@ public class Paging {
     private String endDate;
     //异常类型
     private String exceptionMark;
+    //时间
+    private String attDate;
     
-    public String getExceptionMark() {
+    public String getAttDate() {
+		return attDate;
+	}
+
+	public void setAttDate(String attDate) {
+		this.attDate = attDate;
+	}
+
+	public String getExceptionMark() {
 		return exceptionMark;
 	}
 
