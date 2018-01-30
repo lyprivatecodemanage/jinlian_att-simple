@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -133,12 +134,20 @@ public class ReportDailyController {
 	@RequestMapping(value="export/ReportDailyExcel",produces="application/json;charset=UTF-8",method=RequestMethod.POST)
 	public ReturnData ReportDailyExcel(@RequestBody String objectString,HttpServletRequest request,HttpServletResponse response){
 		ReturnData result = new ReturnData();
-		JSONObject obj = JSON.parseObject(objectString);
-		String beginDate = obj.getString("beginDate");
-		String endDate = obj.getString("endDate");
 		try {
 			response.setContentType("octets/stream"); 
 			String agent = request.getHeader("USER-AGENT");
+			JSONObject obj = JSON.parseObject(objectString);
+			String beginDate = obj.getString("beginDate");
+			String endDate = obj.getString("endDate");
+			
+			if(StringUtils.isEmpty(beginDate)){
+				beginDate = null;
+			}
+			if(StringUtils.isEmpty(endDate)){
+				endDate = null;
+			}
+			
 			String excelName = "ReportDaily.xls";
 			if(agent!=null && agent.indexOf("MSIE")==-1&&agent.indexOf("rv:11")==-1 && 
 					agent.indexOf("Edge")==-1 && agent.indexOf("Apache-HttpClient")==-1){//非IE

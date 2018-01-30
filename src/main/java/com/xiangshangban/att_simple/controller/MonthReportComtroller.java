@@ -89,12 +89,12 @@ public class MonthReportComtroller {
 	@RequestMapping(value="export/MonthReportExcel",produces="application/json;chatset=utf-8",method=RequestMethod.POST)
 	public ReturnData MonthReportExcel(@RequestBody String objectString,HttpServletRequest request,HttpServletResponse response){
 		ReturnData result = new ReturnData();
-		JSONObject obj = JSON.parseObject(objectString);
-		String year = obj.getString("year");
-		String month = obj.getString("month");
 		try {
 			response.setContentType("octets/stream"); 
 			String agent = request.getHeader("USER-AGENT");
+			JSONObject obj = JSON.parseObject(objectString);
+			String year = obj.getString("year");
+			String month = obj.getString("month");
 			String excelName = "MonthReport.xls";
 			if(agent!=null && agent.indexOf("MSIE")==-1&&agent.indexOf("rv:11")==-1 && 
 					agent.indexOf("Edge")==-1 && agent.indexOf("Apache-HttpClient")==-1){//非IE
