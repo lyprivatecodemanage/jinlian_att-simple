@@ -215,6 +215,12 @@ public class VacationController {
 			
 			return result;
 		}else if("1".equals(timingJob)){
+			if(StringUtils.isEmpty(timingJobDate)){
+				result.setReturnCode("3006");
+				result.setMessage("必传参数为空");
+				return result;
+			}
+			
 			try {
 				Date date = times.parse(timingJobDate);
 				Calendar c = Calendar.getInstance();

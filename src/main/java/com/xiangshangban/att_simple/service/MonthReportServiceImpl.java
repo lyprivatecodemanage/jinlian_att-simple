@@ -95,12 +95,20 @@ public class MonthReportServiceImpl implements MonthReportService {
 		
 		List<ReportDaily> list = reportDailyMapper.selectMonthReportFuzzy(paging);
 		
+		for (ReportDaily reportDaily : list) {
+			if(Integer.parseInt(reportDaily.getRealWorkTime())%60>=30){
+				reportDaily.setRealWorkTime(String.valueOf(Integer.parseInt(reportDaily.getRealWorkTime())/60+0.5));
+			}else if(Integer.parseInt(reportDaily.getRealWorkTime())%60>=0){
+				reportDaily.setRealWorkTime(String.valueOf(Integer.parseInt(reportDaily.getRealWorkTime())/60+0.0));
+			}
+		}
+		
 		if(list!=null){
 			int TotalNum = reportDailyMapper.selectMonthReportFuzzyTotalNumber(paging);
 			
 			result.setData(JSON.toJSON(list));
 			result.setTotalPages(TotalNum);
-			int pageCountNum = TotalNum%Integer.parseInt(paging.getPageNum())==0?TotalNum/Integer.parseInt(paging.getPageNum()):TotalNum%Integer.parseInt(paging.getPageNum())+1;
+			int pageCountNum = TotalNum%Integer.parseInt(paging.getPageNum())==0?TotalNum/Integer.parseInt(paging.getPageNum()):TotalNum/Integer.parseInt(paging.getPageNum())+1;
 			result.setPagecountNum(pageCountNum);
 			result.setReturnCode("3000");
 			result.setMessage("数据请求成功");

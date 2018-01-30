@@ -2,6 +2,7 @@ package com.xiangshangban.att_simple.service;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -402,12 +403,17 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 	@Override
 	public ReturnData selectReportDaily(Paging paging) {
 		// TODO Auto-generated method stub
+		
 		ReturnData returndata = new ReturnData();
 		
 		List<ReportDaily> list = reportDailyMapper.selectReportDaily(paging);
 		
 		for (ReportDaily reportDaily : list) {
-			reportDaily.setRealWorkTime(String.valueOf(Double.parseDouble(reportDaily.getRealWorkTime())/60));
+			if(Integer.parseInt(reportDaily.getRealWorkTime())%60==0){
+				reportDaily.setRealWorkTime(String.valueOf(Integer.parseInt(reportDaily.getRealWorkTime())/60+0.0));
+			}else if(Integer.parseInt(reportDaily.getRealWorkTime())%60>=30){
+				reportDaily.setRealWorkTime(String.valueOf(Integer.parseInt(reportDaily.getRealWorkTime())/60+0.5));
+			}
 		}
 		
 		if(list!=null){

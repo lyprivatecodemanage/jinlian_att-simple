@@ -130,7 +130,7 @@ public class ReportDailyController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value="export/ReportDailyExcel",method=RequestMethod.POST)
+	@RequestMapping(value="export/ReportDailyExcel",produces="application/json;charset=UTF-8",method=RequestMethod.POST)
 	public ReturnData ReportDailyExcel(@RequestBody String objectString,HttpServletRequest request,HttpServletResponse response){
 		ReturnData result = new ReturnData();
 		JSONObject obj = JSON.parseObject(objectString);
