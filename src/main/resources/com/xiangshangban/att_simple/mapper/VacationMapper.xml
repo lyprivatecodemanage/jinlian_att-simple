@@ -16,13 +16,13 @@
   </resultMap>
   
   <sql id="Base_Column_List">
-    vacation_id, company_id, department_id, employee_id, annual_leave_total, annual_leave_balance, 
-    adjust_rest_total, adjust_rest_balance,year_
+    vacation_id, company_id, department_id, employee_id,annual_leave_total,annual_leave_balance, 
+    adjust_rest_total,adjust_rest_balance,year_
   </sql>
   
   <sql id="Vacation_Employee_Column_List">
-    vacation_id, company_id, department_id,employee_id,annual_leave_total,annual_leave_balance,
-adjust_rest_total,adjust_rest_balance,department_name,employee_name,year_
+    vacation_id, company_id, department_id,employee_id,to_number(annual_leave_total,'999.9') annual_leave_total,to_number(annual_leave_balance,'999.9')annual_leave_balance,
+to_number(adjust_rest_total,'999.9') adjust_rest_total,to_number(adjust_rest_balance,'999.9') adjust_rest_balance,department_name,employee_name,year_
   </sql>
   
   <sql id="Vacation_Employee_Column_List1">
@@ -42,43 +42,35 @@ v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name,yea
   	select DISTINCT
   	<include refid="Vacation_Employee_Column_List"/>
 	from 
-	(select <include refid="Vacation_Employee_Column_List1"/>,
-	<trim prefix="row_number() over(order by " suffix=") rn">
-		<if test="annualLeaveTotalRank != null">
-			v.annual_leave_total ${annualLeaveTotalRank}
-		</if>
-		<if test="annualLeaveBalanceRank != null">
-			v.annual_leave_balance ${annualLeaveBalanceRank}
-		</if>
-		<if test="adjustRestTotalRank != null">
-			v.adjust_rest_total ${adjustRestTotalRank}
-		</if>
-		<if test="adjustRestBalanceRank != null">
-			v.adjust_rest_balance ${adjustRestBalanceRank}
-		</if>
-	</trim>
+	(select <include refid="Vacation_Employee_Column_List1"/>
 	from vacation v 
 	left join organization.employee_ e 
 	on v.employee_id = e.employee_id and v.company_id = e.company_id and v.department_id = e.department_id 
 	left join organization.department_ d 
 	on e.department_id = d.department_id and e.company_id = d.company_id 
-	left JOIN organization.user_company uc 
-	on uc.company_id=d.company_id and uc.user_id = v.employee_id
-	<where>
-		v.company_id = #{companyId} 
-		and year_ = #{year}
-		and uc.is_active = '1'
-		and uc.type = '1'
-		<if test="departmentId != null">
-			and v.department_id = #{departmentId}
-		</if>
-		<if test="employeeName != null">
-			and e.employee_name like '%#{employeeName}%'
-		</if>
-	</where>
+	where v.company_id = #{companyId} 
+	and year_ = #{year}
+	and e.employee_status = '0'
+	<if test="departmentId != null">
+		and v.department_id = #{departmentId}
+	</if>
+	<if test="employeeName != null">
+		and e.employee_name like '%${employeeName}%'
+	</if>
 	)t
-	where t.rn > ${pageExcludeNumber}
-	limit ${pageNum}
+	<if test="annualLeaveTotalRank != null">
+		ORDER BY annual_leave_total ${annualLeaveTotalRank}
+	</if>
+	<if test="annualLeaveBalanceRank != null">
+		ORDER BY annual_leave_balance ${annualLeaveBalanceRank}
+	</if>
+	<if test="adjustRestTotalRank != null">
+		ORDER BY adjust_rest_total ${adjustRestTotalRank}
+	</if>
+	<if test="adjustRestBalanceRank != null">
+		ORDER BY adjust_rest_balance ${adjustRestBalanceRank}
+	</if>
+	limit ${pageNum} OFFSET ${pageExcludeNumber}
   </select>
   <select id="SelectTotalNumber" resultType="java.lang.Integer">
   	select count(vacation_id) from vacation v

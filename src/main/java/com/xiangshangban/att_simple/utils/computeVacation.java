@@ -50,8 +50,8 @@ public class computeVacation {
 	 * @param workTime
 	 * @return
 	 */
-	public int computeAnnualVacation(Date workTime){
-		int AVday = 0;
+	public Double computeAnnualVacation(Date workTime){
+		double AVday = 0;
 		
 		//获取系统当前时间
 		Date date = new Date();
@@ -70,8 +70,8 @@ public class computeVacation {
 	 * @param year
 	 * @return
 	 */
-	public int AnnualLeave(int year){
-		int AVday = 0;
+	public double AnnualLeave(int year){
+		double AVday = 0;
 		
 		if(year<0){
 			AVday = -1;
@@ -98,13 +98,13 @@ public class computeVacation {
 	 * @return  
 	 * @throws ParseException 
 	 */
-	public int ABCAnnualFormula(String socialService,double socialServicePercent,String workTime,double companyServicePercent,Integer cardinalNumber) throws ParseException{
+	public double ABCAnnualFormula(String socialService,double socialServicePercent,String workTime,double companyServicePercent,Integer cardinalNumber) throws ParseException{
 		
 		//根据传入社会工龄值计算享有年假数
-		int socialAnnualVacationDay = AnnualLeave(Integer.parseInt(socialService));
+		double socialAnnualVacationDay = AnnualLeave(Integer.parseInt(socialService));
 		
 		//传入试用结束日期得到享有年假数
-		int companyAnnualVacationDay = computeAnnualVacation(sdf.parse(workTime));
+		double companyAnnualVacationDay = computeAnnualVacation(sdf.parse(workTime));
 		
 		//试用未结束 返回0天年假
 		if(companyAnnualVacationDay < 0){
@@ -113,7 +113,7 @@ public class computeVacation {
 		
 		double b = socialAnnualVacationDay*socialServicePercent+companyAnnualVacationDay*companyServicePercent+cardinalNumber;
 		
-		int t = (int)Math.floor(b);
+		double t = (double)Math.floor(b);
 		
 		return t;
 	}

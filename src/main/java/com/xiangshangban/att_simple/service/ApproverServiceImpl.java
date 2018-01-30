@@ -314,11 +314,20 @@ public class ApproverServiceImpl implements ApproverService {
 		//年假
 		if(leaveType.equals("0")){
 			
+			if(Integer.parseInt(leaveDay)%8==0){
+				leaveDay = String.valueOf(Integer.parseInt(leaveDay)/8+0.0);
+			}else if(Integer.parseInt(leaveDay)%8<=4){
+				leaveDay = String.valueOf(Integer.parseInt(leaveDay)/8+0.5);
+			}else if(Integer.parseInt(leaveDay)%8>4){
+				leaveDay = String.valueOf(Integer.parseInt(leaveDay)/8+1);
+			}
+			
 			year = String.valueOf(Integer.parseInt(year)-1);
 			//查询前一年假期余额
 			Vacation vacation = vacationMapper.SelectEmployeeVacation(companyId, null,auditorEmployeeId,year);
 			
-			if(Integer.parseInt(vacation.getAnnualLeaveBalance())>0){
+			
+			if(vacation!=null && Integer.parseInt(vacation.getAnnualLeaveBalance())>0){
 				//如果上一年假期余额大于扣减额度则直接扣减上一年额度
 				if(Double.parseDouble(vacation.getAnnualLeaveBalance())-Double.parseDouble(leaveDay)>-1){
 					//使用查询出来最后一条结果的总额和余额  减去调整的值
@@ -410,30 +419,32 @@ public class ApproverServiceImpl implements ApproverService {
 				//查询当年假期余额
 				Vacation vacations = vacationMapper.SelectEmployeeVacation(companyId, null,auditorEmployeeId,year);
 				
-				//使用查询出来最后一条结果的总额和余额  减去调整的值
-				double o = Double.parseDouble(vacations.getAnnualLeaveBalance())-Double.parseDouble(leaveDay);
-				
-				if(o>-1){
-					VacationDetails vd = new VacationDetails();
-					vd.setVacationDetailsId(FormatUtil.createUuid());
-					vd.setVacationId(vacations.getVacationId());
-					vd.setVacationType("0");
-					vd.setVacationMold("1");
-					vd.setLimitChange(leaveDay);
-					vd.setVacationTotal(vacations.getAnnualLeaveTotal());
-					vd.setVacationBalance(String.valueOf(o));
-					vd.setChangingReason(vd.Tweaks);
-					vd.setAdjustingInstruction(adjustingInstruction);
-					vd.setAuditorEmployeeId(auditorEmployeeId);
-					vd.setChangeingDate(sdf.format(new Date()));
-					vd.setYear(year);
+				if(vacations!=null && Double.parseDouble(vacations.getAnnualLeaveBalance())>0){
+					//使用查询出来最后一条结果的总额和余额  减去调整的值
+					double o = Double.parseDouble(vacations.getAnnualLeaveBalance())-Double.parseDouble(leaveDay);
 					
-					int num = vacationMapper.UpdateAnnualLeave(vacations.getVacationId(),vacations.getAnnualLeaveTotal(),String.valueOf(o),year);
-					
-					if(num > 0){
-						vacationDetailsMapper.insertSelective(vd);
+					if(o>-1){
+						VacationDetails vd = new VacationDetails();
+						vd.setVacationDetailsId(FormatUtil.createUuid());
+						vd.setVacationId(vacations.getVacationId());
+						vd.setVacationType("0");
+						vd.setVacationMold("1");
+						vd.setLimitChange(leaveDay);
+						vd.setVacationTotal(vacations.getAnnualLeaveTotal());
+						vd.setVacationBalance(String.valueOf(o));
+						vd.setChangingReason(vd.Tweaks);
+						vd.setAdjustingInstruction(adjustingInstruction);
+						vd.setAuditorEmployeeId(auditorEmployeeId);
+						vd.setChangeingDate(sdf.format(new Date()));
+						vd.setYear(year);
 						
-						return 1;
+						int num = vacationMapper.UpdateAnnualLeave(vacations.getVacationId(),vacations.getAnnualLeaveTotal(),String.valueOf(o),year);
+						
+						if(num > 0){
+							vacationDetailsMapper.insertSelective(vd);
+							
+							return 1;
+						}
 					}
 				}
 				return 0;

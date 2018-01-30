@@ -52,8 +52,8 @@ public class VacationController {
 		String companyId = request.getHeader("companyId");
 		
 		v.setCompanyId(companyId);
-		v.setDepartmentId(StringUtils.isEmpty(json.getString("departmentId"))?null:json.getString("departmentId"));
-		v.setEmployeeName(StringUtils.isEmpty(json.getString("employeeName"))?null:json.getString("employeeName"));
+		v.setDepartmentId(json.getString("departmentId"));
+		v.setEmployeeName(json.getString("employeeName"));
 		v.setAnnualLeaveTotalRank(json.getString("annualLeaveTotalRank"));
 		v.setAnnualLeaveBalanceRank(json.getString("annualLeaveBalanceRank"));
 		v.setAdjustRestTotalRank(json.getString("adjustRestTotalRank"));
@@ -215,6 +215,12 @@ public class VacationController {
 			
 			return result;
 		}else if("1".equals(timingJob)){
+			if(StringUtils.isEmpty(timingJobDate)){
+				result.setReturnCode("3006");
+				result.setMessage("必传参数为空");
+				return result;
+			}
+			
 			try {
 				Date date = times.parse(timingJobDate);
 				Calendar c = Calendar.getInstance();

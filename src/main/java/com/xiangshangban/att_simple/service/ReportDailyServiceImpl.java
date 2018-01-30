@@ -2,6 +2,7 @@ package com.xiangshangban.att_simple.service;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -143,139 +144,57 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 		
 		
 		//获得每一个考勤日报信息
-		for (ReportDaily rd : list) {
-			//根据日报提供的公司ID，人员ID，日报时间  查出当日排班信息
-			ClassesEmployee ce = classesEmployeeMapper.replenishCheckingDate(companyId, rd.getEmployeeId(), rd.getAttDate());
-			
-			//获取系统当前时间
-			String date = sdf.format(new Date());
-			
-			//根据考勤日报的考勤异常类型进行相应代考勤操作
-			switch(rd.getExceptionMark()){
-				case "1"://迟到异常
-					if(ce!=null){
-						ApplicationFillCard af = new ApplicationFillCard();
-						af.setApplicationNo(FormatUtil.createUuid());
-						af.setEmployeeId(rd.getEmployeeId());
-						af.setDepartmentId(rd.getDeptId());
-						af.setCompanyId(rd.getCompanyId());
-						af.setFillCardType("3");
-						af.setFillCardTime(ce.getOnDutySchedulingDate());
-						af.setReason("一键补勤");
-						af.setApprover("0");
-						af.setOperaterTime(date);
-						af.setIsTransfer("0");
-						af.setApplicationTime(date);
-						
-						applicationFillCardMapper.insertApplicationFillCardRecord(af);
-						
-						algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
-						
-						returndata.setReturnCode("3000");
-						returndata.setMessage("数据请求成功");
+			for (ReportDaily rd : list) {
+				//根据日报提供的公司ID，人员ID，日报时间  查出当日排班信息
+				ClassesEmployee ce = classesEmployeeMapper.replenishCheckingDate(companyId, rd.getEmployeeId(), rd.getAttDate());
+				
+			if(ce!=null){
+				
+				//获取系统当前时间
+				String date = sdf.format(new Date());
+				
+				//根据考勤日报的考勤异常类型进行相应代考勤操作
+				switch(rd.getExceptionMark()){
+					case "1"://迟到异常
+						if(ce!=null){
+							ApplicationFillCard af = new ApplicationFillCard();
+							af.setApplicationNo(FormatUtil.createUuid());
+							af.setEmployeeId(rd.getEmployeeId());
+							af.setDepartmentId(rd.getDeptId());
+							af.setCompanyId(rd.getCompanyId());
+							af.setFillCardType("3");
+							af.setFillCardTime(ce.getOnDutySchedulingDate());
+							af.setReason("一键补勤");
+							af.setApprover("0");
+							af.setOperaterTime(date);
+							af.setIsTransfer("0");
+							af.setApplicationTime(date);
+							
+							applicationFillCardMapper.insertApplicationFillCardRecord(af);
+							
+							algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
+							
+							returndata.setReturnCode("3000");
+							returndata.setMessage("数据请求成功");
+							return returndata;
+						}
+						returndata.setReturnCode("3001");
+						returndata.setMessage("服务器错误");
 						return returndata;
-					}
-					returndata.setReturnCode("3001");
-					returndata.setMessage("服务器错误");
-					return returndata;
-				case "2"://早退异常
-					if(ce!=null){
-						ApplicationFillCard af = new ApplicationFillCard();
-						af.setApplicationNo(FormatUtil.createUuid());
-						af.setEmployeeId(rd.getEmployeeId());
-						af.setDepartmentId(rd.getDeptId());
-						af.setCompanyId(rd.getCompanyId());
-						af.setFillCardType("4");
-						af.setFillCardTime(ce.getOffDutySchedulingDate());
-						af.setReason("一键补勤");
-						af.setApprover("0");
-						af.setOperaterTime(date);
-						af.setIsTransfer("0");
-						af.setApplicationTime(date);
-						
-						applicationFillCardMapper.insertApplicationFillCardRecord(af);
-						
-						algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
-						
-						returndata.setReturnCode("3000");
-						returndata.setMessage("数据请求成功");
-						return returndata;
-					}
-					returndata.setReturnCode("3001");
-					returndata.setMessage("服务器错误");
-					return returndata;
-				case "3"://未到异常
-					if(ce!=null){
-						ApplicationFillCard af = new ApplicationFillCard();
-						af.setApplicationNo(FormatUtil.createUuid());
-						af.setEmployeeId(rd.getEmployeeId());
-						af.setDepartmentId(rd.getDeptId());
-						af.setCompanyId(rd.getCompanyId());
-						af.setFillCardType("1");
-						af.setFillCardTime(ce.getOnDutySchedulingDate());
-						af.setReason("一键补勤");
-						af.setApprover("0");
-						af.setOperaterTime(date);
-						af.setIsTransfer("0");
-						af.setApplicationTime(date);
-						
-						applicationFillCardMapper.insertApplicationFillCardRecord(af);
-						
-						algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
-						
-						returndata.setReturnCode("3000");
-						returndata.setMessage("数据请求成功");
-						return returndata;
-					}
-					returndata.setReturnCode("3001");
-					returndata.setMessage("服务器错误");
-					return returndata;
-				case "4"://未退异常
-					if(ce!=null){
-						ApplicationFillCard af = new ApplicationFillCard();
-						af.setApplicationNo(FormatUtil.createUuid());
-						af.setEmployeeId(rd.getEmployeeId());
-						af.setDepartmentId(rd.getDeptId());
-						af.setCompanyId(rd.getCompanyId());
-						af.setFillCardType("2"); 
-						af.setFillCardTime(ce.getOffDutySchedulingDate());
-						af.setReason("一键补勤");
-						af.setApprover("0");
-						af.setOperaterTime(date);
-						af.setIsTransfer("0");
-						af.setApplicationTime(date);
-						
-						applicationFillCardMapper.insertApplicationFillCardRecord(af);
-						
-						algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
-						
-						returndata.setReturnCode("3000");
-						returndata.setMessage("数据请求成功");
-						return returndata;
-					}
-					returndata.setReturnCode("3001");
-					returndata.setMessage("服务器错误");
-					return returndata;
-				case "5"://迟到且早退异常
-					if(ce!=null){
-						ApplicationFillCard af = new ApplicationFillCard();
-						af.setApplicationNo(FormatUtil.createUuid());
-						af.setEmployeeId(rd.getEmployeeId());
-						af.setDepartmentId(rd.getDeptId());
-						af.setCompanyId(rd.getCompanyId());
-						af.setFillCardType("3");
-						af.setFillCardTime(ce.getOnDutySchedulingDate());
-						af.setReason("一键补勤");
-						af.setApprover("0");
-						af.setOperaterTime(date);
-						af.setIsTransfer("0");
-						af.setApplicationTime(date);
-						
-						int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
-						
-						if(num>0){
+					case "2"://早退异常
+						if(ce!=null){
+							ApplicationFillCard af = new ApplicationFillCard();
+							af.setApplicationNo(FormatUtil.createUuid());
+							af.setEmployeeId(rd.getEmployeeId());
+							af.setDepartmentId(rd.getDeptId());
+							af.setCompanyId(rd.getCompanyId());
 							af.setFillCardType("4");
 							af.setFillCardTime(ce.getOffDutySchedulingDate());
+							af.setReason("一键补勤");
+							af.setApprover("0");
+							af.setOperaterTime(date);
+							af.setIsTransfer("0");
+							af.setApplicationTime(date);
 							
 							applicationFillCardMapper.insertApplicationFillCardRecord(af);
 							
@@ -285,63 +204,49 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 							returndata.setMessage("数据请求成功");
 							return returndata;
 						}
-					}
-					returndata.setReturnCode("3001");
-					returndata.setMessage("服务器错误");
-					return returndata;
-				case "6"://迟到且未退异常
-					if(ce!=null){
-						ApplicationFillCard af = new ApplicationFillCard();
-						af.setApplicationNo(FormatUtil.createUuid());
-						af.setEmployeeId(rd.getEmployeeId());
-						af.setDepartmentId(rd.getDeptId());
-						af.setCompanyId(rd.getCompanyId());
-						af.setFillCardType("3"); 
-						af.setFillCardTime(ce.getOnDutySchedulingDate());
-						af.setReason("一键补勤");
-						af.setApprover("0");
-						af.setOperaterTime(date);
-						af.setIsTransfer("0");
-						af.setApplicationTime(date);
-						
-						int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
-						
-						if(num>0){
-							af.setFillCardType("2");
+						returndata.setReturnCode("3001");
+						returndata.setMessage("服务器错误");
+						return returndata;
+					case "3"://未到异常
+						if(ce!=null){
+							ApplicationFillCard af = new ApplicationFillCard();
+							af.setApplicationNo(FormatUtil.createUuid());
+							af.setEmployeeId(rd.getEmployeeId());
+							af.setDepartmentId(rd.getDeptId());
+							af.setCompanyId(rd.getCompanyId());
+							af.setFillCardType("1");
+							af.setFillCardTime(ce.getOnDutySchedulingDate());
+							af.setReason("一键补勤");
+							af.setApprover("0");
+							af.setOperaterTime(date);
+							af.setIsTransfer("0");
+							af.setApplicationTime(date);
+							
+							applicationFillCardMapper.insertApplicationFillCardRecord(af);
+							
+							algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
+							
+							returndata.setReturnCode("3000");
+							returndata.setMessage("数据请求成功");
+							return returndata;
+						}
+						returndata.setReturnCode("3001");
+						returndata.setMessage("服务器错误");
+						return returndata;
+					case "4"://未退异常
+						if(ce!=null){
+							ApplicationFillCard af = new ApplicationFillCard();
+							af.setApplicationNo(FormatUtil.createUuid());
+							af.setEmployeeId(rd.getEmployeeId());
+							af.setDepartmentId(rd.getDeptId());
+							af.setCompanyId(rd.getCompanyId());
+							af.setFillCardType("2"); 
 							af.setFillCardTime(ce.getOffDutySchedulingDate());
-							
-							applicationFillCardMapper.insertApplicationFillCardRecord(af);
-							//触发日报计算
-							algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
-							
-							returndata.setReturnCode("3000");
-							returndata.setMessage("数据请求成功");
-							return returndata;
-						}
-					}
-					returndata.setReturnCode("3001");
-					returndata.setMessage("服务器错误");
-					return returndata;
-				case "7"://未到且早退异常
-					if(ce!=null){
-						ApplicationFillCard af = new ApplicationFillCard();
-						af.setApplicationNo(FormatUtil.createUuid());
-						af.setEmployeeId(rd.getEmployeeId());
-						af.setDepartmentId(rd.getDeptId());
-						af.setCompanyId(rd.getCompanyId());
-						af.setFillCardType("1");
-						af.setFillCardTime(ce.getOnDutySchedulingDate());
-						af.setReason("一键补勤");
-						af.setApprover("0");
-						af.setOperaterTime(date);
-						af.setIsTransfer("0");
-						af.setApplicationTime(date);
-						
-						int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
-						
-						if(num>0){
-							af.setFillCardType("4");
-							af.setFillCardTime(ce.getOffDutySchedulingDate());
+							af.setReason("一键补勤");
+							af.setApprover("0");
+							af.setOperaterTime(date);
+							af.setIsTransfer("0");
+							af.setApplicationTime(date);
 							
 							applicationFillCardMapper.insertApplicationFillCardRecord(af);
 							
@@ -351,44 +256,147 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 							returndata.setMessage("数据请求成功");
 							return returndata;
 						}
-					}
-					returndata.setReturnCode("3001");
-					returndata.setMessage("服务器错误");
-					return returndata;
-				case "8"://未到且未退异常
-					if(ce!=null){
-						ApplicationFillCard af = new ApplicationFillCard();
-						af.setApplicationNo(FormatUtil.createUuid());
-						af.setEmployeeId(rd.getEmployeeId());
-						af.setDepartmentId(rd.getDeptId());
-						af.setCompanyId(rd.getCompanyId());
-						af.setFillCardType("1");
-						af.setFillCardTime(ce.getOnDutySchedulingDate());
-						af.setReason("一键补勤");
-						af.setApprover("0");
-						af.setOperaterTime(date);
-						af.setIsTransfer("0");
-						af.setApplicationTime(date);
-						
-						int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
-						
-						if(num>0){
-							af.setFillCardType("2");
-							af.setFillCardTime(ce.getOffDutySchedulingDate());
+						returndata.setReturnCode("3001");
+						returndata.setMessage("服务器错误");
+						return returndata;
+					case "5"://迟到且早退异常
+						if(ce!=null){
+							ApplicationFillCard af = new ApplicationFillCard();
+							af.setApplicationNo(FormatUtil.createUuid());
+							af.setEmployeeId(rd.getEmployeeId());
+							af.setDepartmentId(rd.getDeptId());
+							af.setCompanyId(rd.getCompanyId());
+							af.setFillCardType("3");
+							af.setFillCardTime(ce.getOnDutySchedulingDate());
+							af.setReason("一键补勤");
+							af.setApprover("0");
+							af.setOperaterTime(date);
+							af.setIsTransfer("0");
+							af.setApplicationTime(date);
 							
-							applicationFillCardMapper.insertApplicationFillCardRecord(af);
+							int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
 							
-							algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
-							
-							returndata.setReturnCode("3000");
-							returndata.setMessage("数据请求成功");
-							return returndata;
+							if(num>0){
+								af.setApplicationNo(FormatUtil.createUuid());
+								af.setFillCardType("4");
+								af.setFillCardTime(ce.getOffDutySchedulingDate());
+								
+								applicationFillCardMapper.insertApplicationFillCardRecord(af);
+								
+								algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
+								
+								returndata.setReturnCode("3000");
+								returndata.setMessage("数据请求成功");
+								return returndata;
+							}
 						}
-					}
-					returndata.setReturnCode("3001");
-					returndata.setMessage("服务器错误");
-					return returndata;
-			}
+						returndata.setReturnCode("3001");
+						returndata.setMessage("服务器错误");
+						return returndata;
+					case "6"://迟到且未退异常
+						if(ce!=null){
+							ApplicationFillCard af = new ApplicationFillCard();
+							af.setApplicationNo(FormatUtil.createUuid());
+							af.setEmployeeId(rd.getEmployeeId());
+							af.setDepartmentId(rd.getDeptId());
+							af.setCompanyId(rd.getCompanyId());
+							af.setFillCardType("3"); 
+							af.setFillCardTime(ce.getOnDutySchedulingDate());
+							af.setReason("一键补勤");
+							af.setApprover("0");
+							af.setOperaterTime(date);
+							af.setIsTransfer("0");
+							af.setApplicationTime(date);
+							
+							int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
+							
+							if(num>0){
+								af.setApplicationNo(FormatUtil.createUuid());
+								af.setFillCardType("2");
+								af.setFillCardTime(ce.getOffDutySchedulingDate());
+								
+								applicationFillCardMapper.insertApplicationFillCardRecord(af);
+								//触发日报计算
+								algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
+								
+								returndata.setReturnCode("3000");
+								returndata.setMessage("数据请求成功");
+								return returndata;
+							}
+						}
+						returndata.setReturnCode("3001");
+						returndata.setMessage("服务器错误");
+						return returndata;
+					case "7"://未到且早退异常
+						if(ce!=null){
+							ApplicationFillCard af = new ApplicationFillCard();
+							af.setApplicationNo(FormatUtil.createUuid());
+							af.setEmployeeId(rd.getEmployeeId());
+							af.setDepartmentId(rd.getDeptId());
+							af.setCompanyId(rd.getCompanyId());
+							af.setFillCardType("1");
+							af.setFillCardTime(ce.getOnDutySchedulingDate());
+							af.setReason("一键补勤");
+							af.setApprover("0");
+							af.setOperaterTime(date);
+							af.setIsTransfer("0");
+							af.setApplicationTime(date);
+							
+							int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
+							
+							if(num>0){
+								af.setApplicationNo(FormatUtil.createUuid());
+								af.setFillCardType("4");
+								af.setFillCardTime(ce.getOffDutySchedulingDate());
+								
+								applicationFillCardMapper.insertApplicationFillCardRecord(af);
+								
+								algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
+								
+								returndata.setReturnCode("3000");
+								returndata.setMessage("数据请求成功");
+								return returndata;
+							}
+						}
+						returndata.setReturnCode("3001");
+						returndata.setMessage("服务器错误");
+						return returndata;
+					case "8"://未到且未退异常
+						if(ce!=null){
+							ApplicationFillCard af = new ApplicationFillCard();
+							af.setApplicationNo(FormatUtil.createUuid());
+							af.setEmployeeId(rd.getEmployeeId());
+							af.setDepartmentId(rd.getDeptId());
+							af.setCompanyId(rd.getCompanyId());
+							af.setFillCardType("1");
+							af.setFillCardTime(ce.getOnDutySchedulingDate());
+							af.setReason("一键补勤");
+							af.setApprover("0");
+							af.setOperaterTime(date);
+							af.setIsTransfer("0");
+							af.setApplicationTime(date);
+							
+							int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
+							
+							if(num>0){
+								af.setApplicationNo(FormatUtil.createUuid());
+								af.setFillCardType("2");
+								af.setFillCardTime(ce.getOffDutySchedulingDate());
+								
+								applicationFillCardMapper.insertApplicationFillCardRecord(af);
+								
+								algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
+								
+								returndata.setReturnCode("3000");
+								returndata.setMessage("数据请求成功");
+								return returndata;
+							}
+						}
+						returndata.setReturnCode("3001");
+						returndata.setMessage("服务器错误");
+						return returndata;
+				}
+			}	
 		}
 		
 		returndata.setReturnCode("3001");
@@ -399,9 +407,18 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 	@Override
 	public ReturnData selectReportDaily(Paging paging) {
 		// TODO Auto-generated method stub
+		
 		ReturnData returndata = new ReturnData();
 		
 		List<ReportDaily> list = reportDailyMapper.selectReportDaily(paging);
+		
+		for (ReportDaily reportDaily : list) {
+			if(Integer.parseInt(reportDaily.getRealWorkTime())%60==0){
+				reportDaily.setRealWorkTime(String.valueOf(Integer.parseInt(reportDaily.getRealWorkTime())/60+0.0));
+			}else if(Integer.parseInt(reportDaily.getRealWorkTime())%60>=30){
+				reportDaily.setRealWorkTime(String.valueOf(Integer.parseInt(reportDaily.getRealWorkTime())/60+0.5));
+			}
+		}
 		
 		if(list!=null){
 			int count = reportDailyMapper.selectReportDailyTotalNumber(paging);
@@ -565,6 +582,7 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 					int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
 					
 					if(num>0){
+						af.setApplicationNo(FormatUtil.createUuid());
 						af.setFillCardType("4");
 						af.setFillCardTime(endDate+" "+endTime);
 						
@@ -600,6 +618,7 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 					int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
 					
 					if(num>0){
+						af.setApplicationNo(FormatUtil.createUuid());
 						af.setFillCardType("2");
 						af.setFillCardTime(endDate+" "+endTime);
 						
@@ -635,6 +654,7 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 					int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
 					
 					if(num>0){
+						af.setApplicationNo(FormatUtil.createUuid());
 						af.setFillCardType("4");
 						af.setFillCardTime(endDate+" "+endTime);
 						
@@ -670,6 +690,7 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 					int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
 					
 					if(num>0){
+						af.setApplicationNo(FormatUtil.createUuid());
 						af.setFillCardType("2");
 						af.setFillCardTime(endDate+" "+endTime);
 						
