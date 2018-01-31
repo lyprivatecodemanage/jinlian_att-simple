@@ -79,7 +79,7 @@ public class VacationServiceImpl implements VacationService {
 			returndata.setMessage("数据请求成功");
 	        return returndata;
 		}
-		
+		returndata.setData(JSONObject.toJSON(list));
 		returndata.setReturnCode("3000");
 		returndata.setMessage("数据请求成功");
         return returndata;
