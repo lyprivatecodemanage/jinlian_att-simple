@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,10 +19,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.bean.AnnualLeaveJob;
+import com.xiangshangban.att_simple.bean.OperateLog;
 import com.xiangshangban.att_simple.bean.Paging;
 import com.xiangshangban.att_simple.service.AnnualLeaveJobService;
 import com.xiangshangban.att_simple.service.VacationService;
 import com.xiangshangban.att_simple.utils.FormatUtil;
+import com.xiangshangban.att_simple.utils.HttpRequestFactory;
 
 @RestController
 @RequestMapping("/VacationController")
@@ -38,6 +41,9 @@ public class VacationController {
 	
 	@Autowired
 	AnnualLeaveJobService annualLeaveJobService;
+	
+	@Value("${sendUrl}")
+	private String sendUrl;
 	
 	/**
 	 * 焦振/假期列表模糊分页查询
@@ -89,6 +95,17 @@ public class VacationController {
 		
 		result = vacationService.AnnualLeaveAdjustment(vacationId,vacationMold, annualLeave, adjustingInstruction, auditorEmployeeId,year);
 		
+		String i = "";
+		
+		if(vacationMold.equals("0")){
+			i = "+";
+		}
+		if(vacationMold.equals("1")){
+			i = "-";
+		}
+		
+		addOperateLog(auditorEmployeeId, companyId, "假期统计[年假调整]-----单号:"+vacationId+"-----时间："+time.format(new Date())+",-----调整额度:"+i+annualLeave);
+		
 		return result;
 	}
 	
@@ -102,7 +119,7 @@ public class VacationController {
 	public ReturnData AdjustRestAdjustment(@RequestBody String jsonStirng,HttpServletRequest request){
 		ReturnData result = new ReturnData();
 		String auditorEmployeeId = request.getHeader("accessUserId");
-
+		String companyId = request.getHeader("companyId");
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
 		
@@ -114,6 +131,17 @@ public class VacationController {
 		String year = c.get(Calendar.YEAR)+"";
 		
 		result = vacationService.AdjustRestAdjustment(vacationId, vacationMold, adjustRest, adjustingInstruction, auditorEmployeeId,year);
+		
+		String i = "";
+		
+		if(vacationMold.equals("0")){
+			i = "+";
+		}
+		if(vacationMold.equals("1")){
+			i = "-";
+		}
+		
+		addOperateLog(auditorEmployeeId, companyId, "假期统计[调休调整]-----单号:"+vacationId+"-----时间："+time.format(new Date())+",-----调整额度:"+i+adjustRest);
 		
 		return result;
 	}
@@ -157,6 +185,8 @@ public class VacationController {
 					
 			result = vacationService.ResetAnnualLeave(companyId,year,auditorEmployeeId);
 					
+			addOperateLog(auditorEmployeeId, companyId, "假期统计[年假即时一键清零]-----时间："+time.format(new Date()));
+			
 			return result;
 		}else if("1".equals(timingJob)){
 			try {
@@ -170,6 +200,8 @@ public class VacationController {
 				AnnualLeaveJob alj = new AnnualLeaveJob(FormatUtil.createUuid(), companyId, auditorEmployeeId, year, timingJobDate, createJobDate, "1", "2");
 				
 				annualLeaveJobService.insertSelective(alj);
+				
+				addOperateLog(auditorEmployeeId, companyId, "假期统计[年假定时一键清零(新增定时任务)]-----时间："+time.format(new Date()));
 				
 				result.setReturnCode("3000");
 				result.setMessage("数据请求成功");
@@ -213,6 +245,8 @@ public class VacationController {
 			
 			result = vacationService.AnnualLeaveGenerate(companyId, year,auditorEmployeeId);
 			
+			addOperateLog(auditorEmployeeId, companyId, "假期统计[年假即时一键生成]-----时间："+time.format(new Date()));
+			
 			return result;
 		}else if("1".equals(timingJob)){
 			if(StringUtils.isEmpty(timingJobDate)){
@@ -233,6 +267,8 @@ public class VacationController {
 				
 				annualLeaveJobService.insertSelective(alj);
 				
+				addOperateLog(auditorEmployeeId, companyId, "假期统计[年假定时一键生成(新增定时任务)]-----时间："+time.format(new Date()));
+				
 				result.setReturnCode("3000");
 				result.setMessage("数据请求成功");
 				return result;
@@ -249,4 +285,13 @@ public class VacationController {
 		return result;
 	}
 	
+	public String addOperateLog(String accessUserId,String companyId,String content){
+		OperateLog operateLog = new OperateLog();
+		operateLog.setOperateEmpId(accessUserId.trim());
+		operateLog.setOperateEmpCompanyId(companyId.trim());
+		operateLog.setOperateType("3");
+		operateLog.setOperateContent(content);
+		String sendRequet = HttpRequestFactory.sendRequet(sendUrl, operateLog);
+		return sendRequet;
+	}
 }

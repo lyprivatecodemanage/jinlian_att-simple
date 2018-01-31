@@ -138,7 +138,7 @@ public class ClassesServiceImpl implements ClassesService {
 		//自动排班开关
 		Object autoScheduledSwitch = jsonObject.get("autoScheduledSwitch");
 		//自动排班周期
-		Object autoClassesFlag = jsonObject.get("autoClassesFlag");
+		Object autoClassesFlag = jsonObject.get("autoClassesFlag");    
 
 		// 声明要返回的数据
 		boolean result = false;
@@ -147,9 +147,10 @@ public class ClassesServiceImpl implements ClassesService {
 				&& restStartTime != null && restEndTime != null && restDays != null && festivalRestFlag != null
 				&& signInRule != null && signOutRule != null && onPunchCardRule != null && offPunchCardRule != null
 				&& employeeIdList != null && autoClassesFlag != null && isDefault!=null && autoScheduledSwitch!=null) {
+						// 获取要排班的人员列表
+						JSONArray empArray = JSONArray.parseArray(JSONObject.toJSONString(employeeIdList));
 						// 先删除，传递上来的班次类型和使用该班次类型的人员班次信息(删除从指定生效日往后的班次)
 						Map<String, String> delParam = new HashMap<>();
-						
 						delParam.put("companyId", companyId.toString());
 						// 判断是否有操作标志
 						if (operateFlag != null && !operateFlag.toString().trim().equals("")) {
@@ -167,9 +168,61 @@ public class ClassesServiceImpl implements ClassesService {
 									classesEmployeeMapper.updateEmpClassesName(operateFlag.toString().trim(),oldClassesType.getClassesName()+"(历史)");
 								}
 							}
+							//TODO 进行更新操作的时候，会出现取消某个人的情况，需要删除【取消该班次类别的人员】，从新的生效时间往后的班次
+							//查询使用该班次类别的人员列表
+							Map paramMap = new HashMap<>();
+							paramMap.put("companyId", companyId);
+							paramMap.put("classesTypeId",operateFlag.toString().trim());
+							List<Map> selectPointClassesTypeEmp = classesEmployeeMapper.selectPointClassesTypeEmp(paramMap);
+							if(selectPointClassesTypeEmp!=null && selectPointClassesTypeEmp.size()>0){
+								if(empArray.size()>0){ 
+									//判断取消了哪些人
+									Object selectEmpId = null;
+									//遍历该班次类别所有人员
+									outter:
+									for (Map map : selectPointClassesTypeEmp) {
+										selectEmpId = map.get("emp_id");
+										if(selectEmpId!=null && !selectEmpId.toString().trim().isEmpty()){
+											for (int f = 0; f < empArray.size(); f++) {
+												JSONObject upEmpObject = JSONObject.parseObject(empArray.get(f).toString());
+												if(upEmpObject.get("empId").toString().trim().equals(selectEmpId.toString().trim())){ //相等，结束内层循环
+													continue outter;
+												}
+											}
+										}
+										//删除该人员,新生效日之后所有的班次
+										if (validDate != null && !validDate.toString().trim().equals("")) {
+											delParam.put("offSetTime", validDate.toString().trim());
+										} else {
+											Calendar instance = Calendar.getInstance();
+											instance.add(Calendar.DAY_OF_MONTH, 1);
+											delParam.put("offSetTime", new SimpleDateFormat("yyyy-MM-dd").format(instance.getTime()));
+										}
+										delParam.put("empId",selectEmpId.toString().trim());
+										// TODO 删除当前公司,指定人员,指定班次类别,指定日期之后的排班
+										classesEmployeeMapper.deleteAppointClassesTypeEmp(delParam);
+									}
+								}else{ //取消所有人
+									for (Map map : selectPointClassesTypeEmp) {
+										Object object = map.get("emp_id");
+										if(object!=null && !object.toString().trim().isEmpty()){
+											//删除该人员,新生效日之后所有的班次
+											if (validDate != null && !validDate.toString().trim().equals("")) {
+												delParam.put("offSetTime", validDate.toString().trim());
+											} else {
+												Calendar instance = Calendar.getInstance();
+												instance.add(Calendar.DAY_OF_MONTH, 1);
+												delParam.put("offSetTime", new SimpleDateFormat("yyyy-MM-dd").format(instance.getTime()));
+											}
+											delParam.put("empId",object.toString().trim());
+											// TODO 删除当前公司,指定人员,指定班次类别,指定日期之后的排班
+											classesEmployeeMapper.deleteAppointClassesTypeEmp(delParam);
+										}
+									}
+								}
+							}
 						}
-						// 获取要排班的人员列表
-						JSONArray empArray = JSONArray.parseArray(JSONObject.toJSONString(employeeIdList));
+						
 						// 删除人员班次(删除当前设置的班次生效时间之后的所有班次)
 						if (validDate != null && !validDate.toString().trim().equals("")) {
 							delParam.put("offSetTime", validDate.toString().trim());
@@ -181,7 +234,6 @@ public class ClassesServiceImpl implements ClassesService {
 						//TODO 去除一个人一天多个排班的情况
 						for(int g=0;g<empArray.size();g++){
 							JSONObject parseObject = JSONObject.parseObject(empArray.get(g).toString());
-							//设置人员名称
 							delParam.put("empId",parseObject.get("empId").toString().trim());
 							delParam.put("classesTypeId",null);
 							// TODO 删除当前公司,指定人员,指定日期之后的排班
@@ -502,7 +554,15 @@ public class ClassesServiceImpl implements ClassesService {
 					innerMap.put("classesTypeId",listMap.get(key).get(s).get("classesTypeId"));
 					innerMap.put("classesName", listMap.get(key).get(s).get("classesName"));
 					innerMap.put("colorFlag", listMap.get(key).get(s).get("colorFlag"));
-
+					
+					if(listMap.get(key).get(s).get("onDutySchedulingDate")!=null 
+							&& !listMap.get(key).get(s).get("onDutySchedulingDate").toString().trim().isEmpty()){
+						innerMap.put("onDutyTime",listMap.get(key).get(s).get("onDutySchedulingDate").toString().split(" ")[1]);
+						innerMap.put("offDutyTime",listMap.get(key).get(s).get("offDutySchedulingDate").toString().split(" ")[1]);
+					}else{
+						innerMap.put("onDutyTime","");
+						innerMap.put("offDutyTime","");
+					}
 					// 计算当天的工时
 					String onDutyTime = listMap.get(key).get(s).get("onDutySchedulingDate").toString();
 					String offDutyTime = listMap.get(key).get(s).get("offDutySchedulingDate").toString();
@@ -545,6 +605,9 @@ public class ClassesServiceImpl implements ClassesService {
 								emptyMap.put("classesId", "");
 								emptyMap.put("classesTypeId","");
 								emptyMap.put("colorFlag", "");
+								emptyMap.put("onDutyTime","");
+								emptyMap.put("offDutyTime","");
+								
 								// 时间倒退一天
 								firstDate.add(Calendar.DAY_OF_MONTH, -1);
 								// 获取星期数
@@ -565,6 +628,8 @@ public class ClassesServiceImpl implements ClassesService {
 								emptyMap.put("classesId", "");
 								emptyMap.put("classesTypeId","");
 								emptyMap.put("colorFlag", "");
+								emptyMap.put("onDutyTime","");
+								emptyMap.put("offDutyTime","");
 								// 时间增加一天
 								lastDate.add(Calendar.DAY_OF_MONTH, +1);
 								// 获取星期数
@@ -1121,145 +1186,167 @@ public class ClassesServiceImpl implements ClassesService {
 		}
 		// TODO ============》添加人员班次
 		String nextDayFlag = classesType.getMorrowDutyTimeFlag(); // 次日下班标志
-		for (int i = 0; i < empArray.size(); i++) {
-			// 创建Calendar对象
-			Calendar cal = Calendar.getInstance();
-			// 设置班次生效时间
-			if (validDate != null && !validDate.toString().trim().equals("")) {
-				try {
-					Date parse = new SimpleDateFormat("yyyy-MM-dd").parse(validDate.toString().trim());
-					cal.setTime(parse);
-					if (!nextDayFlag.equals("1")) {
-						cal.add(Calendar.DAY_OF_MONTH, -1);
+		if(empArray.size()==0){
+			//更新班次类别的时候，允许人员集合为null
+			result = 1;
+		}else{ //新增班次类别的时候不允许人员集合为null
+			for (int i = 0; i < empArray.size(); i++) {
+				// 创建Calendar对象
+				Calendar cal = Calendar.getInstance();
+				// 设置班次生效时间
+				if (validDate != null && !validDate.toString().trim().equals("")) {
+					try {
+						Date parse = new SimpleDateFormat("yyyy-MM-dd").parse(validDate.toString().trim());
+						cal.setTime(parse);
+						if (!nextDayFlag.equals("1")) {
+							cal.add(Calendar.DAY_OF_MONTH, -1);
+						}
+					} catch (ParseException e) {
+						e.printStackTrace();
 					}
-				} catch (ParseException e) {
-					e.printStackTrace();
 				}
-			}
-			JSONObject emp = JSONObject.parseObject(empArray.get(i).toString());
-			// TODO 做x休x模式，获取工作天数和休息天数(限制for循环的执行次数)
-			int workDaysCount = 0;
-			int restDaysCount = 0;
-			// 初始化工作天数限制变量、休息天数限制变量
-			int workDaysLimit = 0;
-			int restDaysLimit = 0;
-			if (classesType.getRestDays().contains(",")) { // 做x休x模式
-				// 获取工作天数
-				workDaysCount = Integer.parseInt(classesType.getRestDays().trim().split(",")[0]);
-				// 获取休息的天数
-				restDaysCount = Integer.parseInt(classesType.getRestDays().trim().split(",")[1]);
-			}
-			for (int s = 0; s < scheduleDays; s++) {
-
-				// 没有指定生效时间的时候，出现跨日的情况，第一次的排版要添加一天（从次日开始生效）、指定生效时间的时候，指定哪一天就是哪一天生效
-				if (validDate == null || validDate.toString().trim().equals("")) {
-					if (s == 0 && nextDayFlag.equals("1")) {
+				JSONObject emp = JSONObject.parseObject(empArray.get(i).toString());
+				// TODO 做x休x模式，获取工作天数和休息天数(限制for循环的执行次数)
+				int workDaysCount = 0;
+				int restDaysCount = 0;
+				// 初始化工作天数限制变量、休息天数限制变量
+				int workDaysLimit = 0;
+				int restDaysLimit = 0;
+				if (classesType.getRestDays().contains(",")) { // 做x休x模式
+					// 获取工作天数
+					workDaysCount = Integer.parseInt(classesType.getRestDays().trim().split(",")[0]);
+					// 获取休息的天数
+					restDaysCount = Integer.parseInt(classesType.getRestDays().trim().split(",")[1]);
+				}
+				for (int s = 0; s < scheduleDays; s++) {
+					// 没有指定生效时间的时候，出现跨日的情况，第一次的排版要添加一天（从次日开始生效）、指定生效时间的时候，指定哪一天就是哪一天生效
+					if (validDate == null || validDate.toString().trim().equals("")) {
+						if (s == 0 && nextDayFlag.equals("1")) {
+							cal.add(Calendar.DAY_OF_MONTH, 1);
+						}
+					}
+					// 不跨天的时候，天数一天天递增
+					if (!nextDayFlag.equals("1")) {
 						cal.add(Calendar.DAY_OF_MONTH, 1);
 					}
-				}
 
-				// 不跨天的时候，天数一天天递增
-				if (!nextDayFlag.equals("1")) {
-					cal.add(Calendar.DAY_OF_MONTH, 1);
-				}
-
-				ClassesEmployee classesEmployee = new ClassesEmployee();
-				classesEmployee.setId(FormatUtil.createUuid());
-				classesEmployee.setEmpId(emp.get("empId").toString());
-				classesEmployee.setEmpCompanyId(classesType.getCompanyId());
-				classesEmployee.setClassesId(classesType.getId());
-				classesEmployee.setClassesName(classesType.getClassesName());
-				// 设置人员班次上班打卡时间（人员班次从创建班次类型的次日开始排）
-				classesEmployee.setOnDutySchedulingDate(
-						new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime()) + " " + classesType.getOnDutyTime());
-				// 设置上班日期对应的星期
-				if (cal.get(Calendar.DAY_OF_WEEK) - 1 == 0) {
-					classesEmployee.setWeek("7");
-				} else {
-					classesEmployee.setWeek(String.valueOf(cal.get(Calendar.DAY_OF_WEEK) - 1));
-				}
-
-				// 下班时间为次日（需要再递增一天，以此来设置下班时间）
-				if (nextDayFlag.equals("1")) {
-					cal.add(Calendar.DAY_OF_MONTH, 1);
-				}
-				// 下班时间
-				classesEmployee.setOffDutySchedulingDate(
-						new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime()) + " " + classesType.getOffDutyTime());
-				String offset = classesEmployee.getOnDutySchedulingDate().split(" ")[0] + " "+ classesType.getRestTime().split("-")[0] + ":00";
-				String last = classesEmployee.getOnDutySchedulingDate().split(" ")[0] + " "+ classesType.getRestTime().split("-")[1] + ":00";
-				// 两个休息时间点，都是小于上班时间点的时候，表明两个休息时间点都是在第二天(休息时间段：下班的日期+时间点)
-				if (TimeUtil.compareTime(classesEmployee.getOnDutySchedulingDate() + ":00", offset)
-						&& TimeUtil.compareTime(classesEmployee.getOnDutySchedulingDate() + ":00", last)) {
-					// 设置当天的休息时间段：开始时间
-					classesEmployee.setRestStartTime(classesEmployee.getOffDutySchedulingDate().split(" ")[0] + " "+ classesType.getRestTime().split("-")[0]);
-					classesEmployee.setRestEndTime(classesEmployee.getOffDutySchedulingDate().split(" ")[0] + " "+ classesType.getRestTime().split("-")[1]);
-				} else if (TimeUtil.compareTime(offset, last)) { // 休息时间结束点<休息时间开始点
-					// （表明时间跨天）
-					classesEmployee.setRestStartTime(classesEmployee.getOnDutySchedulingDate().split(" ")[0] + " "+ classesType.getRestTime().split("-")[0]);
-					classesEmployee.setRestEndTime(classesEmployee.getOffDutySchedulingDate().split(" ")[0] + " "+ classesType.getRestTime().split("-")[1]);
-				} else {
-					// 默认休息时间点在一天
-					classesEmployee.setRestStartTime(classesEmployee.getOnDutySchedulingDate().split(" ")[0] + " "+ classesType.getRestTime().split("-")[0]);
-					classesEmployee.setRestEndTime(classesEmployee.getOnDutySchedulingDate().split(" ")[0] + " "+ classesType.getRestTime().split("-")[1]);
-				}
-				// 设置签到签退规则
-				classesEmployee.setSignInRule(classesType.getSignInRule());
-				classesEmployee.setSignOutRule(classesType.getSignOutRule());
-				// 设置打卡规则
-				classesEmployee.setOnPunchCardRule(classesType.getOnPunchCardTime());
-				classesEmployee.setOffPunchCardRule(classesType.getOffPunchCardTime());
-				// 添加当前日期
-				classesEmployee.setTheDate(classesEmployee.getOnDutySchedulingDate().split(" ")[0]);
-				// 设置分隔颜色
-				classesEmployee.setDivideColor(String.valueOf(access_count));
-				
-				
-				//TODO ##################################################################
-				//		下方操作：对【一周的休息日、法定节假日、法定休息日、工作日】进行判断，限制班次的添加
-				//TODO ##################################################################
-				//查询所有的:法定节假日、法定休息日、工作日信息
-				List<Festival> allFestivalInfo = festivalMapper.selectAllFestivalInfo();
-				//初始化日期类型【法定节假日、法定休息日、工作日】变量
-				String dateType = "";
-				for (Festival festival : allFestivalInfo) {
-					if (!classesEmployee.getOnDutySchedulingDate().equals("")) {
-						if (classesEmployee.getOnDutySchedulingDate().split(" ")[0].equals(festival.getFestivalDate())) {
-							//获取该排班日期的类型
-							dateType = festival.getWorkType();
-							break;
-						}
+					ClassesEmployee classesEmployee = new ClassesEmployee();
+					classesEmployee.setId(FormatUtil.createUuid());
+					classesEmployee.setEmpId(emp.get("empId").toString());
+					classesEmployee.setEmpCompanyId(classesType.getCompanyId());
+					classesEmployee.setClassesId(classesType.getId());
+					classesEmployee.setClassesName(classesType.getClassesName());
+					// 设置人员班次上班打卡时间（人员班次从创建班次类型的次日开始排）
+					classesEmployee.setOnDutySchedulingDate(
+							new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime()) + " " + classesType.getOnDutyTime());
+					// 设置上班日期对应的星期
+					if (cal.get(Calendar.DAY_OF_WEEK) - 1 == 0) {
+						classesEmployee.setWeek("7");
+					} else {
+						classesEmployee.setWeek(String.valueOf(cal.get(Calendar.DAY_OF_WEEK) - 1));
 					}
-				}
-				if(dateType.equals("")){ //=====>该排班日期，不是【法定节假日、法定休息日、工作日】
-					if (classesType.getRestDays().contains(",")) { // 做x休x模式
-						workDaysLimit++;
-						if (workDaysLimit > workDaysCount) {
-							restDaysLimit++;
-							if (restDaysLimit <= restDaysCount) {
-								// 设置休息日的班次
-								setRestDaysClasses(classesEmployee);
-							} else {
-								// 本循环周期结束，重新设置循环次数
-								// (workDaysLimit设置为0的时候将会，除第一轮外<第一轮是从workDaysLimit++后，也就是=1才开始的>，其它轮都会多一次)
-								workDaysLimit = 1;
-								restDaysLimit = 0;
+
+					// 下班时间为次日（需要再递增一天，以此来设置下班时间）
+					if (nextDayFlag.equals("1")) {
+						cal.add(Calendar.DAY_OF_MONTH, 1);
+					}
+					// 下班时间
+					classesEmployee.setOffDutySchedulingDate(
+							new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime()) + " " + classesType.getOffDutyTime());
+					String offset = classesEmployee.getOnDutySchedulingDate().split(" ")[0] + " "+ classesType.getRestTime().split("-")[0] + ":00";
+					String last = classesEmployee.getOnDutySchedulingDate().split(" ")[0] + " "+ classesType.getRestTime().split("-")[1] + ":00";
+					// 两个休息时间点，都是小于上班时间点的时候，表明两个休息时间点都是在第二天(休息时间段：下班的日期+时间点)
+					if (TimeUtil.compareTime(classesEmployee.getOnDutySchedulingDate() + ":00", offset)
+							&& TimeUtil.compareTime(classesEmployee.getOnDutySchedulingDate() + ":00", last)) {
+						// 设置当天的休息时间段：开始时间
+						classesEmployee.setRestStartTime(classesEmployee.getOffDutySchedulingDate().split(" ")[0] + " "+ classesType.getRestTime().split("-")[0]);
+						classesEmployee.setRestEndTime(classesEmployee.getOffDutySchedulingDate().split(" ")[0] + " "+ classesType.getRestTime().split("-")[1]);
+					} else if (TimeUtil.compareTime(offset, last)) { // 休息时间结束点<休息时间开始点
+						// （表明时间跨天）
+						classesEmployee.setRestStartTime(classesEmployee.getOnDutySchedulingDate().split(" ")[0] + " "+ classesType.getRestTime().split("-")[0]);
+						classesEmployee.setRestEndTime(classesEmployee.getOffDutySchedulingDate().split(" ")[0] + " "+ classesType.getRestTime().split("-")[1]);
+					} else {
+						// 默认休息时间点在一天
+						classesEmployee.setRestStartTime(classesEmployee.getOnDutySchedulingDate().split(" ")[0] + " "+ classesType.getRestTime().split("-")[0]);
+						classesEmployee.setRestEndTime(classesEmployee.getOnDutySchedulingDate().split(" ")[0] + " "+ classesType.getRestTime().split("-")[1]);
+					}
+					// 设置签到签退规则
+					classesEmployee.setSignInRule(classesType.getSignInRule());
+					classesEmployee.setSignOutRule(classesType.getSignOutRule());
+					// 设置打卡规则
+					classesEmployee.setOnPunchCardRule(classesType.getOnPunchCardTime());
+					classesEmployee.setOffPunchCardRule(classesType.getOffPunchCardTime());
+					// 添加当前日期
+					classesEmployee.setTheDate(classesEmployee.getOnDutySchedulingDate().split(" ")[0]);
+					// 设置分隔颜色
+					classesEmployee.setDivideColor(String.valueOf(access_count));
+					
+					//判断当前的班次类别是否开启“法定节假日休息的按钮”
+					if(classesType.getFestivalRestFlag().equals("1")){ //开启法定节假日休息（要对：法定休息日，法定工作日，法定休息日进行限定）
+						//TODO ##################################################################
+						//		下方操作：对【一周的休息日、法定节假日、法定休息日、工作日】进行判断，限制班次的添加
+						//TODO ##################################################################
+						//查询所有的:法定节假日、法定休息日、工作日信息
+						List<Festival> allFestivalInfo = festivalMapper.selectAllFestivalInfo();
+						//初始化日期类型【法定节假日、法定休息日、工作日】变量
+						String dateType = "";
+						for (Festival festival : allFestivalInfo) {
+							if (!classesEmployee.getOnDutySchedulingDate().equals("")) {
+								if (classesEmployee.getOnDutySchedulingDate().split(" ")[0].equals(festival.getFestivalDate())) {
+									//获取该排班日期的类型
+									dateType = festival.getWorkType();
+									break;
+								}
 							}
 						}
-					} else if (classesType.getRestDays().contains(classesEmployee.getWeek())) { // 周循环的模式(排除一周的休息日)
-						// 设置休息日的班次
-						setRestDaysClasses(classesEmployee);
+						if(dateType.equals("")){ //=====>该排班日期，不是【法定节假日、法定休息日、工作日】
+							if (classesType.getRestDays().contains(",")) { // 做x休x模式
+								workDaysLimit++;
+								if (workDaysLimit > workDaysCount) {
+									restDaysLimit++;
+									if (restDaysLimit <= restDaysCount) {
+										// 设置休息日的班次
+										setRestDaysClasses(classesEmployee);
+									} else {
+										// 本循环周期结束，重新设置循环次数
+										// (workDaysLimit设置为0的时候将会，除第一轮外<第一轮是从workDaysLimit++后，也就是=1才开始的>，其它轮都会多一次)
+										workDaysLimit = 1;
+										restDaysLimit = 0;
+									}
+								}
+							} else if (classesType.getRestDays().contains(classesEmployee.getWeek())) { // 周循环的模式(排除一周的休息日)
+								// 设置休息日的班次
+								setRestDaysClasses(classesEmployee);
+							}
+						}else if(dateType.equals("0")){ //==============>法定节假日（不进行排班）
+							// 设置休息日的班次
+							setRestDaysClasses(classesEmployee);
+						}else if(dateType.equals("1")){ //==============>法定休息日（不进行排班）
+							// 设置休息日的班次
+							setRestDaysClasses(classesEmployee);
+						}
+					}else{ //未开启法定节假日休息（按照正常流程排班）
+						if (classesType.getRestDays().contains(",")) { // 做x休x模式
+							workDaysLimit++;
+							if (workDaysLimit > workDaysCount) {
+								restDaysLimit++;
+								if (restDaysLimit <= restDaysCount) {
+									// 设置休息日的班次
+									setRestDaysClasses(classesEmployee);
+								} else {
+									// 本循环周期结束，重新设置循环次数
+									// (workDaysLimit设置为0的时候将会，除第一轮外<第一轮是从workDaysLimit++后，也就是=1才开始的>，其它轮都会多一次)
+									workDaysLimit = 1;
+									restDaysLimit = 0;
+								}
+							}
+						} else if (classesType.getRestDays().contains(classesEmployee.getWeek())) { // 周循环的模式(排除一周的休息日)
+							// 设置休息日的班次
+							setRestDaysClasses(classesEmployee);
+						}
 					}
-				}else if(dateType.equals("0")){ //==============>法定节假日（如果设置了：休息，则不进行排班）
-					if(classesType.getFestivalRestFlag().equals("1")){
-						// 设置休息日的班次
-						setRestDaysClasses(classesEmployee);
-					}
-				}else if(dateType.equals("1")){ //==============>法定休息日（不进行排班）
-					// 设置休息日的班次
-					setRestDaysClasses(classesEmployee);
+					result = classesEmployeeMapper.insertSelective(classesEmployee);
 				}
-				result = classesEmployeeMapper.insertSelective(classesEmployee);
 			}
 		}
 		return result;
