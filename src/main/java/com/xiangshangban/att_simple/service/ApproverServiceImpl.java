@@ -316,17 +316,13 @@ public class ApproverServiceImpl implements ApproverService {
 	private int updateVacation(String leaveType,String endDate,String leaveDay,String auditorEmployeeId,String companyId,String adjustingInstruction){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
+		
+		
 		String year = endDate.substring(0,4);
 		//年假
 		if(leaveType.equals("0")){
 			
-			if(Double.parseDouble(leaveDay)%8==0){
-				leaveDay = String.valueOf(Double.parseDouble(leaveDay)/8+0.0);
-			}else if(Double.parseDouble(leaveDay)%8<=4){
-				leaveDay = String.valueOf(Double.parseDouble(leaveDay)/8+0.5);
-			}else if(Double.parseDouble(leaveDay)%8>4){
-				leaveDay = String.valueOf(Double.parseDouble(leaveDay)/8+1);
-			}
+			leaveDay = String.valueOf(Math.ceil(Double.parseDouble(leaveDay)/4)/2);
 			
 			year = String.valueOf(Integer.parseInt(year)-1);
 			//查询前一年假期余额
