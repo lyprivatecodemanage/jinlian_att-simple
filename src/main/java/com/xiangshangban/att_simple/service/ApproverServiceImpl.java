@@ -316,8 +316,6 @@ public class ApproverServiceImpl implements ApproverService {
 	private int updateVacation(String leaveType,String endDate,String leaveDay,String auditorEmployeeId,String companyId,String adjustingInstruction){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
-		
-		
 		String year = endDate.substring(0,4);
 		//年假
 		if(leaveType.equals("0")){
