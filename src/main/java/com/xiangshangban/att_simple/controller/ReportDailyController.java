@@ -132,7 +132,7 @@ public class ReportDailyController {
 	 * @return
 	 */
 	@RequestMapping(value="export/ReportDailyExcel",produces="application/json;charset=UTF-8",method=RequestMethod.POST)
-	public ReturnData ReportDailyExcel(@RequestBody String objectString,HttpServletRequest request,HttpServletResponse response){
+	public void ReportDailyExcel(@RequestBody String objectString,HttpServletRequest request,HttpServletResponse response){
 		ReturnData result = new ReturnData();
 		try {
 			response.setContentType("octets/stream"); 
@@ -160,12 +160,11 @@ public class ReportDailyController {
 			OutputStream out = response.getOutputStream();
 			// 获取请求头信息
 			String companyId = request.getHeader("companyId");
-			result = reportDailyService.ReportDailyExcel(excelName, out,companyId, beginDate, endDate);
+			reportDailyService.ReportDailyExcel(excelName, out,companyId, beginDate, endDate);
 			out.flush();  
 		} catch (IOException e) {
 			System.out.println("导出文件输出流出错了！"+e);
 		}
-		return result;
 	}
 	
 }

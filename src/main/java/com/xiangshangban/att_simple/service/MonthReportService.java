@@ -38,5 +38,5 @@ public interface MonthReportService {
 	 * @param month
 	 * @return
 	 */
-	ReturnData MonthReportExcel(String excelName,OutputStream out,String companyId,String year,String month);
+	void MonthReportExcel(String excelName,OutputStream out,String companyId,String year,String month);
 }
