@@ -268,13 +268,18 @@ public class ApproverServiceImpl implements ApproverService {
 	 * web审批中心-列表分页,条件搜索
 	 */
 	@Override
-	public List<ApplicationTotalRecord> webApproverCentreList(String companyId,String page,String count,
+	public Map<String,Object> webApproverCentreList(String companyId,String page,String count,
 			String departmentId,String applicationType,String isComplete,
-			String employeeName,String startTime,String endTime) {
-		ReturnData returnData = new ReturnData();
-		List<ApplicationTotalRecord> selectWebApproverList = applicationTotalRecordMapper.selectWebApproverList(companyId, 
-				page, count, departmentId, applicationType, isComplete, employeeName, startTime, endTime);
-		return selectWebApproverList;
+			String employeeName,String startTime,String endTime,String orderBy) {
+		Map<String,Object> result = new HashMap<String,Object>();
+		List<ApplicationTotalRecord> selectWebApproverList = applicationTotalRecordMapper.selectWebApproverList(companyId,
+				page, count, departmentId, applicationType, isComplete, employeeName, startTime, endTime, orderBy);
+		//总记录数
+		int i = applicationTotalRecordMapper.selectWebApproverListCount(companyId, 
+				page, count, departmentId, applicationType, isComplete, employeeName, startTime, endTime, orderBy);
+		result.put("selectWebApproverList", selectWebApproverList);
+		result.put("count", i);
+		return result;
 	}
 	/**
 	 * web审批中心-查看

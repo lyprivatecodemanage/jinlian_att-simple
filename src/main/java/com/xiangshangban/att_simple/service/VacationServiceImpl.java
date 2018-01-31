@@ -66,7 +66,7 @@ public class VacationServiceImpl implements VacationService {
 
 		List<Vacation> list = vacationMapper.SelectFuzzyPagel(paging);
 		
-		if(list != null){
+		if(list.size()>0){
 			//查询出条件筛选后的总条数
 			int count = vacationMapper.SelectTotalNumber(paging.getCompanyId(), paging.getDepartmentId(), paging.getEmployeeName(),paging.getYear());
 			
@@ -79,9 +79,9 @@ public class VacationServiceImpl implements VacationService {
 			returndata.setMessage("数据请求成功");
 	        return returndata;
 		}
-		
-		returndata.setReturnCode("3001");
-		returndata.setMessage("服务器错误");
+		returndata.setData(JSONObject.toJSON(list));
+		returndata.setReturnCode("3000");
+		returndata.setMessage("数据请求成功");
         return returndata;
 	}
 
@@ -336,8 +336,7 @@ public class VacationServiceImpl implements VacationService {
 	public ReturnData AnnualLeaveGenerate(String companyId,String year,String auditorEmployeeId) {
 		// TODO Auto-generated method stub
 		ReturnData returndata = new ReturnData();
-		
-			boolean flag = false;
+		try{
 		
 			//查询该公司所有人员
 			List<Employee> list = employeeDao.findAllEmployeeByCompanyId(companyId);
@@ -382,8 +381,6 @@ public class VacationServiceImpl implements VacationService {
 								
 								if(num>0){
 									AnnualLeaveAdjustment(vacation.getVacationId(),"0",String.valueOf(AVday),"年假一键生成", auditorEmployeeId, year);
-									
-									flag = true;
 								}
 							}
 						}else{
@@ -402,19 +399,15 @@ public class VacationServiceImpl implements VacationService {
 							
 							if(num>0){
 								AnnualLeaveAdjustment(v.getVacationId(),"0",String.valueOf(AVday),"年假一键生成", auditorEmployeeId, year);
-								
-								flag = true;
 							}
 						}
 					}
 				}
 			}
-		
-		if(flag){
 			returndata.setReturnCode("3000");
 			returndata.setMessage("数据请求成功");
 			return returndata;
-		}else{
+		}catch(Exception e){
 			returndata.setReturnCode("3001");
 			returndata.setMessage("服务器错误");
 			return returndata;
