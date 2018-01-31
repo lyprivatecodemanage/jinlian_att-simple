@@ -51,7 +51,7 @@ public class Scheduler {
 	/**
 	 * 月报计算（测试用）
 	 */
-	@Scheduled(cron=REPORT_MONTH)
+	//@Scheduled(cron=REPORT_MONTH)
 	public void countReportMonth(){
 		logger.info("月报计算开始时间"+TimeUtil.getCurrentTime()); 
 		String countDate = TimeUtil.getCurrentDate();
