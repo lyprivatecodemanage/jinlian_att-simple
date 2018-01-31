@@ -395,11 +395,11 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 		List<ReportDaily> list = reportDailyMapper.selectReportDaily(paging);
 		
 		for (ReportDaily reportDaily : list) {
-			if(Integer.parseInt(reportDaily.getRealWorkTime())%60<30){
-				reportDaily.setRealWorkTime(String.valueOf(Integer.parseInt(reportDaily.getRealWorkTime())/60+0.0));
-			}else if(Integer.parseInt(reportDaily.getRealWorkTime())%60>=30){
-				reportDaily.setRealWorkTime(String.valueOf(Integer.parseInt(reportDaily.getRealWorkTime())/60+0.5));
-			}
+				reportDaily.setRealWorkTime(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getRealWorkTime().trim())/30)/2));
+				reportDaily.setNormalOverWork(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getNormalOverWork().trim())/30)/2));
+				reportDaily.setLeaveDate(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getLeaveDate().trim())/30)/2));
+				reportDaily.setEvectionTimeWork(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getEvectionTimeWork().trim())/30)/2));
+				reportDaily.setOutTimeWork(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getOutTimeWork().trim())/30)/2));
 		}
 		
 		if(list!=null){

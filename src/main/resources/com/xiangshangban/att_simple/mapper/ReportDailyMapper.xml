@@ -176,10 +176,10 @@
 	ON e.department_id = d.department_id and e.company_id = d.company_id
 	where rd.company_id = #{companyId}
 	<if test="beginDate != null">
-		and att_date <![CDATA[>]]> #{beginDate} 
+		and att_date <![CDATA[>=]]> #{beginDate} 
 	</if>
 	<if test="endDate != null">
-		and att_date <![CDATA[<]]> #{endDate} 
+		and att_date <![CDATA[<=]]> #{endDate} 
 	</if>
 	)t
   </select>
@@ -195,10 +195,10 @@
 	ON e.department_id = d.department_id and e.company_id = d.company_id
 	where rd.company_id = #{companyId}
 	<if test="beginDate != null">
-		and att_date <![CDATA[>]]> #{beginDate} 
+		and att_date <![CDATA[>=]]> #{beginDate} 
 	</if>
 	<if test="endDate != null">
-		and att_date <![CDATA[<]]> #{endDate} 
+		and att_date <![CDATA[<=]]> #{endDate} 
 	</if>
 	<if test="departmentId != null">
 		and rd.dept_id = #{departmentId}
@@ -241,10 +241,10 @@
 	ON e.department_id = d.department_id and e.company_id = d.company_id
 	where rd.company_id = #{companyId}
 	<if test="beginDate != null">
-		and att_date <![CDATA[>]]> #{beginDate} 
+		and att_date <![CDATA[>=]]> #{beginDate} 
 	</if>
 	<if test="endDate != null">
-		and att_date <![CDATA[<]]> #{endDate} 
+		and att_date <![CDATA[<=]]> #{endDate} 
 	</if>
 	<if test="departmentId != null">
 		and rd.dept_id = #{departmentId}

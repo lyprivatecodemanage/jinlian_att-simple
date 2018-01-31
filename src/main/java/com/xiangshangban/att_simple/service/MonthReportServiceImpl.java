@@ -96,16 +96,11 @@ public class MonthReportServiceImpl implements MonthReportService {
 		List<ReportDaily> list = reportDailyMapper.selectMonthReportFuzzy(paging);
 		
 		for (ReportDaily reportDaily : list) {
-			if(Integer.parseInt(reportDaily.getRealWorkTime())%60>=30){
-				reportDaily.setRealWorkTime(String.valueOf(Integer.parseInt(reportDaily.getRealWorkTime())/60+0.5));
-			}else if(Integer.parseInt(reportDaily.getRealWorkTime())%60>=0){
-				reportDaily.setRealWorkTime(String.valueOf(Integer.parseInt(reportDaily.getRealWorkTime())/60+0.0));
-			}
-			if(Integer.parseInt(reportDaily.getWorkTime())%60>=30){
-				reportDaily.setWorkTime(String.valueOf(Integer.parseInt(reportDaily.getWorkTime())/60+0.5));
-			}else if(Integer.parseInt(reportDaily.getWorkTime())%60>=0){
-				reportDaily.setWorkTime(String.valueOf(Integer.parseInt(reportDaily.getWorkTime())/60+0.0));
-			}
+			reportDaily.setWorkTime(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getWorkTime())/30)/2));
+			reportDaily.setRealWorkTime(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getRealWorkTime())/30)/2));
+			reportDaily.setMatterLeave(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getMatterLeave())/30)/2));
+			reportDaily.setLeaveAnnual(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getLeaveAnnual())/30)/2));
+			reportDaily.setLeaveDaysOff(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getLeaveDaysOff())/30)/2));
 		}
 		
 		if(list!=null){
