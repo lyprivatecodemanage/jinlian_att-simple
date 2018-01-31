@@ -101,6 +101,11 @@ public class MonthReportServiceImpl implements MonthReportService {
 			}else if(Integer.parseInt(reportDaily.getRealWorkTime())%60>=0){
 				reportDaily.setRealWorkTime(String.valueOf(Integer.parseInt(reportDaily.getRealWorkTime())/60+0.0));
 			}
+			if(Integer.parseInt(reportDaily.getWorkTime())%60>=30){
+				reportDaily.setWorkTime(String.valueOf(Integer.parseInt(reportDaily.getWorkTime())/60+0.5));
+			}else if(Integer.parseInt(reportDaily.getWorkTime())%60>=0){
+				reportDaily.setWorkTime(String.valueOf(Integer.parseInt(reportDaily.getWorkTime())/60+0.0));
+			}
 		}
 		
 		if(list!=null){
@@ -121,12 +126,10 @@ public class MonthReportServiceImpl implements MonthReportService {
 	}
 
 	@Override
-	public ReturnData MonthReportExcel(String excelName, OutputStream out, String companyId, String year,
+	public void MonthReportExcel(String excelName, OutputStream out, String companyId, String year,
 			String month) {
 		// TODO Auto-generated method stub
-		ReturnData returndata = new ReturnData();
-		
-		String attDate = year+""+month;
+		String attDate = year+"-"+month;
 		
 		List<ReportDaily> list = reportDailyMapper.MonthReportExcel(companyId, attDate);
 		
@@ -207,15 +210,8 @@ public class MonthReportServiceImpl implements MonthReportService {
         try {  
             workbook.write(out); 
             
-            returndata.setReturnCode("3000");
-    		returndata.setMessage("数据请求成功");
-    		return returndata;
         } catch (IOException e) {  
             e.printStackTrace();  
-            
-            returndata.setReturnCode("3001");
-    		returndata.setMessage("服务器错误");
-    		return returndata;
         }
 	}
 

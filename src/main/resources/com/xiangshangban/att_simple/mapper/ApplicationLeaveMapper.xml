@@ -31,7 +31,7 @@
   <sql id="Leave_List">
     application_no, employee_id, department_id, company_id, leave_type, start_time, 
     end_time, reason, upload_voucher, approver, copy_to_person, operater_time, is_transfer, 
-    to_number(application_hour,'9999') application_hour, application_time,employee_name,department_name,leave_type_name,approver_name
+    to_number(application_hour,'9999'to_number(application_hour,'9999')me,employee_name,department_name,leave_type_name,approver_name
   </sql>
    
    <select id="selectLeaveKeyData" parameterType="java.lang.String" resultType="java.lang.Integer">
@@ -94,12 +94,9 @@
 	l.copy_to_person, l.operater_time,l.is_transfer, 
 	application_hour, l.application_time,to_char(to_date(l.application_time,'YYYY'),'YYYY') AS year_,to_char(to_date(l.application_time,'YYYY-mm'),'mm') AS month_
 	FROM att_simple.application_leave_ l
-	LEFT JOIN organization.department_ d
-	on l.department_id = d.department_id and l.company_id = d.company_id
-	LEFT JOIN organization.employee_ e
-	on d.company_id = e.company_id and d.department_id = e.department_id 
-	LEFT JOIN application_total_record_ r 
-	ON l.application_no = r.application_no and e.company_id = r.company_id and e.employee_id = r.application_id
+	LEFT JOIN application_total_record_ r ON l.application_no = r.application_no 
+	LEFT JOIN organization.employee_ e on e.employee_id = r.application_id and r.company_id = e.company_id
+	LEFT JOIN organization.department_ d on e.department_id = d.department_id and e.company_id = d.company_id 
 	where r.is_complete = '1'
 	and l.company_id = #{companyId}
 		<if test="departmentId != null">

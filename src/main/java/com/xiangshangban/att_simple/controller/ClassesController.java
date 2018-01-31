@@ -81,6 +81,8 @@ public class ClassesController {
 		}else{
 			result = "参数【公司ID】异常";
 		}
+		
+		
 		return result;
 	}
 	
@@ -157,9 +159,9 @@ public class ClassesController {
 			//查询当前公司已经存在的班次类别ID和Name
 			List<ClassesType> queryAllClassesIdAndName = classesService.queryAllClassesIdAndName(companyId);
 			boolean addNewClassesType = false;
-			if(queryAllClassesIdAndName!=null && queryAllClassesIdAndName.size()>5){
+			if(queryAllClassesIdAndName!=null && queryAllClassesIdAndName.size()>6){
 				returnData.setReturnCode("3001");
-				returnData.setMessage("班次类别最多存在5个,当前不能进行新增操作");
+				returnData.setMessage("超过最大班次个数");
 			}else{
 				//判断(新增/修改)的班次类别名称，是不是和公司已有的重名
 				JSONObject jsonObject = JSONObject.parseObject(requestParam);
@@ -194,16 +196,16 @@ public class ClassesController {
 					}
 				}
 				addNewClassesType = classesService.addNewClassesType(requestParam, companyId.trim());
-			}
-			if(addNewClassesType){
-				returnData.setReturnCode("3000");
-				returnData.setMessage("排班成功");
-				//增加操作日志:记录web端的操作
-				String addOperateLog = addOperateLog(accessUserId,companyId,"在班次设置界面(新增/更新)班次设置");
-				logger.info("【(新增/修改)班次设置】------>操作日志"+addOperateLog);
-			}else{
-				returnData.setReturnCode("3001");
-				returnData.setMessage("排班失败");
+				if(addNewClassesType){
+					returnData.setReturnCode("3000");
+					returnData.setMessage("排班成功");
+					//增加操作日志:记录web端的操作
+					String addOperateLog = addOperateLog(accessUserId,companyId,"在班次设置界面(新增/更新)班次设置");
+					logger.info("【(新增/修改)班次设置】------>操作日志"+addOperateLog);
+				}else{
+					returnData.setReturnCode("3001");
+					returnData.setMessage("排班失败");
+				}
 			}
 		}else{
 			returnData.setReturnCode("3013");

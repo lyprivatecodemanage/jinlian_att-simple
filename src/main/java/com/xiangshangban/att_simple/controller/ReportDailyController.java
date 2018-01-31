@@ -2,6 +2,8 @@ package com.xiangshangban.att_simple.controller;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,16 +20,23 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.xiangshangban.att_simple.bean.OperateLog;
 import com.xiangshangban.att_simple.bean.Paging;
 import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.service.ReportDailyService;
+import com.xiangshangban.att_simple.utils.HttpRequestFactory;
 
 @RestController
 @RequestMapping("/ReportDailyController")
 public class ReportDailyController {
 
+	SimpleDateFormat time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	
 	@Autowired
 	ReportDailyService reportDailyService;
+	
+	@Value("${sendUrl}")
+	private String sendUrl;
 	
 	/**
 	 * 焦振/查询日报关键数据
@@ -53,9 +63,12 @@ public class ReportDailyController {
 		ReturnData result = new ReturnData();
 		JSONObject obj = JSON.parseObject(objectString);
 		List<String> reportIds =JSONArray.parseArray(obj.get("reportIds").toString(),String.class);
+		String auditorEmployeeId = request.getHeader("accessUserId");
 		String companyId = request.getHeader("companyId");
 		
 		result = reportDailyService.oneKeyChecking(reportIds,companyId);
+		
+		addOperateLog(auditorEmployeeId, companyId, "考勤日报[一键补勤]");
 		
 		return result;
 	}
@@ -112,6 +125,7 @@ public class ReportDailyController {
 		ReturnData result = new ReturnData();
 		JSONObject obj = JSON.parseObject(objectString);
 		String companyId = request.getHeader("companyId");
+		String auditorEmployeeId = request.getHeader("accessUserId");
 		
 		String reportId = obj.getString("reportId");
 		String beginDate = obj.getString("beginDate");
@@ -121,6 +135,8 @@ public class ReportDailyController {
 		String reason = obj.getString("reason");
 		
 		result = reportDailyService.replaceReplenishChecking(companyId,reportId, beginDate, beginTime, endDate, endTime, reason);
+		
+		addOperateLog(auditorEmployeeId, companyId, "考勤日报[代补勤]");
 		
 		return result;
 	}
@@ -132,8 +148,7 @@ public class ReportDailyController {
 	 * @return
 	 */
 	@RequestMapping(value="export/ReportDailyExcel",produces="application/json;charset=UTF-8",method=RequestMethod.POST)
-	public ReturnData ReportDailyExcel(@RequestBody String objectString,HttpServletRequest request,HttpServletResponse response){
-		ReturnData result = new ReturnData();
+	public void ReportDailyExcel(@RequestBody String objectString,HttpServletRequest request,HttpServletResponse response){
 		try {
 			response.setContentType("octets/stream"); 
 			String agent = request.getHeader("USER-AGENT");
@@ -160,12 +175,20 @@ public class ReportDailyController {
 			OutputStream out = response.getOutputStream();
 			// 获取请求头信息
 			String companyId = request.getHeader("companyId");
-			result = reportDailyService.ReportDailyExcel(excelName, out,companyId, beginDate, endDate);
+			reportDailyService.ReportDailyExcel(excelName, out,companyId, beginDate, endDate);
 			out.flush();  
 		} catch (IOException e) {
 			System.out.println("导出文件输出流出错了！"+e);
 		}
-		return result;
 	}
 	
+	public String addOperateLog(String accessUserId,String companyId,String content){
+		OperateLog operateLog = new OperateLog();
+		operateLog.setOperateEmpId(accessUserId.trim());
+		operateLog.setOperateEmpCompanyId(companyId.trim());
+		operateLog.setOperateType("3");
+		operateLog.setOperateContent(content);
+		String sendRequet = HttpRequestFactory.sendRequet(sendUrl, operateLog);
+		return sendRequet;
+	}
 }

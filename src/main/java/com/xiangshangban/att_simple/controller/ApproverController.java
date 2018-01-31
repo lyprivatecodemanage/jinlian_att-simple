@@ -389,6 +389,7 @@ public class ApproverController {
 		String employeeName = "";
 		String startTime = "";
 		String endTime = "";
+		String orderBy = "";
 		try{
 			employeeId = request.getHeader("accessUserId");//员工id
 			companyId = request.getHeader("companyId");//公司id
@@ -399,15 +400,16 @@ public class ApproverController {
 			}
 			try{
 				JSONObject jobj = JSON.parseObject(jsonString);
-				page = jobj.getString("page");
-				count = jobj.getString("count");
+				page = jobj.get("pageNum").toString();
+				count = jobj.getString("pageRecordNum");
 				departmentId = jobj.getString("departmentId");
 				applicationType = jobj.getString("applicationType");
 				isComplete = jobj.getString("isComplete");
 				employeeName = jobj.getString("employeeName");
 				startTime = jobj.getString("startTime");
 				endTime = jobj.getString("endTime");
-				if(StringUtils.isEmpty(page)||StringUtils.isEmpty(count)){
+				orderBy = jobj.getString("orderBy");
+				if(StringUtils.isEmpty(page)||StringUtils.isEmpty(count)||StringUtils.isEmpty(orderBy)){
 					returnData.setMessage("必传参数为空");
 					returnData.setReturnCode("3006");
 					return returnData;
@@ -427,12 +429,15 @@ public class ApproverController {
 				endTime = endTime+" 23:59:59";
 			}
 			page = String.valueOf((Integer.valueOf(page)-1)*Integer.valueOf(count));
-			List<ApplicationTotalRecord> webApproverCentreList = approverService.webApproverCentreList(companyId,
+			Map<String,Object> result = approverService.webApproverCentreList(companyId,
 					page, count, departmentId, applicationType,
-					isComplete, employeeName, startTime, endTime);
+					isComplete, employeeName, startTime, endTime, orderBy);
+			double totalPage = Double.valueOf(result.get("count").toString())/Double.valueOf(count);
+			returnData.setPagecountNum((int)Math.ceil(totalPage));
+			returnData.setTotalPages(result.get("count"));
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
-			returnData.setData(webApproverCentreList);
+			returnData.setData(result.get("selectWebApproverList"));
 			return returnData;
 		}catch(Exception e){
 			logger.info(e);

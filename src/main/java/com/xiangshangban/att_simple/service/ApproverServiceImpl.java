@@ -268,13 +268,18 @@ public class ApproverServiceImpl implements ApproverService {
 	 * web审批中心-列表分页,条件搜索
 	 */
 	@Override
-	public List<ApplicationTotalRecord> webApproverCentreList(String companyId,String page,String count,
+	public Map<String,Object> webApproverCentreList(String companyId,String page,String count,
 			String departmentId,String applicationType,String isComplete,
-			String employeeName,String startTime,String endTime) {
-		ReturnData returnData = new ReturnData();
-		List<ApplicationTotalRecord> selectWebApproverList = applicationTotalRecordMapper.selectWebApproverList(companyId, 
-				page, count, departmentId, applicationType, isComplete, employeeName, startTime, endTime);
-		return selectWebApproverList;
+			String employeeName,String startTime,String endTime,String orderBy) {
+		Map<String,Object> result = new HashMap<String,Object>();
+		List<ApplicationTotalRecord> selectWebApproverList = applicationTotalRecordMapper.selectWebApproverList(companyId,
+				page, count, departmentId, applicationType, isComplete, employeeName, startTime, endTime, orderBy);
+		//总记录数
+		int i = applicationTotalRecordMapper.selectWebApproverListCount(companyId, 
+				page, count, departmentId, applicationType, isComplete, employeeName, startTime, endTime, orderBy);
+		result.put("selectWebApproverList", selectWebApproverList);
+		result.put("count", i);
+		return result;
 	}
 	/**
 	 * web审批中心-查看
@@ -311,17 +316,13 @@ public class ApproverServiceImpl implements ApproverService {
 	private int updateVacation(String leaveType,String endDate,String leaveDay,String auditorEmployeeId,String companyId,String adjustingInstruction){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
+		
+		
 		String year = endDate.substring(0,4);
 		//年假
 		if(leaveType.equals("0")){
 			
-			if(Integer.parseInt(leaveDay)%8==0){
-				leaveDay = String.valueOf(Integer.parseInt(leaveDay)/8+0.0);
-			}else if(Integer.parseInt(leaveDay)%8<=4){
-				leaveDay = String.valueOf(Integer.parseInt(leaveDay)/8+0.5);
-			}else if(Integer.parseInt(leaveDay)%8>4){
-				leaveDay = String.valueOf(Integer.parseInt(leaveDay)/8+1);
-			}
+			leaveDay = String.valueOf(Math.ceil(Double.parseDouble(leaveDay)/4)/2);
 			
 			year = String.valueOf(Integer.parseInt(year)-1);
 			//查询前一年假期余额

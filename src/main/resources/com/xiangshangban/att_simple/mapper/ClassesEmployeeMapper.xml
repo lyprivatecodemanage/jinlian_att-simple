@@ -230,6 +230,8 @@
   	COALESCE(classes_id,'') AS classes_id,
   	COALESCE(on_duty_scheduling_date,'') AS on_duty_scheduling_date,
   	COALESCE(off_duty_scheduling_date,'') AS off_duty_scheduling_date,
+  	COALESCE(rest_start_time,'') AS rest_start_time,
+  	COALESCE(rest_end_time,'') AS rest_end_time,
   	COALESCE(the_date,'') AS the_date
   	FROM classes_employee_
   	WHERE emp_id = #{empId} and emp_company_id = #{companyId} and the_date between #{startTime} and #{endTime} ORDER BY on_duty_scheduling_date
@@ -287,7 +289,7 @@
   </update>
   
   <!-- 查询当前公司人员的班次信息 -->
-  <select id="selectClassesInfo" parameterType="Map" resultType="Map">
+  <!-- <select id="selectClassesInfo" parameterType="Map" resultType="Map">
 	SELECT
 	COALESCE (W. ID, '') AS ID,
 	COALESCE (emp_id, '') AS emp_id,
@@ -373,6 +375,103 @@
 	<where>
 		<if test='classesTypeId!=null and classesTypeId!=""'>
 			W.classes_id = #{classesTypeId}
+		</if>
+		<if test='deptId!=null and deptId!=""'>
+			and W.department_id = #{deptId}
+		</if>
+		<if test='empName!=null and empName!=""'>
+			and W.employee_name like #{empName}
+		</if>
+	</where>
+  </select> -->
+  
+   <!-- 查询当前公司人员的班次信息 -->
+  <select id="selectClassesInfo" parameterType="Map" resultType="Map">
+	SELECT
+	COALESCE (W. ID, '') AS ID,
+	COALESCE (emp_id, '') AS emp_id,
+	COALESCE (emp_company_id, '') AS emp_company_id,
+	COALESCE (classes_id, '') AS classes_id,
+	COALESCE (classes_name, '') AS classes_name,
+	COALESCE (on_duty_scheduling_date, '') AS on_duty_scheduling_date,
+	COALESCE (off_duty_scheduling_date,'') AS off_duty_scheduling_date,
+	COALESCE (rest_start_time, '') AS rest_start_time,
+	COALESCE (rest_end_time, '') AS rest_end_time,
+	COALESCE (the_date, '') AS the_date,
+	COALESCE (week, '') AS week,
+	COALESCE (divide_color, '') AS divide_color,
+	COALESCE (employee_name, '') AS employee_name,
+	COALESCE (department_id, '') AS department_id,
+	COALESCE (department_name, '') AS department_name,
+	COALESCE (post_name, '') AS post_name
+	FROM
+		(
+			SELECT DISTINCT
+				H.*, J.employee_name,
+				department_id,
+				department_name,
+				post_name
+			FROM
+				(
+					SELECT
+						ID,
+						emp_id,
+						emp_company_id,
+						classes_id,
+						classes_name,
+						on_duty_scheduling_date,
+						off_duty_scheduling_date,
+						rest_start_time,
+						rest_end_time,
+						the_date,
+						week,
+						divide_color
+					FROM
+						classes_employee_
+					WHERE
+						the_date BETWEEN #{startDate} AND #{endDate}
+					AND emp_company_id = #{companyId}
+				) H
+			LEFT JOIN (
+				SELECT
+					E.employee_id,
+					E.department_id,
+					E.employee_name,
+					E.department_name,
+					F.post_name
+				FROM
+					(
+						SELECT
+							C .*, D.post_id
+						FROM
+							(
+								SELECT
+									A .*, B.department_name
+								FROM
+									(
+										SELECT
+											employee_id,
+											employee_name,
+											department_id
+										FROM
+											organization.employee_
+										WHERE
+											company_id = #{companyId}
+									) A
+								LEFT JOIN organization.department_ B ON A .department_id = B.department_id
+							) C
+						LEFT JOIN organization.connect_emp_post_ D ON C .department_id = D.department_id
+						AND C .employee_id = D.employee_id
+						AND D.post_grades = '1'
+					) E
+				LEFT JOIN organization.post_ F ON E.post_id = F.post_id
+			) J ON H.emp_id = J.employee_id
+			ORDER BY
+				H.the_date
+		) W
+	<where>
+		<if test='classesTypeId!=null and classesTypeId!=""'>
+			(W.classes_id = #{classesTypeId} or W.classes_id ='')
 		</if>
 		<if test='deptId!=null and deptId!=""'>
 			and W.department_id = #{deptId}
