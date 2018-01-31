@@ -582,68 +582,41 @@ public class ClassesServiceImpl implements ClassesService {
 					}
 					innerList.add(innerMap);
 				}
-				// 将数据完善为一整个周的数据(避免有的班次没有排，造成前端列表展示困难)
+				
+				// 将数据完善为一整个周的数据,缺少哪天补哪天(避免有的班次没有排，造成前端列表展示困难)
+				List<Map<String,String>> emptyDateClasses = new ArrayList<>();
 				if (innerList.size() < 7) {
-					try {
-						// 获取数据集合第一个和最后一个元素的week字段值,和theDate字段值
-						int firstNum = Integer.parseInt(innerList.get(0).get("week").toString().trim());
-						Calendar firstDate = Calendar.getInstance();
-						firstDate.setTime(new SimpleDateFormat("yyyy-MM-dd")
-								.parse(innerList.get(0).get("theDate").toString().trim()));
-
-						int lastNum = Integer
-								.parseInt(innerList.get(innerList.size() - 1).get("week").toString().trim());
-						Calendar lastDate = Calendar.getInstance();
-						lastDate.setTime(new SimpleDateFormat("yyyy-MM-dd")
-								.parse(innerList.get(innerList.size() - 1).get("theDate").toString().trim()));
-
-						if (firstNum != 1) {
-							// 添加空排班(集合前端元素)
-							for (int q = 0; q < (firstNum - 1); q++) {
-								Map<String, Object> emptyMap = new HashMap<>();
-								emptyMap.put("classesName", "");
-								emptyMap.put("classesId", "");
-								emptyMap.put("classesTypeId","");
-								emptyMap.put("colorFlag", "");
-								emptyMap.put("onDutyTime","");
-								emptyMap.put("offDutyTime","");
-								
-								// 时间倒退一天
-								firstDate.add(Calendar.DAY_OF_MONTH, -1);
-								// 获取星期数
-								if (firstDate.get(Calendar.DAY_OF_WEEK) - 1 == 0) {
-									emptyMap.put("week", "7");
-								} else {
-									emptyMap.put("week", String.valueOf(firstDate.get(Calendar.DAY_OF_WEEK) - 1));
-								}
-								emptyMap.put("theDate", new SimpleDateFormat("yyyy-MM-dd").format(firstDate.getTime()));
-								innerList.add(0, emptyMap);
+					outter:
+					for(int b = 0;b<7;b++){
+						Object selectTheDate = null;
+						for (Map<String, Object> map : innerList) {
+							selectTheDate = map.get("theDate");
+							Object selectWeek = map.get("week");
+							if(selectWeek.toString().trim().equals(""+(b+1))){
+								continue outter;
 							}
 						}
-						if (lastNum != 7) {
-							// 集合后端加元素
-							for (int w = 0; w < (7 - lastNum); w++) {
-								Map<String, Object> emptyMap = new HashMap<>();
-								emptyMap.put("classesName", "");
-								emptyMap.put("classesId", "");
-								emptyMap.put("classesTypeId","");
-								emptyMap.put("colorFlag", "");
-								emptyMap.put("onDutyTime","");
-								emptyMap.put("offDutyTime","");
-								// 时间增加一天
-								lastDate.add(Calendar.DAY_OF_MONTH, +1);
-								// 获取星期数
-								if (lastDate.get(Calendar.DAY_OF_WEEK) - 1 == 0) {
-									emptyMap.put("week", "7");
-								} else {
-									emptyMap.put("week", String.valueOf(lastDate.get(Calendar.DAY_OF_WEEK) - 1));
-								}
-								emptyMap.put("theDate", new SimpleDateFormat("yyyy-MM-dd").format(lastDate.getTime()));
-								innerList.add(innerList.size(), emptyMap);
-							}
-						}
-					} catch (ParseException e) {
-						e.printStackTrace();
+						//保存没有数据的日期
+						Map<String,String> innerMap = new HashMap<>();
+						innerMap.put("theDate",selectTheDate.toString().trim());
+						innerMap.put("theWeek",""+(b+1));
+						
+						emptyDateClasses.add(innerMap);
+					}
+				
+					//给没有数据的星期补充数据
+					for (Map<String, String> map : emptyDateClasses) {
+						Map<String, Object> emptyMap = new HashMap<>();
+						emptyMap.put("classesName", "");
+						emptyMap.put("classesId", "");
+						emptyMap.put("classesTypeId","");
+						emptyMap.put("colorFlag", "");
+						emptyMap.put("onDutyTime","");
+						emptyMap.put("offDutyTime","");
+						emptyMap.put("week",map.get("theWeek"));
+						//设置当前周，指定星期对应日期
+						emptyMap.put("theDate",TimeUtil.getPointWeekDate(map.get("theDate"),Integer.parseInt(map.get("theWeek"))));
+						innerList.add(Integer.parseInt(map.get("theWeek"))-1,emptyMap);
 					}
 				}
 				

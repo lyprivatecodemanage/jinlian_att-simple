@@ -101,6 +101,11 @@ public class MonthReportServiceImpl implements MonthReportService {
 			}else if(Integer.parseInt(reportDaily.getRealWorkTime())%60>=0){
 				reportDaily.setRealWorkTime(String.valueOf(Integer.parseInt(reportDaily.getRealWorkTime())/60+0.0));
 			}
+			if(Integer.parseInt(reportDaily.getWorkTime())%60>=30){
+				reportDaily.setWorkTime(String.valueOf(Integer.parseInt(reportDaily.getWorkTime())/60+0.5));
+			}else if(Integer.parseInt(reportDaily.getWorkTime())%60>=0){
+				reportDaily.setWorkTime(String.valueOf(Integer.parseInt(reportDaily.getWorkTime())/60+0.0));
+			}
 		}
 		
 		if(list!=null){
