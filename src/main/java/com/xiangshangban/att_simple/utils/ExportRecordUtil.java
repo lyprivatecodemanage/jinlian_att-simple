@@ -96,7 +96,7 @@ public class ExportRecordUtil {
                         
                         for(int y=0;y<parseArray.size();y++){
                         	JSONObject parseObject = JSONObject.parseObject(parseArray.get(y).toString());
-                        	String classesName = parseObject.get("classesName").toString().trim();
+                        	String classesName = parseObject.get("onDutyTime").toString().trim()+"-"+parseObject.get("offDutyTime").toString().trim();
                         	doorCellContent[y+3] = classesName;
                         }
                         for(int x=0;x<headers.length;x++){
