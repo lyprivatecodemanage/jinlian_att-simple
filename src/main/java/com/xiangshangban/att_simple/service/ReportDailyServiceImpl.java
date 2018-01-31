@@ -395,11 +395,11 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 		List<ReportDaily> list = reportDailyMapper.selectReportDaily(paging);
 		
 		for (ReportDaily reportDaily : list) {
-			reportDaily.setRealWorkTime(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getRealWorkTime())/30)/2));
-			reportDaily.setNormalOverWork(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getNormalOverWork())/30)/2));
-			reportDaily.setLeaveDate(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getLeaveDate())/30)/2));
-			reportDaily.setEvectionTimeWork(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getEvectionTimeWork())/30)/2));
-			reportDaily.setOutTimeWork(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getOutTimeWork())/30)/2));
+				reportDaily.setRealWorkTime(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getRealWorkTime().trim())/30)/2));
+				reportDaily.setNormalOverWork(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getNormalOverWork().trim())/30)/2));
+				reportDaily.setLeaveDate(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getLeaveDate().trim())/30)/2));
+				reportDaily.setEvectionTimeWork(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getEvectionTimeWork().trim())/30)/2));
+				reportDaily.setOutTimeWork(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getOutTimeWork().trim())/30)/2));
 		}
 		
 		if(list!=null){
