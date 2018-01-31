@@ -20,7 +20,7 @@ public class Scheduler {
 	//每天凌晨1点执行
 	private static final String REPORT_TIME = "0 0 1 * * ?";//日报计算时间
 	//每天凌晨0点执行
-	private static final String REPORT_MONTH = "30 56 20 * * ?";//月报计算时间
+	private static final String REPORT_MONTH = "55 9 19 * * ?";//月报计算时间
 	private final Logger logger = Logger.getLogger(Scheduler.class);
 	
 	@Autowired
@@ -55,9 +55,11 @@ public class Scheduler {
 	public void countReportMonth(){
 		logger.info("月报计算开始时间"+TimeUtil.getCurrentTime()); 
 		String countDate = TimeUtil.getCurrentDate();
-		algorithmService.calculate("202552814E3C46A1A47742489F3250BE", "5DCDA1ACA4174B37B84A4386694EB70E", "2018-01-26", "2018-01-26");
-		algorithmService.calculateByCompany("202552814E3C46A1A47742489F3250BE", "2018-01-01", "2018-01-29");
-		algorithmService.calculateMonth(countDate);//计算当前日期之后月报的应出勤
+		algorithmService.calculate("1DC63D0B6AFC41918AB18F61EBC49E8F", "37EB363339AF405B81FB33E83C259C91", "2018-01-26", "2018-01-26");
+		
+		algorithmService.calculate("1DC63D0B6AFC41918AB18F61EBC49E8F", "37EB363339AF405B81FB33E83C259C91", "2018-01-26", "2018-01-26");
+		//algorithmService.calculateByCompany("202552814E3C46A1A47742489F3250BE", "2018-01-01", "2018-01-29");
+		//algorithmService.calculateMonth(countDate);//计算当前日期之后月报的应出勤
 		logger.info("月报计算完成");
 		logger.info("月报计算完成时间"+TimeUtil.getCurrentTime()); 
 	}
