@@ -30,8 +30,8 @@
    
   <sql id="Leave_List">
     application_no, employee_id, department_id, company_id, leave_type, start_time, 
-    end_time, reason, upload_voucher, approver, copy_to_person, operater_time, is_transfer, 
-    to_number(application_hour,'9999'to_number(application_hour,'9999')me,employee_name,department_name,leave_type_name,approver_name
+    end_time, reason, upload_voucher, approver, operater_time, is_transfer, 
+    application_hour, application_time,employee_name,department_name,leave_type_name,approver_name
   </sql>
    
    <select id="selectLeaveKeyData" parameterType="java.lang.String" resultType="java.lang.Integer">
