@@ -92,8 +92,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 			vacation.setYear(year);
 		}else{
 			vacation.setAnnualLeaveBalance(String.valueOf(Double.valueOf(vacation.getAnnualLeaveBalance())*8));
-			vacation.setAdjustRestBalance(String.valueOf(Double.valueOf(vacation.getAdjustRestBalance())*8));
-			vacation.setAdjustRestTotal(String.valueOf(Double.valueOf(vacation.getAdjustRestTotal())*8));
 			vacation.setAnnualLeaveTotal(String.valueOf(Double.valueOf(vacation.getAnnualLeaveTotal())*8));
 		}
 		result.put("vacation", vacation);
