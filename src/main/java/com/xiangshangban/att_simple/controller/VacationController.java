@@ -104,7 +104,7 @@ public class VacationController {
 			i = "-";
 		}
 		
-		addOperateLog(auditorEmployeeId, companyId, "假期统计[年假调整]-----时间："+time.format(new Date())+",-----调整额度:"+i+annualLeave);
+		addOperateLog(auditorEmployeeId, companyId, "假期统计[年假调整]-----单号:"+vacationId+"-----时间："+time.format(new Date())+",-----调整额度:"+i+annualLeave);
 		
 		return result;
 	}
@@ -141,7 +141,7 @@ public class VacationController {
 			i = "-";
 		}
 		
-		addOperateLog(auditorEmployeeId, companyId, "假期统计[调休调整]-----时间："+time.format(new Date())+",-----调整额度:"+i+adjustRest);
+		addOperateLog(auditorEmployeeId, companyId, "假期统计[调休调整]-----单号:"+vacationId+"-----时间："+time.format(new Date())+",-----调整额度:"+i+adjustRest);
 		
 		return result;
 	}
@@ -245,6 +245,8 @@ public class VacationController {
 			
 			result = vacationService.AnnualLeaveGenerate(companyId, year,auditorEmployeeId);
 			
+			addOperateLog(auditorEmployeeId, companyId, "假期统计[年假即时一键生成]-----时间："+time.format(new Date()));
+			
 			return result;
 		}else if("1".equals(timingJob)){
 			if(StringUtils.isEmpty(timingJobDate)){
@@ -264,6 +266,8 @@ public class VacationController {
 				AnnualLeaveJob alj = new AnnualLeaveJob(FormatUtil.createUuid(), companyId, auditorEmployeeId, year, timingJobDate, createJobDate, "2", "2");
 				
 				annualLeaveJobService.insertSelective(alj);
+				
+				addOperateLog(auditorEmployeeId, companyId, "假期统计[年假定时一键生成(新增定时任务)]-----时间："+time.format(new Date()));
 				
 				result.setReturnCode("3000");
 				result.setMessage("数据请求成功");
