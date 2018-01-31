@@ -21,11 +21,13 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
 import com.xiangshangban.att_simple.bean.ApplicationFillCard;
 import com.xiangshangban.att_simple.bean.ClassesEmployee;
+import com.xiangshangban.att_simple.bean.OperateLog;
 import com.xiangshangban.att_simple.bean.Paging;
 import com.xiangshangban.att_simple.bean.ReportDaily;
 import com.xiangshangban.att_simple.bean.ReturnData;
@@ -34,6 +36,7 @@ import com.xiangshangban.att_simple.dao.ClassesEmployeeMapper;
 import com.xiangshangban.att_simple.dao.EmployeeDao;
 import com.xiangshangban.att_simple.dao.ReportDailyMapper;
 import com.xiangshangban.att_simple.utils.FormatUtil;
+import com.xiangshangban.att_simple.utils.HttpRequestFactory;
 
 @Service("reportDailyService")
 public class ReportDailyServiceImpl implements ReportDailyService {
@@ -56,6 +59,9 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 	
 	@Autowired
 	AlgorithmService algorithmService;
+	
+	@Value("${sendUrl}")
+	private String sendUrl;
 	
 	@Override
 	public ReturnData CheckingKeyData(String companyId) {
@@ -118,6 +124,8 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 		//获取存在考勤异常日报信息集合
 		List<ReportDaily> list = new ArrayList<>();
 		
+		boolean flag = false;
+		
 		//选择为空直接返回
 		if(reportIds.size()<1){
 			returndata.setReturnCode("3000");
@@ -174,13 +182,9 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 							
 							algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
 							
-							returndata.setReturnCode("3000");
-							returndata.setMessage("数据请求成功");
-							return returndata;
+							flag = true;
 						}
-						returndata.setReturnCode("3001");
-						returndata.setMessage("服务器错误");
-						return returndata;
+						break;
 					case "2"://早退异常
 						if(ce!=null){
 							ApplicationFillCard af = new ApplicationFillCard();
@@ -200,13 +204,9 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 							
 							algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
 							
-							returndata.setReturnCode("3000");
-							returndata.setMessage("数据请求成功");
-							return returndata;
+							flag = true;
 						}
-						returndata.setReturnCode("3001");
-						returndata.setMessage("服务器错误");
-						return returndata;
+						break;
 					case "3"://未到异常
 						if(ce!=null){
 							ApplicationFillCard af = new ApplicationFillCard();
@@ -226,13 +226,9 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 							
 							algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
 							
-							returndata.setReturnCode("3000");
-							returndata.setMessage("数据请求成功");
-							return returndata;
+							flag = true;
 						}
-						returndata.setReturnCode("3001");
-						returndata.setMessage("服务器错误");
-						return returndata;
+						break;
 					case "4"://未退异常
 						if(ce!=null){
 							ApplicationFillCard af = new ApplicationFillCard();
@@ -252,13 +248,9 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 							
 							algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
 							
-							returndata.setReturnCode("3000");
-							returndata.setMessage("数据请求成功");
-							return returndata;
+							flag = true;
 						}
-						returndata.setReturnCode("3001");
-						returndata.setMessage("服务器错误");
-						return returndata;
+						break;
 					case "5"://迟到且早退异常
 						if(ce!=null){
 							ApplicationFillCard af = new ApplicationFillCard();
@@ -285,14 +277,10 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 								
 								algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
 								
-								returndata.setReturnCode("3000");
-								returndata.setMessage("数据请求成功");
-								return returndata;
+								flag = true;
 							}
 						}
-						returndata.setReturnCode("3001");
-						returndata.setMessage("服务器错误");
-						return returndata;
+						break;
 					case "6"://迟到且未退异常
 						if(ce!=null){
 							ApplicationFillCard af = new ApplicationFillCard();
@@ -319,14 +307,10 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 								//触发日报计算
 								algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
 								
-								returndata.setReturnCode("3000");
-								returndata.setMessage("数据请求成功");
-								return returndata;
+								flag = true;
 							}
 						}
-						returndata.setReturnCode("3001");
-						returndata.setMessage("服务器错误");
-						return returndata;
+						break;
 					case "7"://未到且早退异常
 						if(ce!=null){
 							ApplicationFillCard af = new ApplicationFillCard();
@@ -353,14 +337,10 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 								
 								algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
 								
-								returndata.setReturnCode("3000");
-								returndata.setMessage("数据请求成功");
-								return returndata;
+								flag = true;
 							}
 						}
-						returndata.setReturnCode("3001");
-						returndata.setMessage("服务器错误");
-						return returndata;
+						break;
 					case "8"://未到且未退异常
 						if(ce!=null){
 							ApplicationFillCard af = new ApplicationFillCard();
@@ -387,18 +367,20 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 								
 								algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
 								
-								returndata.setReturnCode("3000");
-								returndata.setMessage("数据请求成功");
-								return returndata;
+								flag = true;
 							}
 						}
-						returndata.setReturnCode("3001");
-						returndata.setMessage("服务器错误");
-						return returndata;
+						break;
 				}
 			}	
 		}
 		
+		if(flag){
+			returndata.setReturnCode("3000");
+			returndata.setMessage("数据请求成功");
+			return returndata;
+		}	
+			
 		returndata.setReturnCode("3001");
 		returndata.setMessage("服务器错误");
 		return returndata;
@@ -467,6 +449,7 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 						af.setApplicationTime(date);
 						//新增补卡申请
 						int num = applicationFillCardMapper.insertApplicationFillCardRecord(af);
+						
 						if(num>0){
 							//触发日报计算
 							algorithmService.calculate(rd.getCompanyId(),rd.getEmployeeId(),rd.getAttDate());
@@ -725,7 +708,7 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 	}
 
 	@Override
-	public ReturnData ReportDailyExcel(String excelName,OutputStream out,String companyId, String beginDate, String endDate) {
+	public void ReportDailyExcel(String excelName,OutputStream out,String companyId, String beginDate, String endDate) {
 		// TODO Auto-generated method stub
 		ReturnData returndata = new ReturnData();
 		
@@ -813,16 +796,8 @@ public class ReportDailyServiceImpl implements ReportDailyService {
         try {  
             workbook.write(out); 
             
-            returndata.setReturnCode("3000");
-    		returndata.setMessage("数据请求成功");
-    		return returndata;
         } catch (IOException e) {  
             e.printStackTrace();  
-            
-            returndata.setReturnCode("3001");
-    		returndata.setMessage("服务器错误");
-    		return returndata;
         }
 	}
-
 }

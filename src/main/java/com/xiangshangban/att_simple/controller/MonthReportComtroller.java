@@ -87,7 +87,7 @@ public class MonthReportComtroller {
 	 * @return
 	 */
 	@RequestMapping(value="export/MonthReportExcel",produces="application/json;chatset=utf-8",method=RequestMethod.POST)
-	public ReturnData MonthReportExcel(@RequestBody String objectString,HttpServletRequest request,HttpServletResponse response){
+	public void MonthReportExcel(@RequestBody String objectString,HttpServletRequest request,HttpServletResponse response){
 		ReturnData result = new ReturnData();
 		try {
 			response.setContentType("octets/stream"); 
@@ -108,12 +108,11 @@ public class MonthReportComtroller {
 			// 获取请求头信息
 			String companyId = request.getHeader("companyId");
 			
-			result = monthReportService.MonthReportExcel(excelName, out,companyId, year, month);
+			monthReportService.MonthReportExcel(excelName, out,companyId, year, month);
 			
 			out.flush();  
 		} catch (IOException e) {
 			System.out.println("导出文件输出流出错了！"+e);
 		}
-		return result;
 	}
 }

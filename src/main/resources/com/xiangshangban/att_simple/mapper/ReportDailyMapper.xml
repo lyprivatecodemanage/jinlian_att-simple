@@ -94,7 +94,6 @@
 	ON e.department_id = d.department_id and e.company_id = d.company_id
 	where rd.company_id = #{companyId}
 	and att_date like '%${attDate}%'
-	LIMIT #{pageNum} OFFSET #{pageExcludeNumber}
   </select>
   
   <!-- 月报数据统总数 -->
@@ -149,15 +148,39 @@
   <!-- 查询该日期段的日报信息 -->
   <select id="selectDateRangeReportDaily" resultMap="BaseResultMap">
   	select 
-	<include refid="Base_Column_List"></include>
-	from report_daily_
-	where company_id = #{companyId}
+	*
+	from (SELECT 
+	report_id,dept_id,d.department_name,rd.employee_id,e.employee_name,att_date,sign_in_time,sign_out_time,to_number(real_work_time,'9999') real_work_time,exception_mark,
+	CASE
+		exception_mark 
+		when '' then '无'
+		when '1' then '迟到'
+		when '2' then '早退'
+		when '3' then '未到'
+		when '4' then '未退'
+		when '5' then '迟到且早退'
+		when '6' then '迟到且未退'
+		when '7' then '未到且早退'
+		when '8' then '旷工'
+	end exception_mark_name,
+	normal_over_work, 
+	to_char((to_number(leave_absence,'9')+to_number(leave_days_off,'9')+to_number(leave_annual,'9')+to_number(leave_sick,'9')+to_number(leave_marriage,'9')+to_number(leave_maternity,'9')
+	+to_number(leave_maternity_check,'9')+to_number(leave_paternity,'9')+to_number(leave_funeral,'9')+to_number(leave_nursing,'9')+to_number(leave_long_sick,'9')+to_number(leave_other,'9')
+	+to_number(leave_amblosis,'9')+to_number(leave_pregnancy,'9')),'9') leavedate
+	,evection_time_work,out_time_work
+	from report_daily_ rd
+	LEFT JOIN organization.employee_ e
+	ON rd.dept_id = e.department_id and rd.employee_id = e.employee_id and rd.company_id = e.company_id
+	LEFT JOIN organization.department_ d
+	ON e.department_id = d.department_id and e.company_id = d.company_id
+	where rd.company_id = #{companyId}
 	<if test="beginDate != null">
-		and att_date <![CDATA[>]]> #{beginDate}
+		and att_date <![CDATA[>]]> #{beginDate} 
 	</if>
 	<if test="endDate != null">
-		and att_date <![CDATA[<]]> #{endDate}
+		and att_date <![CDATA[<]]> #{endDate} 
 	</if>
+	)t
   </select>
   
   <!-- 考勤日报模糊总数查询 -->
@@ -194,7 +217,9 @@
 	from (SELECT 
 	report_id,dept_id,d.department_name,rd.employee_id,e.employee_name,att_date,sign_in_time,sign_out_time,to_number(real_work_time,'9999') real_work_time,exception_mark,
 	CASE
-		exception_mark when '1' then '迟到'
+		exception_mark 
+		when '' then '无'
+		when '1' then '迟到'
 		when '2' then '早退'
 		when '3' then '未到'
 		when '4' then '未退'

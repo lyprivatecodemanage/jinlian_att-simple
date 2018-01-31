@@ -121,7 +121,7 @@ public class MonthReportServiceImpl implements MonthReportService {
 	}
 
 	@Override
-	public ReturnData MonthReportExcel(String excelName, OutputStream out, String companyId, String year,
+	public void MonthReportExcel(String excelName, OutputStream out, String companyId, String year,
 			String month) {
 		// TODO Auto-generated method stub
 		ReturnData returndata = new ReturnData();
@@ -207,15 +207,8 @@ public class MonthReportServiceImpl implements MonthReportService {
         try {  
             workbook.write(out); 
             
-            returndata.setReturnCode("3000");
-    		returndata.setMessage("数据请求成功");
-    		return returndata;
         } catch (IOException e) {  
             e.printStackTrace();  
-            
-            returndata.setReturnCode("3001");
-    		returndata.setMessage("服务器错误");
-    		return returndata;
         }
 	}
 
