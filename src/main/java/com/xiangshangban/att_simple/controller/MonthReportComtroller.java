@@ -8,6 +8,7 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -88,7 +89,6 @@ public class MonthReportComtroller {
 	 */
 	@RequestMapping(value="export/MonthReportExcel",produces="application/json;chatset=utf-8",method=RequestMethod.POST)
 	public void MonthReportExcel(@RequestBody String objectString,HttpServletRequest request,HttpServletResponse response){
-		ReturnData result = new ReturnData();
 		try {
 			response.setContentType("octets/stream"); 
 			String agent = request.getHeader("USER-AGENT");
