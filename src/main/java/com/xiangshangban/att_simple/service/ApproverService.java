@@ -60,9 +60,9 @@ public interface ApproverService {
 	    * @param params
 	    * @return
 	    */
-	   List<ApplicationTotalRecord> webApproverCentreList(String companyId,String page,String count,
+	   Map<String,Object> webApproverCentreList(String companyId,String page,String count,
 				String departmentId,String applicationType,String isComplete,
-				String employeeName,String startTime,String endTime);
+				String employeeName,String startTime,String endTime,String orderBy);
 	   /**
 	    * web审批中心-查看
 	    * @param companyId
