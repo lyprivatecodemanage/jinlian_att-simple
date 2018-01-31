@@ -68,7 +68,7 @@ public class ReportDailyController {
 		
 		result = reportDailyService.oneKeyChecking(reportIds,companyId);
 		
-		addOperateLog(auditorEmployeeId, companyId, "考勤日报[一键补勤]-----单号:"+reportIds+"-----时间："+time.format(new Date()));
+		addOperateLog(auditorEmployeeId, companyId, "考勤日报[一键补勤]");
 		
 		return result;
 	}
@@ -136,7 +136,7 @@ public class ReportDailyController {
 		
 		result = reportDailyService.replaceReplenishChecking(companyId,reportId, beginDate, beginTime, endDate, endTime, reason);
 		
-		addOperateLog(auditorEmployeeId, companyId, "考勤日报[代补勤]-----单号:"+reportId+"-----时间："+time.format(new Date()));
+		addOperateLog(auditorEmployeeId, companyId, "考勤日报[代补勤]");
 		
 		return result;
 	}
