@@ -625,9 +625,7 @@ public class ApplicationController {
 							   end = sdf.format(endTime);
 						   }
 						   double between=(double)(sdf.parse(end).getTime()-sdf.parse(start).getTime())/1000;//除以1000是为了转换成秒
-						   if(between>=28800){
-							   between=28800;
-						   }
+						   
 						   if(sdf.parse(start).getTime()<sdf.parse(classesEmployee.getRestStartTime()).getTime()){
 							   if(sdf.parse(end).getTime()>sdf.parse(classesEmployee.getRestStartTime()).getTime()
 									   && sdf.parse(end).getTime()<sdf.parse(classesEmployee.getRestEndTime()).getTime()){
@@ -644,6 +642,9 @@ public class ApplicationController {
 							   if(sdf.parse(end).getTime()>sdf.parse(classesEmployee.getRestEndTime()).getTime()){
 								   between = between - (sdf.parse(classesEmployee.getRestEndTime()).getTime()-sdf.parse(start).getTime())/1000;
 							   }
+						   }
+						   if(between>=28800){
+							   between=28800;
 						   }
 						   applicationHour=applicationHour+(Math.ceil(between/1800)/2);
 					   }else {
