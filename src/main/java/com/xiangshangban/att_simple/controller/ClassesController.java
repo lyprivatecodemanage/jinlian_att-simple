@@ -161,7 +161,7 @@ public class ClassesController {
 			boolean addNewClassesType = false;
 			if(queryAllClassesIdAndName!=null && queryAllClassesIdAndName.size()>6){
 				returnData.setReturnCode("3001");
-				returnData.setMessage("班次类别最多存在6个,当前不能进行新增操作");
+				returnData.setMessage("超过班次最大个数");
 			}else{
 				//判断(新增/修改)的班次类别名称，是不是和公司已有的重名
 				JSONObject jsonObject = JSONObject.parseObject(requestParam);
