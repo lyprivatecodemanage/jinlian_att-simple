@@ -81,7 +81,7 @@
   </sql>
   
   <!-- 根据公司ID查询某月 月报数据导出报表 -->
-  <select id="MonthReportExcel" resultType="java.lang.Integer">
+  <select id="MonthReportExcel" resultMap="BaseResultMap">
   	SELECT 
 	dept_id,d.department_name,rd.employee_id,e.employee_name,
 	sum(to_number(work_time,'999')) work_time,sum(to_number(real_work_time,'999')) real_work_time,sum((to_number(leave_absence,'999')+to_number(leave_sick,'999')+to_number(leave_marriage,'999')+to_number(leave_maternity,'999')
@@ -94,6 +94,7 @@
 	ON e.department_id = d.department_id and e.company_id = d.company_id
 	where rd.company_id = #{companyId}
 	and att_date like '%${attDate}%'
+	GROUP BY rd.employee_id,dept_id,d.department_name,rd.employee_id,e.employee_name
   </select>
   
   <!-- 月报数据统总数 -->

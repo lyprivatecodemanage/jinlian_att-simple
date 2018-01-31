@@ -124,9 +124,7 @@ public class MonthReportServiceImpl implements MonthReportService {
 	public void MonthReportExcel(String excelName, OutputStream out, String companyId, String year,
 			String month) {
 		// TODO Auto-generated method stub
-		ReturnData returndata = new ReturnData();
-		
-		String attDate = year+""+month;
+		String attDate = year+"-"+month;
 		
 		List<ReportDaily> list = reportDailyMapper.MonthReportExcel(companyId, attDate);
 		

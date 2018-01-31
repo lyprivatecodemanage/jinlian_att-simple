@@ -710,8 +710,6 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 	@Override
 	public void ReportDailyExcel(String excelName,OutputStream out,String companyId, String beginDate, String endDate) {
 		// TODO Auto-generated method stub
-		ReturnData returndata = new ReturnData();
-		
 		List<ReportDaily> list = reportDailyMapper.selectDateRangeReportDaily(companyId, beginDate, endDate);
 		
 		String[] headers = new String[]{"部门","姓名*","日期","签到时间","签退时间","出勤时长","异常情况",

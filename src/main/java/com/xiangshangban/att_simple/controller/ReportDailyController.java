@@ -133,7 +133,6 @@ public class ReportDailyController {
 	 */
 	@RequestMapping(value="export/ReportDailyExcel",produces="application/json;charset=UTF-8",method=RequestMethod.POST)
 	public void ReportDailyExcel(@RequestBody String objectString,HttpServletRequest request,HttpServletResponse response){
-		ReturnData result = new ReturnData();
 		try {
 			response.setContentType("octets/stream"); 
 			String agent = request.getHeader("USER-AGENT");
