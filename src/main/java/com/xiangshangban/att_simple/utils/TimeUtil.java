@@ -750,6 +750,41 @@ public class TimeUtil {
 		}
 		return returnData;
 	}
+	
+	/**
+	 * 获取指定日期所在周，指定星期对应的日期
+	 * @param date 日期字符串:2018-01-18 (本周任意一天的日期)
+	 * @param pointWeek 指定星期：1,2......
+	 * @return 返回当前周指定星期对应的日期：2018-01-18
+	 * @throws ParseException 
+	 */
+	public static String getPointWeekDate(String date,int pointWeek){
+		//初始化要返回的数据
+		String pointWeekDate = "";
+		if(pointWeek>=1 && pointWeek<=7){
+			Calendar calendar = Calendar.getInstance();
+			try {
+				calendar.setTime(new SimpleDateFormat("yyyy-MM-dd").parse(date.trim()));
+				//获取当前日期对应的星期
+				int currentWeek = calendar.get(Calendar.DAY_OF_WEEK)-1;
+				if(currentWeek==0){
+					currentWeek = 7;
+				}
+				//获取周一日期
+				calendar.add(Calendar.DAY_OF_WEEK,-currentWeek+1);
+				//根据传入的星期，然后进行相应天数的增加
+				calendar.add(Calendar.DAY_OF_WEEK,+pointWeek-1);
+				pointWeekDate = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}else{
+			pointWeekDate="传入的星期数不合法";
+		}
+		return pointWeekDate;
+	}
+	
+	
 	/**
 	 * 秒化为分
 	 * @param seconds
@@ -805,7 +840,7 @@ public class TimeUtil {
 		}
 	}
 	public static void main(String[] args) {
-		System.out.println(containTimeLength("2018-01-26 09:00:00", "2018-01-26 18:00:00","2018-01-26 09:00:00", "2018-01-26 18:00:00")/60);
+//		System.out.println(containTimeLength("2018-01-26 09:00:00", "2018-01-26 18:00:00","2018-01-26 09:00:00", "2018-01-26 18:00:00")/60);
 //		System.out.println(parseSecondToMinuteHalfDayUnit("14450"));
 //		System.out.println(getCurrentMaxDate());
 //		System.out.println(compareTime("2018-01-15 21:00:01","2018-01-15 01:00:01"));
@@ -814,5 +849,6 @@ public class TimeUtil {
 		System.out.println(map.get("weekend"));*/
 		//System.out.println(getCurrentLastDate("2018-01-23"));
 //		System.out.println(dayOfDate("2018-01-22 00:00:00","2018-01-25 00:00:00"));
+		System.out.println(getPointWeekDate("2018-01-29",1));
 	}
 }
