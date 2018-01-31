@@ -59,8 +59,21 @@ public class test {
 			e.printStackTrace();
 
 		}*/
-		System.out.println(TimeUtil.getCurrentMonthFirstDateOrMaxDate(false)+"\t"+TimeUtil.getCurrentMonthFirstDateOrMaxDate(true));
-		
+		try{
+		/*System.out.println(TimeUtil.getCurrentMonthFirstDateOrMaxDate(false)+"\t"+TimeUtil.getCurrentMonthFirstDateOrMaxDate(true));*/
+		SimpleDateFormat dfs = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		String start = "2018-02-02 09:00";
+		String end  = "2018-02-02 11:18";
+		double between  = (double)(dfs.parse(end).getTime() - dfs.parse(start).getTime());
+		System.out.println(Math.ceil(between/1000/1800)/2);
+		double time=0;
+		double large = 1111;
+		double small = 2;
+		time = Math.ceil(large/1000);
+		System.out.println(large/1000);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	public void setValue(List<Integer> list){
