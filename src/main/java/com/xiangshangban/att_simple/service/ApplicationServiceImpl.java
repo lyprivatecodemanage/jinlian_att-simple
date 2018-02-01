@@ -516,7 +516,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 		/*}else{//已完成
 		}*/
 			applicationDetails.setOperaterTime(applicationRecordStatus.getOperaterTime());
-		Employee approver = employeeDao.selectNameByEmployeeIdAndDepartmentIdAndCompanyId(applicationDetails.getApprover(), null, companyId);
+		Employee approver = employeeDao.selectNameByEmployeeIdAndDepartmentIdAndCompanyId(applicationRecordStatus.getLastApprover(), null, companyId);
 		applicationDetails.setApproverNmae(approver.getEmployeeName());
 		return applicationDetails;
 	}
