@@ -319,9 +319,9 @@ public class ApproverController {
 					transferPersonId, transferPersionAccessId);
 			Application application = (Application)returnData.getData();
 			if("5".equals(application.getApplicationType())){
-				algorithmService.calculate(companyId, employeeId, sdf.format(sdfhm.parse(application.getFillCardTime())));
+				algorithmService.calculate(companyId, application.getApplicationId(), sdf.format(sdfhm.parse(application.getFillCardTime())));
 			}else{
-				algorithmService.calculate(companyId, employeeId, sdf.format(sdfhm.parse(application.getStartTime())), sdf.format(sdfhm.parse(application.getEndTime())));
+				algorithmService.calculate(companyId, application.getApplicationId(), sdf.format(sdfhm.parse(application.getStartTime())), sdf.format(sdfhm.parse(application.getEndTime())));
 			}
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");

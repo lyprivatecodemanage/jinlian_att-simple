@@ -61,10 +61,11 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 	}
 	@Override
 	public void calculateByCompany(String companyId, String beginDate, String endDate) {
+		beginDate = beginDate.substring(0, 10);
+		endDate = endDate.substring(0, 10);
 		logger.info(beginDate+"到"+endDate+"日报计算开始");
 		String date = beginDate;
-		String newEndDate = TimeUtil.getLongAfterDate(
-				TimeUtil.getCurrentLastDate(endDate), 1, Calendar.DATE);
+		String newEndDate = TimeUtil.getLongAfterDate(endDate, 1, Calendar.DATE);
 		while(TimeUtil.compareTime(newEndDate+" 00:00:00", date+" 00:00:00")){//循环日期段
 			List<Employee> empIdList = algorithmMapper.getEmployeeOnJobList(
 					companyId, "");
@@ -92,10 +93,11 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 	 */
 	@Override
 	public void calculate(String companyId, String employeeId, String beginDate, String endDate) {
+		beginDate = beginDate.substring(0, 10);
+		endDate = endDate.substring(0, 10);
 		logger.info(beginDate+"到"+endDate+"日报计算开始");
 		String date = beginDate;
-		String newEndDate = TimeUtil.getLongAfterDate(
-				TimeUtil.getCurrentLastDate(endDate), 1, Calendar.DATE);
+		String newEndDate = TimeUtil.getLongAfterDate(endDate, 1, Calendar.DATE);
 		while(TimeUtil.compareTime(newEndDate+" 00:00:00", date+" 00:00:00")){//循环日期段
 			this.calculate(companyId, employeeId, date);
 			date = TimeUtil.getLongAfterDate(date+" 00:00:00", 1, Calendar.DATE);
@@ -108,6 +110,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 	 */
 	@Override
 	public void calculate(String companyId,String employeeId, String countDate) {
+		countDate = countDate.substring(0, 10);
 		if(this.preCondition(companyId, employeeId, countDate)){
 			AlgorithmParam algorithmParam = this.generateAlgorithmParam(companyId, employeeId, countDate);//各种查询
 			AlgorithmResult result = new AlgorithmResult();

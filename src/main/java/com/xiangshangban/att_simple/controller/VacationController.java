@@ -104,7 +104,7 @@ public class VacationController {
 			i = "-";
 		}
 		
-		addOperateLog(auditorEmployeeId, companyId, "假期统计[年假调整]-----单号:"+vacationId+"-----时间："+time.format(new Date())+",-----调整额度:"+i+annualLeave);
+		addOperateLog(auditorEmployeeId, companyId, "假期统计[年假调整]-----调整额度:"+i+annualLeave);
 		
 		return result;
 	}
@@ -141,7 +141,7 @@ public class VacationController {
 			i = "-";
 		}
 		
-		addOperateLog(auditorEmployeeId, companyId, "假期统计[调休调整]-----单号:"+vacationId+"-----时间："+time.format(new Date())+",-----调整额度:"+i+adjustRest);
+		addOperateLog(auditorEmployeeId, companyId, "假期统计[调休调整]-----调整额度:"+i+adjustRest);
 		
 		return result;
 	}
@@ -185,7 +185,7 @@ public class VacationController {
 					
 			result = vacationService.ResetAnnualLeave(companyId,year,auditorEmployeeId);
 					
-			addOperateLog(auditorEmployeeId, companyId, "假期统计[年假即时一键清零]-----时间："+time.format(new Date()));
+			addOperateLog(auditorEmployeeId, companyId, "假期统计[年假即时一键清零]");
 			
 			return result;
 		}else if("1".equals(timingJob)){
@@ -201,7 +201,7 @@ public class VacationController {
 				
 				annualLeaveJobService.insertSelective(alj);
 				
-				addOperateLog(auditorEmployeeId, companyId, "假期统计[年假定时一键清零(新增定时任务)]-----时间："+time.format(new Date()));
+				addOperateLog(auditorEmployeeId, companyId, "假期统计[年假定时一键清零(新增定时任务)]");
 				
 				result.setReturnCode("3000");
 				result.setMessage("数据请求成功");
@@ -245,7 +245,7 @@ public class VacationController {
 			
 			result = vacationService.AnnualLeaveGenerate(companyId, year,auditorEmployeeId);
 			
-			addOperateLog(auditorEmployeeId, companyId, "假期统计[年假即时一键生成]-----时间："+time.format(new Date()));
+			addOperateLog(auditorEmployeeId, companyId, "假期统计[年假即时一键生成]");
 			
 			return result;
 		}else if("1".equals(timingJob)){
@@ -267,7 +267,7 @@ public class VacationController {
 				
 				annualLeaveJobService.insertSelective(alj);
 				
-				addOperateLog(auditorEmployeeId, companyId, "假期统计[年假定时一键生成(新增定时任务)]-----时间："+time.format(new Date()));
+				addOperateLog(auditorEmployeeId, companyId, "假期统计[年假定时一键生成(新增定时任务)]");
 				
 				result.setReturnCode("3000");
 				result.setMessage("数据请求成功");

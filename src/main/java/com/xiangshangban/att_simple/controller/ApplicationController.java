@@ -253,7 +253,7 @@ public class ApplicationController {
 				}
 			}
 			//调用申请小时数计算,并发起申请
-			int applicationHour = 0;//计算得出的申请小时数
+			double applicationHour = 0;//计算得出的申请小时数
 			switch(application.getApplicationType()){
 			   case "1"://请假
 				   try{
@@ -597,7 +597,7 @@ public class ApplicationController {
 		 * @param applicationHour
 		 * @return
 		 */
-		private int calculateApplicationHour(String type,String isSkipRestTime,String employeeId,String companyId,Date startTime,Date endTime,int applicationHour)throws Exception{
+		private double calculateApplicationHour(String type,String isSkipRestTime,String employeeId,String companyId,Date startTime,Date endTime,double applicationHour)throws Exception{
 			SimpleDateFormat dfs = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
@@ -624,11 +624,30 @@ public class ApplicationController {
 						   }else{
 							   end = sdf.format(endTime);
 						   }
-						   double between=(sdf.parse(end).getTime()-sdf.parse(start).getTime())/1000;//除以1000是为了转换成秒
+						   double between=(double)(sdf.parse(end).getTime()-sdf.parse(start).getTime())/1000;//除以1000是为了转换成秒
+						   
+						   if(sdf.parse(start).getTime()<sdf.parse(classesEmployee.getRestStartTime()).getTime()){
+							   if(sdf.parse(end).getTime()>sdf.parse(classesEmployee.getRestStartTime()).getTime()
+									   && sdf.parse(end).getTime()<sdf.parse(classesEmployee.getRestEndTime()).getTime()){
+								   between = between - (sdf.parse(end).getTime()-sdf.parse(classesEmployee.getRestStartTime()).getTime())/1000;
+							   }
+							   if(sdf.parse(end).getTime()>sdf.parse(classesEmployee.getRestEndTime()).getTime()){
+								   between = between - (sdf.parse(classesEmployee.getRestEndTime()).getTime()-sdf.parse(classesEmployee.getRestStartTime()).getTime())/1000;
+							   }
+						   }
+						   if(sdf.parse(start).getTime()>sdf.parse(classesEmployee.getRestStartTime()).getTime()
+								   && sdf.parse(start).getTime()<sdf.parse(classesEmployee.getRestEndTime()).getTime()){
+							   if(sdf.parse(end).getTime()<sdf.parse(classesEmployee.getRestEndTime()).getTime()){
+								   between = between - (sdf.parse(end).getTime()-sdf.parse(start).getTime())/1000;
+							   }
+							   if(sdf.parse(end).getTime()>sdf.parse(classesEmployee.getRestEndTime()).getTime()){
+								   between = between - (sdf.parse(classesEmployee.getRestEndTime()).getTime()-sdf.parse(start).getTime())/1000;
+							   }
+						   }
 						   if(between>=28800){
 							   between=28800;
 						   }
-						   applicationHour=applicationHour+(int)(Math.ceil(between/60/30)/2);
+						   applicationHour=applicationHour+(Math.ceil(between/1800)/2);
 					   }else {
 							  if("3".equals(type)||"4".equals(type)){
 							   if("0".equals(isSkipRestTime)){

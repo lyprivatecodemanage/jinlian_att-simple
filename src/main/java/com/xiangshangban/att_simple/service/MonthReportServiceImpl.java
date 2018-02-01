@@ -2,7 +2,9 @@ package com.xiangshangban.att_simple.service;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,10 +62,12 @@ public class MonthReportServiceImpl implements MonthReportService {
 			for (Employee e : empList) {
 				String attDate = year+"-"+month;
 				
-				int num = reportDailyMapper.selectMonthEcxeptionEmployee(companyId, e.getEmployeeId(),attDate);
+				String dateTime = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+				
+				int num = reportDailyMapper.selectMonthEcxeptionEmployee(companyId, e.getEmployeeId(),attDate,dateTime);
 				
 				//计算公司某月总请假次数
-				leaveCount += reportDailyMapper.selectLeaveCount(companyId,e.getEmployeeId(), attDate);
+				leaveCount += reportDailyMapper.selectLeaveCount(companyId,e.getEmployeeId(), attDate,dateTime);
 				
 				if(num==0){
 					list.add(e);
@@ -96,16 +100,11 @@ public class MonthReportServiceImpl implements MonthReportService {
 		List<ReportDaily> list = reportDailyMapper.selectMonthReportFuzzy(paging);
 		
 		for (ReportDaily reportDaily : list) {
-			if(Integer.parseInt(reportDaily.getRealWorkTime())%60>=30){
-				reportDaily.setRealWorkTime(String.valueOf(Integer.parseInt(reportDaily.getRealWorkTime())/60+0.5));
-			}else if(Integer.parseInt(reportDaily.getRealWorkTime())%60>=0){
-				reportDaily.setRealWorkTime(String.valueOf(Integer.parseInt(reportDaily.getRealWorkTime())/60+0.0));
-			}
-			if(Integer.parseInt(reportDaily.getWorkTime())%60>=30){
-				reportDaily.setWorkTime(String.valueOf(Integer.parseInt(reportDaily.getWorkTime())/60+0.5));
-			}else if(Integer.parseInt(reportDaily.getWorkTime())%60>=0){
-				reportDaily.setWorkTime(String.valueOf(Integer.parseInt(reportDaily.getWorkTime())/60+0.0));
-			}
+			reportDaily.setWorkTime(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getWorkTime())/30)/2));
+			reportDaily.setRealWorkTime(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getRealWorkTime())/30)/2));
+			reportDaily.setMatterLeave(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getMatterLeave())/30)/2));
+			reportDaily.setLeaveAnnual(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getLeaveAnnual())/30)/2));
+			reportDaily.setLeaveDaysOff(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getLeaveDaysOff())/30)/2));
 		}
 		
 		if(list!=null){
@@ -131,7 +130,9 @@ public class MonthReportServiceImpl implements MonthReportService {
 		// TODO Auto-generated method stub
 		String attDate = year+"-"+month;
 		
-		List<ReportDaily> list = reportDailyMapper.MonthReportExcel(companyId, attDate);
+		String dateTime = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+		
+		List<ReportDaily> list = reportDailyMapper.MonthReportExcel(companyId, attDate,dateTime);
 		
 		String[] headers = new String[]{"部门","姓名*","应出勤(h)","实出勤(h)","事假(h)","年假(h)","调休(h)"};  
 		 // 第一步，创建一个webbook，对应一个Excel文件  

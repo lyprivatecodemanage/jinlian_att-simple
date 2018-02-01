@@ -156,7 +156,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 					}
 				}
 			}
-			application.setDepartmentId(employee.getEmployeeBirthday());
+			application.setDepartmentId(employee.getDepartmentId());
 			//生成申请记录
 			applicationTotalRecordMapper.insertApplicationRecord(application);
 			//生成请假申请记录

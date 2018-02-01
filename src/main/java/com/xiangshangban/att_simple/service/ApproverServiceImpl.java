@@ -320,13 +320,7 @@ public class ApproverServiceImpl implements ApproverService {
 		//年假
 		if(leaveType.equals("0")){
 			
-			if(Integer.parseInt(leaveDay)%8==0){
-				leaveDay = String.valueOf(Integer.parseInt(leaveDay)/8+0.0);
-			}else if(Integer.parseInt(leaveDay)%8<=4){
-				leaveDay = String.valueOf(Integer.parseInt(leaveDay)/8+0.5);
-			}else if(Integer.parseInt(leaveDay)%8>4){
-				leaveDay = String.valueOf(Integer.parseInt(leaveDay)/8+1);
-			}
+			leaveDay = String.valueOf(Math.ceil(Double.parseDouble(leaveDay)/4)/2);
 			
 			year = String.valueOf(Integer.parseInt(year)-1);
 			//查询前一年假期余额
