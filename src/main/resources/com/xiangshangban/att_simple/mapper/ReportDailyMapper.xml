@@ -227,11 +227,11 @@
 		when '' then '无'
 		when '1' then '迟到'
 		when '2' then '早退'
-		when '3' then '未到'
-		when '4' then '未退'
+		when '3' then '未签到'
+		when '4' then '未签退'
 		when '5' then '迟到且早退'
-		when '6' then '迟到且未退'
-		when '7' then '未到且早退'
+		when '6' then '迟到且未签退'
+		when '7' then '未签到且早退'
 		when '8' then '旷工'
 	end exception_mark_name,
 	normal_over_work, 
