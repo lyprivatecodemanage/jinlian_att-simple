@@ -201,7 +201,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 						&& StringUtils.isNotEmpty(classesLast.getOnDutySchedulingDate())){
 					String lastDateCardEnd = TimeUtil.getLongAfter(
 							classesLast.getOffDutySchedulingDate(), 
-							Integer.parseInt(classesLast.getClassesType().getOffPunchCardTime()), 
+							Integer.parseInt(classesLast.getOffPunchCardRule()), 
 							Calendar.MINUTE);//前一天班次打卡结束时间
 					if(!TimeUtil.compareTime(algorithmParam.getCountDate()+" 00:00:00", lastDateCardEnd)){//前一天班次打卡结束时间在当天
 						overSignValidBegin = TimeUtil.getLongAfter(
@@ -220,7 +220,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 						&& StringUtils.isNotEmpty(classesNext.getOffDutySchedulingDate())){
 					String lastDateCardBegin = TimeUtil.getLongAfter(
 							classesNext.getOnDutySchedulingDate(), 
-							-1*Integer.parseInt(classesNext.getClassesType().getOnPunchCardTime()), 
+							-1*Integer.parseInt(classesNext.getOnPunchCardRule()), 
 							Calendar.MINUTE);//次日班次打卡开始时间
 					if(TimeUtil.compareTime(algorithmParam.getCountDate()+" 23:59:59", lastDateCardBegin)){//次日班次打卡开始时间在当天
 						overSignValidEnd = TimeUtil.getLongAfter(
@@ -259,11 +259,11 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		//检查前一天班次打卡结束时间是否在当天
 		if(classesLast!=null && StringUtils.isNotEmpty(classesLast.getOffDutySchedulingDate())
 				&& StringUtils.isNotEmpty(classesLast.getOnDutySchedulingDate()) 
-				&& classesLast.getClassesType()!=null 
-				&& StringUtils.isNotEmpty(classesLast.getClassesType().getOffPunchCardTime())){
+				&& classesLast!=null 
+				&& StringUtils.isNotEmpty(classesLast.getOffPunchCardRule())){
 			String lastDateCardEnd = TimeUtil.getLongAfter(
 					classesLast.getOffDutySchedulingDate(), 
-					Integer.parseInt(classesLast.getClassesType().getOffPunchCardTime()), 
+					Integer.parseInt(classesLast.getOffPunchCardRule()), 
 					Calendar.MINUTE);//前一天班次打卡结束时间
 			if(!TimeUtil.compareTime(algorithmParam.getCountDate()+" 00:00:00", lastDateCardEnd)){//前一天班次打卡结束时间在当天
 				algorithmParam.setSignInLimitLine(lastDateCardEnd);
@@ -281,11 +281,11 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		//检查次日班次打卡开始时间是否在当天
 		if(classesNext!=null && StringUtils.isNotEmpty(classesNext.getOnDutySchedulingDate())
 				&& StringUtils.isNotEmpty(classesNext.getOffDutySchedulingDate()) 
-				&& classesNext.getClassesType()!=null 
-				&& StringUtils.isNotEmpty(classesNext.getClassesType().getOnPunchCardTime())){
+				&& classesNext!=null 
+				&& StringUtils.isNotEmpty(classesNext.getOnPunchCardRule())){
 			String lastDateCardEnd = TimeUtil.getLongAfter(
 					classesNext.getOffDutySchedulingDate(), 
-					-1*Integer.parseInt(classesNext.getClassesType().getOffPunchCardTime()), 
+					-1*Integer.parseInt(classesNext.getOffPunchCardRule()), 
 					Calendar.MINUTE);//次日班次打卡开始时间
 			if(TimeUtil.compareTime(lastDateCardEnd, algorithmParam.getCountDate()+" 23:59:59")){//次日班次打卡开始时间在当天
 				algorithmParam.setSignOutLimitLine(lastDateCardEnd);
