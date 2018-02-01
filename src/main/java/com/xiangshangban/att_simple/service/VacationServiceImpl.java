@@ -109,11 +109,18 @@ public class VacationServiceImpl implements VacationService {
 			limitChange = Double.parseDouble("-"+annualLeave);
 		}
 		
-		//查询年假假期详情最后一次修改的值
-		VacationDetails vacationDetails = vacationDetailsMapper.SelectVacationIdByEndResult(vacationId,"0",year);
+		//查询年假假期最后一次修改的值
+		Vacation vacation = vacationMapper.selectByPrimaryKey(vacationId,year);
 		
 		//若员工没有任何假期操作
-		if(vacationDetails == null){
+		if(vacation == null){
+			
+			if(limitChange<0){
+				returndata.setReturnCode("4300");
+				returndata.setMessage("不能为负数");
+		        return returndata;
+			}
+			
 			//新增微调为第一个假期操作
 			VacationDetails vd = new VacationDetails();
 			vd.setVacationDetailsId(FormatUtil.createUuid());
@@ -147,8 +154,14 @@ public class VacationServiceImpl implements VacationService {
 			}
 		}else{
 			//使用查询出来最后一条结果的总额和余额  加上调整的值
-			double i = Double.parseDouble(vacationDetails.getVacationTotal())+limitChange;
-			double o = Double.parseDouble(vacationDetails.getVacationBalance())+limitChange;
+			double i = Double.parseDouble(vacation.getAnnualLeaveTotal())+limitChange;
+			double o = Double.parseDouble(vacation.getAnnualLeaveBalance())+limitChange;
+			
+			if(i<0 || o<0){
+				returndata.setReturnCode("4300");
+				returndata.setMessage("不能为负数");
+		        return returndata;
+			}
 			
 			VacationDetails vd = new VacationDetails();
 			vd.setVacationDetailsId(FormatUtil.createUuid());
@@ -213,10 +226,17 @@ public class VacationServiceImpl implements VacationService {
 		}
 				
 		//查询调休假期详情最后一次修改的值
-		VacationDetails vacationDetails = vacationDetailsMapper.SelectVacationIdByEndResult(vacationId,"1",null);
+		Vacation vacation = vacationMapper.selectByPrimaryKey(vacationId,year);
 		
 		//若员工没有任何假期操作
-		if(vacationDetails == null){
+		if(vacation == null){
+			
+			if(limitChange<0){
+				returndata.setReturnCode("4300");
+				returndata.setMessage("不能为负数");
+		        return returndata;
+			}
+			
 			//新增微调为第一个假期操作
 			VacationDetails vd = new VacationDetails();
 			vd.setVacationDetailsId(FormatUtil.createUuid());
@@ -250,8 +270,14 @@ public class VacationServiceImpl implements VacationService {
 			}
 		}else{
 			//使用查询出来最后一条结果的总额和余额  加上调整的值
-			double i = Double.parseDouble(vacationDetails.getVacationTotal())+limitChange;
-			double o = Double.parseDouble(vacationDetails.getVacationBalance())+limitChange;
+			double i = Double.parseDouble(vacation.getAnnualLeaveTotal())+limitChange;
+			double o = Double.parseDouble(vacation.getAnnualLeaveBalance())+limitChange;
+			
+			if(i<0 || o<0){
+				returndata.setReturnCode("4300");
+				returndata.setMessage("不能为负数");
+		        return returndata;
+			}
 			
 			VacationDetails vd = new VacationDetails();
 			vd.setVacationDetailsId(FormatUtil.createUuid());
