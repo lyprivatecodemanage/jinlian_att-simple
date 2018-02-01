@@ -288,9 +288,9 @@
   	select count(*) from report_daily_ 
 	where company_id = #{companyId}
 	and att_date = #{attDate}
-	and leave_absence>'0' or leave_days_off>'0' or leave_annual>'0' or leave_sick>'0' or leave_marriage>'0' or leave_maternity>'0'
+	and (leave_absence>'0' or leave_days_off>'0' or leave_annual>'0' or leave_sick>'0' or leave_marriage>'0' or leave_maternity>'0'
 	or leave_maternity_check>'0' or leave_paternity>'0' or leave_funeral>'0' or leave_nursing>'0' or leave_long_sick>'0' 
-	or leave_other>'0' or leave_amblosis>'0' or leave_pregnancy>'0'
+	or leave_other>'0' or leave_amblosis>'0' or leave_pregnancy>'0')
   </select>
   
   <!-- 查询昨日考勤异常人数 -->
