@@ -32,6 +32,8 @@ public class ReportDailyController {
 
 	SimpleDateFormat time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	
 	@Autowired
 	ReportDailyService reportDailyService;
 	
@@ -108,6 +110,7 @@ public class ReportDailyController {
 		p.setRealWorkTimeRank(realWorkTimeRank);
 		p.setPageExcludeNumber(String.valueOf((Integer.parseInt(varPageNo)-1)*Integer.parseInt(pageNum)));
 		p.setPageNum(pageNum);
+		p.setAttDate(sdf.format(new Date()));
 		
 		result = reportDailyService.selectReportDaily(p);
 		

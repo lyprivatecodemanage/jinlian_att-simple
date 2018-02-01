@@ -76,20 +76,13 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 			
 			String attDate = "";
 			
-			Calendar calendar=Calendar.getInstance();   
-			calendar.setTime(new Date()); 
-			String year = calendar.get(Calendar.YEAR)+"";
-			String month = calendar.get(Calendar.MONTH)+1+"";
-			String day = calendar.get(Calendar.DAY_OF_MONTH)-1+"";
+			SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd");
 			
-			if(month.length()<2){
-				month = "0"+month;
-			}
-			if(day.length()<2){
-				day = "0"+day;
-			}
-			
-			attDate = year+"-"+month+"-"+day;
+			Calendar calendar = Calendar.getInstance(); //得到日历
+			calendar.setTime(new Date());
+			calendar.add(Calendar.DAY_OF_MONTH, -1);  //设置为前一天
+			Date date = calendar.getTime(); 
+			attDate = sdf.format(date);
 			
 			int leaveNum = reportDailyMapper.selectYesterdayLeaveNumber(companyId, attDate);
 			
@@ -710,7 +703,9 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 	@Override
 	public void ReportDailyExcel(String excelName,OutputStream out,String companyId, String beginDate, String endDate) {
 		// TODO Auto-generated method stub
-		List<ReportDaily> list = reportDailyMapper.selectDateRangeReportDaily(companyId, beginDate, endDate);
+		String attDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+		
+		List<ReportDaily> list = reportDailyMapper.selectDateRangeReportDaily(companyId, beginDate, endDate,attDate);
 		
 		String[] headers = new String[]{"部门","姓名*","日期","签到时间","签退时间","出勤时长","异常情况",
 				"加班时间","请假时间", "出差时间","外出时间"};  

@@ -2,7 +2,9 @@ package com.xiangshangban.att_simple.service;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,10 +62,12 @@ public class MonthReportServiceImpl implements MonthReportService {
 			for (Employee e : empList) {
 				String attDate = year+"-"+month;
 				
-				int num = reportDailyMapper.selectMonthEcxeptionEmployee(companyId, e.getEmployeeId(),attDate);
+				String dateTime = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+				
+				int num = reportDailyMapper.selectMonthEcxeptionEmployee(companyId, e.getEmployeeId(),attDate,dateTime);
 				
 				//计算公司某月总请假次数
-				leaveCount += reportDailyMapper.selectLeaveCount(companyId,e.getEmployeeId(), attDate);
+				leaveCount += reportDailyMapper.selectLeaveCount(companyId,e.getEmployeeId(), attDate,dateTime);
 				
 				if(num==0){
 					list.add(e);
@@ -126,7 +130,9 @@ public class MonthReportServiceImpl implements MonthReportService {
 		// TODO Auto-generated method stub
 		String attDate = year+"-"+month;
 		
-		List<ReportDaily> list = reportDailyMapper.MonthReportExcel(companyId, attDate);
+		String dateTime = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+		
+		List<ReportDaily> list = reportDailyMapper.MonthReportExcel(companyId, attDate,dateTime);
 		
 		String[] headers = new String[]{"部门","姓名*","应出勤(h)","实出勤(h)","事假(h)","年假(h)","调休(h)"};  
 		 // 第一步，创建一个webbook，对应一个Excel文件  

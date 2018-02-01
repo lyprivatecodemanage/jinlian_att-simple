@@ -94,6 +94,7 @@
 	ON e.department_id = d.department_id and e.company_id = d.company_id
 	where rd.company_id = #{companyId}
 	and att_date like '%${attDate}%'
+	and att_date <![CDATA[<]]> #{dateTime}
 	GROUP BY rd.employee_id,dept_id,d.department_name,rd.employee_id,e.employee_name
   </select>
   
@@ -102,6 +103,7 @@
 	select count(*) from (select count(employee_id) from report_daily_
 	where company_id = #{companyId} 
 	and att_date like '%${attDate}%'
+	and att_date <![CDATA[<]]> #{dateTime}
 	GROUP BY employee_id)t
   </select>
   
@@ -119,6 +121,7 @@
 	ON e.department_id = d.department_id and e.company_id = d.company_id
 	where rd.company_id = #{companyId}
 	and att_date like '%${attDate}%'
+	and att_date <![CDATA[<]]> #{dateTime}
 	GROUP BY rd.employee_id,dept_id,d.department_name,rd.employee_id,e.employee_name
 	LIMIT ${pageNum} OFFSET ${pageExcludeNumber}
   </select>
@@ -133,6 +136,7 @@
 	where company_id = #{companyId}
 	and employee_id = #{employeeId}
 	and att_date like '${attDate}%'
+	and att_date <![CDATA[<]]> #{dateTime}
 	) t
 	where leavedate > 0
   </select>
@@ -143,6 +147,7 @@
 	where company_id = #{companyId}
 	and employee_id = #{employeeId}
 	and att_date like '${attDate}%'
+	and att_date <![CDATA[<]]> #{dateTime}
 	and has_exception = '1'
   </select>
   
@@ -182,6 +187,7 @@
 		and att_date <![CDATA[<=]]> #{endDate} 
 	</if>
 	)t
+	where att_date <![CDATA[<]]> #{attDate}
   </select>
   
   <!-- 考勤日报模糊总数查询 -->
@@ -255,7 +261,8 @@
 	<if test="employeeName != null">
 		and e.employee_name like '%${employeeName}%'
 	</if>
-	)t
+	)t 
+	where att_date <![CDATA[<]]> #{attDate}
 	<if test="signInTimeRank != null">
 		order by sign_in_time  ${signInTimeRank}
 	</if>
@@ -281,9 +288,9 @@
   	select count(*) from report_daily_ 
 	where company_id = #{companyId}
 	and att_date = #{attDate}
-	and leave_absence>'0' or leave_days_off>'0' or leave_annual>'0' or leave_sick>'0' or leave_marriage>'0' or leave_maternity>'0'
+	and (leave_absence>'0' or leave_days_off>'0' or leave_annual>'0' or leave_sick>'0' or leave_marriage>'0' or leave_maternity>'0'
 	or leave_maternity_check>'0' or leave_paternity>'0' or leave_funeral>'0' or leave_nursing>'0' or leave_long_sick>'0' 
-	or leave_other>'0' or leave_amblosis>'0' or leave_pregnancy>'0'
+	or leave_other>'0' or leave_amblosis>'0' or leave_pregnancy>'0')
   </select>
   
   <!-- 查询昨日考勤异常人数 -->

@@ -72,14 +72,14 @@ public interface ReportDailyMapper {
 	 * @param endDate
 	 * @return
 	 */
-	List<ReportDaily> selectDateRangeReportDaily(@Param("companyId")String companyId,@Param("beginDate")String beginDate,@Param("endDate")String endDate);
+	List<ReportDaily> selectDateRangeReportDaily(@Param("companyId")String companyId,@Param("beginDate")String beginDate,@Param("endDate")String endDate,@Param("attDate")String attDate);
 	
 	/**
 	 * 查询某个月该员工是否存在考勤异常
 	 * @param employeeId
 	 * @return
 	 */
-	int selectMonthEcxeptionEmployee(@Param("companyId")String companyId,@Param("employeeId")String employeeId,@Param("attDate")String attDate);
+	int selectMonthEcxeptionEmployee(@Param("companyId")String companyId,@Param("employeeId")String employeeId,@Param("attDate")String attDate,@Param("dateTime")String dateTime);
 	
 	/**
 	 * 查询一个员工在某月存在几次请假
@@ -87,7 +87,7 @@ public interface ReportDailyMapper {
 	 * @param employeeId
 	 * @return
 	 */
-	int selectLeaveCount(@Param("companyId")String companyId,@Param("employeeId")String employeeId,@Param("attDate")String attDate);
+	int selectLeaveCount(@Param("companyId")String companyId,@Param("employeeId")String employeeId,@Param("attDate")String attDate,@Param("dateTime")String dateTime);
 	
 	/**
 	 * 月报数据统计
@@ -109,7 +109,7 @@ public interface ReportDailyMapper {
 	 * @param attDate
 	 * @return
 	 */
-	List<ReportDaily> MonthReportExcel(@Param("companyId")String companyId,@Param("attDate")String attDate);
+	List<ReportDaily> MonthReportExcel(@Param("companyId")String companyId,@Param("attDate")String attDate,@Param("dateTime")String dateTime);
 	/**
 	 * 修改应出天数和时长
 	 * @param reportDaily
