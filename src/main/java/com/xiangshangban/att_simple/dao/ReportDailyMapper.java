@@ -79,7 +79,7 @@ public interface ReportDailyMapper {
 	 * @param employeeId
 	 * @return
 	 */
-	int selectMonthEcxeptionEmployee(@Param("companyId")String companyId,@Param("attDate")String attDate,@Param("dateTime")String dateTime);
+	int selectMonthEcxeptionEmployee(@Param("companyId")String companyId,@Param("employeeId")String employeeId,@Param("attDate")String attDate,@Param("dateTime")String dateTime);
 	
 	/**
 	 * 查询一个员工在某月存在几次请假
@@ -87,7 +87,7 @@ public interface ReportDailyMapper {
 	 * @param employeeId
 	 * @return
 	 */
-	int selectLeaveCount(@Param("companyId")String companyId,@Param("attDate")String attDate,@Param("dateTime")String dateTime);
+	int selectLeaveCount(@Param("companyId")String companyId,@Param("employeeId")String employeeId,@Param("attDate")String attDate,@Param("dateTime")String dateTime);
 	
 	/**
 	 * 月报数据统计
