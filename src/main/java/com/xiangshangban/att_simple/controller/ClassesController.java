@@ -81,8 +81,6 @@ public class ClassesController {
 		}else{
 			result = "参数【公司ID】异常";
 		}
-		
-		
 		return result;
 	}
 	
@@ -659,6 +657,8 @@ public class ClassesController {
 			String empName = classesService.queryEmpNameById(empId.toString(), companyId);
 			//增加操作日志:记录web端的操作
 		/*	String addOperateLog = addOperateLog(accessUserId,companyId,"在班次管理界面查看【"+empName+"】"+pointDate.toString()+"日的排班");
+		 * 
+		 * 
 			logger.info("【查看指定人员指定日期的排班】------>操作日志"+addOperateLog);*/
 		}else{
 			returnData.setReturnCode("3013");
