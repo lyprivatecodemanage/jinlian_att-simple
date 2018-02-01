@@ -2,6 +2,7 @@ package com.xiangshangban.att_simple.controller;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -74,6 +75,8 @@ public class MonthReportComtroller {
 		p.setAttDate(attDate);
 		p.setPageExcludeNumber(String.valueOf((Integer.parseInt(varPageNo)-1)*Integer.parseInt(pageNum)));
 		p.setPageNum(pageNum);
+		p.setDateTime(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+		
 		
 		result = monthReportService.SelectMonthReportFuzzy(p);
 		
