@@ -76,20 +76,13 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 			
 			String attDate = "";
 			
-			Calendar calendar=Calendar.getInstance();   
-			calendar.setTime(new Date()); 
-			String year = calendar.get(Calendar.YEAR)+"";
-			String month = calendar.get(Calendar.MONTH)+1+"";
-			String day = calendar.get(Calendar.DAY_OF_MONTH)-1+"";
+			SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd");
 			
-			if(month.length()<2){
-				month = "0"+month;
-			}
-			if(day.length()<2){
-				day = "0"+day;
-			}
-			
-			attDate = year+"-"+month+"-"+day;
+			Calendar calendar = Calendar.getInstance(); //得到日历
+			calendar.setTime(new Date());
+			calendar.add(Calendar.DAY_OF_MONTH, -1);  //设置为前一天
+			Date date = calendar.getTime(); 
+			attDate = sdf.format(date);
 			
 			int leaveNum = reportDailyMapper.selectYesterdayLeaveNumber(companyId, attDate);
 			

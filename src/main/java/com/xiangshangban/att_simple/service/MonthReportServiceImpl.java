@@ -54,27 +54,14 @@ public class MonthReportServiceImpl implements MonthReportService {
 			/**
 			 * 当月全勤
 			 */
-			//获取所有在职人员信息
-			List<Employee> empList = employeeDao.findAllEmployeeByCompanyId(companyId);
+			String attDate = year+"-"+month;
 			
-			
-			//循环人员数据查询整月有无考勤异常
-			for (Employee e : empList) {
-				String attDate = year+"-"+month;
-				
-				String dateTime = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-				
-				int num = reportDailyMapper.selectMonthEcxeptionEmployee(companyId, e.getEmployeeId(),attDate,dateTime);
-				
-				//计算公司某月总请假次数
-				leaveCount += reportDailyMapper.selectLeaveCount(companyId,e.getEmployeeId(), attDate,dateTime);
-				
-				if(num==0){
-					list.add(e);
-				}
-			}
+			String dateTime = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 			//全勤人数
-			int checkingNum = list.size();
+			int checkingNum = reportDailyMapper.selectMonthEcxeptionEmployee(companyId,attDate,dateTime);
+			
+			//请假次数
+			leaveCount = reportDailyMapper.selectLeaveCount(companyId,attDate,dateTime);
 			
 			map.put("employeeNum",employeeNum);
 			map.put("checkingNum",checkingNum);
