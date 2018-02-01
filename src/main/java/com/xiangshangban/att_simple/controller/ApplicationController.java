@@ -635,7 +635,8 @@ public class ApplicationController {
 								   between = between - (sdf.parse(classesEmployee.getRestEndTime()).getTime()-sdf.parse(classesEmployee.getRestStartTime()).getTime())/1000;
 							   }
 						   }
-						   if(sdf.parse(start).getTime()>sdf.parse(classesEmployee.getRestStartTime()).getTime()){
+						   if(sdf.parse(start).getTime()>sdf.parse(classesEmployee.getRestStartTime()).getTime()
+								   && sdf.parse(start).getTime()<sdf.parse(classesEmployee.getRestEndTime()).getTime()){
 							   if(sdf.parse(end).getTime()<sdf.parse(classesEmployee.getRestEndTime()).getTime()){
 								   between = between - (sdf.parse(end).getTime()-sdf.parse(start).getTime())/1000;
 							   }

@@ -47,12 +47,9 @@
    <!-- 请假记录记录模糊查询总条数 -->
    <select id="selectTotalNum" parameterType="com.xiangshangban.att_simple.bean.Paging" resultType="java.lang.Integer">
    	select count(*) from (select l.application_no,to_char(to_date(l.application_time,'YYYY'),'YYYY') AS year_,to_char(to_date(l.application_time,'YYYY-mm'),'mm') AS month_ FROM application_leave_ l
-	LEFT JOIN organization.department_ d
-	on l.department_id = d.department_id and l.company_id = d.company_id
-	LEFT JOIN organization.employee_ e
-	on d.company_id = e.company_id and d.department_id = e.department_id
-	LEFT JOIN application_total_record_ r 
-	ON l.application_no = r.application_no and e.company_id = r.company_id and e.employee_id = r.application_id
+	LEFT JOIN application_total_record_ r ON l.application_no = r.application_no 
+	LEFT JOIN organization.employee_ e on e.employee_id = r.application_id and r.company_id = e.company_id
+	LEFT JOIN organization.department_ d on e.department_id = d.department_id and e.company_id = d.company_id 
 	where r.is_complete = '1'
 	and r.company_id = #{companyId}
 		<if test="departmentId != null">
