@@ -747,45 +747,49 @@ public class ClassesServiceImpl implements ClassesService {
 		if (selectAllClassesEmp != null && selectAllClassesEmp.size() > 0) {
 			// 遍历人员信息
 			for (int r = 0; r < selectAllClassesEmp.size(); r++) {
-				String empId = selectAllClassesEmp.get(r).get("emp_id").toString().trim();
-				String lastDate = (String)selectAllClassesEmp.get(r).get("last_date");
-				// 最后的排班日期增加一为生效时间
-				Date parse;
-				try {
-					
-					String classesTypeId = selectAllClassesEmp.get(r).get("classes_id").toString().trim();
-					ClassesType classesType = new ClassesType();
-					if(StringUtils.isNotEmpty(classesTypeId)){
-						// 根据班次类型ID查询，班次类型详细信息
-						classesType = classesTypeMapper.selectByPrimaryKey(classesTypeId);
-					}else{
-						//人员未排过班，则默认从当前日期开始排班
-						lastDate = StringUtils.isEmpty(lastDate)?
-								TimeUtil.getLastDayDate(TimeUtil.getCurrentDate()):lastDate;
-						classesType = classesTypeMapper.selectDefaultClassesType(companyId);
-						
-					}
-					parse = new SimpleDateFormat("yyyy-MM-dd").parse(lastDate);
-					Calendar calendar = Calendar.getInstance();
-					calendar.setTime(parse);
-					calendar.add(Calendar.DAY_OF_MONTH, +1);
-					String validDate = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
-					if (classesType != null) {
-						Map<String, String> param = new HashMap<>();
-						param.put("empId", empId);
-						List<Map<String, String>> listMap = new ArrayList<>();
-						listMap.add(param);
-						JSONArray empArray = JSONArray.parseArray(JSONArray.toJSONString(listMap));
-						// TODO 执行排班操作
-						result = commonSchedulingOperate(validDate, empArray, classesType);
-					}
-					
-				} catch (ParseException e) {
-					e.printStackTrace();
+				Object empIdObj = selectAllClassesEmp.get(r).get("emp_id");
+				Object lastDateObj = selectAllClassesEmp.get(r).get("last_date");
+				Object classesIdObj = selectAllClassesEmp.get(r).get("classes_id");
+				
+				if((empIdObj!=null && StringUtils.isNotEmpty(empIdObj.toString().trim())) 
+						&& (lastDateObj!=null && StringUtils.isNotEmpty(lastDateObj.toString().trim())) 
+						&& (lastDateObj!=null && StringUtils.isNotEmpty(lastDateObj.toString().trim()))){
+					String empId = empIdObj.toString().trim();
+					String lastDate = (String)lastDateObj.toString().trim();
+					// 最后的排班日期增加一为生效时间
+					Date parse;
+					try {
+							String classesTypeId = classesIdObj.toString().trim();
+							ClassesType classesType = new ClassesType();
+							if(StringUtils.isNotEmpty(classesTypeId)){
+								// 根据班次类型ID查询，班次类型详细信息
+								classesType = classesTypeMapper.selectByPrimaryKey(classesTypeId);
+								parse = new SimpleDateFormat("yyyy-MM-dd").parse(lastDate);
+								Calendar calendar = Calendar.getInstance();
+								calendar.setTime(parse);
+								calendar.add(Calendar.DAY_OF_MONTH, +1);
+								String validDate = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
+								if (classesType != null) {
+									Map<String, String> param = new HashMap<>();
+									param.put("empId", empId);
+									List<Map<String, String>> listMap = new ArrayList<>();
+									listMap.add(param);
+									JSONArray empArray = JSONArray.parseArray(JSONArray.toJSONString(listMap));
+									// TODO 执行排班操作
+									result = commonSchedulingOperate(validDate, empArray, classesType);
+								}
+							}
+						} catch (ParseException e) {
+							e.printStackTrace();
+					    }
 				}
 			}
 		}
-		return true;
+		if(result>0){
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 	/**
