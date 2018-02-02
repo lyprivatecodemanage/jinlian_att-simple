@@ -614,18 +614,20 @@ public class ApplicationController {
 					   if(!StringUtils.isEmpty(classesEmployee.getClassesId())&&
 							   !StringUtils.isEmpty(classesEmployee.getOnDutySchedulingDate())&&
 							   !StringUtils.isEmpty(classesEmployee.getOffDutySchedulingDate())){//有班次
-						   if(startTime.getTime()>sdf.parse(classesEmployee.getOnDutySchedulingDate()).getTime()){
+						   if(startTime.getTime()>sdf.parse(classesEmployee.getOnDutySchedulingDate()).getTime()){//开始时间大于班次开始时间
 						         start = sdf.format(startTime);
-						   }else{
+						   }else{//开始时间小于班次时间
 							   start = classesEmployee.getOnDutySchedulingDate();
 						   }
-						   if(endTime.getTime()>sdf.parse(classesEmployee.getOffDutySchedulingDate()).getTime()){
+						   if(endTime.getTime()>sdf.parse(classesEmployee.getOffDutySchedulingDate()).getTime()){//结束时间大于班次结束时间
 							   end = classesEmployee.getOffDutySchedulingDate();
-						   }else{
+						   }else{//结束时间小于班次结束时间
 							   end = sdf.format(endTime);
 						   }
+						   //申请时间段在今天的班次内有效时段
 						   double between=(double)(sdf.parse(end).getTime()-sdf.parse(start).getTime())/1000;//除以1000是为了转换成秒
-						   
+						   //申请时间今天的有效时段-今天的有效休息时段=申请时段在今天的有效小时数
+						   //申请时间段在今天班次内有效休息时段
 						   if(sdf.parse(start).getTime()<sdf.parse(classesEmployee.getRestStartTime()).getTime()){
 							   if(sdf.parse(end).getTime()>sdf.parse(classesEmployee.getRestStartTime()).getTime()
 									   && sdf.parse(end).getTime()<sdf.parse(classesEmployee.getRestEndTime()).getTime()){
@@ -649,33 +651,39 @@ public class ApplicationController {
 						   }
 						   applicationHour=applicationHour+(Math.ceil(between/1800)/2);
 					   }else {
-							  if("3".equals(type)||"4".equals(type)){
-							   if("0".equals(isSkipRestTime)){
-								   //休息日
-								   if(i==0){
+						   //休息日
+							  if("3".equals(type)||"4".equals(type)){//出差,外出
+							   if("0".equals(isSkipRestTime)){//不跳过休息日
+								   if(i==0){//申请时段的首天
 									   start = sdf.format(startTime);
-									   if(sdf1.parse(sdf1.format(endTime)).getTime()>sdf1.parse(classesEmployee.getTheDate()).getTime()){
+									   if(sdf1.parse(sdf1.format(endTime)).getTime()>sdf1.parse(classesEmployee.getTheDate()).getTime()){//结束时间大于当天日期
+										   //用当天的24点-开始时间=今天的(出差或外出)有效小时数
 										   int time= (int)Math.ceil((double)(dfs.parse(classesEmployee.getTheDate()+" 23:59:59").getTime()-dfs.parse(dfs.format(startTime)).getTime())/1000/60/30/2);
-										   if(time>8){
+										   if(time>8){//大于八小时,记为八小时
 											   applicationHour =applicationHour+8;
 										   }else{
 											   applicationHour = applicationHour +time;
 										   }
-									   }else{
+									   }else{//结束时间小于当天日期
+										   //结束时间-开始时间=今天的(出差或外出)有效小时数
 										   int time= (int)Math.ceil((double)(dfs.parse(dfs.format(endTime)).getTime()-dfs.parse(dfs.format(startTime)).getTime()/1000/60/30)/2);
-										   if(time>8){
+										   if(time>8){//大于八小时,记为八小时
 											   applicationHour =applicationHour+8;
 										   }else{
 											   applicationHour = applicationHour +time;
 										   }
 									   }
-								   }else{
+								   }else{//申请时段的非首天
+									   //前一天是否有排班
 									   if(!StringUtils.isEmpty(classesEmployeeList.get(i-1).getClassesId())&&!StringUtils.isEmpty(classesEmployeeList.get(i-1).getOnDutySchedulingDate())&&!StringUtils.isEmpty(classesEmployeeList.get(i-1).getOffDutySchedulingDate())){
+										   //有排班,当天计算的开始时间=前一天排班的结束时间
 										   start= classesEmployeeList.get(i-1).getOffDutySchedulingDate();
 									   }else{
+										   //无排班,当天计算的开始时间=前一天排班的结束时间
 										   start = sdf.format(classesEmployee.getTheDate());
 									   }
 									   if(sdf1.parse(sdf1.format(endTime)).getTime()>sdf1.parse(classesEmployee.getTheDate()).getTime()){
+										   //结束时间大于今天24点
 										   int time= (int)Math.ceil((double)(dfs.parse(classesEmployee.getTheDate()+" 23:59:59").getTime()-dfs.parse(dfs.format(startTime)).getTime()/1000/60/30)/2);
 										   if(time>8){
 											   applicationHour =applicationHour+8;
@@ -683,6 +691,7 @@ public class ApplicationController {
 											   applicationHour = applicationHour +time;
 										   }
 									   }else{
+										   //结束时间小于今天24点
 										   int time= (int)Math.ceil((double)(dfs.parse(dfs.format(endTime)).getTime()-dfs.parse(dfs.format(startTime)).getTime()/1000/60/30)/2);
 										   if(time>8){
 											   applicationHour =applicationHour+8;
