@@ -31,7 +31,7 @@
   <sql id="Leave_List">
     application_no, employee_id, department_id, company_id, leave_type, start_time, 
     end_time, reason, upload_voucher, approver, operater_time, is_transfer, 
-    application_hour, application_time,employee_name,department_name,leave_type_name,approver_name
+    to_number(application_hour,'99.9') application_hour, application_time,employee_name,department_name,leave_type_name,approver_name
   </sql>
    
    <select id="selectLeaveKeyData" parameterType="java.lang.String" resultType="java.lang.Integer">
@@ -40,6 +40,7 @@
 	ON l.application_no = r.application_no and l.employee_id = r.application_id and l.company_id = r.company_id
 	where l.company_id = #{companyId}
 	and r.is_complete = '1'
+	and r.is_reject = '0'
 	and l.application_time like #{applicationTime}
 	and leave_type= #{leaveType}
    </select>
