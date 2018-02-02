@@ -184,12 +184,12 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 					//次日是否有排班
 					if(algorithmParam.getClassesEmployeeNextDay()!=null 
 							&& StringUtils.isNotEmpty(algorithmParam.getClassesEmployeeNextDay().getOffDutySchedulingDate())){//有
-						overSignValidEnd = TimeUtil.getLongAfter(
+						overSignValidBegin = TimeUtil.getLongAfter(
 								algorithmParam.getClassesEmployee().getOnDutySchedulingDate(), 
 								-1*Integer.parseInt(algorithmParam.getClassesEmployee().getOnPunchCardRule()),
 								Calendar.MINUTE);
 					}
-					overSignValidBegin = TimeUtil.getLongAfter(
+					overSignValidEnd = TimeUtil.getLongAfter(
 							algorithmParam.getClassesEmployeeNextDay().getOffDutySchedulingDate(),
 							Integer.parseInt(algorithmParam.getClassesEmployee().getOffPunchCardRule()),
 							Calendar.MINUTE);

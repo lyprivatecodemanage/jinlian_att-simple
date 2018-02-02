@@ -5,6 +5,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.arjuna.ats.internal.jdbc.drivers.modifiers.list;
+import com.xiangshangban.att_simple.bean.ClassesEmpInfo;
 import com.xiangshangban.att_simple.bean.ClassesEmployee;
 import com.xiangshangban.att_simple.bean.ClassesType;
 import com.xiangshangban.att_simple.bean.Festival;
@@ -668,9 +671,9 @@ public class ClassesServiceImpl implements ClassesService {
 					// 设置总页数
 					totalPage = totalRows % Integer.parseInt(rows.toString().trim()) == 0? totalRows / Integer.parseInt(rows.toString().trim()): totalRows / Integer.parseInt(rows.toString().trim()) + 1;
 				}
-				resultInfo.setData(finallyData);
+				resultInfo.setData(commonSortForClassesEmpInfo(finallyData));
 			} else {
-				resultInfo.setData(realData);
+				resultInfo.setData(commonSortForClassesEmpInfo(realData));
 			}
 		} else {
 			//没有查询到数据，但是要返回日期
@@ -711,7 +714,7 @@ public class ClassesServiceImpl implements ClassesService {
 				}
 				returnMap.put("classesList",myListMap);
 				selectClassesInfo.add(returnMap);
-				resultInfo.setData(selectClassesInfo);
+				resultInfo.setData(commonSortForClassesEmpInfo(selectClassesInfo));
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
@@ -1394,5 +1397,36 @@ public class ClassesServiceImpl implements ClassesService {
 			result = commonSchedulingOperate(validDate, empArray, classesType);
 		}
 		return result;
+	}
+	
+	/**
+	 * 获取公司人员班次信息【对封装后的数据进行排序操作：根据人员名称和班次内容排序】
+	 */
+	public List<ClassesEmpInfo> commonSortForClassesEmpInfo(List<?> listMap){
+		//初始化要返回的数据
+		List<ClassesEmpInfo> returnListMap = new ArrayList<>();
+		//遍历参数ListMap
+		for (Object object : listMap) {
+			Map innerMap = (Map)object;
+			ClassesEmpInfo classesEmpInfo = new ClassesEmpInfo();
+			classesEmpInfo.setDeptName(innerMap.get("deptName").toString().trim());
+			classesEmpInfo.setPostName(innerMap.get("postName").toString().trim());
+			classesEmpInfo.setEmpId(innerMap.get("empId").toString().trim());
+			classesEmpInfo.setEmpName(innerMap.get("empName").toString().trim());
+			classesEmpInfo.setThisWeekHours(innerMap.get("thisWeekHours").toString().trim());
+			classesEmpInfo.setClassesList((List<Map<String,String>>)innerMap.get("classesList"));
+			
+			returnListMap.add(classesEmpInfo);
+		}
+		
+		//对集合中的数据进行排序操作
+		Collections.sort(returnListMap, new Comparator<ClassesEmpInfo>() {
+			@Override
+            public int compare(ClassesEmpInfo o1, ClassesEmpInfo o2) {
+			   //根据【人员名称+班次内容】进行【倒序】排序
+               return (o2.getClassesList().toString()+o2.getEmpName()).compareTo(o1.getClassesList().toString()+o1.getEmpName());
+            }
+		});;
+		return returnListMap;
 	}
 }

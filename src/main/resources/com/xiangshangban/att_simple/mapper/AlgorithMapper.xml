@@ -192,7 +192,9 @@
 		  to_char(a.end_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss')  end_time,a.employee_id,
   		a.department_id,a.company_id, '2' AS application_type
 	FROM application_overtime_ a
+	LEFT JOIN application_total_record_ AS b ON a.application_no=b.application_no
 	WHERE a.employee_id=#{employeeId} AND a.company_id=#{companyId}
+	AND  b.is_complete='1' AND b.is_reject='0'
 	AND a.start_time::date=#{beginTime}::date
 	ORDER BY start_time
   </select>
