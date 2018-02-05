@@ -852,10 +852,10 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 			case "1,2,":
 				exceptionMark="5";
 				break;
-			case "1,3,":
+			case "1,4,":
 				exceptionMark="6";	
 				break;
-			case "2,4,":
+			case "2,3,":
 				exceptionMark="7";
 				break;
 			case "5,":
