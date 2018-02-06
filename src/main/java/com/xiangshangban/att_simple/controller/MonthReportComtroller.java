@@ -84,7 +84,7 @@ public class MonthReportComtroller {
 	}
 	
 	/**
-	 * 导出月报表
+	 * 焦振/导出月报表
 	 * @param objectString
 	 * @param request
 	 * @return
@@ -116,5 +116,47 @@ public class MonthReportComtroller {
 		} catch (IOException e) {
 			System.out.println("导出文件输出流出错了！"+e);
 		}
+	}
+	
+	/**
+	 * 焦振/【趋势图】计算趋势图数据
+	 * @param objectString
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/CheckingTendencyChart",produces="application/json;chatset=utf-8",method=RequestMethod.POST)
+	public ReturnData CheckingTendencyChart(@RequestBody String objectString, HttpServletRequest request){
+		ReturnData result = new ReturnData();
+		String companyId = request.getHeader("companyId");
+		JSONObject obj = JSON.parseObject(objectString);
+		String beginDate = obj.getString("beginDate");
+		String endDate = obj.getString("endDate");
+		String type = obj.getString("type");
+		
+		result = monthReportService.CheckingTendencyChart(companyId,beginDate,endDate,type);
+		
+		return result;
+	}
+	
+	/**
+	 * 焦振/【月报统计】趋势分析 关键数据查询
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/TendencyChartKeyData",produces="application/json;chatset=utf-8",method=RequestMethod.POST)
+	public ReturnData TendencyChartKeyData(HttpServletRequest request){
+		ReturnData result = new ReturnData();
+		
+		String companyId = request.getHeader("companyId");
+		
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date());
+		
+		String year = c.get(Calendar.YEAR)+"";
+		String month = c.get(Calendar.DAY_OF_MONTH)+1+"";
+		
+		result = monthReportService.TendencyChartKeyData(companyId, year, month);
+		
+		return result;
 	}
 }

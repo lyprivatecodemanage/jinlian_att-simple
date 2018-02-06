@@ -57,6 +57,7 @@
     <result column="employee_name" jdbcType="VARCHAR" property="employeeName" />
     <result column="leavedate" jdbcType="VARCHAR" property="leaveDate" />
     <result column="matter_leave" jdbcType="VARCHAR" property="matterLeave" />
+    <result column="count" jdbcType="VARCHAR" property="count" />
   </resultMap>
   <sql id="Base_Column_List">
     employee_id, company_id, att_date, report_id, dept_id, paiban_remark, check_info, 
@@ -79,6 +80,77 @@
     evection_time_week, evection_time_work, dept_name, begin_time1, end_time1, leave_other, 
     leave_amblosis, leave_pregnancy, work_day,sign_in_time,sign_out_time,has_exception,exception_mark,department_name,exception_mark_name,employee_name,leavedate
   </sql>
+  
+  <!-- 趋势图 加班人数 -->
+  <select id="overTimeTendencyChart" resultMap="BaseResultMap">
+	select att_date,count(*) from (select att_date,to_number(normal_over_work,'9') normal_over_work from report_daily_ 
+	where company_id = #{companyId}
+	and att_date <![CDATA[>=]]> #{beginDate}
+	and att_date <![CDATA[<=]]> #{endDate}
+	)t
+	where normal_over_work>0
+	and att_date <![CDATA[<]]> #{attDate}
+	GROUP BY att_date
+	ORDER BY att_date
+  </select>
+  
+  <!-- 趋势图 早退人数 -->
+  <select id="leaveEarlyTendencyChart" resultMap="BaseResultMap">
+	select * from (
+	select att_date,count(*) from report_daily_
+	where company_id = #{companyId}
+	and att_date <![CDATA[>=]]> #{beginDate}
+	and att_date <![CDATA[<=]]> #{endDate}
+	and has_exception = '1'
+	and exception_mark = '2'
+	GROUP BY att_date
+	ORDER BY att_date
+	)t
+	where att_date <![CDATA[<]]> #{attDate}
+  </select>
+  
+  <!-- 趋势图 迟到人数 -->
+  <select id="beLateTendencyChart" resultMap="BaseResultMap">
+  	select * from (
+	select att_date,count(*) from report_daily_
+	where company_id = #{companyId}
+	and att_date <![CDATA[>=]]> #{beginDate}
+	and att_date <![CDATA[<=]]> #{endDate}
+	and has_exception = '1'
+	and exception_mark = '1'
+	GROUP BY att_date
+	ORDER BY att_date
+	)t
+	where att_date <![CDATA[<]]> #{attDate}
+  </select>
+  
+  <!-- 趋势图  请假人数 -->
+  <select id="LeaveTendencyChart" resultMap="BaseResultMap">
+  	select att_date,count(*) from (select att_date,((to_number(leave_absence,'9')+to_number(leave_days_off,'9')+to_number(leave_annual,'9')+to_number(leave_sick,'9')+to_number(leave_marriage,'9')+to_number(leave_maternity,'9')
+	+to_number(leave_maternity_check,'9')+to_number(leave_paternity,'9')+to_number(leave_funeral,'9')+to_number(leave_nursing,'9')+to_number(leave_long_sick,'9')+to_number(leave_other,'9')
+	+to_number(leave_amblosis,'9')+to_number(leave_pregnancy,'9'))) leavedate 
+	from report_daily_ 
+	where company_id = #{companyId}
+	and att_date <![CDATA[>=]]> #{beginDate}
+	and att_date <![CDATA[<=]]> #{endDate}
+	)t
+	where leavedate>0
+	and att_date <![CDATA[<]]> #{attDate}
+	GROUP BY att_date
+	ORDER BY att_date
+  </select>
+  
+  <!-- 计算全勤趋势图数据 -->
+  <select id="CheckingTendencyChart" resultMap="BaseResultMap">
+  	select * from (select att_date,count(*) from report_daily_
+	where company_id = #{companyId}
+	and att_date <![CDATA[>=]]> #{beginDate}
+	and att_date <![CDATA[<=]]> #{endDate}
+	and has_exception = '0'
+	GROUP BY att_date
+	ORDER BY att_date)t
+	where att_date <![CDATA[<]]> #{attDate}
+  </select>
   
   <!-- 根据公司ID查询某月 月报数据导出报表 -->
   <select id="MonthReportExcel" resultMap="BaseResultMap">
