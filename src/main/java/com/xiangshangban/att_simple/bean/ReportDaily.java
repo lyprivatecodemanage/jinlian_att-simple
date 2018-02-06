@@ -53,8 +53,18 @@ public class ReportDaily extends ReportDailyKey {
     private String employeeName;//人员名称
     private String leaveDate;//请假时间
     private String matterLeave;//事假时间（除年假调休假以外所有假）
-    
-    public String getMatterLeave() {
+    //计数
+    private String count;
+
+	public String getCount() {
+		return count;
+	}
+
+	public void setCount(String count) {
+		this.count = count;
+	}
+
+	public String getMatterLeave() {
 		return matterLeave;
 	}
 

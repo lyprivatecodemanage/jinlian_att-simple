@@ -110,10 +110,59 @@ public interface ReportDailyMapper {
 	 * @return
 	 */
 	List<ReportDaily> MonthReportExcel(@Param("companyId")String companyId,@Param("attDate")String attDate,@Param("dateTime")String dateTime);
+	
 	/**
 	 * 修改应出天数和时长
 	 * @param reportDaily
 	 * @return
 	 */
 	int updateWorkTime(ReportDaily reportDaily);
+	
+	/**
+	 * 计算全勤趋势图数据
+	 * @param companyId
+	 * @param attDate
+	 * @return
+	 */
+	List<ReportDaily> CheckingTendencyChart(@Param("companyId")String companyId,@Param("beginDate")String beginDate,@Param("endDate")String endDate,@Param("attDate")String attDate);
+	
+	/**
+	 * 趋势图  请假人数
+	 * @param companyId
+	 * @param beginDate
+	 * @param endDate
+	 * @param attDate
+	 * @return
+	 */
+	List<ReportDaily> LeaveTendencyChart(@Param("companyId")String companyId,@Param("beginDate")String beginDate,@Param("endDate")String endDate,@Param("attDate")String attDate);
+	
+	/**
+	 * 趋势图 迟到人数
+	 * @param companyId
+	 * @param beginDate
+	 * @param endDate
+	 * @param attDate
+	 * @return
+	 */
+	List<ReportDaily> beLateTendencyChart(@Param("companyId")String companyId,@Param("beginDate")String beginDate,@Param("endDate")String endDate,@Param("attDate")String attDate);
+	
+	/**
+	 * 趋势图 早退人数
+	 * @param companyId
+	 * @param beginDate
+	 * @param endDate
+	 * @param attDate
+	 * @return
+	 */
+	List<ReportDaily> leaveEarlyTendencyChart(@Param("companyId")String companyId,@Param("beginDate")String beginDate,@Param("endDate")String endDate,@Param("attDate")String attDate);
+	
+	/**
+	 * 趋势图 加班人数
+	 * @param companyId
+	 * @param beginDate
+	 * @param endDate
+	 * @param attDate
+	 * @return
+	 */
+	List<ReportDaily> overTimeTendencyChart(@Param("companyId")String companyId,@Param("beginDate")String beginDate,@Param("endDate")String endDate,@Param("attDate")String attDate);
 }

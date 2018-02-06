@@ -39,4 +39,21 @@ public interface MonthReportService {
 	 * @return
 	 */
 	void MonthReportExcel(String excelName,OutputStream out,String companyId,String year,String month);
+	
+	/**
+	 * 计算趋势图数据
+	 * @param companyId
+	 * @param dayNumber
+	 * @return
+	 */
+	ReturnData CheckingTendencyChart(String companyId,String beginDate,String endDate,String type);
+	
+	/**
+	 * 趋势分析 关键数据
+	 * @param companyId
+	 * @param year
+	 * @param month
+	 * @return
+	 */
+	ReturnData TendencyChartKeyData(String companyId,String year,String month);
 }
