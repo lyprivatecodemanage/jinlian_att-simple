@@ -423,9 +423,9 @@ public class VacationServiceImpl implements VacationService {
 							
 							int num = vacationMapper.insertSelective(v);
 							
-							if(num>0){
+							/*if(num>0){
 								AnnualLeaveAdjustment(v.getVacationId(),"0",String.valueOf(AVday),"年假一键生成", auditorEmployeeId, year);
-							}
+							}*/
 						}
 					}
 				}
