@@ -615,7 +615,8 @@
 	<select id="selectCommonContactPeoplePage" parameterType="java.lang.String" resultMap="Employee">
 		select e.employee_id,e.employee_name,d.department_name from organization.employee_ e
 		left join organization.department_ d on d.company_id = #{companyId} and d.department_id = e.department_id and status = '1'
-		where e.employee_id != #{employeeId} and e.company_id = #{companyId} and e.employee_status = '0' order by d.department_name ASC limit #{count}::integer offset #{page}::integer
+		where e.employee_id != #{employeeId} and e.company_id = #{companyId} and e.employee_status = '0' order by convert_to(e.employee_name, 'GBK') ASC 
+		limit #{count}::integer offset #{page}::integer
 	</select>
 	<!-- 根据人员id,部门id,公司id查询对应的名称 -->
 	<select id="selectNameByEmployeeIdAndDepartmentIdAndCompanyId" parameterType="java.lang.String" resultMap="Employee">
