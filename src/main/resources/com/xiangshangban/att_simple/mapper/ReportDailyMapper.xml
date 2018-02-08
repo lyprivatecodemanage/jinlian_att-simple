@@ -264,7 +264,7 @@
   
   <!-- 考勤日报模糊总数查询 -->
   <select id="selectReportDailyTotalNumber" resultType="java.lang.Integer">
-  	select * from 
+  	select count(*) from 
   	(SELECT 
 	report_id,dept_id,d.department_name,rd.employee_id,e.employee_name,att_date,sign_in_time,sign_out_time,to_number(real_work_time,'9999') real_work_time,exception_mark,
 	CASE
@@ -304,7 +304,9 @@
 	</if>
 	<if test="employeeName != null">
 		and e.employee_name like '%${employeeName}%'
-	</if>)t
+	</if>
+	)t 
+	where att_date <![CDATA[<]]> #{attDate}
   </select>
   
   <!-- 日报模糊查询列表 -->
