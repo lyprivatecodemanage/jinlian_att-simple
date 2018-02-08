@@ -73,7 +73,6 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 				try {
 					
 					this.calculate(companyId, emp.getEmployeeId(), date);
-					date = TimeUtil.getLongAfterDate(date+" 00:00:00", 1, Calendar.DATE);
 					
 				} catch (Exception e) {
 					logger.info("公司ID："+companyId+", 员工ID："+emp.getEmployeeId()+", "+date+ "日报计算异常");
@@ -584,7 +583,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 					Integer.parseInt(algorithmParam.getClassesEmployee().getSignInRule()), 
 					Calendar.MINUTE);//迟到线
 			String earlyLine = TimeUtil.getLongAfter(
-					algorithmParam.getAttBeginLine(), 
+					algorithmParam.getAttEndLine(), 
 					-1*Integer.parseInt(algorithmParam.getClassesEmployee().getSignOutRule()), 
 					Calendar.MINUTE);//早退线
 			if(StringUtils.isEmpty(signInTime)){//未签到
@@ -877,7 +876,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getWorkTime()));
 		//实出时长
 		algorithmResult.getReportDaily().setRealWorkTime(
-				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getRealWorkTime()));
+				TimeUtil.parseSecondToMinuteHalfHourFloorUnit(algorithmResult.getReportDaily().getRealWorkTime()));
 		//事假
 		algorithmResult.getReportDaily().setLeaveAbsence(
 				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getLeaveAbsence()));
