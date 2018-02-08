@@ -270,8 +270,8 @@ public class VacationServiceImpl implements VacationService {
 			}
 		}else{
 			//使用查询出来最后一条结果的总额和余额  加上调整的值
-			double i = Double.parseDouble(vacation.getAnnualLeaveTotal())+limitChange;
-			double o = Double.parseDouble(vacation.getAnnualLeaveBalance())+limitChange;
+			double i = Double.parseDouble(vacation.getAdjustRestTotal())+limitChange;
+			double o = Double.parseDouble(vacation.getAdjustRestBalance())+limitChange;
 			
 			if(i<0 || o<0){
 				returndata.setReturnCode("4300");
