@@ -10,7 +10,6 @@ import com.xiangshangban.att_simple.utils.TimeUtil;
 
 public class test {
 	public static void main(String[] args) {
-		
 	}
 	
 	public void setValue(List<Integer> list){
