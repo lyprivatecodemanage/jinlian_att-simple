@@ -54,7 +54,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 					this.calculate(company.getCompanyId(), emp.getEmployeeId(), countDate);
 				} catch (Exception e) {
 					logger.info("公司ID："+company.getCompanyId()+", 员工ID："+emp.getEmployeeId()+", "+countDate+ "日报计算异常");
-					e.printStackTrace();
+					logger.info(e.getMessage());
 				}
 			}
 		}
@@ -76,7 +76,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 					
 				} catch (Exception e) {
 					logger.info("公司ID："+companyId+", 员工ID："+emp.getEmployeeId()+", "+date+ "日报计算异常");
-					e.printStackTrace();
+					logger.info(e.getMessage());
 				}
 			}
 			date = TimeUtil.getLongAfterDate(date+" 00:00:00", 1, Calendar.DATE);
@@ -931,7 +931,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 					
 				} catch (Exception e) {
 					logger.info("公司ID："+company.getCompanyId()+", 员工ID："+emp.getEmployeeId()+", "+countDate+ "后应出时长计算异常");
-					e.printStackTrace();
+					logger.info(e.getMessage());
 				}
 			}
 		}
