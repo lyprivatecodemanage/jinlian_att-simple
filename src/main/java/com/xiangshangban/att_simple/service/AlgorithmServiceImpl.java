@@ -577,6 +577,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 			reportExcept.setExceptDate(countDate);
 			reportExcept.setExceptType("5");
 			result.getReportExcept().add(reportExcept);
+			result.getReportDaily().setAbsent("1");
 		}else{
 			String lateLine = TimeUtil.getLongAfter(
 					algorithmParam.getAttBeginLine(), 
@@ -854,7 +855,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 			case "1,4,":
 				exceptionMark="6";	
 				break;
-			case "2,3,":
+			case "3,2,":
 				exceptionMark="7";
 				break;
 			case "5,":
