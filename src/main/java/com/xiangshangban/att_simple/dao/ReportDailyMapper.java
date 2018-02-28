@@ -20,6 +20,8 @@ public interface ReportDailyMapper {
 
     int updateByPrimaryKeySelective(ReportDaily record);
 
+    int updateIsProcess(ReportDaily record);
+    
     int updateByPrimaryKey(ReportDaily record);
     
 	int deleteByDate(@Param("companyId")String companyId, 

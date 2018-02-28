@@ -21,4 +21,6 @@ public interface ReportDailyService {
 	ReturnData replaceReplenishChecking(String companyId,String reportId,String beginDate,String beginTime,String endDate,String endTime,String reason);
 	
 	void ReportDailyExcel(String excelName,OutputStream out,String companyId,String beginDate,String endDate);
+	
+	ReturnData affirmException(String reportId);
 }

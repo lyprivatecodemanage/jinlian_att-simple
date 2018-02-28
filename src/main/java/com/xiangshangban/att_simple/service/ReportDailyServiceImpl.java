@@ -768,7 +768,12 @@ public class ReportDailyServiceImpl implements ReportDailyService {
             double rwt = Double.parseDouble(rd.getRealWorkTime())/60;
             rwt = Math.floor(rwt*10)/10;
             row.createCell(j++).setCellValue(rwt);
-            row.createCell(j++).setCellValue(rd.getExceptionMarkName());//异常情况
+            if(rd.getIsProcess().equals("0")){
+            	row.createCell(j++).setCellValue("未处理("+rd.getExceptionMarkName()+")");//异常情况
+            }
+            if(rd.getIsProcess().equals("1")){
+            	row.createCell(j++).setCellValue("已处理("+rd.getExceptionMarkName()+")");//异常情况
+            }
             //加班时间
             double now = Double.parseDouble(rd.getNormalOverWork())/60;
             now = Math.floor(now*10)/10;
@@ -792,5 +797,26 @@ public class ReportDailyServiceImpl implements ReportDailyService {
         } catch (IOException e) {  
             e.printStackTrace();  
         }
+	}
+
+	@Override
+	public ReturnData affirmException(String reportId) {
+		// TODO Auto-generated method stub
+		ReturnData returndata = new ReturnData();
+		
+		ReportDaily record = new ReportDaily();
+		record.setReportId(reportId);
+		record.setIsProcess("1");
+		
+		int i = reportDailyMapper.updateIsProcess(record);
+		
+		if(i>0){
+			returndata.setReturnCode("3000");
+			returndata.setMessage("数据请求成功");
+			return returndata;
+		}
+		returndata.setReturnCode("3001");
+		returndata.setMessage("服务器错误");
+		return returndata;
 	}
 }
