@@ -58,6 +58,7 @@
     <result column="leavedate" jdbcType="VARCHAR" property="leaveDate" />
     <result column="matter_leave" jdbcType="VARCHAR" property="matterLeave" />
     <result column="count" jdbcType="VARCHAR" property="count" />
+    <result column="is_process" jdbcType="VARCHAR" property="isProcess" />
   </resultMap>
   <sql id="Base_Column_List">
     employee_id, company_id, att_date, report_id, dept_id, paiban_remark, check_info, 
@@ -67,7 +68,7 @@
     leave_maternity_check, leave_paternity, leave_funeral, leave_nursing, leave_welfare, 
     new_welfare, leave_long_sick, out_time_holiday, out_time_week, out_time_work, evection_time_holiday, 
     evection_time_week, evection_time_work, dept_name, begin_time1, end_time1, leave_other, 
-    leave_amblosis, leave_pregnancy, work_day,sign_in_time,sign_out_time,exception_mark,has_exception
+    leave_amblosis, leave_pregnancy, work_day,sign_in_time,sign_out_time,exception_mark,has_exception,is_process
   </sql>
   
   <sql id="reportDepartment">
@@ -245,7 +246,7 @@
 	to_char((to_number(leave_absence,'9')+to_number(leave_days_off,'9')+to_number(leave_annual,'9')+to_number(leave_sick,'9')+to_number(leave_marriage,'9')+to_number(leave_maternity,'9')
 	+to_number(leave_maternity_check,'9')+to_number(leave_paternity,'9')+to_number(leave_funeral,'9')+to_number(leave_nursing,'9')+to_number(leave_long_sick,'9')+to_number(leave_other,'9')
 	+to_number(leave_amblosis,'9')+to_number(leave_pregnancy,'9')),'9') leavedate
-	,evection_time_work,out_time_work
+	,evection_time_work,out_time_work,is_process,has_exception
 	from report_daily_ rd
 	LEFT JOIN organization.employee_ e
 	ON rd.dept_id = e.department_id and rd.employee_id = e.employee_id and rd.company_id = e.company_id
@@ -283,7 +284,7 @@
 	to_char((to_number(leave_absence,'9')+to_number(leave_days_off,'9')+to_number(leave_annual,'9')+to_number(leave_sick,'9')+to_number(leave_marriage,'9')+to_number(leave_maternity,'9')
 	+to_number(leave_maternity_check,'9')+to_number(leave_paternity,'9')+to_number(leave_funeral,'9')+to_number(leave_nursing,'9')+to_number(leave_long_sick,'9')+to_number(leave_other,'9')
 	+to_number(leave_amblosis,'9')+to_number(leave_pregnancy,'9')),'9') leavedate
-	,evection_time_work,out_time_work
+	,evection_time_work,out_time_work,is_process,has_exception
 	from report_daily_ rd
 	LEFT JOIN organization.employee_ e
 	ON rd.dept_id = e.department_id and rd.employee_id = e.employee_id and rd.company_id = e.company_id
@@ -330,7 +331,7 @@
 	to_char((to_number(leave_absence,'9')+to_number(leave_days_off,'9')+to_number(leave_annual,'9')+to_number(leave_sick,'9')+to_number(leave_marriage,'9')+to_number(leave_maternity,'9')
 	+to_number(leave_maternity_check,'9')+to_number(leave_paternity,'9')+to_number(leave_funeral,'9')+to_number(leave_nursing,'9')+to_number(leave_long_sick,'9')+to_number(leave_other,'9')
 	+to_number(leave_amblosis,'9')+to_number(leave_pregnancy,'9')),'9') leavedate
-	,evection_time_work,out_time_work
+	,evection_time_work,out_time_work,is_process,has_exception
 	from report_daily_ rd
 	LEFT JOIN organization.employee_ e
 	ON rd.dept_id = e.department_id and rd.employee_id = e.employee_id and rd.company_id = e.company_id
@@ -390,6 +391,7 @@
 	where company_id = #{companyId}
 	and att_date = #{attDate}
 	and has_exception = '1'
+	and is_process = '0'
   </select>
   
   <select id="selectByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ReportDailyKey" resultMap="BaseResultMap">
@@ -902,6 +904,9 @@
       <if test="exceptionMark!=null">
       	exception_mark=#{exceptionMark},
       </if>
+      <if test="isProcess != null">
+      	is_process = #{isProcess},
+      </if>
       create_time=to_char(now(),'yyyy-MM-dd hh24:mi:ss')
     </set>
     where employee_id = #{employeeId,jdbcType=VARCHAR}
@@ -976,4 +981,13 @@
       and company_id = #{companyId,jdbcType=VARCHAR}
       and att_date = #{attDate,jdbcType=VARCHAR}
   </update>
+  <update id="updateIsProcess" parameterType="com.xiangshangban.att_simple.bean.ReportDaily">
+    update report_daily_
+    <set>
+    	<if test="isProcess != null">
+      		is_process = #{isProcess},
+      	</if>
+    </set>
+    where report_id = #{reportId,jdbcType=VARCHAR}
+    </update>
 </mapper>
