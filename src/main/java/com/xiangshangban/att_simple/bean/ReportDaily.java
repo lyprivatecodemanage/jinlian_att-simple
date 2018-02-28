@@ -48,22 +48,14 @@ public class ReportDaily extends ReportDailyKey {
     private String signOutTime;//签退
     private String hasException;//是否有异常待处理，0：否，1：是
     private String exceptionMark;//异常描述
-    private String isProcess;//异常处理状态，0：未处理，1：处理
     private String departmentName;//部门名称
     private String exceptionMarkName;//异常名称
     private String employeeName;//人员名称
+    private String isProcess;//异常处理状态，0：未处理，1：处理。默认已处理。不存在异常时，该状态也为未处理。当确认过异常，则日报数据不会再计算更新
     private String leaveDate;//请假时间
     private String matterLeave;//事假时间（除年假调休假以外所有假）
     //计数
     private String count;
-
-	public String getIsProcess() {
-		return isProcess;
-	}
-
-	public void setIsProcess(String isProcess) {
-		this.isProcess = isProcess;
-	}
 
 	public String getCount() {
 		return count;
@@ -487,5 +479,13 @@ public class ReportDaily extends ReportDailyKey {
 
 	public void setSignOutTime(String signOutTime) {
 		this.signOutTime = signOutTime;
+	}
+
+	public String getIsProcess() {
+		return isProcess;
+	}
+
+	public void setIsProcess(String isProcess) {
+		this.isProcess = isProcess;
 	}
 }

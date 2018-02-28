@@ -658,7 +658,7 @@ public class ApplicationController {
 									   start = sdf.format(startTime);
 									   if(sdf1.parse(sdf1.format(endTime)).getTime()>sdf1.parse(classesEmployee.getTheDate()).getTime()){//结束时间大于当天日期
 										   //用当天的24点-开始时间=今天的(出差或外出)有效小时数
-										   int time= (int)Math.ceil((double)(dfs.parse(classesEmployee.getTheDate()+" 23:59:59").getTime()-dfs.parse(dfs.format(startTime)).getTime())/1000/60/30/2);
+										   int time= (int)Math.ceil((double)(dfs.parse(classesEmployee.getTheDate()+" 23:59:59").getTime()-dfs.parse(dfs.format(startTime)).getTime())/1000/60/30)/2;
 										   if(time>8){//大于八小时,记为八小时
 											   applicationHour =applicationHour+8;
 										   }else{
@@ -680,7 +680,7 @@ public class ApplicationController {
 										   start= classesEmployeeList.get(i-1).getOffDutySchedulingDate();
 									   }else{
 										   //无排班,当天计算的开始时间=前一天排班的结束时间
-										   start = sdf.format(classesEmployee.getTheDate());
+										   start = sdf.format(sdf1.parse(classesEmployee.getTheDate()));
 									   }
 									   if(sdf1.parse(sdf1.format(endTime)).getTime()>sdf1.parse(classesEmployee.getTheDate()).getTime()){
 										   //结束时间大于今天24点
