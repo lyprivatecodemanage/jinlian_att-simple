@@ -779,13 +779,16 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 
 	@Override
 	public void postProcess(AlgorithmParam algorithmParam, AlgorithmResult algorithmResult) {
+		//查询日报数据是否存在
+		ReportDaily oldReportDaily = reportDailyMapper.selectByDate(algorithmParam.getCompanyId(), 
+				algorithmParam.getEmployeeId(), algorithmResult.getReportDaily().getAttDate());
+		if(oldReportDaily!=null && "1".equals(oldReportDaily.getIsProcess())){
+			return;
+		}
 		this.proReportData(algorithmResult);
 		this.proException(algorithmParam, algorithmResult);
 		//加班转调休生成处理，将对应日期生成的调休时长改动
 		String vacationId = algorithmMapper.getVacationId(algorithmParam.getCompanyId(), 
-				algorithmParam.getEmployeeId(), algorithmResult.getReportDaily().getAttDate());
-		//查询日报数据是否存在
-		ReportDaily oldReportDaily = reportDailyMapper.selectByDate(algorithmParam.getCompanyId(), 
 				algorithmParam.getEmployeeId(), algorithmResult.getReportDaily().getAttDate());
 		if(oldReportDaily!=null && StringUtils.isNotEmpty(oldReportDaily.getChangeTime()) 
 				&& 0!=Double.parseDouble(oldReportDaily.getChangeTime())){//存在，则扣除调休时长
@@ -878,27 +881,35 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		//实出时长
 		algorithmResult.getReportDaily().setRealWorkTime(
 				TimeUtil.parseSecondToMinuteHalfHourFloorUnit(algorithmResult.getReportDaily().getRealWorkTime()));
+		
 		//事假
-		algorithmResult.getReportDaily().setLeaveAbsence(
-				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getLeaveAbsence()));
+		String leaveAbsence = TimeUtil.parseSecondToMinuteHalfHourUnit(
+				algorithmResult.getReportDaily().getLeaveAbsence());
+		algorithmResult.getReportDaily().setLeaveAbsence(leaveAbsence);
 		//年假
-		algorithmResult.getReportDaily().setLeaveAnnual(
-				TimeUtil.parseSecondToMinuteHalfDayUnit(algorithmResult.getReportDaily().getLeaveAnnual()));
+		String leaveAnnual = TimeUtil.parseSecondToMinuteHalfDayUnit(
+				algorithmResult.getReportDaily().getLeaveAnnual());
+		algorithmResult.getReportDaily().setLeaveAnnual(leaveAnnual);
 		//调休假
-		algorithmResult.getReportDaily().setLeaveDaysOff(
-				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getLeaveDaysOff()));
+		String leaveDaysOff = TimeUtil.parseSecondToMinuteHalfHourUnit(
+				algorithmResult.getReportDaily().getLeaveDaysOff());
+		algorithmResult.getReportDaily().setLeaveDaysOff(leaveDaysOff);
 		//婚假
-		algorithmResult.getReportDaily().setLeaveMarriage(
-				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getLeaveMarriage()));
+		String leaveMarriage = TimeUtil.parseSecondToMinuteHalfHourUnit(
+				algorithmResult.getReportDaily().getLeaveMarriage());
+		algorithmResult.getReportDaily().setLeaveMarriage(leaveMarriage);
 		//产假
-		algorithmResult.getReportDaily().setLeaveMaternity(
-				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getLeaveMaternity()));
+		String leaveMaternity = TimeUtil.parseSecondToMinuteHalfHourUnit(
+				algorithmResult.getReportDaily().getLeaveMaternity());
+		algorithmResult.getReportDaily().setLeaveMaternity(leaveMaternity);
 		//丧假
-		algorithmResult.getReportDaily().setLeaveFuneral(
-				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getLeaveFuneral()));
+		String leaveFuneral= TimeUtil.parseSecondToMinuteHalfHourUnit(
+				algorithmResult.getReportDaily().getLeaveFuneral());
+		algorithmResult.getReportDaily().setLeaveFuneral(leaveFuneral);
 		//病假
-		algorithmResult.getReportDaily().setLeaveSick(
-				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getLeaveSick()));
+		String leaveSick = TimeUtil.parseSecondToMinuteHalfHourUnit(
+				algorithmResult.getReportDaily().getLeaveSick());
+		algorithmResult.getReportDaily().setLeaveSick(leaveSick);
 		//出差
 		algorithmResult.getReportDaily().setEvectionTimeWork(
 				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getEvectionTimeWork()));
@@ -910,6 +921,16 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 				TimeUtil.parseSecondToMinuteHalfHourFloorUnit(algorithmResult.getReportDaily().getNormalOverWork()));
 		//新增调休
 		algorithmResult.getReportDaily().setChangeTime(algorithmResult.getReportDaily().getNormalOverWork());
+		//旷工时长=应出-请假时长
+		if(algorithmResult.getReportDaily().getAbsent()!=null && 
+				Integer.parseInt(algorithmResult.getReportDaily().getAbsent())>0){
+			int leaveTime = Integer.parseInt(leaveAbsence)+Integer.parseInt(leaveAnnual)+
+					Integer.parseInt(leaveDaysOff)+Integer.parseInt(leaveMarriage)+
+					Integer.parseInt(leaveMaternity)+Integer.parseInt(leaveFuneral)+
+					Integer.parseInt(leaveSick);
+			algorithmResult.getReportDaily().setAbsentTime((
+					Integer.parseInt(algorithmResult.getReportDaily().getWorkTime())-leaveTime)+"");
+		}
 	}
 	@Override
 	public void calculateMonth(String countDate) {
