@@ -130,6 +130,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		//有排班
 		if(algorithmParam.getClassesEmployee()!=null 
 				&& StringUtils.isNotEmpty(algorithmParam.getClassesEmployee().getOnDutySchedulingDate())){
+			algorithmParam.setHasPlan(true);
 			this.havePlan(algorithmParam, result);
 		}else{//无排班
 			this.noPlan(algorithmParam, result);
@@ -759,9 +760,9 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		algorithmParam.setEmployee(employee );
 		algorithmParam.setCompanyId(companyId);
 		algorithmParam.setCountDate(countDate);
-		if("4D758DEFD8B04A4F96FE289E48E09EB4".equals(companyId) && "4F1F7958F7AA4F539335859E84820869".equals(employeeId)){
+		/*if("4D758DEFD8B04A4F96FE289E48E09EB4".equals(companyId) && "4F1F7958F7AA4F539335859E84820869".equals(employeeId)){
 			logger.info("查询");
-		}
+		}*/
 		//查询当天的排班
 		algorithmParam.setClassesEmployee(
 				algorithmMapper.getPlanByDate(companyId, employee.getEmployeeId(), countDate));
@@ -785,7 +786,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		if(oldReportDaily!=null && "1".equals(oldReportDaily.getIsProcess())){
 			return;
 		}
-		this.proReportData(algorithmResult);
+		this.proReportData(algorithmParam, algorithmResult);
 		this.proException(algorithmParam, algorithmResult);
 		//加班转调休生成处理，将对应日期生成的调休时长改动
 		String vacationId = algorithmMapper.getVacationId(algorithmParam.getCompanyId(), 
@@ -874,7 +875,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 	 * 处理前文计算的日报数据：秒-》分钟
 	 * @param algorithmResult
 	 */
-	public void proReportData(AlgorithmResult algorithmResult) {
+	public void proReportData(AlgorithmParam algorithmParam, AlgorithmResult algorithmResult) {
 		//应出时长
 		algorithmResult.getReportDaily().setWorkTime(
 				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getWorkTime()));
@@ -921,16 +922,49 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 				TimeUtil.parseSecondToMinuteHalfHourFloorUnit(algorithmResult.getReportDaily().getNormalOverWork()));
 		//新增调休
 		algorithmResult.getReportDaily().setChangeTime(algorithmResult.getReportDaily().getNormalOverWork());
+		//请假总时长
+		int leaveTime = Integer.parseInt(leaveAbsence)+Integer.parseInt(leaveAnnual)+
+				Integer.parseInt(leaveDaysOff)+Integer.parseInt(leaveMarriage)+
+				Integer.parseInt(leaveMaternity)+Integer.parseInt(leaveFuneral)+
+				Integer.parseInt(leaveSick);
 		//旷工时长=应出-请假时长
 		if(algorithmResult.getReportDaily().getAbsent()!=null && 
 				Integer.parseInt(algorithmResult.getReportDaily().getAbsent())>0){
-			int leaveTime = Integer.parseInt(leaveAbsence)+Integer.parseInt(leaveAnnual)+
-					Integer.parseInt(leaveDaysOff)+Integer.parseInt(leaveMarriage)+
-					Integer.parseInt(leaveMaternity)+Integer.parseInt(leaveFuneral)+
-					Integer.parseInt(leaveSick);
+			
 			algorithmResult.getReportDaily().setAbsentTime((
 					Integer.parseInt(algorithmResult.getReportDaily().getWorkTime())-leaveTime)+"");
 		}
+		//计算实际有效出勤时长
+		if(algorithmParam.isHasPlan()){//有排班
+			if(StringUtils.isNotEmpty(algorithmResult.getReportDaily().getSignInTime()) 
+					&& StringUtils.isNotEmpty(algorithmResult.getReportDaily().getSignOutTime())){
+				
+				//签到签退时间区间与班次的交集，扣除休息时间
+				long containAtt = TimeUtil.containTimeLength(
+							algorithmResult.getReportDaily().getSignInTime(), 
+							algorithmResult.getReportDaily().getSignOutTime(), 
+							algorithmParam.getClassesEmployee().getOnDutySchedulingDate(), 
+							algorithmParam.getClassesEmployee().getRestStartTime())+
+						TimeUtil.containTimeLength(
+								algorithmResult.getReportDaily().getSignInTime(), 
+								algorithmResult.getReportDaily().getSignOutTime(), 
+								algorithmParam.getClassesEmployee().getRestEndTime(), 
+								algorithmParam.getClassesEmployee().getOffDutySchedulingDate());
+				
+				//应出勤扣除请假
+				long workTimeLeaveSub = (Long.parseLong(algorithmResult.getReportDaily().getWorkTime())-
+						leaveTime)*60;
+				workTimeLeaveSub = workTimeLeaveSub<0?0:workTimeLeaveSub;//不可小于0
+				if(containAtt>workTimeLeaveSub){//有效出勤时长，最大等于(应出时长-请假时长)
+					containAtt = workTimeLeaveSub;
+				}
+				algorithmResult.getReportDaily().setRealAttendanceTime(
+						TimeUtil.parseSecondToMinuteHalfHourFloorUnit(containAtt+""));
+			}
+		}else{//无排班时，有效出勤时长=签到-签退，得到的时长
+			algorithmResult.getReportDaily().setRealAttendanceTime(algorithmResult.getReportDaily().getRealWorkTime());
+		}
+		
 	}
 	@Override
 	public void calculateMonth(String countDate) {

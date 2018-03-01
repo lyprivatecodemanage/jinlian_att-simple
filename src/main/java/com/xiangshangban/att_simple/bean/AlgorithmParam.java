@@ -17,6 +17,7 @@ public class AlgorithmParam {
 	private ClassesEmployee ClassesEmployee = new ClassesEmployee();//当天排班
 	private ClassesEmployee ClassesEmployeeLastDay = new ClassesEmployee();//前一天排班
 	private ClassesEmployee ClassesEmployeeNextDay = new ClassesEmployee();//次日排班
+	private boolean hasPlan = false; //是否有排班，辅助计算用
 	private String centerLine;//区分签到签退的中间线
 	private String lateLine;//迟到线
 	private String earlyLine;//早退线
@@ -164,6 +165,12 @@ public class AlgorithmParam {
 	}
 	public void setClassesEmployeeLastDay(ClassesEmployee classesEmployeeLastDay) {
 		ClassesEmployeeLastDay = classesEmployeeLastDay;
+	}
+	public boolean isHasPlan() {
+		return hasPlan;
+	}
+	public void setHasPlan(boolean hasPlan) {
+		this.hasPlan = hasPlan;
 	}
 	
 }
