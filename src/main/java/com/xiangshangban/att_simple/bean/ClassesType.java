@@ -39,7 +39,17 @@ public class ClassesType {
     
     private String delDate;//班次类别删除时间
 
-    public String getId() {
+    private String mustAttendanceTime;//必须出勤时长
+    
+    public String getMustAttendanceTime() {
+		return mustAttendanceTime;
+	}
+
+	public void setMustAttendanceTime(String mustAttendanceTime) {
+		this.mustAttendanceTime = mustAttendanceTime;
+	}
+
+	public String getId() {
         return id;
     }
 

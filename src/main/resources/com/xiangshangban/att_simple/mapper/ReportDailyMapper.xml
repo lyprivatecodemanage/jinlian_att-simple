@@ -59,7 +59,10 @@
     <result column="leavedate" jdbcType="VARCHAR" property="leaveDate" />
     <result column="matter_leave" jdbcType="VARCHAR" property="matterLeave" />
     <result column="count" jdbcType="VARCHAR" property="count" />
-    <result column="is_process" jdbcType="VARCHAR" property="isProcess" />
+    <result column="is_process" jdbcType="VARCHAR" property="isProcess"/>
+    <result column="be_late" jdbcType="VARCHAR" property="beLate"/>
+    <result column="leave_early" jdbcType="VARCHAR" property="leaveEarly"/>
+    <result column="absenteeism" jdbcType="VARCHAR" property="absenteeism"/>
   </resultMap>
   <sql id="Base_Column_List">
     employee_id, company_id, att_date, report_id, dept_id, paiban_remark, check_info, 
@@ -161,6 +164,22 @@
 	sum(to_number(work_time,'999')) work_time,sum(to_number(real_work_time,'999')) real_work_time,sum((to_number(leave_absence,'999')+to_number(leave_sick,'999')+to_number(leave_marriage,'999')+to_number(leave_maternity,'999')
 	+to_number(leave_maternity_check,'999')+to_number(leave_paternity,'999')+to_number(leave_funeral,'999')+to_number(leave_nursing,'999')+to_number(leave_long_sick,'999')
 	+to_number(leave_other,'999')+to_number(leave_amblosis,'999')+to_number(leave_pregnancy,'999'))) matter_leave,sum(to_number(leave_annual,'999')) leave_annual,sum(to_number(leave_days_off,'999')) leave_days_off
+	,sum(to_number(rd.absent_time,'999')) absent_time,sum(to_number(rd.normal_over_work,'999')) normal_over_work
+	,
+	CASE
+		exception_mark when '1' then count(exception_mark)
+		ELSE '0'
+	end be_late
+	,
+	CASE
+		exception_mark when '2' then count(exception_mark)
+		ELSE '0'
+	end leave_early
+	,
+	CASE
+		exception_mark when '8' then count(exception_mark)
+		ELSE '0'
+	end absenteeism
 	from report_daily_ rd
 	LEFT JOIN organization.employee_ e
 	ON rd.dept_id = e.department_id and rd.employee_id = e.employee_id and rd.company_id = e.company_id
@@ -188,6 +207,22 @@
 	sum(to_number(work_time,'999')) work_time,sum(to_number(real_work_time,'999')) real_work_time,sum((to_number(leave_absence,'999')+to_number(leave_sick,'999')+to_number(leave_marriage,'999')+to_number(leave_maternity,'999')
 	+to_number(leave_maternity_check,'999')+to_number(leave_paternity,'999')+to_number(leave_funeral,'999')+to_number(leave_nursing,'999')+to_number(leave_long_sick,'999')
 	+to_number(leave_other,'999')+to_number(leave_amblosis,'999')+to_number(leave_pregnancy,'999'))) matter_leave,sum(to_number(leave_annual,'999')) leave_annual,sum(to_number(leave_days_off,'999')) leave_days_off
+	,sum(to_number(rd.absent_time,'999')) absent_time,sum(to_number(rd.normal_over_work,'999')) normal_over_work
+	,
+	CASE
+		exception_mark when '1' then count(exception_mark)
+		ELSE '0'
+	end be_late
+	,
+	CASE
+		exception_mark when '2' then count(exception_mark)
+		ELSE '0'
+	end leave_early
+	,
+	CASE
+		exception_mark when '8' then count(exception_mark)
+		ELSE '0'
+	end absenteeism
 	from report_daily_ rd
 	LEFT JOIN organization.employee_ e
 	ON rd.dept_id = e.department_id and rd.employee_id = e.employee_id and rd.company_id = e.company_id
@@ -196,7 +231,7 @@
 	where rd.company_id = #{companyId}
 	and att_date like '%${attDate}%'
 	and att_date <![CDATA[<]]> #{dateTime}
-	GROUP BY rd.employee_id,dept_id,d.department_name,rd.employee_id,e.employee_name
+	GROUP BY rd.employee_id,dept_id,d.department_name,rd.employee_id,e.employee_name,exception_mark
 	LIMIT ${pageNum} OFFSET ${pageExcludeNumber}
   </select>
   

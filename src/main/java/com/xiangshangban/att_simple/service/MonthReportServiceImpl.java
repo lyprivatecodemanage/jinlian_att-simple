@@ -110,6 +110,8 @@ public class MonthReportServiceImpl implements MonthReportService {
 			reportDaily.setMatterLeave(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getMatterLeave())/30)/2));
 			reportDaily.setLeaveAnnual(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getLeaveAnnual())/30)/2));
 			reportDaily.setLeaveDaysOff(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getLeaveDaysOff())/30)/2));
+			reportDaily.setAbsentTime(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getAbsentTime())/30)/2));
+			reportDaily.setNormalOverWork(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getNormalOverWork())/30)/2));
 		}
 		
 		if(list!=null){

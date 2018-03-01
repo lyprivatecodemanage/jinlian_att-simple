@@ -81,6 +81,7 @@ public class ClassesServiceImpl implements ClassesService {
 		classesType.setCreateTime(TimeUtil.getCurrentTime());
 		classesType.setValidDate(new SimpleDateFormat("yyyy-MM-dd").format(new Date().getTime()));
 		classesType.setIsDefault("1");
+		classesType.setMustAttendanceTime("480");
 		int insertSelective = classesTypeMapper.insertSelective(classesType);
 		if(insertSelective>0){
 			result = true;
@@ -138,6 +139,7 @@ public class ClassesServiceImpl implements ClassesService {
 		Object employeeIdList = jsonObject.get("employeeIdList");
 		String validDate = (String)jsonObject.get("validDate");
 		Object isDefault = jsonObject.get("isDefault");
+		String mustAttendanceTime = jsonObject.getString("mustAttendanceTime");
 		//自动排班开关
 		Object autoScheduledSwitch = jsonObject.get("autoScheduledSwitch");
 		//自动排班周期
@@ -261,6 +263,7 @@ public class ClassesServiceImpl implements ClassesService {
 						classesType.setOffPunchCardTime(offPunchCardRule.toString().trim());
 						classesType.setAutoClassesFlag(autoClassesFlag.toString().trim());
 						classesType.setCompanyId(companyId);
+						classesType.setMustAttendanceTime(mustAttendanceTime);
 						// 创建该班次类型的时间
 						classesType.setCreateTime(TimeUtil.getCurrentTime());
 						
