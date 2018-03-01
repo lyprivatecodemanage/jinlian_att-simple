@@ -54,8 +54,36 @@ public class ReportDaily extends ReportDailyKey {
     private String isProcess;//异常处理状态，0：未处理，1：处理。默认已处理。不存在异常时，该状态也为未处理。当确认过异常，则日报数据不会再计算更新
     private String leaveDate;//请假时间
     private String matterLeave;//事假时间（除年假调休假以外所有假）
+    private String beLate; //迟到次数
+    private String leaveEarly; //早退次数
+    private String absenteeism; //旷工次数
+    
     //计数
     private String count;
+
+	public String getBeLate() {
+		return beLate;
+	}
+
+	public void setBeLate(String beLate) {
+		this.beLate = beLate;
+	}
+
+	public String getLeaveEarly() {
+		return leaveEarly;
+	}
+
+	public void setLeaveEarly(String leaveEarly) {
+		this.leaveEarly = leaveEarly;
+	}
+
+	public String getAbsenteeism() {
+		return absenteeism;
+	}
+
+	public void setAbsenteeism(String absenteeism) {
+		this.absenteeism = absenteeism;
+	}
 
 	public String getCount() {
 		return count;
