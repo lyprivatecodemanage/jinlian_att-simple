@@ -245,7 +245,7 @@ public class VacationController {
 			
 			result = vacationService.AnnualLeaveGenerate(companyId, year,auditorEmployeeId);
 			
-			addOperateLog(auditorEmployeeId, companyId, "假期统计[年假即时一键生成]");
+			//addOperateLog(auditorEmployeeId, companyId, "假期统计[年假即时一键生成]");
 			
 			return result;
 		}else if("1".equals(timingJob)){
