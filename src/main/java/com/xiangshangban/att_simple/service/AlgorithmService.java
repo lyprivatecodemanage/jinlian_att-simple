@@ -54,6 +54,12 @@ public interface AlgorithmService {
      * @param countDate 日期
      */
 	public void calculateMonth(String countDate);
+	/**
+	 * 计算某个公司，一段时间的日报
+	 * @param companyId
+	 * @param beginDate
+	 * @param endDate
+	 */
 	public void calculateByCompany(String companyId, String beginDate, String endDate);
 	/**
 	 * 计算所有公司一段区间内的日报
