@@ -987,8 +987,11 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 				algorithmResult.getReportDaily().setRealAttendanceTime(
 						TimeUtil.parseSecondToMinuteHalfHourFloorUnit(containAtt+""));
 				//判断是否存在迟到、早退，都不存在，则检查出勤是否足够，不够，则产生早退异常。已经有一个早退，则不需要再产生一次早退
-				if(Integer.parseInt(algorithmResult.getReportDaily().getLate())==0
-						&& Integer.parseInt(algorithmResult.getReportDaily().getEarly())==0){
+				if((StringUtils.isEmpty(algorithmResult.getReportDaily().getLate())
+							||Integer.parseInt(algorithmResult.getReportDaily().getLate())==0)
+						&& (StringUtils.isEmpty(algorithmResult.getReportDaily().getEarly())
+							|| Integer.parseInt(algorithmResult.getReportDaily().getEarly())==0
+						)){
 					if(containAtt<workTimeLeaveSub){
 						ReportExcept reportExcept = new ReportExcept();
 						reportExcept.setEmployeeId(algorithmParam.getEmployeeId());
