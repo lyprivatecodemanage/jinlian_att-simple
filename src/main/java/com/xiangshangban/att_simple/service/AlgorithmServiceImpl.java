@@ -60,6 +60,32 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		}
 	}
 	@Override
+	public void calculate(String beginDate, String endDate) {
+		
+		beginDate = beginDate.substring(0, 10);
+		endDate = endDate.substring(0, 10);
+		logger.info(beginDate+"到"+endDate+"日报所有公司计算开始");
+		String date = beginDate;
+		String newEndDate = TimeUtil.getLongAfterDate(endDate, 1, Calendar.DATE);
+		while(TimeUtil.compareTime(newEndDate+" 00:00:00", date+" 00:00:00")){//循环日期段
+			List<Company> companyIdList = algorithmMapper.getAllCompanyList();
+			for(Company company : companyIdList){
+				List<Employee> empIdList = algorithmMapper.getEmployeeOnJobList(
+						company.getCompanyId(), date);
+				for(Employee emp:empIdList){
+					try {
+						this.calculate(company.getCompanyId(), emp.getEmployeeId(), date);
+					} catch (Exception e) {
+						logger.info("公司ID："+company.getCompanyId()+", 员工ID："+emp.getEmployeeId()+", "+date+ "日报计算异常");
+						logger.info(e.getMessage());
+					}
+				}
+			}
+			date = TimeUtil.getLongAfterDate(date+" 00:00:00", 1, Calendar.DATE);
+		}
+		logger.info(beginDate+"到"+endDate+"日报所有公司计算结束");
+	}
+	@Override
 	public void calculateByCompany(String companyId, String beginDate, String endDate) {
 		beginDate = beginDate.substring(0, 10);
 		endDate = endDate.substring(0, 10);
@@ -397,8 +423,8 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 			int appAttRelation = TimeUtil.timeRelation(attBeginLine, attEndLine,
 					application.getStartTime(), application.getEndTime());
 			//申请时间与休息时间的关系
-			int appRestRelation = TimeUtil.timeRelation(application.getStartTime(), 
-					application.getEndTime(), restBeginTime, restEndTime);
+			int appRestRelation = TimeUtil.timeRelation(restBeginTime, restEndTime,
+					application.getStartTime(), application.getEndTime());
 			if(appAttRelation==2 ){//左申请
 				currentApplyBegin=attBeginLine;
 				switch (appRestRelation) {
@@ -960,6 +986,20 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 				}
 				algorithmResult.getReportDaily().setRealAttendanceTime(
 						TimeUtil.parseSecondToMinuteHalfHourFloorUnit(containAtt+""));
+				//判断是否存在迟到、早退，都不存在，则检查出勤是否足够，不够，则产生早退异常。已经有一个早退，则不需要再产生一次早退
+				if(Integer.parseInt(algorithmResult.getReportDaily().getLate())==0
+						&& Integer.parseInt(algorithmResult.getReportDaily().getEarly())==0){
+					if(containAtt<workTimeLeaveSub){
+						ReportExcept reportExcept = new ReportExcept();
+						reportExcept.setEmployeeId(algorithmParam.getEmployeeId());
+						reportExcept.setCompanyId(algorithmParam.getCompanyId());
+						reportExcept.setExceptDate(algorithmParam.getCountDate());
+						reportExcept.setExceptType("2");
+						algorithmResult.getReportExcept().add(reportExcept);
+						algorithmResult.getReportDaily().setEarly("1");//早退次数
+					}
+				}
+				
 			}
 		}else{//无排班时，有效出勤时长=签到-签退，得到的时长
 			algorithmResult.getReportDaily().setRealAttendanceTime(algorithmResult.getReportDaily().getRealWorkTime());

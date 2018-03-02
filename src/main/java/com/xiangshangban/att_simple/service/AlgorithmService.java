@@ -55,4 +55,10 @@ public interface AlgorithmService {
      */
 	public void calculateMonth(String countDate);
 	public void calculateByCompany(String companyId, String beginDate, String endDate);
+	/**
+	 * 计算所有公司一段区间内的日报
+	 * @param beginDate
+	 * @param endDate
+	 */
+	public void calculate(String beginDate, String endDate);
 }

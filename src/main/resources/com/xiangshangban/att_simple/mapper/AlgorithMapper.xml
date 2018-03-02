@@ -14,6 +14,7 @@
     <result column="sign_out_rule" jdbcType="VARCHAR" property="signOutRule" />
     <result column="on_punch_card_rule" jdbcType="VARCHAR" property="onPunchCardRule" />
     <result column="off_punch_card_rule" jdbcType="VARCHAR" property="offPunchCardRule" />
+    <result column="must_attendance_time" jdbcType="VARCHAR" property="mustAttendanceTime"/>
   </resultMap>
   <resultMap id="ClassesMap" type="com.xiangshangban.att_simple.bean.ClassesType">
     <id column="id" jdbcType="VARCHAR" property="id" />
@@ -29,6 +30,7 @@
     <result column="on_punch_card_rule" jdbcType="VARCHAR" property="onPunchCardTime" />
     <result column="off_punch_card_rule" jdbcType="VARCHAR" property="offPunchCardTime" />
     <result column="auto_classes_flag" jdbcType="VARCHAR" property="autoClassesFlag" />
+    <result column="must_attendance_time" jdbcType="VARCHAR" property="mustAttendanceTime"/>
     <result column="create_time" jdbcType="VARCHAR" property="createTime" />
   </resultMap>
   <resultMap id="ApplicationMap" type="com.xiangshangban.att_simple.bean.Application">
@@ -109,7 +111,7 @@
   		to_char(a.off_duty_scheduling_date::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') off_duty_scheduling_date, 
 			to_char(a.rest_start_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') rest_start_time, 
 			to_char(a.rest_end_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') rest_end_time, a.week,
-  		 a.sign_in_rule, a.sign_out_rule, a.on_punch_card_rule, a.off_punch_card_rule
+  		 a.sign_in_rule, a.sign_out_rule, a.on_punch_card_rule, a.off_punch_card_rule, a.must_attendance_time
 	FROM classes_employee_ AS a
 	WHERE a.emp_company_id=#{companyId} AND a.emp_id=#{employeeId} AND a.on_duty_scheduling_date IS NOT NULL
 	AND a.on_duty_scheduling_date!='' AND a.the_date::DATE=#{countDate}::DATE
