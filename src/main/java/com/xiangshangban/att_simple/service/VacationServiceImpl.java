@@ -371,6 +371,9 @@ public class VacationServiceImpl implements VacationService {
 				//判断员工工龄字段不能为空   试用期到期时间    入职时间
 				if(StringUtils.isNotEmpty(employee.getSeniority()) && StringUtils.isNotEmpty(employee.getProbationaryExpired()) && StringUtils.isNotEmpty(employee.getEntryTime())){
 					
+					if(sdf.parse(employee.getProbationaryExpired()).getTime()<new Date().getTime()){
+						continue;
+					}
 					//年假天数
 					double AVday = 0.0;
 					

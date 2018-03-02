@@ -159,27 +159,18 @@
   
   <!-- 根据公司ID查询某月 月报数据导出报表 -->
   <select id="MonthReportExcel" resultMap="BaseResultMap">
-  	SELECT 
+  	SELECT
 	dept_id,d.department_name,rd.employee_id,e.employee_name,
-	sum(to_number(work_time,'999')) work_time,sum(to_number(real_work_time,'999')) real_work_time,sum((to_number(leave_absence,'999')+to_number(leave_sick,'999')+to_number(leave_marriage,'999')+to_number(leave_maternity,'999')
-	+to_number(leave_maternity_check,'999')+to_number(leave_paternity,'999')+to_number(leave_funeral,'999')+to_number(leave_nursing,'999')+to_number(leave_long_sick,'999')
-	+to_number(leave_other,'999')+to_number(leave_amblosis,'999')+to_number(leave_pregnancy,'999'))) matter_leave,sum(to_number(leave_annual,'999')) leave_annual,sum(to_number(leave_days_off,'999')) leave_days_off
-	,sum(to_number(rd.absent_time,'999')) absent_time,sum(to_number(rd.normal_over_work,'999')) normal_over_work
+	sum(work_time::INTEGER) work_time,sum(real_work_time::INTEGER) real_work_time,sum(leave_absence::INTEGER+leave_sick::INTEGER+leave_marriage::INTEGER+leave_maternity::INTEGER
+	+leave_maternity_check::INTEGER+leave_paternity::INTEGER+leave_funeral::INTEGER+leave_nursing::INTEGER+leave_long_sick::INTEGER
+	+leave_other::INTEGER+leave_amblosis::INTEGER+leave_pregnancy::INTEGER) matter_leave,sum(leave_annual::INTEGER) leave_annual,sum(leave_days_off::INTEGER) leave_days_off
+	,sum(rd.absent_time::INTEGER) absent_time,sum(rd.normal_over_work::INTEGER) normal_over_work,sum(rd.real_attendance_time::INTEGER) real_attendance_time
 	,
-	CASE
-		exception_mark when '1' then count(exception_mark)
-		ELSE '0'
-	end be_late
+	sum(late::INTEGER) be_late
 	,
-	CASE
-		exception_mark when '2' then count(exception_mark)
-		ELSE '0'
-	end leave_early
+	sum(early::INTEGER) leave_early
 	,
-	CASE
-		exception_mark when '8' then count(exception_mark)
-		ELSE '0'
-	end absenteeism
+	sum(absent::INTEGER) absenteeism
 	from report_daily_ rd
 	LEFT JOIN organization.employee_ e
 	ON rd.dept_id = e.department_id and rd.employee_id = e.employee_id and rd.company_id = e.company_id
@@ -202,27 +193,18 @@
   
   <!-- 月报数据统计分页模糊查询 -->
   <select id="selectMonthReportFuzzy" resultMap="BaseResultMap">
-  	SELECT 
+  	SELECT
 	dept_id,d.department_name,rd.employee_id,e.employee_name,
-	sum(to_number(work_time,'999')) work_time,sum(to_number(real_work_time,'999')) real_work_time,sum((to_number(leave_absence,'999')+to_number(leave_sick,'999')+to_number(leave_marriage,'999')+to_number(leave_maternity,'999')
-	+to_number(leave_maternity_check,'999')+to_number(leave_paternity,'999')+to_number(leave_funeral,'999')+to_number(leave_nursing,'999')+to_number(leave_long_sick,'999')
-	+to_number(leave_other,'999')+to_number(leave_amblosis,'999')+to_number(leave_pregnancy,'999'))) matter_leave,sum(to_number(leave_annual,'999')) leave_annual,sum(to_number(leave_days_off,'999')) leave_days_off
-	,sum(to_number(rd.absent_time,'999')) absent_time,sum(to_number(rd.normal_over_work,'999')) normal_over_work
+	sum(work_time::INTEGER) work_time,sum(real_work_time::INTEGER) real_work_time,sum(leave_absence::INTEGER+leave_sick::INTEGER+leave_marriage::INTEGER+leave_maternity::INTEGER
+	+leave_maternity_check::INTEGER+leave_paternity::INTEGER+leave_funeral::INTEGER+leave_nursing::INTEGER+leave_long_sick::INTEGER
+	+leave_other::INTEGER+leave_amblosis::INTEGER+leave_pregnancy::INTEGER) matter_leave,sum(leave_annual::INTEGER) leave_annual,sum(leave_days_off::INTEGER) leave_days_off
+	,sum(rd.absent_time::INTEGER) absent_time,sum(rd.normal_over_work::INTEGER) normal_over_work,sum(rd.real_attendance_time::INTEGER) real_attendance_time
 	,
-	CASE
-		exception_mark when '1' then count(exception_mark)
-		ELSE '0'
-	end be_late
+	sum(late::INTEGER) be_late
 	,
-	CASE
-		exception_mark when '2' then count(exception_mark)
-		ELSE '0'
-	end leave_early
+	sum(early::INTEGER) leave_early
 	,
-	CASE
-		exception_mark when '8' then count(exception_mark)
-		ELSE '0'
-	end absenteeism
+	sum(absent::INTEGER) absenteeism
 	from report_daily_ rd
 	LEFT JOIN organization.employee_ e
 	ON rd.dept_id = e.department_id and rd.employee_id = e.employee_id and rd.company_id = e.company_id
@@ -231,7 +213,7 @@
 	where rd.company_id = #{companyId}
 	and att_date like '%${attDate}%'
 	and att_date <![CDATA[<]]> #{dateTime}
-	GROUP BY rd.employee_id,dept_id,d.department_name,rd.employee_id,e.employee_name,exception_mark
+	GROUP BY rd.employee_id,dept_id,d.department_name,rd.employee_id,e.employee_name
 	LIMIT ${pageNum} OFFSET ${pageExcludeNumber}
   </select>
   
@@ -282,7 +264,7 @@
 	to_char((to_number(leave_absence,'9')+to_number(leave_days_off,'9')+to_number(leave_annual,'9')+to_number(leave_sick,'9')+to_number(leave_marriage,'9')+to_number(leave_maternity,'9')
 	+to_number(leave_maternity_check,'9')+to_number(leave_paternity,'9')+to_number(leave_funeral,'9')+to_number(leave_nursing,'9')+to_number(leave_long_sick,'9')+to_number(leave_other,'9')
 	+to_number(leave_amblosis,'9')+to_number(leave_pregnancy,'9')),'9') leavedate
-	,evection_time_work,out_time_work,is_process,has_exception
+	,evection_time_work,out_time_work,is_process,has_exception,real_attendance_time
 	from report_daily_ rd
 	LEFT JOIN organization.employee_ e
 	ON rd.dept_id = e.department_id and rd.employee_id = e.employee_id and rd.company_id = e.company_id
@@ -320,7 +302,7 @@
 	to_char((to_number(leave_absence,'9')+to_number(leave_days_off,'9')+to_number(leave_annual,'9')+to_number(leave_sick,'9')+to_number(leave_marriage,'9')+to_number(leave_maternity,'9')
 	+to_number(leave_maternity_check,'9')+to_number(leave_paternity,'9')+to_number(leave_funeral,'9')+to_number(leave_nursing,'9')+to_number(leave_long_sick,'9')+to_number(leave_other,'9')
 	+to_number(leave_amblosis,'9')+to_number(leave_pregnancy,'9')),'9') leavedate
-	,evection_time_work,out_time_work,is_process,has_exception
+	,evection_time_work,out_time_work,is_process,has_exception,real_attendance_time
 	from report_daily_ rd
 	LEFT JOIN organization.employee_ e
 	ON rd.dept_id = e.department_id and rd.employee_id = e.employee_id and rd.company_id = e.company_id
@@ -367,7 +349,7 @@
 	to_char((to_number(leave_absence,'9')+to_number(leave_days_off,'9')+to_number(leave_annual,'9')+to_number(leave_sick,'9')+to_number(leave_marriage,'9')+to_number(leave_maternity,'9')
 	+to_number(leave_maternity_check,'9')+to_number(leave_paternity,'9')+to_number(leave_funeral,'9')+to_number(leave_nursing,'9')+to_number(leave_long_sick,'9')+to_number(leave_other,'9')
 	+to_number(leave_amblosis,'9')+to_number(leave_pregnancy,'9')),'9') leavedate
-	,evection_time_work,out_time_work,is_process,has_exception
+	,evection_time_work,out_time_work,is_process,has_exception,real_attendance_time
 	from report_daily_ rd
 	LEFT JOIN organization.employee_ e
 	ON rd.dept_id = e.department_id and rd.employee_id = e.employee_id and rd.company_id = e.company_id

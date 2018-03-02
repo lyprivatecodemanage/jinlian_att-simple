@@ -121,28 +121,26 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 		
 		//选择为空直接返回
 		if(reportIds.size()<1){
-			returndata.setReturnCode("3000");
-			returndata.setMessage("数据请求成功");
+			returndata.setReturnCode("4301");
+			returndata.setMessage("没有选择记录");
 			return returndata;
 		}
 		
 		for (String rid : reportIds) {
 			ReportDaily rd = reportDailyMapper.selectById(rid);
 			
-			
 			//当日报记录存在考勤异常  并且 公司ID与登录人的ID相等(预防缓存数据导致可操作别公司数据问题)时  加入集合准备补勤
-			if(rd!=null && "1".equals(rd.getHasException())&& companyId.equals(rd.getCompanyId())){
+			if(rd!=null && "1".equals(rd.getHasException())&& companyId.equals(rd.getCompanyId())&&"0".equals(rd.getIsProcess())){
 				list.add(rd);
 			}
 		}
 		
 		//若选中人员不存在异常日报 则直接返回
 		if(list.size()<1){
-			returndata.setReturnCode("3000");
-			returndata.setMessage("数据请求成功");
+			returndata.setReturnCode("4302");
+			returndata.setMessage("不存在异常");
 			return returndata;
 		}
-		
 		
 		//获得每一个考勤日报信息
 			for (ReportDaily rd : list) {
@@ -393,6 +391,7 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 				reportDaily.setLeaveDate(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getLeaveDate().trim())/30)/2));
 				reportDaily.setEvectionTimeWork(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getEvectionTimeWork().trim())/30)/2));
 				reportDaily.setOutTimeWork(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getOutTimeWork().trim())/30)/2));
+				reportDaily.setRealAttendanceTime(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getRealAttendanceTime().trim())/30)/2));
 		}
 		
 		if(list!=null){
@@ -708,7 +707,7 @@ public class ReportDailyServiceImpl implements ReportDailyService {
 		List<ReportDaily> list = reportDailyMapper.selectDateRangeReportDaily(companyId, beginDate, endDate,attDate);
 		
 		String[] headers = new String[]{"部门","姓名*","日期","签到时间","签退时间","出勤时长","异常情况",
-				"加班时间","请假时间", "出差时间","外出时间"};  
+				"加班时间","请假时间", "出差时间","外出时间","有效出勤时长"};  
 		 // 第一步，创建一个webbook，对应一个Excel文件  
 		HSSFWorkbook workbook = new HSSFWorkbook();  
         //生成一个表格  
@@ -765,8 +764,7 @@ public class ReportDailyServiceImpl implements ReportDailyService {
             row.createCell(j++).setCellValue(rd.getSignInTime());//签到时间
             row.createCell(j++).setCellValue(rd.getSignOutTime());//签退时间
             //出勤时长
-            double rwt = Double.parseDouble(rd.getRealWorkTime())/60;
-            rwt = Math.floor(rwt*10)/10;
+            String rwt = String.valueOf(Math.floor(Integer.parseInt(rd.getRealWorkTime().trim())/30)/2);
             row.createCell(j++).setCellValue(rwt);
             if(rd.getIsProcess().equals("0")){
             	row.createCell(j++).setCellValue("未处理("+rd.getExceptionMarkName()+")");//异常情况
@@ -790,6 +788,9 @@ public class ReportDailyServiceImpl implements ReportDailyService {
             double otw = Double.parseDouble(rd.getOutTimeWork())/60;
             otw = Math.floor(otw*10)/10;
             row.createCell(j++).setCellValue(otw);
+            //有效出勤时长
+            String rat = String.valueOf(Math.floor(Integer.parseInt(rd.getRealAttendanceTime().trim())/30)/2);
+            row.createCell(j++).setCellValue(rat);
         }  
         try {  
             workbook.write(out); 
