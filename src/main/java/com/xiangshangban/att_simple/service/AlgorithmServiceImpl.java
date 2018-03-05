@@ -956,9 +956,11 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		//旷工时长=应出-请假时长
 		if(algorithmResult.getReportDaily().getAbsent()!=null && 
 				Integer.parseInt(algorithmResult.getReportDaily().getAbsent())>0){
-			
-			algorithmResult.getReportDaily().setAbsentTime((
-					Integer.parseInt(algorithmResult.getReportDaily().getWorkTime())-leaveTime)+"");
+			int absentTime = Integer.parseInt(algorithmResult.getReportDaily().getWorkTime())-leaveTime;
+			algorithmResult.getReportDaily().setAbsentTime(absentTime+"");
+			if(absentTime==0){//如果旷工时长为0，则消除旷工次数
+				algorithmResult.getReportDaily().setAbsent("0");
+			}
 		}
 		//计算实际有效出勤时长
 		if(algorithmParam.isHasPlan()){//有排班
