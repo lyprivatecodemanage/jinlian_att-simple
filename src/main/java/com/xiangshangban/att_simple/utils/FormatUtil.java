@@ -1,5 +1,7 @@
 package com.xiangshangban.att_simple.utils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.UUID;
@@ -17,7 +19,23 @@ public class FormatUtil {
 	public static String createUuid() {
 		return UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
 	}
-
+	/**
+	 * 获取异常信息
+	 * @param ex
+	 * @return
+	 */
+	public static String getExceptionInfo(Exception ex) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PrintStream pout = new PrintStream(out);
+        ex.printStackTrace(pout);
+        String ret = new String(out.toByteArray());
+        pout.close();
+        try {
+             out.close();
+        } catch (Exception e) {
+        }
+        return ret;
+}
 	/**
 	 * 获取当前时间一定长度时间之后的时间
 	 * 
