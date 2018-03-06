@@ -50,7 +50,7 @@ public class TestController {
 			algorithmService.calculate(companyId, employeeId, beginDate, endDate);
 			break;
 		case "1":
-			algorithmService.calculate(companyId, beginDate, endDate);
+			algorithmService.calculateByCompany(companyId, beginDate, endDate);
 			break;
 		case "2":
 			algorithmService.calculate(beginDate, endDate);
