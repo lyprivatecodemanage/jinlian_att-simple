@@ -54,7 +54,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 					this.calculate(company.getCompanyId(), emp.getEmployeeId(), countDate);
 				} catch (Exception e) {
 					logger.info("公司ID："+company.getCompanyId()+", 员工ID："+emp.getEmployeeId()+", "+countDate+ "日报计算异常");
-					logger.info(e.getMessage());
+					logger.info(FormatUtil.getExceptionInfo(e));
 				}
 			}
 		}
@@ -77,7 +77,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 						this.calculate(company.getCompanyId(), emp.getEmployeeId(), date);
 					} catch (Exception e) {
 						logger.info("公司ID："+company.getCompanyId()+", 员工ID："+emp.getEmployeeId()+", "+date+ "日报计算异常");
-						logger.info(e.getMessage());
+						logger.info(FormatUtil.getExceptionInfo(e));
 					}
 				}
 			}
@@ -102,7 +102,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 					
 				} catch (Exception e) {
 					logger.info("公司ID："+companyId+", 员工ID："+emp.getEmployeeId()+", "+date+ "日报计算异常");
-					logger.info(e.getMessage());
+					logger.info(FormatUtil.getExceptionInfo(e));
 				}
 			}
 			date = TimeUtil.getLongAfterDate(date+" 00:00:00", 1, Calendar.DATE);
@@ -812,6 +812,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		if(oldReportDaily!=null && "1".equals(oldReportDaily.getIsProcess())){
 			return;
 		}
+		//proReportData必须放在proException之前，原因是日报计算结果处理方法中也会产生早退异常，并且也会影响旷工统计
 		this.proReportData(algorithmParam, algorithmResult);
 		this.proException(algorithmParam, algorithmResult);
 		//加班转调休生成处理，将对应日期生成的调休时长改动
@@ -889,7 +890,11 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 				exceptionMark="7";
 				break;
 			case "5,":
-				exceptionMark="8";	
+				//此处要与日报中旷工数据一致，若日报体现没有旷工，则不记录旷工异常
+				if(algorithmResult.getReportDaily().getAbsent()!=null 
+				&& Integer.parseInt(algorithmResult.getReportDaily().getAbsent())>0){
+					exceptionMark="8";
+				}
 				break;
 			default:
 				break;
@@ -956,9 +961,11 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		//旷工时长=应出-请假时长
 		if(algorithmResult.getReportDaily().getAbsent()!=null && 
 				Integer.parseInt(algorithmResult.getReportDaily().getAbsent())>0){
-			
-			algorithmResult.getReportDaily().setAbsentTime((
-					Integer.parseInt(algorithmResult.getReportDaily().getWorkTime())-leaveTime)+"");
+			int absentTime = Integer.parseInt(algorithmResult.getReportDaily().getWorkTime())-leaveTime;
+			algorithmResult.getReportDaily().setAbsentTime(absentTime+"");
+			if(absentTime==0){//如果旷工时长为0，则消除旷工次数
+				algorithmResult.getReportDaily().setAbsent("0");
+			}
 		}
 		//计算实际有效出勤时长
 		if(algorithmParam.isHasPlan()){//有排班
@@ -1030,7 +1037,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 					
 				} catch (Exception e) {
 					logger.info("公司ID："+company.getCompanyId()+", 员工ID："+emp.getEmployeeId()+", "+countDate+ "后应出时长计算异常");
-					logger.info(e.getMessage());
+					logger.info(FormatUtil.getExceptionInfo(e));
 				}
 			}
 		}
