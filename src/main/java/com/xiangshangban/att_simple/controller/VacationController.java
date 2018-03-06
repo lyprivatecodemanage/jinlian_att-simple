@@ -58,7 +58,7 @@ public class VacationController {
 		String companyId = request.getHeader("companyId");
 		
 		v.setCompanyId(companyId);
-		v.setDepartmentId(json.getString("departmentId"));
+		v.setDepartmentId(StringUtils.isEmpty(json.getString("departmentId"))?null:json.getString("departmentId"));
 		v.setEmployeeName(json.getString("employeeName"));
 		v.setAnnualLeaveTotalRank(json.getString("annualLeaveTotalRank"));
 		v.setAnnualLeaveBalanceRank(json.getString("annualLeaveBalanceRank"));
