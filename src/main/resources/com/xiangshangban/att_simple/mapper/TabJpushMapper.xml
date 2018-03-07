@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiangshangban.att_simple.dao.TabJpushMapper">
+  <resultMap id="Base_result_Map" type="com.xiangshangban.att_simple.bean.TabJpush">
+    <result column="id"  property="id" />
+    <result column="company_id"  property="companyId" />
+    <result column="push_person_id"  property="pushPersonId" />
+    <result column="access_person_id"  property="accessPersonId" />
+    <result column="notification_type"  property="notificationType" />
+    <result column="notification_content" property="notificationContent"/>
+    <result column="notification_associated_obj" property="notificationAssociatedObj"/>
+    <result column="create_time"  property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+  	id,company_id,push_person_id,access_person_id,
+  	notification_type,notification_content,notification_associated_obj,create_time
+  </sql>
+  <insert id="insertTabJpush" parameterType="com.xiangshangban.att_simple.bean.TabJpush">
+  	insert into public.tab_jpush
+  	<trim prefix="(" suffix=")" suffixOverrides=",">
+  		<if test="id != null">id,</if>
+  		<if test="companyId != null">company_id,</if>
+  		<if test="pushPersonId != null">push_person_id,</if>
+  		<if test="accessPersonId != null">access_person_id,</if>
+  		<if test="notificationType != null">notification_type,</if>
+  		<if test="notificationContent != null">notification_content,</if>
+  		<if test="notificationAssociatedObj != null">notification_associated_obj,</if>
+  		create_time
+  	</trim>
+  	<trim prefix="values(" suffix=")" suffixOverrides=",">
+  		<if test="id != null">#{id},</if>
+  		<if test="companyId != null">#{companyId},</if>
+  		<if test="pushPersonId != null">#{pushPersonId},</if>
+  		<if test="accessPersonId != null">#{accessPersonId},</if>
+  		<if test="notificationType != null">#{notificationType},</if>
+  		<if test="notificationContent != null">#{notificationContent},</if>
+  		<if test="notificationAssociatedObj != null">#{notificationAssociatedObj},</if>
+  		to_char(now(),'yyyy-MM-dd hh24:mi:ss')
+  	</trim>
+  </insert>
+</mapper>

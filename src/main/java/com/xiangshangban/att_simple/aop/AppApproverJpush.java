@@ -5,12 +5,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -21,11 +20,14 @@ import com.xiangshangban.att_simple.bean.Company;
 import com.xiangshangban.att_simple.bean.Employee;
 import com.xiangshangban.att_simple.bean.PhoneClientId;
 import com.xiangshangban.att_simple.bean.ReturnData;
+import com.xiangshangban.att_simple.bean.TabJpush;
 import com.xiangshangban.att_simple.bean.Uusers;
 import com.xiangshangban.att_simple.dao.ApplicationTotalRecordMapper;
 import com.xiangshangban.att_simple.dao.CompanyDao;
 import com.xiangshangban.att_simple.dao.EmployeeDao;
 import com.xiangshangban.att_simple.dao.PhoneClientIdMapper;
+import com.xiangshangban.att_simple.dao.TabJpushMapper;
+import com.xiangshangban.att_simple.utils.FormatUtil;
 import com.xiangshangban.att_simple.utils.JPushUtil;
 
 @Aspect
@@ -39,9 +41,11 @@ public class AppApproverJpush {
 	private PhoneClientIdMapper phoneClientIdMapper;
 	@Autowired
 	private ApplicationTotalRecordMapper applicationTotalRecordMapper;
+	@Autowired
+	private TabJpushMapper tabJpushMapper;
 	@Pointcut("execution(* com.xiangshangban.att_simple.controller.ApproverController.approverApplication(..))")
 	public void p(){}
-	@After("p()")
+	@AfterReturning("p()")
 	public void pushNotificationToApp(){
 		ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		 HttpServletRequest request = attributes.getRequest();
@@ -85,7 +89,7 @@ public class AppApproverJpush {
 		 String applicationId = applicationTotalRecord.getApplicationId();//申请人id
 		 //根据申请人id查询出申请人的信息
 		 Employee applicationEmp = employeeDao.selectEmployeeByCompanyIdAndEmployeeId(applicationId, companyId);
-	 	if("3000".equals(returnData.getReturnCode())){//审批操作成功
+	 	if(returnData!=null&&"3000".equals(returnData.getReturnCode())){//审批操作成功
 			 JPushUtil client = new JPushUtil();
 			 Map<String,String> extraMap = new HashMap<String,String>();//额外的键值对
 			 extraMap.put("companyId", companyId);
@@ -96,15 +100,20 @@ public class AppApproverJpush {
 				 //根据移交目标人id查询出移交目标人的用户信息
 				 Uusers transferPersonAccessUser = employeeDao.selectPhoneByEmployeeIdFromUUsers(transferPersionAccessId);
 				//查询移交目标人手机端当前的默认公司是否与移交人所在公司一致,一致则发送通知
-				 PhoneClientId transferPersonAccessDefaultCompany = phoneClientIdMapper.selectDefaultCompanyByUserId(transferPersonId);
+				 PhoneClientId transferPersonAccessDefaultCompany = phoneClientIdMapper.selectDefaultCompanyByUserId(transferPersionAccessId);
 				 if(companyId.equals(transferPersonAccessDefaultCompany.getCompanyId())){//一致
 					//判断当前移交目标人的phone，clientId关系是是否存在，存在则发送通知
 					PhoneClientId transferPersonAccessPhoneClientId = phoneClientIdMapper.selectByPhone(transferPersonAccessUser.getPhone());
 					if(transferPersonAccessPhoneClientId!=null){//存在
 						String[] alias={transferPersonAccessPhoneClientId.getClientId()};//别名数组
 						alert=applicationEmp.getEmployeeName()+"的"+applicationType+"申请,被"+approver.getEmployeeName()+approverDescription+"给您了,请查阅!";
-						extraMap.put("notificationType", "1");
+						extraMap.put("notificationType", TabJpush.approver);
 						String str = client.sendPush(JPushUtil.JPUSH_ALIS, title, alert, extraMap, alias);
+						 if("1".equals(str)){
+							 tabJpushMapper.insertTabJpush(new TabJpush(FormatUtil.createUuid(), 
+									 companyId, employeeId, transferPersionAccessId, TabJpush.approver, 
+									 title+","+alert, applicationNo, null));
+						 }
 						System.out.println(str);
 					}
 				 }
@@ -116,9 +125,14 @@ public class AppApproverJpush {
 					 PhoneClientId applicationPhoneClientId = phoneClientIdMapper.selectByPhone(applicationUser.getPhone());
 				 if(applicationPhoneClientId!=null){//存在
 					 String[] alias={applicationPhoneClientId.getClientId()};//别名数组
-					 extraMap.put("notificationType", "0");
+					 extraMap.put("notificationType", TabJpush.application);
 					 alert="您的"+applicationType+"申请,被"+approver.getEmployeeName()+approverDescription+"了!";//通知内容
 					 String str = client.sendPush(JPushUtil.JPUSH_ALIS,title, alert, extraMap, alias);
+					 if("1".equals(str)){
+						 tabJpushMapper.insertTabJpush(new TabJpush(FormatUtil.createUuid(), 
+								 companyId, employeeId, applicationTotalRecord.getApplicationId(), TabJpush.application, 
+								 title+","+alert, applicationNo, null));
+					 }
 					 System.out.println(str);
 				 	}
 				 }

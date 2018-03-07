@@ -128,7 +128,7 @@ public static PushPayload buildPushObject(String content,String notificationTiti
     							.addExtras(extraMap)//添加额外键值
     							.build())
     					.addPlatformNotification(IosNotification.newBuilder()
-    							.incrBadge(+1)
+    							.incrBadge(1)
     							.addExtras(extraMap)
     							.build())
     					.build())

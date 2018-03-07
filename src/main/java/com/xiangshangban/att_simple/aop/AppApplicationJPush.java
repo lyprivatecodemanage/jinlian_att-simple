@@ -5,7 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +19,13 @@ import com.xiangshangban.att_simple.bean.Company;
 import com.xiangshangban.att_simple.bean.Employee;
 import com.xiangshangban.att_simple.bean.PhoneClientId;
 import com.xiangshangban.att_simple.bean.ReturnData;
+import com.xiangshangban.att_simple.bean.TabJpush;
 import com.xiangshangban.att_simple.bean.Uusers;
 import com.xiangshangban.att_simple.dao.CompanyDao;
 import com.xiangshangban.att_simple.dao.EmployeeDao;
 import com.xiangshangban.att_simple.dao.PhoneClientIdMapper;
+import com.xiangshangban.att_simple.dao.TabJpushMapper;
+import com.xiangshangban.att_simple.utils.FormatUtil;
 import com.xiangshangban.att_simple.utils.JPushUtil;
 
 @Aspect
@@ -34,9 +37,11 @@ public class AppApplicationJPush {
 	private CompanyDao companyDao;
 	@Autowired
 	private PhoneClientIdMapper phoneClientIdMapper;
+	@Autowired
+	private TabJpushMapper tabJpushMapper;
 	@Pointcut("execution(* com.xiangshangban.att_simple.controller.ApplicationController.allTypeApplication(..))")
 	public void p(){}
-	@After("p()")
+	@AfterReturning("p()")
 	public void pushNotificationToApp(){
 		ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		 HttpServletRequest request = attributes.getRequest();
@@ -45,7 +50,7 @@ public class AppApplicationJPush {
 		 Application application = (Application) request.getAttribute("application");
 		 ReturnData returnData = (ReturnData)request.getAttribute("returnData");
 		 Company company;
-		 if("3000".equals(returnData.getReturnCode())){
+		 if(returnData!=null&&"3000".equals(returnData.getReturnCode())){
 			 //申请人
 			 Employee empApplication = employeeDao.selectEmployeeByCompanyIdAndEmployeeId(employeeId, companyId);
 			//审批人id
@@ -91,10 +96,15 @@ public class AppApplicationJPush {
 					 //添加额外键值对
 					 extraMap.put("companyId", companyId);
 					 extraMap.put("companyName", company.getCompanyName());
-					 extraMap.put("notificationType", "1");//通知类型,0:申请,1:审批 
+					 extraMap.put("notificationType", TabJpush.approver);//通知类型,0:申请,1:审批 
 					 String[] alias={approverPhoneClientId.getClientId()};//别名
 					 //String[] alias={"1111"};
 					 String str = client.sendPush(JPushUtil.JPUSH_ALIS,title, body, extraMap, alias);
+					 if("1".equals(str)){
+						 tabJpushMapper.insertTabJpush(new TabJpush(FormatUtil.createUuid(), 
+								 companyId, employeeId, approverId, TabJpush.approver, 
+								 title+","+body, application.getApplicationNo(), null));
+					 }
 					 System.out.println(str);
 				 }
 			 }

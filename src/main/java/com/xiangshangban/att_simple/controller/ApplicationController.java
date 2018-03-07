@@ -186,7 +186,6 @@ public class ApplicationController {
 				return returnData;
 			}
 			Application application = JSON.parseObject(jsonString, Application.class);
-			request.setAttribute("application", application);
 			if(application==null||StringUtils.isEmpty(application.getApplicationType())
 					||StringUtils.isEmpty(application.getIsCopy())){
 				returnData.setMessage("必传参数为空");
@@ -205,6 +204,7 @@ public class ApplicationController {
 			application.setOperaterTime(date);//操作时间
 			application.setApplicationTime(date);//申请发起时间
 			application.setIsComplete("0");//未完成
+			request.setAttribute("application", application);
 			Date startTime =null;//开始时间
 			Date endTime=null;//结束时间
 			//申请类型{ 1:请假,2:加班,3:出差,4:外出,5:补卡 }
