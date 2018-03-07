@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiangshangban.att_simple.dao.FillCardRecordMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.FillCardRecord">
+    <result column="company_id"  property="companyId" />
+    <result column="employee_id"  property="employeeId" />
+    <result column="fill_card_type"  property="fillCardType" />
+    <result column="fill_card_time"  property="fillCardTime" />
+    <result column="fill_card_address"  property="fillCardAddress" />
+    <result column="customer_name"  property="customerName" />
+    <result column="description"  property="description" />
+    <result column="img_url"  property="imgUrl" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    company_id, employee_id, fill_card_type, fill_card_time,fill_card_address,customer_name, 
+    description,img_url
+  </sql>
+  
+  
+</mapper>

@@ -1,8 +1,9 @@
 package com.xiangshangban.att_simple.bean;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Application {
+public class Application implements Serializable{
 	private String applicationNo;//申请单号
 	private String applicationId;//申请人id
 	private String applicatrionPersonName;//申请人姓名

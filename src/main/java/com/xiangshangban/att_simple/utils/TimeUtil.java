@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 
 
 public class TimeUtil {
-
 	/**
 	 * 得到几天前的时间
 	 * 

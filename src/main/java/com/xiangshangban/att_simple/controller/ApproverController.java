@@ -276,6 +276,7 @@ public class ApproverController {
 		String postscriptason = "";//附言
 		String transferPersonId ="";//移交人id
 		String transferPersionAccessId="";//移交目标人id
+		request.setAttribute("jsonString", jsonString);
 		SimpleDateFormat sdfhm = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		JSONObject jobj = null;
@@ -319,10 +320,14 @@ public class ApproverController {
 					transferPersonId, transferPersionAccessId);
 			Application application = (Application)returnData.getData();
 			if("5".equals(application.getApplicationType())){
-				algorithmService.calculate(companyId, application.getApplicationId(), sdf.format(sdfhm.parse(application.getFillCardTime())));
+				algorithmService.calculate(companyId, application.getApplicationId(), 
+						sdf.format(sdfhm.parse(application.getFillCardTime())));
 			}else{
-				algorithmService.calculate(companyId, application.getApplicationId(), sdf.format(sdfhm.parse(application.getStartTime())), sdf.format(sdfhm.parse(application.getEndTime())));
+				algorithmService.calculate(companyId, application.getApplicationId(), 
+						sdf.format(sdfhm.parse(application.getStartTime())), 
+						sdf.format(sdfhm.parse(application.getEndTime())));
 			}
+			request.setAttribute("returnData", returnData);
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
 			returnData.setData("");

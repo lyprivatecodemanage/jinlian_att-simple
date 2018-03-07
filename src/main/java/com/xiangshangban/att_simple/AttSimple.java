@@ -8,15 +8,18 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import com.xiangshangban.att_simple.aop.AppApplicationJPush;
 import com.xiangshangban.att_simple.filter.ServletFilter;
 
 
 @SpringBootApplication
 @EnableTransactionManagement
 @EnableScheduling
+@EnableAspectJAutoProxy
 public class AttSimple {
 
     public static Logger logger = Logger.getLogger(AttSimple.class);

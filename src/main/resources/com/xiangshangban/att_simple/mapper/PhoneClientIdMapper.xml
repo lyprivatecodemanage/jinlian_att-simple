@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xiangshangban.att_simple.dao.PhoneClientIdMapper">
+	<resultMap id="BaseResultMap"
+		type="com.xiangshangban.att_simple.bean.PhoneClientId">
+		<result column="phone" property="phone" />
+		<result column="client_id" property="clientId" />
+		<result column="company_id" property="companyId" />
+		<result column="create_time" property="createTime" />
+		<result column="employee_id" property="employeeId" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		phone,client_id,company_id,create_time,employee_id
+	</sql>
+
+	<select id="selectByPhone" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select 
+		<include refid="Base_Column_List"/>
+		from organization.phone_clientid pc
+		where pc.phone=#{phone}
+	</select>
+	<select id="selectByClientId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select 
+		<include refid="Base_Column_List"/>
+		from organization.phone_clientid pc
+		where pc.client_id=#{clientId}
+	</select>
+	<!-- 根据userid查询手机端当前的默认公司 -->
+	<select id="selectDefaultCompanyByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select uc.company_id
+		from organization.user_company uc
+		where uc.user_id = #{userId} and uc.current_option = '1' and type = '1'
+	</select>
+	<!-- 根据公司id和userid查询出clientid -->
+	<select id="">
+		select <include refid="Base_Column_List"/>
+		from organization.phone_clientid pc
+		where pc.company_id = #{companyId} and pc.employee_id=#{employeeId}
+	</select>
+	<insert id="insertPhoneClientId" parameterType="com.xiangshangban.att_simple.bean.PhoneClientId" >
+		insert into organization.phone_clientid (<include refid="Base_Column_List"/>)
+		values
+		(
+			#{phone},#{clientId},#{companyId},to_char(now(), 'yyyy-MM-dd hh24:mi:ss'),#{employeeId}
+		)
+	</insert>
+	<delete id="deletePhoneClientIdByPhone" parameterType="java.lang.String">
+		delete from organization.phone_clientid where phone = #{phone}
+	</delete>
+	<delete id="deletePhoneClientIdByClientId" parameterType="java.lang.String">
+		delete from organization.phone_clientid where client_id = #{clientId}
+	</delete>
+	
+
+</mapper>

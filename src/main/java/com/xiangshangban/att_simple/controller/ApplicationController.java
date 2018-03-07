@@ -186,6 +186,7 @@ public class ApplicationController {
 				return returnData;
 			}
 			Application application = JSON.parseObject(jsonString, Application.class);
+			request.setAttribute("application", application);
 			if(application==null||StringUtils.isEmpty(application.getApplicationType())
 					||StringUtils.isEmpty(application.getIsCopy())){
 				returnData.setMessage("必传参数为空");
@@ -324,7 +325,7 @@ public class ApplicationController {
 				   returnData.setReturnCode("3006");
 				   return returnData;
 			}
-			
+			request.setAttribute("returnData", returnData);
 			return returnData;
 			}catch(Exception e){
 				logger.info(e);

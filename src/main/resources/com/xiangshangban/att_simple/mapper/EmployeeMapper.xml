@@ -630,4 +630,33 @@
 		</if>
 		and e.company_id =#{companyId}
 	</select>
+	<resultMap id="U_Users" type="com.xiangshangban.att_simple.bean.Uusers">
+		<id column="userid" property="userid" />
+		<result column="account" property="account" />
+		<result column="userpwd" property="userpwd" />
+		<result column="temporarypwd" property="temporarypwd" />
+		<result column="salt" property="salt" />
+		<result column="username" property="username" />
+		<result column="phone" property="phone" />
+		<result column="create_time" property="createTime" />
+		<result column="last_login_time" jdbcType="DATE" property="lastLoginTime" />
+		<result column="status" property="status" />
+		<result column="wechat_id" property="wechatId" />
+		<result column="wechat_code" property="wechatCode" />
+		<result column="wechat_name" property="wecharName" />
+		<result column="company_id" property="companyId" />
+	</resultMap>
+	<sql id="U_Users_Base_Column_List">
+		userid, account, userpwd, temporarypwd, salt, username,
+		phone, create_time, last_login_time, status, wechat_id, wechat_code,
+		wechat_name
+	</sql>
+	<!-- 根据员工id查询员工的手机号 -->
+	<select id="selectPhoneByEmployeeIdFromUUsers" parameterType="java.lang.String" resultMap="U_Users">
+		select 	<include refid="U_Users_Base_Column_List"/>
+		from organization.u_users u 
+		where u.userid = #{userid} and status='1'
+	</select>
+	
+	
 </mapper>
