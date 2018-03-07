@@ -18,6 +18,7 @@
     <result column="the_date" jdbcType="VARCHAR" property="theDate" />
     <result column="week" jdbcType="VARCHAR" property="week" />
     <result column="divide_color" jdbcType="VARCHAR" property="divideColor" />
+    <result column="must_attendance_time" jdbcType="VARCHAR" property="mustAttendanceTime" />
   </resultMap>
   
   <sql id="Base_Column_List">
@@ -104,6 +105,9 @@
       <if test="divideColor != null">
         divide_color,
       </if>
+      <if test="mustAttendanceTime!=null">
+      	must_attendance_time,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -153,6 +157,9 @@
       </if>
       <if test="divideColor != null">
         #{divideColor,jdbcType=VARCHAR},
+      </if>
+      <if test="mustAttendanceTime!=null">
+      	#{mustAttendanceTime,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>

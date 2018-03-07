@@ -58,7 +58,7 @@ public class VacationController {
 		String companyId = request.getHeader("companyId");
 		
 		v.setCompanyId(companyId);
-		v.setDepartmentId(json.getString("departmentId"));
+		v.setDepartmentId(StringUtils.isEmpty(json.getString("departmentId"))?null:json.getString("departmentId"));
 		v.setEmployeeName(json.getString("employeeName"));
 		v.setAnnualLeaveTotalRank(json.getString("annualLeaveTotalRank"));
 		v.setAnnualLeaveBalanceRank(json.getString("annualLeaveBalanceRank"));
@@ -245,7 +245,7 @@ public class VacationController {
 			
 			result = vacationService.AnnualLeaveGenerate(companyId, year,auditorEmployeeId);
 			
-			addOperateLog(auditorEmployeeId, companyId, "假期统计[年假即时一键生成]");
+			//addOperateLog(auditorEmployeeId, companyId, "假期统计[年假即时一键生成]");
 			
 			return result;
 		}else if("1".equals(timingJob)){

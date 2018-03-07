@@ -55,9 +55,14 @@
     <result column="department_name" jdbcType="VARCHAR" property="departmentName" />
     <result column="exception_mark_name" jdbcType="VARCHAR" property="exceptionMarkName" />
     <result column="employee_name" jdbcType="VARCHAR" property="employeeName" />
+    <result column="is_process" jdbcType="VARCHAR" property="isProcess" />
     <result column="leavedate" jdbcType="VARCHAR" property="leaveDate" />
     <result column="matter_leave" jdbcType="VARCHAR" property="matterLeave" />
     <result column="count" jdbcType="VARCHAR" property="count" />
+    <result column="is_process" jdbcType="VARCHAR" property="isProcess"/>
+    <result column="be_late" jdbcType="VARCHAR" property="beLate"/>
+    <result column="leave_early" jdbcType="VARCHAR" property="leaveEarly"/>
+    <result column="absenteeism" jdbcType="VARCHAR" property="absenteeism"/>
   </resultMap>
   <sql id="Base_Column_List">
     employee_id, company_id, att_date, report_id, dept_id, paiban_remark, check_info, 
@@ -67,7 +72,7 @@
     leave_maternity_check, leave_paternity, leave_funeral, leave_nursing, leave_welfare, 
     new_welfare, leave_long_sick, out_time_holiday, out_time_week, out_time_work, evection_time_holiday, 
     evection_time_week, evection_time_work, dept_name, begin_time1, end_time1, leave_other, 
-    leave_amblosis, leave_pregnancy, work_day,sign_in_time,sign_out_time,exception_mark,has_exception
+    leave_amblosis, leave_pregnancy, work_day,sign_in_time,sign_out_time,exception_mark,has_exception,is_process
   </sql>
   
   <sql id="reportDepartment">
@@ -154,11 +159,18 @@
   
   <!-- 根据公司ID查询某月 月报数据导出报表 -->
   <select id="MonthReportExcel" resultMap="BaseResultMap">
-  	SELECT 
+  	SELECT
 	dept_id,d.department_name,rd.employee_id,e.employee_name,
-	sum(to_number(work_time,'999')) work_time,sum(to_number(real_work_time,'999')) real_work_time,sum((to_number(leave_absence,'999')+to_number(leave_sick,'999')+to_number(leave_marriage,'999')+to_number(leave_maternity,'999')
-	+to_number(leave_maternity_check,'999')+to_number(leave_paternity,'999')+to_number(leave_funeral,'999')+to_number(leave_nursing,'999')+to_number(leave_long_sick,'999')
-	+to_number(leave_other,'999')+to_number(leave_amblosis,'999')+to_number(leave_pregnancy,'999'))) matter_leave,sum(to_number(leave_annual,'999')) leave_annual,sum(to_number(leave_days_off,'999')) leave_days_off
+	sum(work_time::INTEGER) work_time,sum(real_work_time::INTEGER) real_work_time,sum(leave_absence::INTEGER+leave_sick::INTEGER+leave_marriage::INTEGER+leave_maternity::INTEGER
+	+leave_maternity_check::INTEGER+leave_paternity::INTEGER+leave_funeral::INTEGER+leave_nursing::INTEGER+leave_long_sick::INTEGER
+	+leave_other::INTEGER+leave_amblosis::INTEGER+leave_pregnancy::INTEGER) matter_leave,sum(leave_annual::INTEGER) leave_annual,sum(leave_days_off::INTEGER) leave_days_off
+	,sum(rd.absent_time::INTEGER) absent_time,sum(rd.normal_over_work::INTEGER) normal_over_work,sum(rd.real_attendance_time::INTEGER) real_attendance_time
+	,
+	sum(late::INTEGER) be_late
+	,
+	sum(early::INTEGER) leave_early
+	,
+	sum(absent::INTEGER) absenteeism
 	from report_daily_ rd
 	LEFT JOIN organization.employee_ e
 	ON rd.dept_id = e.department_id and rd.employee_id = e.employee_id and rd.company_id = e.company_id
@@ -181,11 +193,18 @@
   
   <!-- 月报数据统计分页模糊查询 -->
   <select id="selectMonthReportFuzzy" resultMap="BaseResultMap">
-  	SELECT 
+  	SELECT
 	dept_id,d.department_name,rd.employee_id,e.employee_name,
-	sum(to_number(work_time,'999')) work_time,sum(to_number(real_work_time,'999')) real_work_time,sum((to_number(leave_absence,'999')+to_number(leave_sick,'999')+to_number(leave_marriage,'999')+to_number(leave_maternity,'999')
-	+to_number(leave_maternity_check,'999')+to_number(leave_paternity,'999')+to_number(leave_funeral,'999')+to_number(leave_nursing,'999')+to_number(leave_long_sick,'999')
-	+to_number(leave_other,'999')+to_number(leave_amblosis,'999')+to_number(leave_pregnancy,'999'))) matter_leave,sum(to_number(leave_annual,'999')) leave_annual,sum(to_number(leave_days_off,'999')) leave_days_off
+	sum(work_time::INTEGER) work_time,sum(real_work_time::INTEGER) real_work_time,sum(leave_absence::INTEGER+leave_sick::INTEGER+leave_marriage::INTEGER+leave_maternity::INTEGER
+	+leave_maternity_check::INTEGER+leave_paternity::INTEGER+leave_funeral::INTEGER+leave_nursing::INTEGER+leave_long_sick::INTEGER
+	+leave_other::INTEGER+leave_amblosis::INTEGER+leave_pregnancy::INTEGER) matter_leave,sum(leave_annual::INTEGER) leave_annual,sum(leave_days_off::INTEGER) leave_days_off
+	,sum(rd.absent_time::INTEGER) absent_time,sum(rd.normal_over_work::INTEGER) normal_over_work,sum(rd.real_attendance_time::INTEGER) real_attendance_time
+	,
+	sum(late::INTEGER) be_late
+	,
+	sum(early::INTEGER) leave_early
+	,
+	sum(absent::INTEGER) absenteeism
 	from report_daily_ rd
 	LEFT JOIN organization.employee_ e
 	ON rd.dept_id = e.department_id and rd.employee_id = e.employee_id and rd.company_id = e.company_id
@@ -245,7 +264,7 @@
 	to_char((to_number(leave_absence,'9')+to_number(leave_days_off,'9')+to_number(leave_annual,'9')+to_number(leave_sick,'9')+to_number(leave_marriage,'9')+to_number(leave_maternity,'9')
 	+to_number(leave_maternity_check,'9')+to_number(leave_paternity,'9')+to_number(leave_funeral,'9')+to_number(leave_nursing,'9')+to_number(leave_long_sick,'9')+to_number(leave_other,'9')
 	+to_number(leave_amblosis,'9')+to_number(leave_pregnancy,'9')),'9') leavedate
-	,evection_time_work,out_time_work
+	,evection_time_work,out_time_work,is_process,has_exception,real_attendance_time
 	from report_daily_ rd
 	LEFT JOIN organization.employee_ e
 	ON rd.dept_id = e.department_id and rd.employee_id = e.employee_id and rd.company_id = e.company_id
@@ -283,7 +302,7 @@
 	to_char((to_number(leave_absence,'9')+to_number(leave_days_off,'9')+to_number(leave_annual,'9')+to_number(leave_sick,'9')+to_number(leave_marriage,'9')+to_number(leave_maternity,'9')
 	+to_number(leave_maternity_check,'9')+to_number(leave_paternity,'9')+to_number(leave_funeral,'9')+to_number(leave_nursing,'9')+to_number(leave_long_sick,'9')+to_number(leave_other,'9')
 	+to_number(leave_amblosis,'9')+to_number(leave_pregnancy,'9')),'9') leavedate
-	,evection_time_work,out_time_work
+	,evection_time_work,out_time_work,is_process,has_exception,real_attendance_time
 	from report_daily_ rd
 	LEFT JOIN organization.employee_ e
 	ON rd.dept_id = e.department_id and rd.employee_id = e.employee_id and rd.company_id = e.company_id
@@ -330,7 +349,7 @@
 	to_char((to_number(leave_absence,'9')+to_number(leave_days_off,'9')+to_number(leave_annual,'9')+to_number(leave_sick,'9')+to_number(leave_marriage,'9')+to_number(leave_maternity,'9')
 	+to_number(leave_maternity_check,'9')+to_number(leave_paternity,'9')+to_number(leave_funeral,'9')+to_number(leave_nursing,'9')+to_number(leave_long_sick,'9')+to_number(leave_other,'9')
 	+to_number(leave_amblosis,'9')+to_number(leave_pregnancy,'9')),'9') leavedate
-	,evection_time_work,out_time_work
+	,evection_time_work,out_time_work,is_process,has_exception,real_attendance_time
 	from report_daily_ rd
 	LEFT JOIN organization.employee_ e
 	ON rd.dept_id = e.department_id and rd.employee_id = e.employee_id and rd.company_id = e.company_id
@@ -390,6 +409,7 @@
 	where company_id = #{companyId}
 	and att_date = #{attDate}
 	and has_exception = '1'
+	and is_process = '0'
   </select>
   
   <select id="selectByPrimaryKey" parameterType="com.xiangshangban.att_simple.bean.ReportDailyKey" resultMap="BaseResultMap">
@@ -430,7 +450,7 @@
       evection_time_holiday, evection_time_week, 
       evection_time_work, dept_name, begin_time1, 
       end_time1, leave_other, leave_amblosis, 
-      leave_pregnancy, work_day,sign_in_time,sign_out_time,create_time,has_exception,exception_mark)
+      leave_pregnancy, work_day,sign_in_time,sign_out_time,create_time,has_exception,exception_mark,is_process)
     values (#{employeeId,jdbcType=VARCHAR}, #{companyId,jdbcType=VARCHAR}, #{attDate,jdbcType=VARCHAR}, 
       #{reportId,jdbcType=VARCHAR}, #{deptId,jdbcType=VARCHAR}, #{paibanRemark,jdbcType=VARCHAR}, 
       #{checkInfo,jdbcType=VARCHAR}, #{workTime,jdbcType=VARCHAR}, #{realWorkTime,jdbcType=VARCHAR}, 
@@ -447,7 +467,7 @@
       #{evectionTimeWork,jdbcType=VARCHAR}, #{deptName,jdbcType=VARCHAR}, #{beginTime1,jdbcType=VARCHAR}, 
       #{endTime1,jdbcType=VARCHAR}, #{leaveOther,jdbcType=VARCHAR}, #{leaveAmblosis,jdbcType=VARCHAR}, 
       #{leavePregnancy,jdbcType=VARCHAR}, #{workDay,jdbcType=VARCHAR},#{signInTime},#{signOutTime},#{hasException},#{exceptionMark},
-      to_char(now(),'yyyy-MM-dd hh24:mi:ss'))
+      to_char(now(),'yyyy-MM-dd hh24:mi:ss'),#{isProcess})
   </insert>
   <insert id="insertSelective" parameterType="com.xiangshangban.att_simple.bean.ReportDaily">
     insert into report_daily_
@@ -602,6 +622,9 @@
       <if test="exceptionMark!=null">
       	exception_mark,
       </if>
+      <if test="isProcess!=null">
+      	is_process,
+      </if>
       create_time
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -755,6 +778,9 @@
       <if test="exceptionMark!=null">
       	#{exceptionMark},
       </if>
+      <if test="isProcess!=null">
+      	#{isProcess},
+      </if>
       to_char(now(),'yyyy-MM-dd hh24:mi:ss')
     </trim>
   </insert>
@@ -902,6 +928,9 @@
       <if test="exceptionMark!=null">
       	exception_mark=#{exceptionMark},
       </if>
+      <if test="isProcess!=null">
+      	is_process = #{isProcess},
+      </if>
       create_time=to_char(now(),'yyyy-MM-dd hh24:mi:ss')
     </set>
     where employee_id = #{employeeId,jdbcType=VARCHAR}
@@ -957,6 +986,7 @@
       sign_out_time=#{signOutTime},
       has_exception=#{hasException},
       exception_mark=#{exceptionMark},
+      is_process = #{isProcess},
       create_time=to_char(now(),'yyyy-MM-dd hh24:mi:ss')
     where employee_id = #{employeeId,jdbcType=VARCHAR}
       and company_id = #{companyId,jdbcType=VARCHAR}
@@ -976,4 +1006,13 @@
       and company_id = #{companyId,jdbcType=VARCHAR}
       and att_date = #{attDate,jdbcType=VARCHAR}
   </update>
+  <update id="updateIsProcess" parameterType="com.xiangshangban.att_simple.bean.ReportDaily">
+    update report_daily_
+    <set>
+    	<if test="isProcess != null">
+      		is_process = #{isProcess},
+      	</if>
+    </set>
+    where report_id = #{reportId,jdbcType=VARCHAR}
+    </update>
 </mapper>

@@ -367,65 +367,67 @@ public class VacationServiceImpl implements VacationService {
 			//查询该公司所有人员
 			List<Employee> list = employeeDao.findAllEmployeeByCompanyId(companyId);
 			
-			for (Employee employee : list) {
-				//判断员工工龄字段不能为空   试用期到期时间    入职时间
-				if(StringUtils.isNotEmpty(employee.getSeniority()) && StringUtils.isNotEmpty(employee.getProbationaryExpired()) && StringUtils.isNotEmpty(employee.getEntryTime())){
-					
-					//年假天数
-					double AVday = 0.0;
-					
-					try {
-						AVday = cv.ABCAnnualFormula(employee.getSeniority(), 1, employee.getEntryTime(), 0, 0);
-						//计算入职时间到现在时间的年假  累加入职前年假
-						AVday += cv.computeAnnualVacation(sdate.parse(employee.getEntryTime()));
+			if(list.size()>0){
+				for (Employee employee : list) {
+					//判断员工工龄字段不能为空   试用期到期时间    入职时间
+					if(StringUtils.isNotEmpty(employee.getSeniority()) && StringUtils.isNotEmpty(employee.getProbationaryExpired()) && StringUtils.isNotEmpty(employee.getEntryTime()) && sdate.parse(employee.getProbationaryExpired()).getTime()<=new Date().getTime()){
 						
-						if(AVday>15){
-							AVday = 15.0;
+						//年假天数
+						double AVday = 0.0;
+						
+						try {
+							AVday = cv.ABCAnnualFormula(employee.getSeniority(), 1, employee.getEntryTime(), 0, 0);
+							//计算入职时间到现在时间的年假  累加入职前年假
+							AVday += cv.computeAnnualVacation(sdate.parse(employee.getEntryTime()));
+							
+							if(AVday>15){
+								AVday = 15.0;
+							}
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-					if(AVday>-1){
-						Vacation vacation = vacationMapper.SelectEmployeeVacation(companyId, null, employee.getEmployeeId(),year);
 						
-						if(vacation != null ){
-							if(!vacation.getYear().equals(year)){
+						if(AVday>-1){
+							Vacation vacation = vacationMapper.SelectEmployeeVacation(companyId, null, employee.getEmployeeId(),year);
+							
+							if(vacation != null ){
+								if(!vacation.getYear().equals(year)){
+									Vacation v = new Vacation();
+									v.setVacationId(vacation.getVacationId());
+									v.setCompanyId(employee.getCompanyId());
+									v.setDepartmentId(employee.getDepartmentId());
+									v.setEmployeeId(employee.getEmployeeId());
+									v.setAnnualLeaveTotal(String.valueOf(AVday));
+									v.setAnnualLeaveBalance(String.valueOf(AVday));
+									v.setAdjustRestTotal(vacation.getAdjustRestTotal());
+									v.setAdjustRestBalance(vacation.getAdjustRestBalance());
+									v.setYear(year);
+									
+									int num = vacationMapper.insertSelective(v);
+									
+									if(num>0){
+										AnnualLeaveAdjustment(vacation.getVacationId(),"0",String.valueOf(AVday),"年假一键生成", auditorEmployeeId, year);
+									}
+								}
+							}else{
 								Vacation v = new Vacation();
-								v.setVacationId(vacation.getVacationId());
+								v.setVacationId(FormatUtil.createUuid());
 								v.setCompanyId(employee.getCompanyId());
 								v.setDepartmentId(employee.getDepartmentId());
 								v.setEmployeeId(employee.getEmployeeId());
 								v.setAnnualLeaveTotal(String.valueOf(AVday));
 								v.setAnnualLeaveBalance(String.valueOf(AVday));
-								v.setAdjustRestTotal(vacation.getAdjustRestTotal());
-								v.setAdjustRestBalance(vacation.getAdjustRestBalance());
+								v.setAdjustRestTotal("0");
+								v.setAdjustRestBalance("0");
 								v.setYear(year);
 								
 								int num = vacationMapper.insertSelective(v);
 								
-								if(num>0){
-									AnnualLeaveAdjustment(vacation.getVacationId(),"0",String.valueOf(AVday),"年假一键生成", auditorEmployeeId, year);
-								}
+								/*if(num>0){
+									AnnualLeaveAdjustment(v.getVacationId(),"0",String.valueOf(AVday),"年假一键生成", auditorEmployeeId, year);
+								}*/
 							}
-						}else{
-							Vacation v = new Vacation();
-							v.setVacationId(FormatUtil.createUuid());
-							v.setCompanyId(employee.getCompanyId());
-							v.setDepartmentId(employee.getDepartmentId());
-							v.setEmployeeId(employee.getEmployeeId());
-							v.setAnnualLeaveTotal(String.valueOf(AVday));
-							v.setAnnualLeaveBalance(String.valueOf(AVday));
-							v.setAdjustRestTotal("0");
-							v.setAdjustRestBalance("0");
-							v.setYear(year);
-							
-							int num = vacationMapper.insertSelective(v);
-							
-							/*if(num>0){
-								AnnualLeaveAdjustment(v.getVacationId(),"0",String.valueOf(AVday),"年假一键生成", auditorEmployeeId, year);
-							}*/
 						}
 					}
 				}

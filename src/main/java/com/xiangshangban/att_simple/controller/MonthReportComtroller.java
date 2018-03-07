@@ -44,7 +44,7 @@ public class MonthReportComtroller {
 		c.setTime(new Date());
 		
 		String year = c.get(Calendar.YEAR)+"";
-		String month = c.get(Calendar.DAY_OF_MONTH)+1+"";
+		String month = "0"+(c.get(Calendar.MONDAY)+1);
 		
 		result = monthReportService.monthReportKeyData(companyId, year, month);
 		

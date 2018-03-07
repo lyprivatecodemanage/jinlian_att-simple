@@ -61,7 +61,7 @@ public class MonthReportServiceImpl implements MonthReportService {
 			 */
 			//获取所有在职人员信息
 			List<Employee> empList = employeeDao.findAllEmployeeByCompanyId(companyId);
-			
+				
 			
 			//循环人员数据查询整月有无考勤异常
 			for (Employee e : empList) {
@@ -110,6 +110,9 @@ public class MonthReportServiceImpl implements MonthReportService {
 			reportDaily.setMatterLeave(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getMatterLeave())/30)/2));
 			reportDaily.setLeaveAnnual(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getLeaveAnnual())/30)/2));
 			reportDaily.setLeaveDaysOff(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getLeaveDaysOff())/30)/2));
+			reportDaily.setAbsentTime(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getAbsentTime())/30)/2));
+			reportDaily.setNormalOverWork(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getNormalOverWork())/30)/2));
+			reportDaily.setRealAttendanceTime(String.valueOf(Math.floor(Integer.parseInt(reportDaily.getRealAttendanceTime())/30)/2));
 		}
 		
 		if(list!=null){
@@ -139,7 +142,7 @@ public class MonthReportServiceImpl implements MonthReportService {
 		
 		List<ReportDaily> list = reportDailyMapper.MonthReportExcel(companyId, attDate,dateTime);
 		
-		String[] headers = new String[]{"部门","姓名*","应出勤(h)","实出勤(h)","事假(h)","年假(h)","调休(h)"};  
+		String[] headers = new String[]{"部门","姓名*","应出勤(h)","实出勤(h)","有效出勤时长(h)","迟到次数","早退次数","旷工次数","旷工时长(h)","加班时长(h)","事假(h)","年假(h)","调休(h)"};  
 		 // 第一步，创建一个webbook，对应一个Excel文件  
 		HSSFWorkbook workbook = new HSSFWorkbook();  
         //生成一个表格  
@@ -189,28 +192,38 @@ public class MonthReportServiceImpl implements MonthReportService {
            ReportDaily rd = list.get(i);  
             row = sheet.createRow(i+1);  
             int j = 0;  
-            //"部门","姓名*","应出勤(h)","实出勤(h)","事假(h)","年假(h)","调休(h)"
+            //"部门","姓名*","应出勤(h)","实出勤(h)","有效出勤时长(h)","迟到次数","早退次数","旷工次数","旷工时长(h)","加班时长(h)","事假(h)","年假(h)","调休(h)"
             row.createCell(j++).setCellValue(rd.getDepartmentName());//部门
             row.createCell(j++).setCellValue(rd.getEmployeeName());//姓名
             //应出勤时间
-            double wt = Double.parseDouble(rd.getWorkTime())/60;
-            wt = Math.floor(wt*10)/10;
+            String wt = String.valueOf(Math.floor(Integer.parseInt(rd.getWorkTime().trim())/30)/2);
             row.createCell(j++).setCellValue(wt);
             //实出勤时间
-            double rwt = Double.parseDouble(rd.getRealWorkTime())/60;
-            rwt = Math.floor(rwt*10)/10;
+            String rwt = String.valueOf(Math.floor(Integer.parseInt(rd.getRealWorkTime().trim())/30)/2);
             row.createCell(j++).setCellValue(rwt);
+            //有效出勤时长
+            String rat = String.valueOf(Math.floor(Integer.parseInt(rd.getRealAttendanceTime().trim())/30)/2);
+            row.createCell(j++).setCellValue(rat);
+            //迟到次数
+            row.createCell(j++).setCellValue(rd.getBeLate().trim());
+            //早退次数
+            row.createCell(j++).setCellValue(rd.getLeaveEarly().trim());
+            //旷工次数
+            row.createCell(j++).setCellValue(rd.getAbsenteeism().trim());
+            //旷工时长
+            String at = String.valueOf(Math.floor(Integer.parseInt(rd.getAbsentTime().trim())/30)/2);
+            row.createCell(j++).setCellValue(at);
+            //加班时长
+            String now = String.valueOf(Math.floor(Integer.parseInt(rd.getNormalOverWork().trim())/30)/2);
+            row.createCell(j++).setCellValue(now);
             //事假
-            double ml = Double.parseDouble(rd.getMatterLeave())/60;
-            ml = Math.floor(ml*10)/10;
+            String ml = String.valueOf(Math.floor(Integer.parseInt(rd.getMatterLeave().trim())/30)/2);
             row.createCell(j++).setCellValue(ml);
             //年假
-            double la = Double.parseDouble(rd.getLeaveAnnual())/60;
-            la = Math.floor(la*10)/10;
+            String la = String.valueOf(Math.floor(Integer.parseInt(rd.getLeaveAnnual().trim())/30)/2);
             row.createCell(j++).setCellValue(la);
             //调休
-            double ldo = Double.parseDouble(rd.getLeaveDaysOff())/60;
-            ldo = Math.floor(ldo*10)/10;
+            String ldo = String.valueOf(Math.floor(Integer.parseInt(rd.getLeaveDaysOff().trim())/30)/2);
             row.createCell(j++).setCellValue(ldo);
         }  
         try {  

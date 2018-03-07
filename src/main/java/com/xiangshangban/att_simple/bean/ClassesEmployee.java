@@ -36,6 +36,16 @@ public class ClassesEmployee {
     
     private ClassesType classesType;
 
+    private String mustAttendanceTime;
+    
+	public String getMustAttendanceTime() {
+		return mustAttendanceTime;
+	}
+
+	public void setMustAttendanceTime(String mustAttendanceTime) {
+		this.mustAttendanceTime = mustAttendanceTime;
+	}
+
 	public String getId() {
 		return id;
 	}

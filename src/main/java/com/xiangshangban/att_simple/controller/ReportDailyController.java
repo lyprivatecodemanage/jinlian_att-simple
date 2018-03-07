@@ -41,6 +41,26 @@ public class ReportDailyController {
 	private String sendUrl;
 	
 	/**
+	 * 焦振/考勤日报[确认异常]
+	 * @param objectString
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/affirmException",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+	public ReturnData affirmException(@RequestBody String objectString,HttpServletRequest request){
+		ReturnData result = new ReturnData();
+		JSONObject obj = JSON.parseObject(objectString);
+		String reportId = obj.getString("reportId");
+		String auditorEmployeeId = request.getHeader("accessUserId");
+		String companyId = request.getHeader("companyId");
+		result = reportDailyService.affirmException(reportId);
+		
+		addOperateLog(auditorEmployeeId, companyId, "考勤日报[确认异常]");
+		
+		return result;
+	}
+	
+	/**
 	 * 焦振/查询日报关键数据
 	 * @param request
 	 * @return

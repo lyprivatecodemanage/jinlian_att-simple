@@ -78,6 +78,7 @@ v.adjust_rest_total, v.adjust_rest_balance,d.department_name,e.employee_name,yea
 	on v.employee_id = e.employee_id and v.company_id = e.company_id and v.department_id = e.department_id
 	where v.company_id = #{companyId}
 	and year_ = #{year}
+	and e.employee_status = '0'
 	<if test="departmentId != null">
 		and v.department_id = #{departmentId}
 	</if>

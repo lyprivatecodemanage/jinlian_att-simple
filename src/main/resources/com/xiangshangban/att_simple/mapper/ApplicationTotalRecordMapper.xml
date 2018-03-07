@@ -66,23 +66,25 @@
     </trim>
   </insert>
 	<!-- 申请列表 -->  
+	<!-- 申请列表 -->  
 	<select id="selectApplicationList" parameterType="java.lang.String" resultMap="BaseResultMap">
-  	select <include refid="Base_Column_List"/>,
-  	case application_type when '1' then l.application_time
-	when '2' then over.application_time
-	when '3' then bt.application_time
-	when '4' then out.application_time
-	when '5' then fc.application_time
-	end as application_time
-  	from att_simple.application_total_record_ atr
-  	left join application_leave_ l on l.application_no =atr.application_no
-	left join application_overtime_ over on over.application_no =atr.application_no
-	left join application_business_travel_ bt on bt.application_no =atr.application_no
-	left join application_outgoing_ out on out.application_no =atr.application_no
-	left join application_fill_card_ fc on fc.application_no =atr.application_no
-  	where atr.application_id =#{employeeId} and atr.company_id =#{companyId} order by atr.operater_time DESC
-  	limit #{count}::integer offset #{page}::integer
+	  	select <include refid="Base_Column_List"/>,
+	  	case application_type when '1' then l.application_time
+		when '2' then over.application_time
+		when '3' then bt.application_time
+		when '4' then out.application_time
+		when '5' then fc.application_time
+		end as application_time
+	  	from att_simple.application_total_record_ atr
+	  	left join application_leave_ l on l.application_no =atr.application_no
+		left join application_overtime_ over on over.application_no =atr.application_no
+		left join application_business_travel_ bt on bt.application_no =atr.application_no
+		left join application_outgoing_ out on out.application_no =atr.application_no
+		left join application_fill_card_ fc on fc.application_no =atr.application_no
+	  	where atr.application_id =#{employeeId} and atr.company_id =#{companyId} order by atr.operater_time DESC
+	  	limit #{count}::integer offset #{page}::integer
   </select>
+
    <sql id="T_Base_Column_List">
     t.application_no, t.operater_time, t.operater_id, t.application_type, t.last_approver, t.is_copy, 
     t.application_id, t.company_id, t.is_reject, t.application_status, t.reject_reason, 

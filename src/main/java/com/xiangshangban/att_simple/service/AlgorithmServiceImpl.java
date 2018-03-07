@@ -54,10 +54,36 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 					this.calculate(company.getCompanyId(), emp.getEmployeeId(), countDate);
 				} catch (Exception e) {
 					logger.info("公司ID："+company.getCompanyId()+", 员工ID："+emp.getEmployeeId()+", "+countDate+ "日报计算异常");
-					e.printStackTrace();
+					logger.info(FormatUtil.getExceptionInfo(e));
 				}
 			}
 		}
+	}
+	@Override
+	public void calculate(String beginDate, String endDate) {
+		
+		beginDate = beginDate.substring(0, 10);
+		endDate = endDate.substring(0, 10);
+		logger.info(beginDate+"到"+endDate+"日报所有公司计算开始");
+		String date = beginDate;
+		String newEndDate = TimeUtil.getLongAfterDate(endDate, 1, Calendar.DATE);
+		while(TimeUtil.compareTime(newEndDate+" 00:00:00", date+" 00:00:00")){//循环日期段
+			List<Company> companyIdList = algorithmMapper.getAllCompanyList();
+			for(Company company : companyIdList){
+				List<Employee> empIdList = algorithmMapper.getEmployeeOnJobList(
+						company.getCompanyId(), date);
+				for(Employee emp:empIdList){
+					try {
+						this.calculate(company.getCompanyId(), emp.getEmployeeId(), date);
+					} catch (Exception e) {
+						logger.info("公司ID："+company.getCompanyId()+", 员工ID："+emp.getEmployeeId()+", "+date+ "日报计算异常");
+						logger.info(FormatUtil.getExceptionInfo(e));
+					}
+				}
+			}
+			date = TimeUtil.getLongAfterDate(date+" 00:00:00", 1, Calendar.DATE);
+		}
+		logger.info(beginDate+"到"+endDate+"日报所有公司计算结束");
 	}
 	@Override
 	public void calculateByCompany(String companyId, String beginDate, String endDate) {
@@ -76,7 +102,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 					
 				} catch (Exception e) {
 					logger.info("公司ID："+companyId+", 员工ID："+emp.getEmployeeId()+", "+date+ "日报计算异常");
-					e.printStackTrace();
+					logger.info(FormatUtil.getExceptionInfo(e));
 				}
 			}
 			date = TimeUtil.getLongAfterDate(date+" 00:00:00", 1, Calendar.DATE);
@@ -130,6 +156,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		//有排班
 		if(algorithmParam.getClassesEmployee()!=null 
 				&& StringUtils.isNotEmpty(algorithmParam.getClassesEmployee().getOnDutySchedulingDate())){
+			algorithmParam.setHasPlan(true);
 			this.havePlan(algorithmParam, result);
 		}else{//无排班
 			this.noPlan(algorithmParam, result);
@@ -396,8 +423,8 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 			int appAttRelation = TimeUtil.timeRelation(attBeginLine, attEndLine,
 					application.getStartTime(), application.getEndTime());
 			//申请时间与休息时间的关系
-			int appRestRelation = TimeUtil.timeRelation(application.getStartTime(), 
-					application.getEndTime(), restBeginTime, restEndTime);
+			int appRestRelation = TimeUtil.timeRelation(restBeginTime, restEndTime,
+					application.getStartTime(), application.getEndTime());
 			if(appAttRelation==2 ){//左申请
 				currentApplyBegin=attBeginLine;
 				switch (appRestRelation) {
@@ -577,6 +604,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 			reportExcept.setExceptDate(countDate);
 			reportExcept.setExceptType("5");
 			result.getReportExcept().add(reportExcept);
+			result.getReportDaily().setAbsent("1");
 		}else{
 			String lateLine = TimeUtil.getLongAfter(
 					algorithmParam.getAttBeginLine(), 
@@ -758,9 +786,9 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		algorithmParam.setEmployee(employee );
 		algorithmParam.setCompanyId(companyId);
 		algorithmParam.setCountDate(countDate);
-		if("4D758DEFD8B04A4F96FE289E48E09EB4".equals(companyId) && "4F1F7958F7AA4F539335859E84820869".equals(employeeId)){
+		/*if("4D758DEFD8B04A4F96FE289E48E09EB4".equals(companyId) && "4F1F7958F7AA4F539335859E84820869".equals(employeeId)){
 			logger.info("查询");
-		}
+		}*/
 		//查询当天的排班
 		algorithmParam.setClassesEmployee(
 				algorithmMapper.getPlanByDate(companyId, employee.getEmployeeId(), countDate));
@@ -778,13 +806,17 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 
 	@Override
 	public void postProcess(AlgorithmParam algorithmParam, AlgorithmResult algorithmResult) {
-		this.proReportData(algorithmResult);
+		//查询日报数据是否存在
+		ReportDaily oldReportDaily = reportDailyMapper.selectByDate(algorithmParam.getCompanyId(), 
+				algorithmParam.getEmployeeId(), algorithmResult.getReportDaily().getAttDate());
+		if(oldReportDaily!=null && "1".equals(oldReportDaily.getIsProcess())){
+			return;
+		}
+		//proReportData必须放在proException之前，原因是日报计算结果处理方法中也会产生早退异常，并且也会影响旷工统计
+		this.proReportData(algorithmParam, algorithmResult);
 		this.proException(algorithmParam, algorithmResult);
 		//加班转调休生成处理，将对应日期生成的调休时长改动
 		String vacationId = algorithmMapper.getVacationId(algorithmParam.getCompanyId(), 
-				algorithmParam.getEmployeeId(), algorithmResult.getReportDaily().getAttDate());
-		//查询日报数据是否存在
-		ReportDaily oldReportDaily = reportDailyMapper.selectByDate(algorithmParam.getCompanyId(), 
 				algorithmParam.getEmployeeId(), algorithmResult.getReportDaily().getAttDate());
 		if(oldReportDaily!=null && StringUtils.isNotEmpty(oldReportDaily.getChangeTime()) 
 				&& 0!=Double.parseDouble(oldReportDaily.getChangeTime())){//存在，则扣除调休时长
@@ -854,11 +886,15 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 			case "1,4,":
 				exceptionMark="6";	
 				break;
-			case "2,3,":
+			case "3,2,":
 				exceptionMark="7";
 				break;
 			case "5,":
-				exceptionMark="8";	
+				//此处要与日报中旷工数据一致，若日报体现没有旷工，则不记录旷工异常
+				if(algorithmResult.getReportDaily().getAbsent()!=null 
+				&& Integer.parseInt(algorithmResult.getReportDaily().getAbsent())>0){
+					exceptionMark="8";
+				}
 				break;
 			default:
 				break;
@@ -870,34 +906,42 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 	 * 处理前文计算的日报数据：秒-》分钟
 	 * @param algorithmResult
 	 */
-	public void proReportData(AlgorithmResult algorithmResult) {
+	public void proReportData(AlgorithmParam algorithmParam, AlgorithmResult algorithmResult) {
 		//应出时长
 		algorithmResult.getReportDaily().setWorkTime(
 				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getWorkTime()));
 		//实出时长
 		algorithmResult.getReportDaily().setRealWorkTime(
 				TimeUtil.parseSecondToMinuteHalfHourFloorUnit(algorithmResult.getReportDaily().getRealWorkTime()));
+		
 		//事假
-		algorithmResult.getReportDaily().setLeaveAbsence(
-				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getLeaveAbsence()));
+		String leaveAbsence = TimeUtil.parseSecondToMinuteHalfHourUnit(
+				algorithmResult.getReportDaily().getLeaveAbsence());
+		algorithmResult.getReportDaily().setLeaveAbsence(leaveAbsence);
 		//年假
-		algorithmResult.getReportDaily().setLeaveAnnual(
-				TimeUtil.parseSecondToMinuteHalfDayUnit(algorithmResult.getReportDaily().getLeaveAnnual()));
+		String leaveAnnual = TimeUtil.parseSecondToMinuteHalfDayUnit(
+				algorithmResult.getReportDaily().getLeaveAnnual());
+		algorithmResult.getReportDaily().setLeaveAnnual(leaveAnnual);
 		//调休假
-		algorithmResult.getReportDaily().setLeaveDaysOff(
-				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getLeaveDaysOff()));
+		String leaveDaysOff = TimeUtil.parseSecondToMinuteHalfHourUnit(
+				algorithmResult.getReportDaily().getLeaveDaysOff());
+		algorithmResult.getReportDaily().setLeaveDaysOff(leaveDaysOff);
 		//婚假
-		algorithmResult.getReportDaily().setLeaveMarriage(
-				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getLeaveMarriage()));
+		String leaveMarriage = TimeUtil.parseSecondToMinuteHalfHourUnit(
+				algorithmResult.getReportDaily().getLeaveMarriage());
+		algorithmResult.getReportDaily().setLeaveMarriage(leaveMarriage);
 		//产假
-		algorithmResult.getReportDaily().setLeaveMaternity(
-				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getLeaveMaternity()));
+		String leaveMaternity = TimeUtil.parseSecondToMinuteHalfHourUnit(
+				algorithmResult.getReportDaily().getLeaveMaternity());
+		algorithmResult.getReportDaily().setLeaveMaternity(leaveMaternity);
 		//丧假
-		algorithmResult.getReportDaily().setLeaveFuneral(
-				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getLeaveFuneral()));
+		String leaveFuneral= TimeUtil.parseSecondToMinuteHalfHourUnit(
+				algorithmResult.getReportDaily().getLeaveFuneral());
+		algorithmResult.getReportDaily().setLeaveFuneral(leaveFuneral);
 		//病假
-		algorithmResult.getReportDaily().setLeaveSick(
-				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getLeaveSick()));
+		String leaveSick = TimeUtil.parseSecondToMinuteHalfHourUnit(
+				algorithmResult.getReportDaily().getLeaveSick());
+		algorithmResult.getReportDaily().setLeaveSick(leaveSick);
 		//出差
 		algorithmResult.getReportDaily().setEvectionTimeWork(
 				TimeUtil.parseSecondToMinuteHalfHourUnit(algorithmResult.getReportDaily().getEvectionTimeWork()));
@@ -909,6 +953,68 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 				TimeUtil.parseSecondToMinuteHalfHourFloorUnit(algorithmResult.getReportDaily().getNormalOverWork()));
 		//新增调休
 		algorithmResult.getReportDaily().setChangeTime(algorithmResult.getReportDaily().getNormalOverWork());
+		//请假总时长
+		int leaveTime = Integer.parseInt(leaveAbsence)+Integer.parseInt(leaveAnnual)+
+				Integer.parseInt(leaveDaysOff)+Integer.parseInt(leaveMarriage)+
+				Integer.parseInt(leaveMaternity)+Integer.parseInt(leaveFuneral)+
+				Integer.parseInt(leaveSick);
+		//旷工时长=应出-请假时长
+		if(algorithmResult.getReportDaily().getAbsent()!=null && 
+				Integer.parseInt(algorithmResult.getReportDaily().getAbsent())>0){
+			int absentTime = Integer.parseInt(algorithmResult.getReportDaily().getWorkTime())-leaveTime;
+			algorithmResult.getReportDaily().setAbsentTime(absentTime+"");
+			if(absentTime==0){//如果旷工时长为0，则消除旷工次数
+				algorithmResult.getReportDaily().setAbsent("0");
+			}
+		}
+		//计算实际有效出勤时长
+		if(algorithmParam.isHasPlan()){//有排班
+			if(StringUtils.isNotEmpty(algorithmResult.getReportDaily().getSignInTime()) 
+					&& StringUtils.isNotEmpty(algorithmResult.getReportDaily().getSignOutTime())){
+				
+				//签到签退时间区间与班次的交集，扣除休息时间
+				long containAtt = TimeUtil.containTimeLength(
+							algorithmResult.getReportDaily().getSignInTime(), 
+							algorithmResult.getReportDaily().getSignOutTime(), 
+							algorithmParam.getClassesEmployee().getOnDutySchedulingDate(), 
+							algorithmParam.getClassesEmployee().getRestStartTime())+
+						TimeUtil.containTimeLength(
+								algorithmResult.getReportDaily().getSignInTime(), 
+								algorithmResult.getReportDaily().getSignOutTime(), 
+								algorithmParam.getClassesEmployee().getRestEndTime(), 
+								algorithmParam.getClassesEmployee().getOffDutySchedulingDate());
+				
+				//应出勤扣除请假
+				long workTimeLeaveSub = (Long.parseLong(algorithmResult.getReportDaily().getWorkTime())-
+						leaveTime)*60;
+				workTimeLeaveSub = workTimeLeaveSub<0?0:workTimeLeaveSub;//不可小于0
+				if(containAtt>workTimeLeaveSub){//有效出勤时长，最大等于(应出时长-请假时长)
+					containAtt = workTimeLeaveSub;
+				}
+				algorithmResult.getReportDaily().setRealAttendanceTime(
+						TimeUtil.parseSecondToMinuteHalfHourFloorUnit(containAtt+""));
+				//判断是否存在迟到、早退，都不存在，则检查出勤是否足够，不够，则产生早退异常。已经有一个早退，则不需要再产生一次早退
+				if((StringUtils.isEmpty(algorithmResult.getReportDaily().getLate())
+							||Integer.parseInt(algorithmResult.getReportDaily().getLate())==0)
+						&& (StringUtils.isEmpty(algorithmResult.getReportDaily().getEarly())
+							|| Integer.parseInt(algorithmResult.getReportDaily().getEarly())==0
+						)){
+					if(containAtt<workTimeLeaveSub){
+						ReportExcept reportExcept = new ReportExcept();
+						reportExcept.setEmployeeId(algorithmParam.getEmployeeId());
+						reportExcept.setCompanyId(algorithmParam.getCompanyId());
+						reportExcept.setExceptDate(algorithmParam.getCountDate());
+						reportExcept.setExceptType("2");
+						algorithmResult.getReportExcept().add(reportExcept);
+						algorithmResult.getReportDaily().setEarly("1");//早退次数
+					}
+				}
+				
+			}
+		}else{//无排班时，有效出勤时长=签到-签退，得到的时长
+			algorithmResult.getReportDaily().setRealAttendanceTime(algorithmResult.getReportDaily().getRealWorkTime());
+		}
+		
 	}
 	@Override
 	public void calculateMonth(String countDate) {
@@ -931,7 +1037,7 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 					
 				} catch (Exception e) {
 					logger.info("公司ID："+company.getCompanyId()+", 员工ID："+emp.getEmployeeId()+", "+countDate+ "后应出时长计算异常");
-					e.printStackTrace();
+					logger.info(FormatUtil.getExceptionInfo(e));
 				}
 			}
 		}
