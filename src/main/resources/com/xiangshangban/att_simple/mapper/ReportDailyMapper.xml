@@ -187,7 +187,6 @@
 	select count(*) from (select count(employee_id) from report_daily_
 	where company_id = #{companyId} 
 	and att_date like '%${attDate}%'
-	and att_date <![CDATA[<]]> #{dateTime}
 	GROUP BY employee_id)t
   </select>
   
@@ -212,7 +211,6 @@
 	ON e.department_id = d.department_id and e.company_id = d.company_id
 	where rd.company_id = #{companyId}
 	and att_date like '%${attDate}%'
-	and att_date <![CDATA[<]]> #{dateTime}
 	GROUP BY rd.employee_id,dept_id,d.department_name,rd.employee_id,e.employee_name
 	LIMIT ${pageNum} OFFSET ${pageExcludeNumber}
   </select>
