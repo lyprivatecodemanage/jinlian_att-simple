@@ -1,11 +1,8 @@
-package com.xiangshangban.att_simple.dao;
-
-import org.apache.ibatis.annotations.Mapper;
+package com.xiangshangban.att_simple.service;
 
 import com.xiangshangban.att_simple.bean.FillCardRecord;
 
-@Mapper
-public interface FillCardRecordMapper {
+public interface FillCardRecordService {
 	/**
 	 * 添加外勤记录
 	 * @param fillCardRecord

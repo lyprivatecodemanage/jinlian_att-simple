@@ -3,12 +3,13 @@ package com.xiangshangban.att_simple.bean;
 public class FillCardRecord {
 	private String companyId;//公司id
 	private String employeeId;//员工id
-	private String fillCardType;//打卡类型
-	private String fillCardTime;//打卡时间
-	private String fillCardAddress;//打卡地点
+	private String attTime;//考勤时间
+	private String place;//考勤地点详情
 	private String customerName;//客户名称
 	private String description;//详情描述
-	private String imgUrl;//凭证key
+	private String imgKey;//上传的照片
+	private String longitude;//位置的经度
+	private String latitude;//位置的纬度
 	public String getCompanyId() {
 		return companyId;
 	}
@@ -21,23 +22,17 @@ public class FillCardRecord {
 	public void setEmployeeId(String employeeId) {
 		this.employeeId = employeeId;
 	}
-	public String getFillCardType() {
-		return fillCardType;
+	public String getAttTime() {
+		return attTime;
 	}
-	public void setFillCardType(String fillCardType) {
-		this.fillCardType = fillCardType;
+	public void setAttTime(String attTime) {
+		this.attTime = attTime;
 	}
-	public String getFillCardTime() {
-		return fillCardTime;
+	public String getPlace() {
+		return place;
 	}
-	public void setFillCardTime(String fillCardTime) {
-		this.fillCardTime = fillCardTime;
-	}
-	public String getFillCardAddress() {
-		return fillCardAddress;
-	}
-	public void setFillCardAddress(String fillCardAddress) {
-		this.fillCardAddress = fillCardAddress;
+	public void setPlace(String place) {
+		this.place = place;
 	}
 	public String getCustomerName() {
 		return customerName;
@@ -51,12 +46,23 @@ public class FillCardRecord {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public String getImgUrl() {
-		return imgUrl;
+	public String getImgKey() {
+		return imgKey;
 	}
-	public void setImgUrl(String imgUrl) {
-		this.imgUrl = imgUrl;
+	public void setImgKey(String imgKey) {
+		this.imgKey = imgKey;
 	}
-	
+	public String getLongitude() {
+		return longitude;
+	}
+	public void setLongitude(String longitude) {
+		this.longitude = longitude;
+	}
+	public String getLatitude() {
+		return latitude;
+	}
+	public void setLatitude(String latitude) {
+		this.latitude = latitude;
+	}
 	
 }
