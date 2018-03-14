@@ -101,7 +101,7 @@ public class AppApproverJpush {
 				 Uusers transferPersonAccessUser = employeeDao.selectPhoneByEmployeeIdFromUUsers(transferPersionAccessId);
 				//查询移交目标人手机端当前的默认公司是否与移交人所在公司一致,一致则发送通知
 				 PhoneClientId transferPersonAccessDefaultCompany = phoneClientIdMapper.selectDefaultCompanyByUserId(transferPersionAccessId);
-				 if(companyId.equals(transferPersonAccessDefaultCompany.getCompanyId())){//一致
+				/* if(companyId.equals(transferPersonAccessDefaultCompany.getCompanyId())){*///一致
 					//判断当前移交目标人的phone，clientId关系是是否存在，存在则发送通知
 					PhoneClientId transferPersonAccessPhoneClientId = phoneClientIdMapper.selectByPhone(transferPersonAccessUser.getPhone());
 					if(transferPersonAccessPhoneClientId!=null){//存在
@@ -116,11 +116,11 @@ public class AppApproverJpush {
 						 }
 						System.out.println(str);
 					}
-				 }
+				 /*}*/
 			 }else{
 				 //查询申请人手机端当前的默认公司是否与审批人所在公司一致,一致则发送通知
 				 PhoneClientId applicationDefaultCompany = phoneClientIdMapper.selectDefaultCompanyByUserId(applicationTotalRecord.getApplicationId());
-				 if(companyId.equals(applicationDefaultCompany.getCompanyId())){//当前申请人移动端默认公司和审批人在同一公司,发送通知
+				 /*if(companyId.equals(applicationDefaultCompany.getCompanyId())){*///当前申请人移动端默认公司和审批人在同一公司,发送通知
 					 //判断当前申请人的phone，clientId关系是是否存在，存在则发送通知
 					 PhoneClientId applicationPhoneClientId = phoneClientIdMapper.selectByPhone(applicationUser.getPhone());
 				 if(applicationPhoneClientId!=null){//存在
@@ -135,7 +135,7 @@ public class AppApproverJpush {
 					 }
 					 System.out.println(str);
 				 	}
-				 }
+				/* }*/
 			 }
 		 }
 	}

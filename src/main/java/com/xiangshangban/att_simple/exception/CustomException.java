@@ -1,6 +1,6 @@
 package com.xiangshangban.att_simple.exception;
 
-public class CustomException extends Exception {
+public class CustomException extends RuntimeException {
 	private String exceptionMessage;
 	 public CustomException(String message)
 	 {
