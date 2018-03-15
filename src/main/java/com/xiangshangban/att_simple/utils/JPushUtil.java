@@ -129,6 +129,7 @@ public static PushPayload buildPushObject(String content,String notificationTiti
     							.build())
     					.addPlatformNotification(IosNotification.newBuilder()
     							.incrBadge(1)
+    							.setSound("default")
     							.addExtras(extraMap)
     							.build())
     					.build())
