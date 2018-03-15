@@ -23,6 +23,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.xiangshangban.att_simple.bean.OperateLog;
 import com.xiangshangban.att_simple.bean.Paging;
 import com.xiangshangban.att_simple.bean.ReturnData;
+import com.xiangshangban.att_simple.service.ApplicationFillCardService;
 import com.xiangshangban.att_simple.service.ReportDailyService;
 import com.xiangshangban.att_simple.utils.HttpRequestFactory;
 
@@ -37,8 +38,48 @@ public class ReportDailyController {
 	@Autowired
 	ReportDailyService reportDailyService;
 	
+	@Autowired
+	ApplicationFillCardService applicationFillCardService;
+	
 	@Value("${sendUrl}")
 	private String sendUrl;
+	
+	/**
+	 * 焦振/补勤记录列表查询
+	 * @param objectString
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/fillCardRecord",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+	public ReturnData fillCardRecord(@RequestBody String objectString,HttpServletRequest request){
+		ReturnData result = new ReturnData();
+		JSONObject obj = JSON.parseObject(objectString);
+		String beginDate = obj.getString("beginDate");
+		String endDate = obj.getString("endDate");
+		String departmentId = obj.getString("departmentId");
+		String employeeName = obj.getString("employeeName");
+		String applicationTimeRank = obj.getString("applicationTimeRank");
+		String varPageNo = obj.getString("pageNum");
+		String pageNum = obj.getString("pageRecordNum");
+		String auditorEmployeeId = request.getHeader("accessUserId");
+		String companyId = request.getHeader("companyId");
+		
+		Paging paging = new Paging();
+		paging.setBeginDate(beginDate);
+		paging.setEndDate(endDate);
+		paging.setDepartmentId(StringUtils.isEmpty(departmentId)?null:departmentId);
+		paging.setEmployeeName(StringUtils.isEmpty(employeeName)?null:employeeName);
+		paging.setCompanyId(companyId);
+		paging.setApplicationTimeRank(applicationTimeRank);
+		paging.setPageExcludeNumber(String.valueOf((Integer.parseInt(varPageNo)-1)*Integer.parseInt(pageNum)));
+		paging.setPageNum(pageNum);
+		
+		result = applicationFillCardService.SelectFuzzyPagel(paging);
+		
+		addOperateLog(auditorEmployeeId, companyId, "考勤日报[补勤记录]");
+		
+		return result;
+	}
 	
 	/**
 	 * 焦振/考勤日报[确认异常]

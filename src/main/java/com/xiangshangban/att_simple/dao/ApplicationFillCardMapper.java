@@ -1,9 +1,12 @@
 package com.xiangshangban.att_simple.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import com.xiangshangban.att_simple.bean.Application;
 import com.xiangshangban.att_simple.bean.ApplicationFillCard;
+import com.xiangshangban.att_simple.bean.Paging;
 @Mapper
 public interface ApplicationFillCardMapper {
 	/**
@@ -18,4 +21,18 @@ public interface ApplicationFillCardMapper {
 	 * @return
 	 */
 	Application selectDetailsByApplicationNo(String applicationNo);
+	
+	/**
+	 * 补勤记录模糊分页查询
+	 * @param paging
+	 * @return
+	 */
+	List<ApplicationFillCard> SelectFuzzyPagel(Paging paging);
+	
+	/**
+	 * 查询总数
+	 * @param paging
+	 * @return
+	 */
+	int FindAllNumber(Paging paging);
 }
