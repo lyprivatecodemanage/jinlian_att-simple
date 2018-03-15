@@ -121,13 +121,13 @@ public static PushPayload buildPushObject(String content,String notificationTiti
     			.setPlatform(Platform.android_ios())//推送平台ios和android
     			.setAudience(Audience.alias(alias))
     			.setNotification(Notification.newBuilder()
-    					.setAlert(title+"\n"+alert)
     					.addPlatformNotification(AndroidNotification.newBuilder()
     							.setAlert(alert)
     							.setTitle(title)
     							.addExtras(extraMap)//添加额外键值
     							.build())
     					.addPlatformNotification(IosNotification.newBuilder()
+    							.setAlert(title+"\n"+alert)
     							.incrBadge(1)
     							.setSound("default")
     							.addExtras(extraMap)

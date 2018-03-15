@@ -31,15 +31,15 @@
   		<if test="latitude != null">latitude,</if>
   	</trim>
   	<trim prefix="values(" suffix=")" suffixOverrides=",">
-  	<if test="companyId != null">#{companyId}</if>
-  		<if test="employeeId != null ">#{employeeId}</if>
-  		<if test="attTime != null ">#{attTime}</if>
-  		<if test="place != null ">#{place}</if>
-  		<if test="customerName != null ">#{customerName}</if>
-  		<if test="description != null">#{description}</if>
-  		<if test="imgKey != null">#{imgKey}</if>
-  		<if test="longitude != null ">#{longitude}</if>
-  		<if test="latitude != null">#{latitude}</if>
+  	<if test="companyId != null">#{companyId},</if>
+  		<if test="employeeId != null ">#{employeeId},</if>
+  		<if test="attTime != null ">#{attTime},</if>
+  		<if test="place != null ">#{place},</if>
+  		<if test="customerName != null ">#{customerName},</if>
+  		<if test="description != null">#{description},</if>
+  		<if test="imgKey != null">#{imgKey},</if>
+  		<if test="longitude != null ">#{longitude},</if>
+  		<if test="latitude != null">#{latitude},</if>
   	</trim>
   </insert>
   
