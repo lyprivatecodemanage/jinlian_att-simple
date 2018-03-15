@@ -45,6 +45,23 @@ public class ReportDailyController {
 	private String sendUrl;
 	
 	/**
+	 * 焦振/补勤记录单条详情
+	 * @param objectString
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/fillCardRecordDetails",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+	public ReturnData fillCardRecordDetails(@RequestBody String objectString,HttpServletRequest request){
+		ReturnData result = new ReturnData();
+		JSONObject obj = JSON.parseObject(objectString);
+		String applicationNo = obj.getString("applicationNo");
+		
+		result = applicationFillCardService.SelectApplicationFillCardDetails(applicationNo);
+		
+		return result;
+	}
+	
+	/**
 	 * 焦振/补勤记录列表查询
 	 * @param objectString
 	 * @param request
@@ -75,8 +92,6 @@ public class ReportDailyController {
 		paging.setPageNum(pageNum);
 		
 		result = applicationFillCardService.SelectFuzzyPagel(paging);
-		
-		addOperateLog(auditorEmployeeId, companyId, "考勤日报[补勤记录]");
 		
 		return result;
 	}

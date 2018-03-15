@@ -35,4 +35,11 @@ public interface ApplicationFillCardMapper {
 	 * @return
 	 */
 	int FindAllNumber(Paging paging);
+	
+	/**
+	 * 补勤记录单条详情
+	 * @param ApplicationNo
+	 * @return
+	 */
+	ApplicationFillCard SelectApplicationFillCardDetails(String ApplicationNo);
 }
