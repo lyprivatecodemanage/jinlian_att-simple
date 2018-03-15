@@ -53,9 +53,9 @@
 	LEFT JOIN organization.department_ d on e.department_id = d.department_id and e.company_id = d.company_id 
 	where r.is_complete = '1'
 	and r.is_reject = '0'
-	and r.company_id = #{companyId}
+	and l.company_id = #{companyId}
 		<if test="departmentId != null">
-			l.department_id = #{departmentId}
+			and l.department_id = #{departmentId}
 		</if>
 		<if test="leaveType != null">
 			and leave_type = #{leaveType}

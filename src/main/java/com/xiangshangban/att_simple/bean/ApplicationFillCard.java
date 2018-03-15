@@ -25,7 +25,29 @@ public class ApplicationFillCard {
 
     private String applicationTime;
 
-    public String getApplicationNo() {
+ /***************************************扩展属性*****************************************/
+    
+    private String departmentName;
+    
+    private String employeeeName;
+    
+    public String getDepartmentName() {
+		return departmentName;
+	}
+
+	public void setDepartmentName(String departmentName) {
+		this.departmentName = departmentName;
+	}
+
+	public String getEmployeeeName() {
+		return employeeeName;
+	}
+
+	public void setEmployeeeName(String employeeeName) {
+		this.employeeeName = employeeeName;
+	}
+
+	public String getApplicationNo() {
         return applicationNo;
     }
 
