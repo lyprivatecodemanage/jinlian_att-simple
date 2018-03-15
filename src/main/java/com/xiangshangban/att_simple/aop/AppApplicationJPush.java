@@ -62,7 +62,7 @@ public class AppApplicationJPush {
 			 //查询审批人当前的默认公司
 			 PhoneClientId approverDefaultCompany = phoneClientIdMapper.selectDefaultCompanyByUserId(approverId);
 			 //判断当前审批人的默认公司是否与申请人一致，一致则发送通知
-			 if(companyId.equals(approverDefaultCompany.getCompanyId())){//当前审批人默认公司和申请人在同一公司,发送通知
+			 /*if(companyId.equals(approverDefaultCompany.getCompanyId())){*///当前审批人默认公司和申请人在同一公司,发送通知
 				 company = companyDao.selectByCompany(companyId);
 				 //判断当前审批人的phone，clientId关系是是否存在，存在则发送通知
 				 PhoneClientId approverPhoneClientId = phoneClientIdMapper.selectByPhone(approver.getPhone());
@@ -107,7 +107,7 @@ public class AppApplicationJPush {
 					 }
 					 System.out.println(str);
 				 }
-			 }
+			/* }*/
 		 }
 	}
 }
