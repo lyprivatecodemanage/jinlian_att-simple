@@ -99,32 +99,41 @@
   	<include refid="AOT_Base_Column_List"/>,
   	<include refid="AFC_Base_Column_List"/>,e.employee_name,t.copy_person_id,t.transfer_person_id from 
 	(select atr.*,cp.copy_person_id,tr.transfer_person_id from application_total_record_ atr 
-	LEFT JOIN att_simple.application_to_copy_person_ cp on atr.application_no = cp.application_no and cp.company_id = atr.company_id
-	left join att_simple.application_transfer_record_ tr on atr.application_no = tr.application_no and tr.company_id = atr.company_id
-	where atr.company_id = #{companyId}
-	and atr.last_approver = #{employeeId} 
-	<!-- and is_copy = '0' and is_transfer = '0' -->
+	LEFT JOIN att_simple.application_to_copy_person_ cp 
+		on atr.application_no = cp.application_no and cp.company_id = atr.company_id
+	left join att_simple.application_transfer_record_ tr 
+		on atr.application_no = tr.application_no and tr.company_id = atr.company_id
+			where atr.company_id = #{companyId}
+			and atr.last_approver = #{employeeId} 
+			<!-- and is_copy = '0' and is_transfer = '0' -->
 	UNION
 	select atr.*,cp.copy_person_id,tr.transfer_person_id from application_total_record_ atr 
-	LEFT JOIN att_simple.application_to_copy_person_ cp on atr.application_no = cp.application_no and cp.company_id = atr.company_id
-	left join att_simple.application_transfer_record_ tr on atr.application_no = tr.application_no and tr.company_id = atr.company_id
-	where atr.company_id = #{companyId}
-	and cp.copy_person_id =#{employeeId} 
-	and is_copy='1' and is_transfer = '0'
+	LEFT JOIN att_simple.application_to_copy_person_ cp 
+		on atr.application_no = cp.application_no and cp.company_id = atr.company_id
+	left join att_simple.application_transfer_record_ tr 
+		on atr.application_no = tr.application_no and tr.company_id = atr.company_id
+			where atr.company_id = #{companyId}
+			and cp.copy_person_id =#{employeeId} 
+			and is_copy='1' and is_transfer = '0'
 	UNION
 	select atr.*,cp.copy_person_id,tr.transfer_person_id from application_total_record_ atr 
-	LEFT JOIN att_simple.application_to_copy_person_ cp on atr.application_no = cp.application_no and cp.company_id = atr.company_id
-	left join att_simple.application_transfer_record_ tr on atr.application_no = tr.application_no and tr.company_id = atr.company_id
-	where atr.company_id = #{companyId}
-	and atr.last_approver = #{employeeId}
-	and is_transfer = '1' and is_copy='0'
+	LEFT JOIN att_simple.application_to_copy_person_ cp 
+		on atr.application_no = cp.application_no and cp.company_id = atr.company_id
+	left join att_simple.application_transfer_record_ tr 
+		on atr.application_no = tr.application_no and tr.company_id = atr.company_id
+			where atr.company_id = #{companyId}
+			and atr.last_approver = #{employeeId}
+			and is_transfer = '1' and is_copy='0'
 	union
-	select atr.*,cp.copy_person_id,tr.transfer_person_id from application_total_record_ atr 
-	LEFT JOIN att_simple.application_to_copy_person_ cp on atr.application_no = cp.application_no and cp.company_id = atr.company_id
-	left join att_simple.application_transfer_record_ tr on atr.application_no = tr.application_no and tr.company_id = atr.company_id
-	where atr.company_id =#{companyId}
-	and tr.transfer_person_id = #{employeeId}
-	and is_transfer = '1' and is_copy='0') t
+	select atr.*,cp.copy_person_id,tr.transfer_person_id 
+	from application_total_record_ atr 
+	LEFT JOIN att_simple.application_to_copy_person_ cp 
+		on atr.application_no = cp.application_no and cp.company_id = atr.company_id
+	left join att_simple.application_transfer_record_ tr 
+		on atr.application_no = tr.application_no and tr.company_id = atr.company_id
+			where atr.company_id =#{companyId}
+			and tr.transfer_person_id = #{employeeId}
+			and is_transfer = '1' and is_copy='0') t
 	LEFT JOIN organization.employee_ e on e.company_id = #{companyId} 
 	  	and e.employee_id = t.application_id 
 	left join application_leave_ al on t.application_no = al.application_no

@@ -98,7 +98,7 @@ public class ApproverServiceImpl implements ApproverService {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		String applicationTimeEnd = sdf.format(new Date(System.currentTimeMillis()));
 		//申请时间
-		if(StringUtils.isEmpty(applicationType)||"全部".equals(applicationTimeDescription)){
+		if(/*StringUtils.isEmpty(applicationType)||*/"全部".equals(applicationTimeDescription)){
 		}else if("近一周".equals(applicationTimeDescription)){
 			applicationTimeStart = TimeUtil.getDateBefore(applicationTimeEnd, "6");
 		}else if("近半月".equals(applicationTimeDescription)){
