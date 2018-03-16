@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.eclipse.jetty.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.xiangshangban.att_simple.bean.AlgorithmParam;
@@ -740,7 +741,8 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 			checkBeginTime=leaveEndTime;
 		}
 		//检查是否包含休息时间，若包含，则上班时间后延到休息时间结束
-		if(TimeUtil.compareTime(restEndTime, checkBeginTime) &&
+		if(StringUtils.isNotEmpty(restBeginTime)&& StringUtils.isNotEmpty(restEndTime) && 
+				TimeUtil.compareTime(restEndTime, checkBeginTime) &&
 				TimeUtil.compareTime(checkBeginTime, restBeginTime)){
 			checkBeginTime = restEndTime;
 		}
@@ -766,7 +768,8 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 			checkEndTime=leaveEndTime;
 		}
 		//检查是否包含休息时间，若包含，则上班时间后提前休息时间开始
-		if(TimeUtil.compareTime(leaveEndTime, restBeginTime) &&
+		if(StringUtils.isNotEmpty(restBeginTime)&& StringUtils.isNotEmpty(restEndTime) 
+				&& TimeUtil.compareTime(leaveEndTime, restBeginTime) &&
 				TimeUtil.compareTime(restEndTime, checkEndTime)){
 			checkEndTime = restEndTime;
 		}
