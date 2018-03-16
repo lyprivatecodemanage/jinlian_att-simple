@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.xiangshangban.att_simple.bean.Employee;
+import com.xiangshangban.att_simple.bean.Uusers;
 
 @Mapper
 public interface EmployeeDao {
@@ -117,4 +118,10 @@ public interface EmployeeDao {
 	 * @return
 	 */
 	Employee selectNameByEmployeeIdAndDepartmentIdAndCompanyId(@Param("employeeId")String employeeId,@Param("departmentId")String departmentId,@Param("companyId")String companyId);
+	/**
+	 * 根据员工id查询员工的手机号 
+	 * @param userid
+	 * @return
+	 */
+	Uusers selectPhoneByEmployeeIdFromUUsers(String userid);
 }

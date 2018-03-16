@@ -2,6 +2,7 @@ package com.xiangshangban.att_simple.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +16,7 @@ import com.xiangshangban.att_simple.bean.ReturnData;
 import com.xiangshangban.att_simple.service.ApplicationLeaveService;
 
 @RestController
-@RequestMapping("ApplicationLeaveController")
+@RequestMapping("/ApplicationLeaveController")
 public class ApplicationLeaveController {
 
 	@Autowired
@@ -26,7 +27,7 @@ public class ApplicationLeaveController {
 	 * @param objectString
 	 * @return
 	 */
-	@RequestMapping(value="selectCompleteLeave",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+	@RequestMapping(value="/selectCompleteLeave",produces="application/json;charset=utf-8",method=RequestMethod.POST)
 	public ReturnData selectCompleteLeave(@RequestBody String objectString,HttpServletRequest request){
 		ReturnData returndata = new ReturnData();
 		JSONObject job = JSON.parseObject(objectString);
@@ -35,7 +36,7 @@ public class ApplicationLeaveController {
 		pg.setCompanyId(conpamyId);
 		pg.setYear(job.getString("year"));
 		pg.setMonth(job.getString("month"));
-		pg.setDepartmentId(job.getString("departmentId"));
+		pg.setDepartmentId(StringUtils.isEmpty(job.getString("departmentId"))?null:job.getString("departmentId"));
 		pg.setLeaveType(job.getString("leaveType"));
 		pg.setEmployeeName(job.getString("employeeName"));
 		pg.setApplicationHourRank(job.getString("applicationHourRank"));

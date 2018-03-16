@@ -14,12 +14,84 @@
     <result column="operater_time"  property="operaterTime" />
     <result column="is_transfer"  property="isTransfer" />
     <result column="application_time"  property="applicationTime" />
-    
+    <result column="department_name"  property="departmentName" />
+    <result column="employeee_name"  property="employeeeName" />
   </resultMap>
   <sql id="Base_Column_List">
     afc.application_no, afc.employee_id, afc.department_id, afc.company_id, afc.fill_card_type, afc.fill_card_time, 
     afc.reason, afc.upload_voucher, afc.approver, afc.operater_time, afc.is_transfer, afc.application_time
   </sql>
+  
+  <select id="FindAllNumber" parameterType="com.xiangshangban.att_simple.bean.Paging" resultType="java.lang.Integer">
+  	select count(*) from application_fill_card_ afc
+	left JOIN application_total_record_ atr
+	on afc.application_no = atr.application_no
+	where afc.company_id = #{companyId}
+	and atr.is_complete = '1'
+	and afc.application_time <![CDATA[>=]]> #{beginDate} 
+	and afc.application_time <![CDATA[<=]]> #{endDate} 
+  </select>
+  
+  <select id="SelectApplicationFillCardDetails" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select DISTINCT afc.application_no,d.department_name,e.employee_name,afc.application_time,atr.operater_time,afc.fill_card_time,
+	CASE
+		fill_card_type WHEN '1' then '下班补卡'
+		when '2' then '下班补卡'
+		when '3' then '消迟到'
+		when '4' then '消早退'
+	end fill_card_type
+	,
+	CASE 
+		afc.approver WHEN '0' then '系统代补勤'
+		WHEN '1' then '系统代补勤'
+		ELSE 'app补勤'
+	end approver
+	from application_fill_card_  afc
+	LEFT JOIN application_total_record_ atr
+	on afc.application_no = atr.application_no and afc.employee_id = atr.application_id and afc.company_id = atr.company_id
+	LEFT JOIN organization.employee_ e
+	on atr.application_id = e.employee_id and atr.company_id = e.company_id
+	LEFT JOIN organization.department_ d
+	on e.department_id = d.department_id and e.company_id = d.company_id
+	where atr.is_complete = '1'
+	and afc.application_no = #{applicationNo}
+  </select>
+  
+  <select id="SelectFuzzyPagel" parameterType="com.xiangshangban.att_simple.bean.Paging" resultMap="BaseResultMap">
+  	select DISTINCT afc.application_no,d.department_name,e.employee_name,afc.application_time,atr.operater_time,afc.fill_card_time,
+	CASE
+		fill_card_type WHEN '1' then '下班补卡'
+		when '2' then '下班补卡'
+		when '3' then '消迟到'
+		when '4' then '消早退'
+	end fill_card_type
+	,
+	CASE 
+		afc.approver WHEN '0' then '系统代补勤'
+		WHEN '1' then '系统代补勤'
+		ELSE 'app补勤'
+	end approver
+	from application_fill_card_  afc
+	LEFT JOIN application_total_record_ atr
+	on afc.application_no = atr.application_no and afc.employee_id = atr.application_id and afc.company_id = atr.company_id
+	LEFT JOIN organization.employee_ e
+	on atr.application_id = e.employee_id and atr.company_id = e.company_id
+	LEFT JOIN organization.department_ d
+	on e.department_id = d.department_id and e.company_id = d.company_id
+	where afc.company_id = #{companyId}
+	<if test="departmentId != null">
+		and d.department_id = #{departmentId}
+	</if>
+	<if test="employeeName != null">
+		and e.employee_name = '%${employeeName}%'
+	</if>
+	and afc.application_time <![CDATA[>=]]> #{beginDate} 
+	and afc.application_time <![CDATA[<=]]> #{endDate} 
+	and atr.is_complete = '1'
+	ORDER BY afc.application_time ${applicationTimeRank}
+	LIMIT ${pageNum} OFFSET ${pageExcludeNumber}
+  </select>
+  
   <!-- 添加补卡申请记录 -->
   <insert id="insertApplicationFillCardRecord" parameterType="com.xiangshangban.att_simple.bean.ApplicationFillCard">
   	insert into application_fill_card_ 

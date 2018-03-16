@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiangshangban.att_simple.dao.FillCardRecordMapper">
+  <resultMap id="BaseResultMap" type="com.xiangshangban.att_simple.bean.FillCardRecord">
+    <result column="company_id"  property="companyId" />
+    <result column="employee_id"  property="employeeId" />
+    <result column="att_time"  property="attTime" />
+    <result column="place"  property="place" />
+    <result column="customer_name"  property="customerName" />
+    <result column="description"  property="description" />
+    <result column="img_key"  property="imgKey" />
+    <result column="longitude"  property="longitude" />
+    <result column="latitude"  property="latitude" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    company_id, employee_id, att_time, place,customer_name, 
+    description,img_key,longitude,latitude
+  </sql>
+  <insert id="insertFillCardRecord" parameterType="com.xiangshangban.att_simple.bean.FillCardRecord">
+  	insert into att_simple.fill_card_record
+  	<trim prefix="(" suffix=")" suffixOverrides=",">
+  		<if test="companyId != null">company_id,</if>
+  		<if test="employeeId != null ">employee_id,</if>
+  		<if test="attTime != null ">att_time,</if>
+  		<if test="place != null ">place,</if>
+  		<if test="customerName != null ">customer_name,</if>
+  		<if test="description != null">description,</if>
+  		<if test="imgKey != null">img_key,</if>
+  		<if test="longitude != null ">longitude,</if>
+  		<if test="latitude != null">latitude,</if>
+  	</trim>
+  	<trim prefix="values(" suffix=")" suffixOverrides=",">
+  	<if test="companyId != null">#{companyId},</if>
+  		<if test="employeeId != null ">#{employeeId},</if>
+  		<if test="attTime != null ">#{attTime},</if>
+  		<if test="place != null ">#{place},</if>
+  		<if test="customerName != null ">#{customerName},</if>
+  		<if test="description != null">#{description},</if>
+  		<if test="imgKey != null">#{imgKey},</if>
+  		<if test="longitude != null ">#{longitude},</if>
+  		<if test="latitude != null">#{latitude},</if>
+  	</trim>
+  </insert>
+  
+</mapper>

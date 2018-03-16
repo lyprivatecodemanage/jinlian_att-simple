@@ -43,4 +43,8 @@ public class PropertiesUtils {
 		setPropertyName( "/properties/version.properties" );
 		return props.getProperty( property );
 	}
+	public static String  jpushProperty( String property ) throws IOException{
+		setPropertyName( "/properties/jpush.properties" );
+		return props.getProperty( property );
+	}
 }
