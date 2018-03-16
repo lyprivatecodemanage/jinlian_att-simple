@@ -423,8 +423,14 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 			int appAttRelation = TimeUtil.timeRelation(attBeginLine, attEndLine,
 					application.getStartTime(), application.getEndTime());
 			//申请时间与休息时间的关系
-			int appRestRelation = TimeUtil.timeRelation(restBeginTime, restEndTime,
-					application.getStartTime(), application.getEndTime());
+			int appRestRelation = 1;
+			//未设置休息时间
+			if(StringUtils.isEmpty(restBeginTime) || StringUtils.isEmpty(restEndTime)){
+				appRestRelation = 1;
+			}else{
+				appRestRelation = TimeUtil.timeRelation(restBeginTime, restEndTime,
+						application.getStartTime(), application.getEndTime());
+			}
 			if(appAttRelation==2 ){//左申请
 				currentApplyBegin=attBeginLine;
 				switch (appRestRelation) {
