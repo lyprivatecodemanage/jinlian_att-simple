@@ -32,8 +32,33 @@
 	and afc.application_time <![CDATA[<=]]> #{endDate} 
   </select>
   
+  <select id="SelectApplicationFillCardDetails" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select DISTINCT afc.application_no,d.department_name,e.employee_name,afc.application_time,atr.operater_time,afc.fill_card_time,
+	CASE
+		fill_card_type WHEN '1' then '下班补卡'
+		when '2' then '下班补卡'
+		when '3' then '消迟到'
+		when '4' then '消早退'
+	end fill_card_type
+	,
+	CASE 
+		afc.approver WHEN '0' then '系统代补勤'
+		WHEN '1' then '系统代补勤'
+		ELSE 'app补勤'
+	end approver
+	from application_fill_card_  afc
+	LEFT JOIN application_total_record_ atr
+	on afc.application_no = atr.application_no and afc.employee_id = atr.application_id and afc.company_id = atr.company_id
+	LEFT JOIN organization.employee_ e
+	on atr.application_id = e.employee_id and atr.company_id = e.company_id
+	LEFT JOIN organization.department_ d
+	on e.department_id = d.department_id and e.company_id = d.company_id
+	where atr.is_complete = '1'
+	and afc.application_no = #{applicationNo}
+  </select>
+  
   <select id="SelectFuzzyPagel" parameterType="com.xiangshangban.att_simple.bean.Paging" resultMap="BaseResultMap">
-  	select DISTINCT d.department_name,e.employee_name,afc.application_time,atr.operater_time,afc.fill_card_time,
+  	select DISTINCT afc.application_no,d.department_name,e.employee_name,afc.application_time,atr.operater_time,afc.fill_card_time,
 	CASE
 		fill_card_type WHEN '1' then '下班补卡'
 		when '2' then '下班补卡'

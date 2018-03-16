@@ -11,4 +11,11 @@ public interface ApplicationFillCardService {
 	 * @return
 	 */
 	ReturnData SelectFuzzyPagel(Paging paging);
+	
+	/**
+	 * 
+	 * @param paging
+	 * @return
+	 */
+	ReturnData SelectApplicationFillCardDetails(String applicationNo);
 }

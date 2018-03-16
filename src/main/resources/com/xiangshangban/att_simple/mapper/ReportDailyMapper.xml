@@ -277,6 +277,7 @@
 	</if>
 	)t
 	where att_date <![CDATA[<]]> #{attDate}
+	ORDER BY dept_id,employee_id,att_date
   </select>
   
   <!-- 考勤日报模糊总数查询 -->

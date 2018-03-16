@@ -23,13 +23,38 @@ public class ApplicationFillCardServiceImpl implements ApplicationFillCardServic
 		
 		List<ApplicationFillCard> list = applicationFillCardMapper.SelectFuzzyPagel(paging);
 		
-		int num = applicationFillCardMapper.FindAllNumber(paging);
+		if(list!=null){
+			int num = applicationFillCardMapper.FindAllNumber(paging);
+			
+			if(num>0){
+				data.setData(list);
+				data.setReturnCode("3000");
+				data.setMessage("数据请求成功");
+				data.setTotalPages(num);
+				
+				return data;
+			}
+		}
+		data.setReturnCode("3001");
+		data.setMessage("服务器错误");
+		return data;
+	}
+
+	@Override
+	public ReturnData SelectApplicationFillCardDetails(String applicationNo) {
+		// TODO Auto-generated method stub
+		ReturnData data = new ReturnData();
 		
-		data.setData(list);
-		data.setReturnCode("3000");
-		data.setMessage("数据请求成功");
-		data.setTotalPages(num);
-		
+		ApplicationFillCard af = applicationFillCardMapper.SelectApplicationFillCardDetails(applicationNo);
+	
+		if(af!=null){
+			data.setData(af);
+			data.setReturnCode("3000");
+			data.setMessage("数据请求成功");
+			return data;
+		}	
+		data.setReturnCode("3001");
+		data.setMessage("服务器错误");
 		return data;
 	}
 
