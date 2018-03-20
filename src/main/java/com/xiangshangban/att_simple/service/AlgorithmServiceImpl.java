@@ -355,8 +355,12 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 	 */
 	public void countWorkTime(AlgorithmParam algorithmParam, AlgorithmResult result) {
 		ClassesEmployee ClassesEmployee = algorithmParam.getClassesEmployee();
-		long restTime = TimeUtil.getTimeLength(ClassesEmployee.getRestEndTime(),
-				ClassesEmployee.getRestStartTime());
+		long restTime = 0;
+		if(StringUtils.isNotEmpty(ClassesEmployee.getRestStartTime()) &&
+				StringUtils.isNotEmpty(ClassesEmployee.getRestEndTime())){
+			restTime = TimeUtil.getTimeLength(ClassesEmployee.getRestEndTime(),
+					ClassesEmployee.getRestStartTime());
+		}
 		long workTime = TimeUtil.getTimeLength(
 				ClassesEmployee.getOffDutySchedulingDate(), 
 				ClassesEmployee.getOnDutySchedulingDate())-restTime;

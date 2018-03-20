@@ -15,7 +15,7 @@
     <result column="is_transfer"  property="isTransfer" />
     <result column="application_time"  property="applicationTime" />
     <result column="department_name"  property="departmentName" />
-    <result column="employeee_name"  property="employeeeName" />
+    <result column="employee_name"  property="employeeeName" />
   </resultMap>
   <sql id="Base_Column_List">
     afc.application_no, afc.employee_id, afc.department_id, afc.company_id, afc.fill_card_type, afc.fill_card_time, 

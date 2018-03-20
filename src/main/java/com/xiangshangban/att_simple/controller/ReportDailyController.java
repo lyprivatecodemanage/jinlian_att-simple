@@ -78,7 +78,6 @@ public class ReportDailyController {
 		String applicationTimeRank = obj.getString("applicationTimeRank");
 		String varPageNo = obj.getString("pageNum");
 		String pageNum = obj.getString("pageRecordNum");
-		String auditorEmployeeId = request.getHeader("accessUserId");
 		String companyId = request.getHeader("companyId");
 		
 		Paging paging = new Paging();
