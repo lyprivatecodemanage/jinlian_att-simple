@@ -23,6 +23,7 @@
     <result column="is_skip_rest_day"  property="isSkipRestDay" />
     <result column="copy_person_id"  property="appCopyPersonId" />
     <result column="transfer_person_id"  property="transferPersonId" />
+    <result column="children_description"  property="childrenDescription" />
   </resultMap>
   <sql id="Base_Column_List">
     atr.application_no, atr.operater_time, atr.operater_id, atr.application_type, atr.last_approver, atr.is_copy, 

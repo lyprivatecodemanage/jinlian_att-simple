@@ -56,6 +56,7 @@ public class ApplicationTotalRecord {
     private String appCopyPersonId;
     
     private String transferPersonId;
+    private String childrenDescription;//申请子类型名称
     
     private List<ApplicationTransferRecord> applicationTransferRecordList;
     
@@ -317,6 +318,14 @@ public class ApplicationTotalRecord {
 
 	public void setApplicationFillCard(ApplicationFillCard applicationFillCard) {
 		this.applicationFillCard = applicationFillCard;
+	}
+
+	public String getChildrenDescription() {
+		return childrenDescription;
+	}
+
+	public void setChildrenDescription(String childrenDescription) {
+		this.childrenDescription = childrenDescription;
 	}
     
     
