@@ -189,15 +189,18 @@ public class ApproverController {
 				if("7".equals(approverDetails.getApplicationLeave().getLeaveType())){
 					approverDetails.getApplicationLeave().setLeaveType("病假");
 				}
-				String[] keys = approverDetails.getApplicationLeave().getUploadVoucher().split(",");
-				for(int i=0;i<keys.length;i++){
-					if(keys[i]!=null&&!keys[i].equals("")){
-						String directory = PropertiesUtils.ossProperty("application_outFillCard");
-						String url = oSSFileService.getPathByKey(company.getCompanyNo(), directory, keys[i]);
-						keyUrls.append(url+",");
+				if(!StringUtils.isEmpty(approverDetails.getApplicationLeave().getUploadVoucher())){
+					//图片
+					String[] keys = approverDetails.getApplicationLeave().getUploadVoucher().split(",");
+					for(int i=0;i<keys.length;i++){
+						if(keys[i]!=null&&!keys[i].equals("")){
+							String directory = PropertiesUtils.ossProperty("application_outFillCard");
+							String url = oSSFileService.getPathByKey(company.getCompanyNo(), directory, keys[i]);
+							keyUrls.append(url+",");
+						}
 					}
+					approverDetails.getApplicationLeave().setUploadVoucher(keyUrls.substring(0,keyUrls.lastIndexOf(",")).toString());
 				}
-				approverDetails.getApplicationLeave().setUploadVoucher(keyUrls.substring(0,keyUrls.lastIndexOf(",")).toString());
 			}else if("2".equals(approverDetails.getApplicationType())){
 				if("1".equals(approverDetails.getApplicationOvertime().getOvertimeType())){
 					approverDetails.getApplicationOvertime().setOvertimeType("加班");
@@ -205,15 +208,18 @@ public class ApproverController {
 				if("2".equals(approverDetails.getApplicationOvertime().getOvertimeType())){
 					approverDetails.getApplicationOvertime().setOvertimeType("预加班");
 				}
-				String[] keys = approverDetails.getApplicationOvertime().getUploadVoucher().split(",");
-				for(int i=0;i<keys.length;i++){
-					if(keys[i]!=null&&!keys[i].equals("")){
-						String directory = PropertiesUtils.ossProperty("application_outFillCard");
-						String url = oSSFileService.getPathByKey(company.getCompanyNo(), directory, keys[i]);
-						keyUrls.append(url+",");
+				if(!StringUtils.isEmpty(approverDetails.getApplicationOvertime().getUploadVoucher())){
+					//图片
+					String[] keys = approverDetails.getApplicationOvertime().getUploadVoucher().split(",");
+					for(int i=0;i<keys.length;i++){
+						if(keys[i]!=null&&!keys[i].equals("")){
+							String directory = PropertiesUtils.ossProperty("application_outFillCard");
+							String url = oSSFileService.getPathByKey(company.getCompanyNo(), directory, keys[i]);
+							keyUrls.append(url+",");
+						}
 					}
+					approverDetails.getApplicationOvertime().setUploadVoucher(keyUrls.substring(0,keyUrls.lastIndexOf(",")).toString());
 				}
-				approverDetails.getApplicationOvertime().setUploadVoucher(keyUrls.substring(0,keyUrls.lastIndexOf(",")).toString());
 			}else if("3".equals(approverDetails.getApplicationType())){
 				if("1".equals(approverDetails.getApplicationBusinessTravel().getBusinessTravelType())){
 					approverDetails.getApplicationBusinessTravel().setBusinessTravelType("短期出差");
@@ -221,26 +227,32 @@ public class ApproverController {
 				if("2".equals(approverDetails.getApplicationBusinessTravel().getBusinessTravelType())){
 					approverDetails.getApplicationBusinessTravel().setBusinessTravelType("长期出差");
 				}
-				String[] keys = approverDetails.getApplicationBusinessTravel().getUploadVoucher().split(",");
-				for(int i=0;i<keys.length;i++){
-					if(keys[i]!=null&&!keys[i].equals("")){
-						String directory = PropertiesUtils.ossProperty("application_outFillCard");
-						String url = oSSFileService.getPathByKey(company.getCompanyNo(), directory, keys[i]);
-						keyUrls.append(url+",");
+				if(!StringUtils.isEmpty(approverDetails.getApplicationBusinessTravel().getUploadVoucher())){
+					//图片
+					String[] keys = approverDetails.getApplicationBusinessTravel().getUploadVoucher().split(",");
+					for(int i=0;i<keys.length;i++){
+						if(keys[i]!=null&&!keys[i].equals("")){
+							String directory = PropertiesUtils.ossProperty("application_outFillCard");
+							String url = oSSFileService.getPathByKey(company.getCompanyNo(), directory, keys[i]);
+							keyUrls.append(url+",");
+						}
 					}
+					approverDetails.getApplicationBusinessTravel().setUploadVoucher(keyUrls.substring(0,keyUrls.lastIndexOf(",")).toString());
 				}
-				approverDetails.getApplicationBusinessTravel().setUploadVoucher(keyUrls.substring(0,keyUrls.lastIndexOf(",")).toString());
 			}else if("4".equals(approverDetails.getApplicationType())){
 				//前端转换
-				String[] keys = approverDetails.getApplicationOutgoing().getUploadVoucher().split(",");
-				for(int i=0;i<keys.length;i++){
-					if(keys[i]!=null&&!keys[i].equals("")){
-						String directory = PropertiesUtils.ossProperty("application_outFillCard");
-						String url = oSSFileService.getPathByKey(company.getCompanyNo(), directory, keys[i]);
-						keyUrls.append(url+",");
+				if(!StringUtils.isEmpty(approverDetails.getApplicationOutgoing().getUploadVoucher())){
+					//图片
+					String[] keys = approverDetails.getApplicationOutgoing().getUploadVoucher().split(",");
+					for(int i=0;i<keys.length;i++){
+						if(keys[i]!=null&&!keys[i].equals("")){
+							String directory = PropertiesUtils.ossProperty("application_outFillCard");
+							String url = oSSFileService.getPathByKey(company.getCompanyNo(), directory, keys[i]);
+							keyUrls.append(url+",");
+						}
 					}
+					approverDetails.getApplicationOutgoing().setUploadVoucher(keyUrls.substring(0,keyUrls.lastIndexOf(",")).toString());
 				}
-				approverDetails.getApplicationOutgoing().setUploadVoucher(keyUrls.substring(0,keyUrls.lastIndexOf(",")).toString());
 			}else if("5".equals(approverDetails.getApplicationType())){
 				if("1".equals(approverDetails.getApplicationFillCard().getFillCardType())){
 					approverDetails.getApplicationFillCard().setFillCardType("上班补卡");
@@ -254,15 +266,18 @@ public class ApproverController {
 				if("4".equals(approverDetails.getApplicationFillCard().getFillCardType())){
 					approverDetails.getApplicationFillCard().setFillCardType("消早退");
 				}
-				String[] keys = approverDetails.getApplicationFillCard().getUploadVoucher().split(",");
-				for(int i=0;i<keys.length;i++){
-					if(keys[i]!=null&&!keys[i].equals("")){
-						String directory = PropertiesUtils.ossProperty("application_outFillCard");
-						String url = oSSFileService.getPathByKey(company.getCompanyNo(), directory, keys[i]);
-						keyUrls.append(url+",");
+				if(!StringUtils.isEmpty(approverDetails.getApplicationFillCard().getUploadVoucher())){
+					//图片
+					String[] keys = approverDetails.getApplicationFillCard().getUploadVoucher().split(",");
+					for(int i=0;i<keys.length;i++){
+						if(keys[i]!=null&&!keys[i].equals("")){
+							String directory = PropertiesUtils.ossProperty("application_outFillCard");
+							String url = oSSFileService.getPathByKey(company.getCompanyNo(), directory, keys[i]);
+							keyUrls.append(url+",");
+						}
 					}
+					approverDetails.getApplicationFillCard().setUploadVoucher(keyUrls.substring(0,keyUrls.lastIndexOf(",")).toString());
 				}
-				approverDetails.getApplicationFillCard().setUploadVoucher(keyUrls.substring(0,keyUrls.lastIndexOf(",")).toString());
 			}
 			returnData.setMessage("成功");
 			returnData.setReturnCode("3000");
