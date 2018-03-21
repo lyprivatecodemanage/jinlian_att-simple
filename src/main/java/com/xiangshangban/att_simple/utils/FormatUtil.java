@@ -95,7 +95,7 @@ public class FormatUtil {
 	 */
 	public static void main(String[] args) {
 		int i=0;
-		while(i<200){
+		while(i<31){
 			System.out.println(createUuid());
 			i++;
 		}

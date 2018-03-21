@@ -16,6 +16,10 @@
     <result column="off_punch_card_rule" jdbcType="VARCHAR" property="offPunchCardRule" />
     <result column="must_attendance_time" jdbcType="VARCHAR" property="mustAttendanceTime"/>
   </resultMap>
+  <resultMap id="AlgorithmSignType" type="com.xiangshangban.att_simple.bean.AlgorithmSignType">
+  	<result column="record_date" jdbcType="VARCHAR" property="signTime" />
+    <result column="record_type" jdbcType="VARCHAR" property="recordType" />
+  </resultMap>
   <resultMap id="ClassesMap" type="com.xiangshangban.att_simple.bean.ClassesType">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="classes_name" jdbcType="VARCHAR" property="classesName" />
@@ -133,6 +137,11 @@
 		WHERE b.employee_id=#{employeeId} AND b.company_id=#{companyId} 
 		AND  ((c.application_no IS NOT NULL AND c.is_complete='1' AND c.is_reject='0' ) OR c.application_no IS NULL)
 	   AND (b.fill_card_time BETWEEN #{beginTime} AND #{endTime})
+	   UNION
+		SELECT to_char(c.att_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') AS record_date
+				FROM fill_card_record c
+				WHERE c.employee_id=#{employeeId} AND c.company_id=#{companyId} 
+					AND (c.att_time BETWEEN #{beginTime} AND #{endTime})
 	) AS c 
   </select>
   <select id="getMaxSignOut" resultType="String">
@@ -151,6 +160,11 @@
 		WHERE b.employee_id=#{employeeId} AND b.company_id=#{companyId} 
 		AND  ((c.application_no IS NOT NULL AND c.is_complete='1' AND c.is_reject='0' ) OR c.application_no IS NULL)
 	   AND (b.fill_card_time BETWEEN #{beginTime} AND #{endTime})
+	   UNION
+		SELECT to_char(c.att_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') AS record_date
+				FROM fill_card_record c
+				WHERE c.employee_id=#{employeeId} AND c.company_id=#{companyId} 
+					AND (c.att_time BETWEEN #{beginTime} AND #{endTime})
 	) AS c 
   </select>
   <select id="getLeaveByTime" resultMap="ApplicationMap">
