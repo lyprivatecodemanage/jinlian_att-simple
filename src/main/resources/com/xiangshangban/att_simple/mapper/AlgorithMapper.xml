@@ -109,8 +109,9 @@
   	select a.emp_id, a.emp_company_id, a.classes_id, 
 			to_char(a.on_duty_scheduling_date::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') on_duty_scheduling_date,
   		to_char(a.off_duty_scheduling_date::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') off_duty_scheduling_date, 
-			a.rest_start_time, 
-			a.rest_end_time, a.week,
+			CASE a.rest_start_time WHEN '' THEN '' WHEN NULL THEN '' ELSE to_char(a.rest_start_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') END rest_start_time, 
+			CASE a.rest_end_time WHEN '' THEN '' WHEN NULL THEN '' ELSE to_char(a.rest_end_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') END rest_end_time, 
+			a.week,
   		 a.sign_in_rule, a.sign_out_rule, a.on_punch_card_rule, a.off_punch_card_rule, a.must_attendance_time
 	FROM classes_employee_ AS a
 	WHERE a.emp_company_id=#{companyId} AND a.emp_id=#{employeeId} AND a.on_duty_scheduling_date IS NOT NULL
