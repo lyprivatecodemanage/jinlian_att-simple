@@ -85,7 +85,9 @@ public class MessageBean<T> {
 	public void setType(String type){
 		this.setValue("type", type);
 	}
-	
+	public void setField(String field ,String value){
+		this.setValue(field, value);
+	}
 	private void setValue(String key,String value){
 		Class c = t.getClass();
 		 Field[] fs = c.getDeclaredFields();
