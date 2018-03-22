@@ -16,6 +16,10 @@
     <result column="off_punch_card_rule" jdbcType="VARCHAR" property="offPunchCardRule" />
     <result column="must_attendance_time" jdbcType="VARCHAR" property="mustAttendanceTime"/>
   </resultMap>
+  <resultMap id="AlgorithmSignType" type="com.xiangshangban.att_simple.bean.AlgorithmSignType">
+  	<result column="record_date" jdbcType="VARCHAR" property="signTime" />
+    <result column="record_type" jdbcType="VARCHAR" property="recordType" />
+  </resultMap>
   <resultMap id="ClassesMap" type="com.xiangshangban.att_simple.bean.ClassesType">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="classes_name" jdbcType="VARCHAR" property="classesName" />
@@ -109,8 +113,9 @@
   	select a.emp_id, a.emp_company_id, a.classes_id, 
 			to_char(a.on_duty_scheduling_date::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') on_duty_scheduling_date,
   		to_char(a.off_duty_scheduling_date::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') off_duty_scheduling_date, 
-			a.rest_start_time, 
-			a.rest_end_time, a.week,
+			CASE a.rest_start_time WHEN '' THEN '' WHEN NULL THEN '' ELSE to_char(a.rest_start_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') END rest_start_time, 
+			CASE a.rest_end_time WHEN '' THEN '' WHEN NULL THEN '' ELSE to_char(a.rest_end_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') END rest_end_time, 
+			a.week,
   		 a.sign_in_rule, a.sign_out_rule, a.on_punch_card_rule, a.off_punch_card_rule, a.must_attendance_time
 	FROM classes_employee_ AS a
 	WHERE a.emp_company_id=#{companyId} AND a.emp_id=#{employeeId} AND a.on_duty_scheduling_date IS NOT NULL
@@ -132,6 +137,11 @@
 		WHERE b.employee_id=#{employeeId} AND b.company_id=#{companyId} 
 		AND  ((c.application_no IS NOT NULL AND c.is_complete='1' AND c.is_reject='0' ) OR c.application_no IS NULL)
 	   AND (b.fill_card_time BETWEEN #{beginTime} AND #{endTime})
+	   UNION
+		SELECT to_char(c.att_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') AS record_date
+				FROM fill_card_record c
+				WHERE c.employee_id=#{employeeId} AND c.company_id=#{companyId} 
+					AND (c.att_time BETWEEN #{beginTime} AND #{endTime})
 	) AS c 
   </select>
   <select id="getMaxSignOut" resultType="String">
@@ -150,6 +160,11 @@
 		WHERE b.employee_id=#{employeeId} AND b.company_id=#{companyId} 
 		AND  ((c.application_no IS NOT NULL AND c.is_complete='1' AND c.is_reject='0' ) OR c.application_no IS NULL)
 	   AND (b.fill_card_time BETWEEN #{beginTime} AND #{endTime})
+	   UNION
+		SELECT to_char(c.att_time::TIMESTAMP, 'yyyy-MM-dd hh24:mi:ss') AS record_date
+				FROM fill_card_record c
+				WHERE c.employee_id=#{employeeId} AND c.company_id=#{companyId} 
+					AND (c.att_time BETWEEN #{beginTime} AND #{endTime})
 	) AS c 
   </select>
   <select id="getLeaveByTime" resultMap="ApplicationMap">

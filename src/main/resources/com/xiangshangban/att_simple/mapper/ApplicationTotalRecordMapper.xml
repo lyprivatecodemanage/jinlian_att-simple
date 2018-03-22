@@ -23,6 +23,7 @@
     <result column="is_skip_rest_day"  property="isSkipRestDay" />
     <result column="copy_person_id"  property="appCopyPersonId" />
     <result column="transfer_person_id"  property="transferPersonId" />
+    <result column="children_description"  property="childrenDescription" />
   </resultMap>
   <sql id="Base_Column_List">
     atr.application_no, atr.operater_time, atr.operater_id, atr.application_type, atr.last_approver, atr.is_copy, 
@@ -421,39 +422,42 @@
 	when '4' then d.department_name   when '5' then f.department_name end as department_name,
 	 case atr.application_type when '1' then a.application_time  
 	when '2' then b.application_time when '3' then c.application_time  
-	when '4' then d.application_time when '5' then f.application_time end as application_time
+	when '4' then d.application_time when '5' then f.application_time end as application_time,
+case atr.application_type when '1' then a.children_description  ELSE '' end as children_description
 	from att_simple.application_total_record_ atr 
 	left join 
 	(
-	select l.*,e.employee_name,d.department_name,c.company_name from att_simple.application_leave_ l 
+	select l.*,e.employee_name,d.department_name,c.company_name, t.children_description from att_simple.application_leave_ l 
 	left join organization.employee_ e on e.employee_id = l.employee_id and e.company_id = #{companyId}
 	left join organization.department_ d on e.department_id = d.department_id
-	left join organization.company_ c on c.company_id = e.company_id 
+	left join organization.company_ c on c.company_id = e.company_id
+	LEFT JOIN att_simple.application_type_ t ON l.leave_type=t.application_children_type AND t.application_type='1'
 	) a on a.application_no = atr.application_no
 	left join 
 	(
-	select l.*,e.employee_name,d.department_name,c.company_name from att_simple.application_overtime_ l 
+	select l.*,e.employee_name,d.department_name,c.company_name,t.children_description from att_simple.application_overtime_ l 
 	left join organization.employee_ e on e.employee_id = l.employee_id and e.company_id = #{companyId}
 	left join organization.department_ d on e.department_id = d.department_id
 	left join organization.company_ c on c.company_id = e.company_id 
+	LEFT JOIN att_simple.application_type_ t ON l.overtime_type=t.application_children_type AND t.application_type='2'
 	) b on b.application_no = atr.application_no
 	left join 
 	(
-	select l.*,e.employee_name,d.department_name,c.company_name from att_simple.application_business_travel_ l 
+	select l.*,e.employee_name,d.department_name,c.company_name,'' children_description from att_simple.application_business_travel_ l 
 	left join organization.employee_ e on e.employee_id = l.employee_id and e.company_id = #{companyId}
 	left join organization.department_ d on e.department_id = d.department_id
 	left join organization.company_ c on c.company_id = e.company_id 
 	) c on c.application_no = atr.application_no
 	left join 
 	(
-	select l.*,e.employee_name,d.department_name,c.company_name from att_simple.application_outgoing_ l 
+	select l.*,e.employee_name,d.department_name,c.company_name,'' children_description from att_simple.application_outgoing_ l 
 	left join organization.employee_ e on e.employee_id = l.employee_id and e.company_id = #{companyId}
 	left join organization.department_ d on e.department_id = d.department_id
 	left join organization.company_ c on c.company_id = e.company_id 
 	) d on d.application_no = atr.application_no
 	left join 
 	(
-	select l.*,e.employee_name,d.department_name,c.company_name from att_simple.application_fill_card_ l 
+	select l.*,e.employee_name,d.department_name,c.company_name,'' children_description from att_simple.application_fill_card_ l 
 	left join organization.employee_ e on e.employee_id = l.employee_id and e.company_id = #{companyId}
 	left join organization.department_ d on e.department_id = d.department_id
 	left join organization.company_ c on c.company_id = e.company_id 

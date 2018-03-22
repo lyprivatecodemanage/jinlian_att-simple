@@ -727,60 +727,6 @@ public class AlgorithmServiceImpl implements AlgorithmService {
 		
 	}
 	
-	/**
-	 * 更新最新的上班时间（左请假，内请假执行）
-	 * @param checkBeginTime 实际上班时间
-	 * @param leaveBeginTime 请假开始时间
-	 * @param leaveEndTime 结束时间
-	 * @param restBeginTime 休息开始时间
-	 * @param restEndTime 休息结束时间
-	 * @return checkBeginTime 上班时间
-	 */
-	public AlgorithmSign getNewCheckBeginTime(AlgorithmSign algorithmSign, String leaveBeginTime,
-			String leaveEndTime, String restBeginTime, String restEndTime) {
-		String checkBeginTime = algorithmSign.getCheckBeginTime();
-		//检查是否 后延上班时间
-		if(!TimeUtil.compareTime(leaveBeginTime, checkBeginTime) &&
-				!TimeUtil.compareTime(checkBeginTime, leaveBeginTime)){
-			checkBeginTime=leaveEndTime;
-		}
-		//检查是否包含休息时间，若包含，则上班时间后延到休息时间结束
-		if(StringUtils.isNotEmpty(restBeginTime)&& StringUtils.isNotEmpty(restEndTime) && 
-				TimeUtil.compareTime(restEndTime, checkBeginTime) &&
-				TimeUtil.compareTime(checkBeginTime, restBeginTime)){
-			checkBeginTime = restEndTime;
-		}
-		algorithmSign.setCheckBeginTime(checkBeginTime);
-		return algorithmSign;
-	}
-	/**
-	 *  更新最新的下班时间（右请假，内请假执行）
-	 * @param checkEndTime 实际下班时间
-	 * @return checkEndTime 下班时间
-	 * @param leaveBeginTime 请假开始时间
-	 * @param leaveEndTime 请假结束时间
-	 * @param restBeginTime 休息开始时间
-	 * @param restEndTime 休息结束时间
-	 * @return checkEndTime 下班时间
-	 */
-	public AlgorithmSign getNewCheckEndTime(AlgorithmSign algorithmSign, String leaveBeginTime,
-			String leaveEndTime, String restBeginTime, String restEndTime) {
-		String checkEndTime = algorithmSign.getCheckEndTime();
-		//检查是否 提前下班时间
-		if(!TimeUtil.compareTime(checkEndTime, leaveEndTime) &&
-				!TimeUtil.compareTime(leaveEndTime, checkEndTime)){
-			checkEndTime=leaveEndTime;
-		}
-		//检查是否包含休息时间，若包含，则上班时间后提前休息时间开始
-		if(StringUtils.isNotEmpty(restBeginTime)&& StringUtils.isNotEmpty(restEndTime) 
-				&& TimeUtil.compareTime(leaveEndTime, restBeginTime) &&
-				TimeUtil.compareTime(restEndTime, checkEndTime)){
-			checkEndTime = restEndTime;
-		}
-		algorithmSign.setCheckEndTime(checkEndTime);
-		return algorithmSign;
-	}
-	
 	@Override
 	public boolean preCondition(String companyId, String employeeId, String countDate) {
 		int noCheckAtt = algorithmMapper.getIsCheck(companyId, employeeId);

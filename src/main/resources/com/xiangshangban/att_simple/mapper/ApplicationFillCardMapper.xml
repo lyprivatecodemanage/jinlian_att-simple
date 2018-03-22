@@ -83,7 +83,7 @@
 		and d.department_id = #{departmentId}
 	</if>
 	<if test="employeeName != null">
-		and e.employee_name = '%${employeeName}%'
+		and e.employee_name like '%${employeeName}%'
 	</if>
 	and afc.application_time <![CDATA[>=]]> #{beginDate} 
 	and afc.application_time <![CDATA[<=]]> #{endDate} 
